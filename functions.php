@@ -611,6 +611,11 @@ if (class_exists('WooCommerce_Lottery')) {
   require_once NERA_DIR . '/inc/giveaway-custom.php';
 }
 
+// Lottery for WooCommerce — thank-you page result overlays (instant win / prize draw)
+if (function_exists('LTY') && class_exists('WooCommerce')) {
+  require_once NERA_DIR . '/inc/lty-result-screens-loader.php';
+}
+
 // One-time: manually set one instant win prize as "won" for demo (admin only: ?nera_set_demo_instant_winner=1)
 if (class_exists('WooCommerce')) {
   require_once NERA_DIR . '/inc/demo-instant-winner.php';

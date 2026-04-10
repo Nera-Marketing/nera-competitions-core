@@ -1,6 +1,6 @@
 {
   "private": true,
   "scripts": {
-    "build": "yarn --cwd frontend build"
+    "build": "yarn --cwd frontend build && yarn --cwd lty-result-screens build"
   }
 }

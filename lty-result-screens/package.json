@@ -1,0 +1,11 @@
+{
+  "name": "lty-result-screens",
+  "private": true,
+  "scripts": {
+    "build": "tailwindcss -i ./src/input.css -o ./assets/css/lty-result-screens.css --minify",
+    "watch": "tailwindcss -i ./src/input.css -o ./assets/css/lty-result-screens.css --watch"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.4.0"
+  }
+}

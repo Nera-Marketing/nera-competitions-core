@@ -1,6 +1,7 @@
 # Dependencies & build
 frontend/node_modules/
 frontend/dist/
+lty-result-screens/node_modules/
 
 # Local env
 .env.local
