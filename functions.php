@@ -621,11 +621,6 @@ if (class_exists('WooCommerce')) {
   require_once NERA_DIR . '/inc/demo-instant-winner.php';
 }
 
-// Custom Elementor widgets
-if (did_action('elementor/loaded')) {
-  require_once NERA_DIR . '/elementor/widgets-loader.php';
-}
-
 /**
  * Add theme support
  */

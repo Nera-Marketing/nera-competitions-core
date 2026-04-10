@@ -30,8 +30,6 @@ competitions-standard/
 │   │   └── main.css            # TailwindCSS entry with @theme config
 │   ├── components/             # Vue SFCs
 │   └── instant-wins-vue-init.js
-├── elementor/                  # Custom Elementor widgets
-│   └── widgets-loader.php
 ├── inc/                        # PHP includes
 │   ├── brand-presets.php       # Brand preset definitions
 │   ├── customizer.php          # WordPress Customizer settings
