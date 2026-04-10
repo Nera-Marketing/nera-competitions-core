@@ -14,10 +14,10 @@ if (!defined('ABSPATH')) {
 // Load theme env from .env.local (no wp-config changes needed)
 require_once __DIR__ . '/inc/env-loader.php';
 
-// Define theme constants
+// Define theme constants (template directory = parent theme; child-safe when used as a parent)
 define('NERA_VERSION', '1.0.0');
-define('NERA_DIR', get_stylesheet_directory());
-define('NERA_URI', get_stylesheet_directory_uri());
+define('NERA_DIR', get_template_directory());
+define('NERA_URI', get_template_directory_uri());
 define('NERA_FRONTEND_DIST_DIR', NERA_DIR . '/frontend/dist');
 define('NERA_FRONTEND_DIST_URI', NERA_URI . '/frontend/dist');
 define('NERA_ASSETS_URI', NERA_URI . '/frontend/assets');
@@ -550,9 +550,6 @@ add_filter(
 /**
  * Include required files
  */
-// WordPress Customizer
-require_once NERA_DIR . '/inc/customizer.php';
-
 // Menu Walker Classes
 require_once NERA_DIR . '/inc/menu-walkers.php';
 

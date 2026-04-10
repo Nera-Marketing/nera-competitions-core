@@ -17,7 +17,7 @@ $site_name = get_bloginfo('name');
 $site_url = home_url('/');
 $current_year = date('Y');
 
-// Social links (can be set via customizer)
+// Social URLs (get_theme_mod defaults; no Customizer UI)
 $facebook_url = get_theme_mod('nera_facebook_url', '#');
 $instagram_url = get_theme_mod('nera_instagram_url', '#');
 $twitter_url = get_theme_mod('nera_twitter_url', '#');

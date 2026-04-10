@@ -37,7 +37,7 @@ $section_description = function_exists('get_field')
     'nera-competitions',
   );
 
-// Social media links - using Customizer settings
+// Social media links (get_theme_mod defaults)
 $facebook = get_theme_mod('nera_facebook_url', '');
 $twitter = get_theme_mod('nera_twitter_url', '');
 $instagram = get_theme_mod('nera_instagram_url', '');

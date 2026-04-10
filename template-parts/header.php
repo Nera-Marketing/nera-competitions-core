@@ -17,7 +17,7 @@ if (!defined('ABSPATH')) {
 $site_name = get_bloginfo('name');
 $site_url = home_url('/');
 
-// Get CTA settings from customizer
+// CTA labels/URLs (get_theme_mod defaults; no Customizer UI — override via child theme or filters if needed)
 $cta_secondary_text = get_theme_mod('nera_header_cta_secondary_text', __('Sign In', 'nera-competitions'));
 $cta_secondary_logged_in_text = get_theme_mod('nera_header_cta_secondary_logged_in_text', __('My Account', 'nera-competitions'));
 $cta_secondary_url = get_theme_mod('nera_header_cta_secondary_url', '');

@@ -31,8 +31,6 @@ competitions-standard/
 │   ├── components/             # Vue SFCs
 │   └── instant-wins-vue-init.js
 ├── inc/                        # PHP includes
-│   ├── brand-presets.php       # Brand preset definitions
-│   ├── customizer.php          # WordPress Customizer settings
 │   ├── giveaway-custom.php     # Lottery plugin customizations
 │   ├── menu-walkers.php        # Custom menu walker classes
 │   └── woocommerce.php         # WooCommerce customizations
@@ -209,35 +207,9 @@ get_template_part('template-parts/competition-card', null, [
 ]);
 ```
 
-### Customizer Settings
+### Theme mods and branding
 
-All customizer settings are in `inc/customizer.php`. Access values with:
-
-```php
-$value = get_theme_mod('nera_setting_name', 'default_value');
-```
-
-Key setting prefixes:
-
-- `nera_brand_*` - Brand colors and preset
-- `nera_hero_*` - Hero section content
-- `nera_header_*` - Header options
-- `nera_footer_*` - Footer options
-
-### Brand Presets System
-
-Brand presets in `inc/brand-presets.php` define complete theme configurations:
-
-```php
-'preset_key' => array(
-    'name' => 'Display Name',
-    'colors' => array('primary' => '#HEX', ...),
-    'fonts' => array('heading' => 'Font Name', 'body' => 'Font Name'),
-    'styles' => array('border_radius' => 'rounded', 'card_shadow' => 'medium'),
-)
-```
-
-Available presets: `default`, `luxury`, `modern_blue`, `neon_nights`, `forest_green`
+There is **no** Appearance → Customize panel for Nera theme options. **Brand colors and typography** come from Tailwind `@theme` in [`frontend/src/main.css`](frontend/src/main.css). Some template parts still use `get_theme_mod('nera_*', $default)` for header CTAs and social URLs (defaults in PHP; optional child-theme overrides).
 
 ## JavaScript Patterns
 
@@ -290,8 +262,7 @@ All JS modules use the IIFE pattern with auto-initialization:
 
 1. Create template in `template-parts/homepage/[name]-section.php`
 2. Add to `page-templates/homepage-template.php`
-3. Add customizer settings in `inc/customizer.php` if needed
-4. Use Tailwind utility classes for styling
+3. Use Tailwind utility classes for styling (and ACF fields where the section uses them)
 
 ### New Reusable Component
 
@@ -318,15 +289,12 @@ The theme integrates with WooCommerce for competition products:
 
 ### Change Brand Colors
 
-1. Go to **Appearance > Customize > Nera Theme Options > Brand Identity**
-2. Select a preset or choose "Custom" for manual colors
-3. Or use the **Brand Manager** at **Appearance > Brand Manager**
+Edit the `@theme` block in [`frontend/src/main.css`](frontend/src/main.css) (e.g. `--color-primary`), then run `yarn build` from the theme root.
 
 ### Add New Competition Card Style
 
-1. Add new style option in `inc/customizer.php` under `nera_card_style`
-2. Add corresponding CSS in `frontend/src/main.css`
-3. Update `template-parts/competition-card.php` to apply the class
+1. Add corresponding utilities or variants in `frontend/src/main.css` if needed
+2. Update `template-parts/competition-card.php` to apply the class
 
 ### Modify Homepage Layout
 
@@ -352,12 +320,6 @@ define('NERA_DEV_MODE', true);
 2. Check browser console for script errors
 3. Inspect Network tab for failed asset loads
 
-### Customizer Issues
-
-1. Verify setting registered in `nera_customize_register()`
-2. Check `nera_customizer_css()` outputs the CSS variable
-3. Clear caches (browser, WordPress, CDN)
-
 ## File Naming Conventions
 
 | Type               | Pattern                 | Example                |
@@ -365,7 +327,7 @@ define('NERA_DEV_MODE', true);
 | Homepage section   | `[name]-section.php`    | `hero-section.php`     |
 | Template part      | `[component-name].php`  | `competition-card.php` |
 | JavaScript module  | `[feature].js`          | `countdown.js`         |
-| Customizer setting | `nera_[section]_[name]` | `nera_hero_title`      |
+| Theme mod (legacy) | `nera_[section]_[name]` | `nera_header_cta_primary_text` |
 | CSS class          | `nera-[component]`      | `nera-card`            |
 
 ## Security Considerations
@@ -392,6 +354,5 @@ The `.claude/commands/` directory contains predefined workflows:
 - `/template-part` - Create reusable component
 - `/js-module` - Create JavaScript module
 - `/css-component` - Add CSS component styles
-- `/customizer-setting` - Add Customizer option
 - `/debug-theme` - Troubleshoot theme issues
 - `/woocommerce-integration` - Add WooCommerce customizations

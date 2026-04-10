@@ -2,7 +2,7 @@
  * Nera Competitions Standard - Design Tokens
  * CSS Custom Properties for brand customization
  * 
- * These values serve as defaults and are overridden by the WordPress Customizer
+ * Archived reference only; live theme tokens are in frontend/src/main.css (@theme).
  */
 
 :root {
@@ -168,7 +168,7 @@
   --nera-container-2xl: 1536px;
 
   /* ========================================================================
-     Header & Footer (from Customizer)
+     Header & Footer (example tokens)
      ======================================================================== */
   --nera-header-bg: #1f2937;
   --nera-footer-bg: #111827;
