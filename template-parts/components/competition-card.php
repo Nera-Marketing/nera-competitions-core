@@ -35,20 +35,23 @@ $product_id = $product->get_id();
 $image_id = $product->get_image_id();
 $price = $product->get_price();
 
-// Default Category Colors if not provided
+// Default Category Colors if not provided (filterable for child themes / brands)
 $category_colors = isset($args['category_colors'])
   ? $args['category_colors']
-  : [
-    'cars' => '#3B82F6',
-    'cash' => '#10B981',
-    'luxury' => '#8B5CF6',
-    'electronics' => '#F59E0B',
-    'travel' => '#EC4899',
-    'tech' => '#06B6D4',
-    'gadgets' => '#F97316',
-    'watches' => '#6366F1',
-    'lifestyle' => '#14B8A6',
-  ];
+  : apply_filters(
+    'nera_competition_card_category_colors',
+    [
+      'cars' => '#3B82F6',
+      'cash' => '#10B981',
+      'luxury' => '#8B5CF6',
+      'electronics' => '#F59E0B',
+      'travel' => '#EC4899',
+      'tech' => '#06B6D4',
+      'gadgets' => '#F97316',
+      'watches' => '#6366F1',
+      'lifestyle' => '#14B8A6',
+    ],
+  );
 
 // Lottery-specific data
 $max_tickets = get_post_meta($product_id, '_lty_maximum_tickets', true);
@@ -96,7 +99,7 @@ $category_slugs = array_map(function ($cat) {
 $primary_category = !empty($product_categories) ? $product_categories[0]->slug : '';
 $base_accent_color = isset($category_colors[$primary_category])
   ? $category_colors[$primary_category]
-  : '#1313ec';
+  : apply_filters('nera_competition_card_fallback_accent', '#1313ec');
 
 // Parsing Args
 $x_show_attr = !empty($args['x_show']) ? 'x-show="' . esc_attr($args['x_show']) . '"' : '';

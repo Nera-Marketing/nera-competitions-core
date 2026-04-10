@@ -755,17 +755,20 @@ add_filter('body_class', 'nera_product_listing_body_classes');
  */
 function nera_advanced_filter_category_colors()
 {
-  return [
-    'cars' => '#3B82F6',
-    'cash' => '#10B981',
-    'luxury' => '#8B5CF6',
-    'electronics' => '#F59E0B',
-    'travel' => '#EC4899',
-    'tech' => '#06B6D4',
-    'gadgets' => '#F97316',
-    'watches' => '#6366F1',
-    'lifestyle' => '#14B8A6',
-  ];
+  return apply_filters(
+    'nera_advanced_filter_category_colors',
+    [
+      'cars' => '#3B82F6',
+      'cash' => '#10B981',
+      'luxury' => '#8B5CF6',
+      'electronics' => '#F59E0B',
+      'travel' => '#EC4899',
+      'tech' => '#06B6D4',
+      'gadgets' => '#F97316',
+      'watches' => '#6366F1',
+      'lifestyle' => '#14B8A6',
+    ],
+  );
 }
 
 /**

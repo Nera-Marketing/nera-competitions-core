@@ -43,18 +43,10 @@ $categories_competitions_args = [
 
 $competitions = new WP_Query($categories_competitions_args);
 
-// Category color mapping for visual coding
-$category_colors = [
-  'cars' => '#3B82F6', // Blue
-  'cash' => '#10B981', // Green
-  'luxury' => '#8B5CF6', // Purple
-  'electronics' => '#F59E0B', // Orange
-  'travel' => '#EC4899', // Pink
-  'tech' => '#06B6D4', // Cyan
-  'gadgets' => '#F97316', // Deep orange
-  'watches' => '#6366F1', // Indigo
-  'lifestyle' => '#14B8A6', // Teal
-];
+// Category color mapping (single source: nera_advanced_filter_category_colors + filters)
+$category_colors = function_exists('nera_advanced_filter_category_colors')
+  ? nera_advanced_filter_category_colors()
+  : [];
 
 // Category icon mapping (Material Symbols)
 $category_icons = [
