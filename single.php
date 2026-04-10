@@ -114,7 +114,7 @@ get_header();
                 <?php if ($prev_post): ?>
                     <a href="<?php echo get_permalink(
                       $prev_post,
-                    ); ?>" class="flex-1 p-6 bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow group">
+                    ); ?>" class="flex-1 p-6 bg-surface rounded-xl shadow-sm hover:shadow-md transition-shadow group">
                         <span class="text-sm text-text-secondary"><?php esc_html_e(
                           'Previous',
                           'nera-competitions',
@@ -130,7 +130,7 @@ get_header();
                 <?php if ($next_post): ?>
                     <a href="<?php echo get_permalink(
                       $next_post,
-                    ); ?>" class="flex-1 p-6 bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow group text-right">
+                    ); ?>" class="flex-1 p-6 bg-surface rounded-xl shadow-sm hover:shadow-md transition-shadow group text-right">
                         <span class="text-sm text-text-secondary"><?php esc_html_e(
                           'Next',
                           'nera-competitions',
@@ -144,7 +144,7 @@ get_header();
         </nav>
 
         <?php if (comments_open() || get_comments_number()) {
-          echo '<div class="container mx-auto px-4 pb-12"><div class="max-w-3xl mx-auto bg-white rounded-2xl p-8 shadow-sm">';
+          echo '<div class="container mx-auto px-4 pb-12"><div class="max-w-3xl mx-auto bg-surface rounded-2xl p-8 shadow-sm">';
           comments_template();
           echo '</div></div>';
         } ?>

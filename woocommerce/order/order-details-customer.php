@@ -20,7 +20,7 @@ $show_shipping = !wc_ship_to_billing_address_only() && $order->needs_shipping_ad
   <?php endif; ?>
 
   <!-- Billing Address Card -->
-  <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 woocommerce-column woocommerce-column--1 woocommerce-column--billing-address">
+  <div class="bg-surface rounded-2xl border border-gray-100 shadow-sm p-6 woocommerce-column woocommerce-column--1 woocommerce-column--billing-address">
     <h2 class="woocommerce-column__title text-lg font-bold text-gray-900 flex items-center gap-2 mb-4">
       <span class="material-symbols-outlined text-primary">receipt_long</span>
       <?php esc_html_e('Billing address', 'woocommerce'); ?>
@@ -55,7 +55,7 @@ $show_shipping = !wc_ship_to_billing_address_only() && $order->needs_shipping_ad
 
   <?php if ($show_shipping): ?>
     <!-- Shipping Address Card -->
-    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 woocommerce-column woocommerce-column--2 woocommerce-column--shipping-address">
+    <div class="bg-surface rounded-2xl border border-gray-100 shadow-sm p-6 woocommerce-column woocommerce-column--2 woocommerce-column--shipping-address">
       <h2 class="woocommerce-column__title text-lg font-bold text-gray-900 flex items-center gap-2 mb-4">
         <span class="material-symbols-outlined text-primary">local_shipping</span>
         <?php esc_html_e('Shipping address', 'woocommerce'); ?>

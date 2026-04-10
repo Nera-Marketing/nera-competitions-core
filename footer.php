@@ -28,7 +28,7 @@ if (!defined('ABSPATH')) {
       x-transition:enter-start="opacity-0 -translate-y-8" x-transition:enter-end="opacity-100 translate-y-0"
       x-transition:leave="transition-all transform ease-[cubic-bezier(0.21,1.02,0.73,1)] duration-300"
       x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 -translate-y-8"
-      class="group bg-white dark:bg-zinc-950 rounded-xl border border-zinc-200 dark:border-zinc-800 p-4 flex gap-4 items-start md:items-center min-h-[64px] max-w-[420px] shadow-[0_8px_30px_rgb(0,0,0,0.04)] pointer-events-auto hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] transition-shadow">
+      class="group bg-surface dark:bg-zinc-950 rounded-xl border border-zinc-200 dark:border-zinc-800 p-4 flex gap-4 items-start md:items-center min-h-[64px] max-w-[420px] shadow-[0_8px_30px_rgb(0,0,0,0.04)] pointer-events-auto hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] transition-shadow">
 
       <!-- Icon -->
       <div class="shrink-0 w-6 h-6 overflow-hidden mt-0.5 md:mt-0 flex items-center justify-center">

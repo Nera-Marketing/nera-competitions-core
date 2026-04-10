@@ -84,7 +84,7 @@
               <button
                 @click="goToPreviousPage"
                 :disabled="currentPage === 1"
-                class="group flex items-center gap-2 px-4 py-2.5 rounded-xl font-['DM_Sans'] font-semibold text-sm transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent hover:bg-white hover:shadow-sm focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50"
+                class="group flex items-center gap-2 px-4 py-2.5 rounded-xl font-['DM_Sans'] font-semibold text-sm transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent hover:bg-surface hover:shadow-sm focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50"
                 aria-label="Previous page"
               >
                 <span
@@ -124,7 +124,7 @@
                           'focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50',
                           currentPage === i
                             ? 'bg-[#D4AF37] text-white shadow-sm'
-                            : 'bg-transparent text-gray-600 hover:bg-white hover:shadow-sm',
+                            : 'bg-transparent text-gray-600 hover:bg-surface hover:shadow-sm',
                         ]"
                         :aria-label="`Go to page ${i}`"
                         :aria-current="currentPage === i ? 'page' : undefined"
@@ -141,7 +141,7 @@
               <button
                 @click="goToNextPage"
                 :disabled="currentPage === totalPages"
-                class="group flex items-center gap-2 px-4 py-2.5 rounded-xl font-['DM_Sans'] font-semibold text-sm transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent hover:bg-white hover:shadow-sm focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50"
+                class="group flex items-center gap-2 px-4 py-2.5 rounded-xl font-['DM_Sans'] font-semibold text-sm transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent hover:bg-surface hover:shadow-sm focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50"
                 aria-label="Next page"
               >
                 <span class="hidden sm:inline">Next</span>

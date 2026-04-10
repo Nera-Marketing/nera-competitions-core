@@ -65,14 +65,14 @@ if (!$competitions->have_posts()) {
       </div>
       <div class="flex gap-2">
         <button id="endingSoonPrev"
-          class="size-10 rounded-full border border-gray-200 flex items-center justify-center hover:bg-white transition-all cursor-pointer">
+          class="size-10 rounded-full border border-gray-200 flex items-center justify-center hover:bg-surface transition-all cursor-pointer">
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <polyline points="15 18 9 12 15 6"></polyline>
           </svg>
         </button>
         <button id="endingSoonNext"
-          class="size-10 rounded-full border border-gray-200 flex items-center justify-center hover:bg-white transition-all cursor-pointer">
+          class="size-10 rounded-full border border-gray-200 flex items-center justify-center hover:bg-surface transition-all cursor-pointer">
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <polyline points="9 18 15 12 9 6"></polyline>
@@ -135,7 +135,7 @@ if (!$competitions->have_posts()) {
           }
           ?>
           <article
-            class="group w-[300px] md:w-[calc((100%-48px)/3)] bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 flex-shrink-0">
+            class="group w-[300px] md:w-[calc((100%-48px)/3)] bg-surface rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 flex-shrink-0">
             <div class="relative aspect-[4/3] overflow-hidden">
               <!-- Status Badge -->
               <?php if ($badge_text): ?>
@@ -169,7 +169,7 @@ if (!$competitions->have_posts()) {
 
               <!-- Price Badge (Bottom Right, Glassmorphism) -->
               <div
-                class="absolute bottom-4 right-4 z-10 bg-white/90 backdrop-blur-sm px-4 py-2 rounded-xl border border-white/20 shadow-sm">
+                class="absolute bottom-4 right-4 z-10 bg-surface/90 backdrop-blur-sm px-4 py-2 rounded-xl border border-white/20 shadow-sm">
                 <span class="text-xs font-bold text-primary"><?php echo wc_price($price); ?>
                   <?php _e('per entry', 'nera-competitions'); ?>
                 </span>
@@ -231,7 +231,7 @@ if (!$competitions->have_posts()) {
         <!-- Placeholder cards when no competitions -->
         <?php for ($i = 0; $i < 3; $i++): ?>
           <article
-            class="w-[300px] md:w-[calc((100%-48px)/3)] bg-white rounded-3xl overflow-hidden shadow-sm border border-gray-100 opacity-60 flex-shrink-0">
+            class="w-[300px] md:w-[calc((100%-48px)/3)] bg-surface rounded-3xl overflow-hidden shadow-sm border border-gray-100 opacity-60 flex-shrink-0">
             <div class="relative aspect-[4/3] overflow-hidden">
               <div class="w-full h-full flex items-center justify-center bg-gray-50 text-gray-300">
                 <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
@@ -241,7 +241,7 @@ if (!$competitions->have_posts()) {
                 </svg>
               </div>
               <div
-                class="absolute bottom-4 right-4 bg-white/90 backdrop-blur-sm px-4 py-2 rounded-xl border border-white/20">
+                class="absolute bottom-4 right-4 bg-surface/90 backdrop-blur-sm px-4 py-2 rounded-xl border border-white/20">
                 <p class="text-xs font-bold text-primary">£0.99 per entry</p>
               </div>
             </div>

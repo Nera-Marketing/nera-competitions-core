@@ -38,7 +38,7 @@ do_action('woocommerce_before_edit_address_form_' . $load_address);
 
   <form method="post" class="woocommerce-EditAddressForm">
 
-    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 mb-6">
+    <div class="bg-surface rounded-2xl border border-gray-100 shadow-sm p-6 mb-6">
       
       <div class="space-y-6">
         <?php do_action('woocommerce_before_edit_address_form_' . $load_address); ?>
@@ -87,7 +87,7 @@ do_action('woocommerce_before_edit_address_form_' . $load_address);
       </p>
 
       <a href="<?php echo esc_url(wc_get_endpoint_url('edit-address')); ?>" 
-         class="inline-flex items-center justify-center gap-2 px-8 py-4 bg-white border-2 border-gray-200 text-gray-700 font-semibold rounded-xl hover:border-primary hover:text-primary transition-all w-full sm:w-auto">
+         class="inline-flex items-center justify-center gap-2 px-8 py-4 bg-surface border-2 border-gray-200 text-gray-700 font-semibold rounded-xl hover:border-primary hover:text-primary transition-all w-full sm:w-auto">
         <span class="material-symbols-outlined text-xl">cancel</span>
         <?php esc_html_e('Cancel', 'nera-competitions-standard'); ?>
       </a>

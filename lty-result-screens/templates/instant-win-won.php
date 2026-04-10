@@ -12,7 +12,7 @@ $win_button     = get_field( 'lty_rs_win_button', 'option' ) ?: __( 'Claim my pr
 <div class="lty-rs-overlay flex items-center justify-center p-4 bg-[rgba(8,8,18,0.88)] backdrop-blur-md"
      role="dialog" aria-modal="true" aria-labelledby="lty-rs-win-heading">
 
-	<div class="relative w-full max-w-[520px] max-h-[90vh] overflow-y-auto overflow-x-hidden rounded-[var(--lty-rs-card-radius)] bg-white text-center px-9 py-11 shadow-2xl border-t-4 border-[var(--lty-rs-win-accent)] animate-rs-enter">
+	<div class="relative w-full max-w-[520px] max-h-[90vh] overflow-y-auto overflow-x-hidden rounded-[var(--lty-rs-card-radius)] bg-surface text-center px-9 py-11 shadow-2xl border-t-4 border-[var(--lty-rs-win-accent)] animate-rs-enter">
 
 		<!-- Confetti -->
 		<div class="absolute inset-0 pointer-events-none overflow-hidden rounded-[var(--lty-rs-card-radius)] z-0" aria-hidden="true">
@@ -77,7 +77,7 @@ $win_button     = get_field( 'lty_rs_win_button', 'option' ) ?: __( 'Claim my pr
 						<p class="text-xs font-semibold uppercase tracking-widest text-gray-400 mt-3 mb-1.5">
 							<?php esc_html_e( 'Your coupon code:', 'lty-result-screens' ); ?>
 						</p>
-						<button class="lty-rs-copy-code group relative font-mono text-xl font-bold tracking-[0.12em] text-gray-900 border-2 border-dashed border-[var(--lty-rs-win-accent)] rounded-lg px-4 py-2 inline-flex items-center gap-2 bg-white cursor-pointer hover:bg-[var(--lty-rs-win-bg)] transition-colors duration-150"
+						<button class="lty-rs-copy-code group relative font-mono text-xl font-bold tracking-[0.12em] text-gray-900 border-2 border-dashed border-[var(--lty-rs-win-accent)] rounded-lg px-4 py-2 inline-flex items-center gap-2 bg-surface cursor-pointer hover:bg-[var(--lty-rs-win-bg)] transition-colors duration-150"
 							data-code="<?php echo esc_attr( $log->get_coupon_code() ); ?>"
 							title="<?php esc_attr_e( 'Click to copy', 'lty-result-screens' ); ?>">
 							<span class="lty-rs-copy-code__text"><?php echo esc_html( $log->get_coupon_code() ); ?></span>

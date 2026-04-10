@@ -106,7 +106,7 @@ if ($is_sold_out) {
 ?>
 
 <article
-  class="group bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100"
+  class="group bg-surface rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100"
   data-product-id="<?php echo esc_attr($product_id); ?>"
   data-category="<?php echo esc_attr(
     implode(' ', wp_get_post_terms($product_id, 'product_cat', ['fields' => 'slugs'])),

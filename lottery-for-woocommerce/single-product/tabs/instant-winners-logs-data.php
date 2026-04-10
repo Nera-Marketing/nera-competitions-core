@@ -75,7 +75,7 @@ foreach ($instant_winner_ids as $instant_winner_id) {
 
 		<!-- Prize Card -->
 		<div 
-			class="instant-win-card bg-white rounded-2xl shadow-card hover:shadow-card-hover transition-all duration-300 overflow-hidden <?php echo $is_won
+			class="instant-win-card bg-surface rounded-2xl shadow-card hover:shadow-card-hover transition-all duration-300 overflow-hidden <?php echo $is_won
      ? 'prize-won'
      : 'prize-available'; ?>"
 		>
@@ -148,7 +148,7 @@ foreach ($instant_winner_ids as $instant_winner_id) {
 				>
 					<div class="space-y-3">
 						<?php foreach ($displayed_winners as $winner): ?>
-							<div class="p-3 bg-white rounded-lg border border-gray-200">
+							<div class="p-3 bg-surface rounded-lg border border-gray-200">
 								<p class="text-xs font-semibold text-text-secondary uppercase tracking-wide mb-1">
 									Winner
 								</p>
@@ -167,7 +167,7 @@ foreach ($instant_winner_ids as $instant_winner_id) {
 						
 						<?php if ($has_more): ?>
 							<button 
-								class="w-full text-sm font-semibold text-primary hover:text-primary-dark transition-colors py-2 px-3 bg-white rounded-lg border border-primary/20 hover:border-primary/40 hover:bg-primary/5 opacity-50 cursor-not-allowed"
+								class="w-full text-sm font-semibold text-primary hover:text-primary-dark transition-colors py-2 px-3 bg-surface rounded-lg border border-primary/20 hover:border-primary/40 hover:bg-primary/5 opacity-50 cursor-not-allowed"
 								disabled
 								title="Winners modal functionality has been migrated to React component"
 							>

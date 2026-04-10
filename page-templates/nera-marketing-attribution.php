@@ -375,7 +375,7 @@ get_header();
 	</div>
 
 	<!-- ── STAT BAR ──────────────────────────────────────────────────────────── -->
-	<div class="bg-white border-b border-gray-200 py-10">
+	<div class="bg-surface border-b border-gray-200 py-10">
 		<div class="max-w-7xl mx-auto px-4 lg:px-8">
 			<div class="grid grid-cols-2 sm:grid-cols-4 gap-6">
 				<?php foreach ( $stats as $i => $stat ) : ?>
@@ -389,7 +389,7 @@ get_header();
 	</div>
 
 	<!-- ── CONTENT SECTION 1: WHO BUILT THIS ─────────────────────────────────── -->
-	<section class="py-16 lg:py-24 border-b border-gray-200 bg-white">
+	<section class="py-16 lg:py-24 border-b border-gray-200 bg-surface">
 		<div class="max-w-7xl mx-auto px-4 lg:px-8">
 			<div class="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
 
@@ -436,7 +436,7 @@ get_header();
 						     height="<?php echo esc_attr( $s2_image['height'] ?? '' ); ?>"
 						     class="w-full aspect-square object-cover rounded-xl">
 					<?php else : ?>
-						<div class="aspect-square bg-white border-2 border-dashed border-gray-200 rounded-xl flex flex-col items-center justify-center gap-3 text-text-secondary text-sm text-center p-8">
+						<div class="aspect-square bg-surface border-2 border-dashed border-gray-200 rounded-xl flex flex-col items-center justify-center gap-3 text-text-secondary text-sm text-center p-8">
 							<svg class="opacity-30" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
 							<span>Add marketing / mobile mockup<br><small class="text-xs opacity-60">Recommended: 800×800px</small></span>
 						</div>
@@ -456,7 +456,7 @@ get_header();
 	</section>
 
 	<!-- ── CONTENT SECTION 3: WHY CHOOSE NERA ───────────────────────────────── -->
-	<section class="py-16 lg:py-24 border-b border-gray-200 bg-white">
+	<section class="py-16 lg:py-24 border-b border-gray-200 bg-surface">
 		<div class="max-w-7xl mx-auto px-4 lg:px-8">
 			<div class="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
 
@@ -505,7 +505,7 @@ get_header();
 					$icon = $feature_icons[ $i % count( $feature_icons ) ];
 					$row_delay = ( $i % 3 ) * 75;
 				?>
-				<div class="nera-attr-feature bg-white p-7 flex gap-4 items-start transition-colors hover:bg-secondary" data-aos="fade-up" data-aos-delay="<?php echo $row_delay; ?>">
+				<div class="nera-attr-feature bg-surface p-7 flex gap-4 items-start transition-colors hover:bg-secondary" data-aos="fade-up" data-aos-delay="<?php echo $row_delay; ?>">
 					<?php echo $icon; // phpcs:ignore WordPress.Security.EscapeOutput -- hardcoded SVG ?>
 					<div>
 						<strong class="block text-sm font-semibold text-text-primary mb-1"><?php echo esc_html( $feature['title'] ); ?></strong>
@@ -519,7 +519,7 @@ get_header();
 	</section>
 
 	<!-- ── THREE PILLARS ─────────────────────────────────────────────────────── -->
-	<section class="py-16 lg:py-24 border-b border-gray-200 bg-white">
+	<section class="py-16 lg:py-24 border-b border-gray-200 bg-surface">
 		<div class="max-w-7xl mx-auto px-4 lg:px-8">
 
 			<div class="text-center mb-16" data-aos="fade-up">
@@ -530,7 +530,7 @@ get_header();
 
 			<div class="grid grid-cols-1 sm:grid-cols-3 gap-px bg-gray-200">
 				<?php foreach ( $pillars as $i => $pillar ) : ?>
-				<div class="nera-attr-pillar relative bg-white p-10 overflow-hidden" data-aos="fade-up" data-aos-delay="<?php echo $i * 100; ?>">
+				<div class="nera-attr-pillar relative bg-surface p-10 overflow-hidden" data-aos="fade-up" data-aos-delay="<?php echo $i * 100; ?>">
 					<p class="text-7xl font-bold leading-none text-primary/10 mb-5 tracking-wide"><?php echo esc_html( $pillar['number'] ); ?></p>
 					<h3 class="text-base font-bold text-text-primary uppercase tracking-widest mb-3"><?php echo esc_html( $pillar['title'] ); ?></h3>
 					<p class="text-sm text-text-secondary font-light leading-relaxed"><?php echo esc_html( $pillar['description'] ); ?></p>
@@ -553,7 +553,7 @@ get_header();
 
 			<div class="flex flex-col gap-0.5">
 				<?php foreach ( $faqs as $i => $faq ) : ?>
-				<div class="nera-attr-faq-item bg-white border border-gray-200 overflow-hidden"
+				<div class="nera-attr-faq-item bg-surface border border-gray-200 overflow-hidden"
 				     x-data="{ open: false }"
 				     data-aos="fade-up"
 				     data-aos-delay="<?php echo $i * 60; ?>">
@@ -597,7 +597,7 @@ get_header();
 				</div>
 				<div class="flex flex-col sm:flex-row lg:flex-col gap-3 shrink-0">
 					<a href="<?php echo esc_url( $cta_btn1_url ); ?>" target="_blank" rel="noopener"
-					   class="inline-flex items-center justify-center gap-2 px-7 py-3.5 bg-white text-primary text-xs font-bold tracking-widest uppercase rounded-sm border-2 border-white hover:bg-white/90 transition-colors">
+					   class="inline-flex items-center justify-center gap-2 px-7 py-3.5 bg-surface text-primary text-xs font-bold tracking-widest uppercase rounded-sm border-2 border-white hover:bg-surface/90 transition-colors">
 						<?php echo esc_html( $cta_btn1_label ); ?>
 					</a>
 					<a href="<?php echo esc_url( $cta_btn2_url ); ?>" target="_blank" rel="noopener"
@@ -610,7 +610,7 @@ get_header();
 	</section>
 
 	<!-- ── CREDIT BAR ─────────────────────────────────────────────────────────── -->
-	<div class="border-t border-gray-200 bg-white py-7">
+	<div class="border-t border-gray-200 bg-surface py-7">
 		<div class="max-w-7xl mx-auto px-4 lg:px-8 flex flex-wrap items-center justify-between gap-4">
 			<p class="text-xs text-text-secondary font-light">
 				<?php echo esc_html( $credit_text ); ?>

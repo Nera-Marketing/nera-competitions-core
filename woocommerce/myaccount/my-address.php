@@ -93,7 +93,7 @@ $col = 1;
       ?>
 
       <!-- Address Card -->
-      <div class="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
+      <div class="bg-surface rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
         
         <!-- Card Header -->
         <div class="bg-gradient-to-r from-gray-50 to-gray-100/50 px-6 py-4 border-b border-gray-200">
@@ -166,7 +166,7 @@ $col = 1;
           <!-- Edit Button -->
           <a href="<?php echo esc_url(wc_get_endpoint_url('edit-address', $name)); ?>" 
              class="inline-flex items-center justify-center gap-2 w-full px-6 py-3 <?php echo $address
-               ? 'bg-white border-2 border-gray-200 text-gray-700 hover:border-primary hover:text-primary'
+               ? 'bg-surface border-2 border-gray-200 text-gray-700 hover:border-primary hover:text-primary'
                : 'bg-gradient-to-r from-primary to-indigo-600 text-white hover:opacity-90 shadow-sm hover:shadow-md'; ?> font-semibold rounded-xl transition-all">
             <span class="material-symbols-outlined text-base"><?php echo $address
               ? 'edit'

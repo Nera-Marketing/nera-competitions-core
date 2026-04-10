@@ -52,7 +52,7 @@ $active_tab = isset($_GET['action']) && $_GET['action'] === 'register' ? 'regist
 		<?php do_action('woocommerce_before_customer_login_form'); ?>
 
 		<!-- Card -->
-		<div class="bg-white rounded-2xl shadow-md overflow-hidden">
+		<div class="bg-surface rounded-2xl shadow-md overflow-hidden">
 
 			<!-- Tab Bar -->
 			<div class="flex border-b border-gray-200">
@@ -140,7 +140,7 @@ $active_tab = isset($_GET['action']) && $_GET['action'] === 'register' ? 'regist
 					<div class="space-y-4 mb-5">
 						<label class="flex items-center cursor-pointer group">
 							<input
-								class="w-4 h-4 text-primary bg-white border-2 border-gray-300 rounded focus:ring-2 focus:ring-primary/20 transition-all cursor-pointer"
+								class="w-4 h-4 text-primary bg-surface border-2 border-gray-300 rounded focus:ring-2 focus:ring-primary/20 transition-all cursor-pointer"
 								name="rememberme"
 								type="checkbox"
 								id="rememberme"
@@ -313,7 +313,7 @@ $active_tab = isset($_GET['action']) && $_GET['action'] === 'register' ? 'regist
 								type="checkbox"
 								name="terms_conditions"
 								id="reg_terms"
-								class="mt-0.5 w-4 h-4 text-primary bg-white border-2 border-gray-300 rounded focus:ring-2 focus:ring-primary/20 transition-all cursor-pointer flex-shrink-0"
+								class="mt-0.5 w-4 h-4 text-primary bg-surface border-2 border-gray-300 rounded focus:ring-2 focus:ring-primary/20 transition-all cursor-pointer flex-shrink-0"
 								required />
 							<span class="text-sm text-text-secondary group-hover:text-text-primary transition-colors leading-snug">
 								<?php
@@ -338,7 +338,7 @@ $active_tab = isset($_GET['action']) && $_GET['action'] === 'register' ? 'regist
 								type="checkbox"
 								name="age_confirm"
 								id="reg_age"
-								class="mt-0.5 w-4 h-4 text-primary bg-white border-2 border-gray-300 rounded focus:ring-2 focus:ring-primary/20 transition-all cursor-pointer flex-shrink-0"
+								class="mt-0.5 w-4 h-4 text-primary bg-surface border-2 border-gray-300 rounded focus:ring-2 focus:ring-primary/20 transition-all cursor-pointer flex-shrink-0"
 								required />
 							<span class="text-sm text-text-secondary group-hover:text-text-primary transition-colors leading-snug">
 								<?php esc_html_e('I am over the age of 18', 'woocommerce'); ?>

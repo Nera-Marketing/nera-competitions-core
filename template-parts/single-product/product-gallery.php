@@ -88,14 +88,14 @@ $alpine_images = array_map(function ($img) {
 
     <?php if (count($images) > 1): ?>
       <button
-        class="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/90 rounded-full shadow-lg flex items-center justify-center hover:bg-white opacity-0 group-hover:opacity-100 transition-opacity z-10"
+        class="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-surface/90 rounded-full shadow-lg flex items-center justify-center hover:bg-surface opacity-0 group-hover:opacity-100 transition-opacity z-10"
         data-gallery-prev
         aria-label="<?php esc_attr_e('Previous image', 'nera-competitions'); ?>"
       >
         <span class="material-symbols-outlined text-gray-700">chevron_left</span>
       </button>
       <button
-        class="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/90 rounded-full shadow-lg flex items-center justify-center hover:bg-white opacity-0 group-hover:opacity-100 transition-opacity z-10"
+        class="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-surface/90 rounded-full shadow-lg flex items-center justify-center hover:bg-surface opacity-0 group-hover:opacity-100 transition-opacity z-10"
         data-gallery-next
         aria-label="<?php esc_attr_e('Next image', 'nera-competitions'); ?>"
       >
@@ -147,7 +147,7 @@ $alpine_images = array_map(function ($img) {
     @click.self="closeLightbox()"
   >
     <button
-      class="absolute top-4 right-4 z-10 w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-colors"
+      class="absolute top-4 right-4 z-10 w-12 h-12 rounded-full bg-surface/10 hover:bg-surface/20 flex items-center justify-center text-white transition-colors"
       @click="closeLightbox()"
       aria-label="<?php esc_attr_e('Close lightbox', 'nera-competitions'); ?>"
     >

@@ -108,7 +108,7 @@
           if (form && !form.querySelector('.checkout-loading-overlay')) {
             var overlay = document.createElement('div');
             overlay.className =
-              'checkout-loading-overlay fixed inset-0 bg-white/70 z-50 flex items-center justify-center';
+              'checkout-loading-overlay fixed inset-0 bg-surface/70 z-50 flex items-center justify-center';
             overlay.innerHTML =
               '<span class="material-symbols-outlined animate-spin text-4xl text-primary">progress_activity</span>';
             form.appendChild(overlay);

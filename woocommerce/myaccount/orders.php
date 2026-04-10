@@ -71,13 +71,13 @@ do_action('woocommerce_before_account_orders', $has_orders);
         ?>
 
       <!-- Order Card -->
-      <div class="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all overflow-hidden">
+      <div class="bg-surface rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all overflow-hidden">
         
         <!-- Card Header -->
         <div class="bg-gradient-to-r from-gray-50 to-gray-100/50 px-6 py-4 border-b border-gray-200">
           <div class="flex items-center justify-between flex-wrap gap-3">
             <div class="flex items-center gap-3">
-              <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center border border-gray-200">
+              <div class="w-10 h-10 bg-surface rounded-lg flex items-center justify-center border border-gray-200">
                 <span class="material-symbols-outlined text-primary text-xl">receipt</span>
               </div>
               <div>
@@ -127,7 +127,7 @@ do_action('woocommerce_before_account_orders', $has_orders);
                 $thumbnail = $product->get_image('thumbnail');
                 ?>
               <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
-                <div class="w-12 h-12 flex-shrink-0 bg-white rounded-lg overflow-hidden border border-gray-200">
+                <div class="w-12 h-12 flex-shrink-0 bg-surface rounded-lg overflow-hidden border border-gray-200">
                   <?php echo wp_kses_post($thumbnail); ?>
                 </div>
                 <div class="flex-1 min-w-0">
@@ -185,7 +185,7 @@ do_action('woocommerce_before_account_orders', $has_orders);
                       ' bg-gradient-to-r from-primary to-indigo-600 text-white hover:opacity-90 shadow-sm hover:shadow-md';
                   } elseif ($key === 'view') {
                     $action_classes .=
-                      ' bg-white border-2 border-gray-200 text-gray-700 hover:border-primary hover:text-primary';
+                      ' bg-surface border-2 border-gray-200 text-gray-700 hover:border-primary hover:text-primary';
                   } else {
                     $action_classes .= ' bg-gray-100 text-gray-700 hover:bg-gray-200';
                   }
@@ -225,7 +225,7 @@ do_action('woocommerce_before_account_orders', $has_orders);
     <?php if (1 < $customer_orders->max_num_pages): ?>
       <div class="woocommerce-pagination woocommerce-pagination--without-numbers woocommerce-Pagination mt-8 flex items-center justify-center gap-3">
         <?php if (1 !== $customer_orders->current_page): ?>
-          <a class="woocommerce-button woocommerce-button--previous woocommerce-Button woocommerce-Button--previous button inline-flex items-center gap-2 px-6 py-3 bg-white border-2 border-gray-200 text-gray-700 font-semibold rounded-xl hover:border-primary hover:text-primary transition-all" 
+          <a class="woocommerce-button woocommerce-button--previous woocommerce-Button woocommerce-Button--previous button inline-flex items-center gap-2 px-6 py-3 bg-surface border-2 border-gray-200 text-gray-700 font-semibold rounded-xl hover:border-primary hover:text-primary transition-all" 
              href="<?php echo esc_url(
                wc_get_endpoint_url('orders', $customer_orders->current_page - 1),
              ); ?>">
@@ -251,7 +251,7 @@ do_action('woocommerce_before_account_orders', $has_orders);
   <?php else: ?>
     
     <!-- Empty State -->
-    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-12 text-center">
+    <div class="bg-surface rounded-2xl border border-gray-100 shadow-sm p-12 text-center">
       <div class="w-24 h-24 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
         <span class="material-symbols-outlined text-gray-400 text-5xl">shopping_cart</span>
       </div>

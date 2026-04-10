@@ -145,7 +145,7 @@ $first_tab = array_key_first($tabs);
                   <span class="font-semibold text-text-primary pr-4">
                     <?php echo esc_html($faq['question']); ?>
                   </span>
-                  <span class="faq-icon flex-shrink-0 w-8 h-8 rounded-full bg-white shadow flex items-center justify-center transition-transform <?php echo $index ===
+                  <span class="faq-icon flex-shrink-0 w-8 h-8 rounded-full bg-surface shadow flex items-center justify-center transition-transform <?php echo $index ===
                   0
                     ? 'rotate-180'
                     : ''; ?>">

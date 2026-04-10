@@ -185,7 +185,7 @@ $steps = isset($args['steps']) && is_array($args['steps']) ? $args['steps'] : $d
 
               <!-- Glassmorphic Card -->
               <div
-                class="how-it-works-card relative h-full bg-white/80 backdrop-blur-xl rounded-3xl p-8 border border-gray-100 shadow-lg shadow-gray-100/50 transition-all duration-500 group-hover:shadow-2xl group-hover:shadow-gray-200/80 group-hover:-translate-y-2 group-hover:border-gray-200 overflow-visible">
+                class="how-it-works-card relative h-full bg-surface/80 backdrop-blur-xl rounded-3xl p-8 border border-gray-100 shadow-lg shadow-gray-100/50 transition-all duration-500 group-hover:shadow-2xl group-hover:shadow-gray-200/80 group-hover:-translate-y-2 group-hover:border-gray-200 overflow-visible">
 
                 <!-- Shine Effect -->
                 <div

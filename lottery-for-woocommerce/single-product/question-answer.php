@@ -89,7 +89,7 @@ if (!is_array($answers) || empty($answers)) {
             class="answer-input sr-only"
             required
           />
-          <div class="answer-card flex items-center gap-3 p-4 rounded-xl border-2 border-gray-200 bg-white transition-all hover:border-primary/50 hover:bg-primary/5 peer-checked:border-primary peer-checked:bg-primary/10 peer-checked:ring-2 peer-checked:ring-primary/20">
+          <div class="answer-card flex items-center gap-3 p-4 rounded-xl border-2 border-gray-200 bg-surface transition-all hover:border-primary/50 hover:bg-primary/5 peer-checked:border-primary peer-checked:bg-primary/10 peer-checked:ring-2 peer-checked:ring-primary/20">
             <!-- Answer Letter -->
             <span class="answer-letter flex-shrink-0 w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center text-sm font-bold text-text-secondary transition-colors">
               <?php echo esc_html(chr(65 + $index)); ?>

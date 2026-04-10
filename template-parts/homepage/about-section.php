@@ -35,7 +35,7 @@ $image_position = get_field('about_image_position') ?: 'right';
 $background = get_field('about_background') ?: 'gradient';
 
 // Determine background class
-$bg_class = 'bg-white';
+$bg_class = 'bg-surface';
 if ($background === 'gray') {
   $bg_class = 'bg-gray-50';
 } elseif ($background === 'gradient') {
@@ -197,7 +197,7 @@ $image_order = $image_position === 'right' ? 'order-2' : 'order-1';
 
         <!-- Floating credibility badge -->
         <div
-          class="absolute -bottom-8 -left-8 bg-white rounded-2xl p-6 lg:p-8 shadow-2xl shadow-primary/10 border border-indigo-100 hidden lg:block about-floating-badge">
+          class="absolute -bottom-8 -left-8 bg-surface rounded-2xl p-6 lg:p-8 shadow-2xl shadow-primary/10 border border-indigo-100 hidden lg:block about-floating-badge">
           <div class="flex items-center gap-5">
             <div
               class="w-16 h-16 bg-gradient-to-br from-primary to-indigo-600 rounded-2xl flex items-center justify-center shadow-lg shadow-primary/30">

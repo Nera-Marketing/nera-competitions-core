@@ -319,7 +319,7 @@ $nera_adv_posts_per_page = function_exists('nera_advanced_filter_get_posts_per_p
     <!-- Filter Bar -->
     <div class="relative z-10" data-aos="fade-up" data-aos-duration="600" data-aos-delay="100">
       <div class="flex flex-col sm:flex-row sm:items-center sm:justify-center gap-3 mb-6
-                  bg-white border border-gray-100 rounded-2xl
+                  bg-surface border border-gray-100 rounded-2xl
                   shadow-[0_2px_20px_-4px_rgba(0,0,0,0.07)]
                   p-3 sm:p-4
                   transition-shadow duration-300
@@ -351,7 +351,7 @@ $nera_adv_posts_per_page = function_exists('nera_advanced_filter_get_posts_per_p
           <div @click="categoryDropdownOpen = !categoryDropdownOpen"
             :class="categoryDropdownOpen ? 'border-primary ring-2 ring-primary/20' : 'border-gray-200 hover:border-gray-300'"
             class="relative min-h-[44px] min-w-[200px] flex flex-wrap items-center gap-1.5 px-3.5 py-2 pr-9
-                   bg-white border rounded-xl cursor-pointer
+                   bg-surface border rounded-xl cursor-pointer
                    transition-all duration-300
                    hover:-translate-y-px hover:shadow-[0_2px_8px_rgba(0,0,0,0.06)]">
 
@@ -363,7 +363,7 @@ $nera_adv_posts_per_page = function_exists('nera_advanced_filter_get_posts_per_p
                 class="inline-flex items-center gap-1.5 px-2.5 py-[3px] rounded-full text-white
                        shadow-[0_1px_3px_rgba(0,0,0,.2)] border border-white/20"
                 :style="{ backgroundColor: categoryColors[slug] || '#1313ec' }">
-                <span class="w-1.5 h-1.5 rounded-full bg-white/50 shrink-0"></span>
+                <span class="w-1.5 h-1.5 rounded-full bg-surface/50 shrink-0"></span>
                 <span x-text="categoryNames[slug]" class="text-[0.62rem] font-semibold uppercase tracking-[0.08em]"></span>
                 <button type="button" @click.stop="toggleCategory(slug)"
                   class="opacity-50 hover:opacity-100 transition-opacity ml-0.5 -mr-0.5">
@@ -405,7 +405,7 @@ $nera_adv_posts_per_page = function_exists('nera_advanced_filter_get_posts_per_p
             x-transition:enter-start="opacity-0 -translate-y-1" x-transition:enter-end="opacity-100 translate-y-0"
             x-transition:leave="transition ease-in duration-100" x-transition:leave-start="opacity-100 translate-y-0"
             x-transition:leave-end="opacity-0 -translate-y-1"
-            class="absolute z-50 top-full mt-2 w-full min-w-[240px] bg-white border border-gray-200 rounded-xl shadow-lg overflow-hidden">
+            class="absolute z-50 top-full mt-2 w-full min-w-[240px] bg-surface border border-gray-200 rounded-xl shadow-lg overflow-hidden">
             <ul class="max-h-52 overflow-y-auto py-1.5" role="listbox">
               <template x-for="option in filteredCategories()" :key="option.slug">
                 <li @click="toggleCategory(option.slug)"
@@ -415,7 +415,7 @@ $nera_adv_posts_per_page = function_exists('nera_advanced_filter_get_posts_per_p
                
                   <!-- Checkbox indicator -->
                   <span class="flex items-center justify-center w-4 h-4 rounded border transition-all duration-200"
-                    :class="selectedCategories.includes(option.slug) ? 'bg-primary border-primary scale-110' : 'border-gray-300 bg-white'">
+                    :class="selectedCategories.includes(option.slug) ? 'bg-primary border-primary scale-110' : 'border-gray-300 bg-surface'">
                     <template x-if="selectedCategories.includes(option.slug)">
                       <svg class="w-2.5 h-2.5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                         stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round">
@@ -450,7 +450,7 @@ $nera_adv_posts_per_page = function_exists('nera_advanced_filter_get_posts_per_p
             </svg>
           </span>
           <select x-model="priceRange"
-            class="appearance-none bg-white border border-gray-200 rounded-xl
+            class="appearance-none bg-surface border border-gray-200 rounded-xl
                    h-[44px] pl-9 pr-10 text-sm font-medium text-text-primary
                    cursor-pointer
                    hover:border-primary
@@ -480,7 +480,7 @@ $nera_adv_posts_per_page = function_exists('nera_advanced_filter_get_posts_per_p
             </svg>
           </span>
           <select x-model="sortBy"
-            class="appearance-none bg-white border border-gray-200 rounded-xl
+            class="appearance-none bg-surface border border-gray-200 rounded-xl
                    h-[44px] pl-9 pr-10 text-sm font-medium text-text-primary
                    cursor-pointer
                    hover:border-primary

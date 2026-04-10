@@ -19,7 +19,7 @@ get_header();
 <div class="relative left-1/2 -translate-x-1/2 w-screen max-w-none bg-gray-50 border-b border-gray-200 py-10 lg:py-16">
   <div class="max-w-7xl mx-auto px-4 lg:px-8">
     <div class="flex items-center gap-4 mb-8">
-      <div class="w-12 h-12 rounded-xl bg-white shadow-sm flex items-center justify-center text-primary">
+      <div class="w-12 h-12 rounded-xl bg-surface shadow-sm flex items-center justify-center text-primary">
         <span class="material-symbols-outlined text-2xl">lock</span>
       </div>
       <div class="text-text-secondary text-sm">
@@ -97,7 +97,7 @@ get_header();
     <?php if (!is_user_logged_in()): ?>
 
       <!-- Login / Register Required -->
-      <div class="max-w-lg mx-auto bg-white rounded-2xl border border-gray-100 shadow-sm p-10 text-center">
+      <div class="max-w-lg mx-auto bg-surface rounded-2xl border border-gray-100 shadow-sm p-10 text-center">
         <div class="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-6">
           <span class="material-symbols-outlined text-4xl text-primary">lock</span>
         </div>

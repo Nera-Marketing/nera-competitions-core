@@ -132,10 +132,18 @@ All theme tokens are defined in `frontend/src/main.css` using the CSS-first `@th
 | ------------------------ | --------- | ------------------------- |
 | `--color-primary`        | `#1313ec` | Buttons, links, accents   |
 | `--color-secondary`      | `#F4F7FF` | Section backgrounds       |
+| `--color-background-light` | `#f6f6f8` | **Page canvas** — `body` and site shell (`bg-background-light`) |
+| `--color-surface`        | `#ffffff` | **Elevated surfaces** — cards, header bar, modals (`bg-surface`); child themes override for light/neutral/dark |
 | `--color-text-primary`   | `#0d0d1b` | Headings, body text       |
 | `--color-text-secondary` | `#64748b` | Subtitles, labels         |
 | `--color-success`        | `#10B981` | Progress, positive states |
 | `--color-danger`         | `#dc2626` | Urgency, errors           |
+
+### Canvas vs surface (child themes)
+
+- **Canvas** (`--color-background-light`, utility `bg-background-light`): default page background behind content. `body` uses this token so a child can set a site-wide look by overriding the variable in `child-brand.css` `:root` (light, neutral, or dark shells).
+- **Surface** (`--color-surface`, utility `bg-surface`): panels and cards that sit above the canvas. Templates and `@utility` blocks prefer `bg-surface` instead of literal `bg-white` so children can lift or dim “card white” independently of the canvas.
+- **Child themes** should enqueue a stylesheet after the parent Vite bundle (e.g. `child-brand.css`), override these tokens and any semantic colors, and add scoped CSS files only where cascade or inline styles require it (WooCommerce My Account, plugins). See the **wp-apply-theme** skill for filters (`nera_*` category colors) and enqueue discipline.
 
 ### Custom Utility Classes
 

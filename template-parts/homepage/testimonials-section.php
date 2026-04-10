@@ -68,7 +68,7 @@ if (empty($stories)) {
         <div class="story-card group relative">
           <!-- Card -->
           <div
-            class="relative h-full bg-white rounded-2xl p-8 lg:p-10 border border-gray-100 shadow-sm transition-all duration-300 hover:shadow-xl hover:border-primary/10 hover:-translate-y-1">
+            class="relative h-full bg-surface rounded-2xl p-8 lg:p-10 border border-gray-100 shadow-sm transition-all duration-300 hover:shadow-xl hover:border-primary/10 hover:-translate-y-1">
 
             <!-- Quote Icon -->
             <div class="absolute top-6 right-6 w-12 h-12 bg-primary/5 rounded-full flex items-center justify-center">

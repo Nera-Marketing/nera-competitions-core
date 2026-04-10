@@ -78,7 +78,7 @@ $alpine_config = [
                               <span><?php echo esc_html($item['label']); ?></span>
                               <span
                                 class="inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 rounded-full text-xs font-bold"
-                                :class="activeFilter === '<?php echo esc_attr($item['value']); ?>' ? 'bg-white/20 text-white' : 'bg-gray-200 text-text-secondary'"
+                                :class="activeFilter === '<?php echo esc_attr($item['value']); ?>' ? 'bg-surface/20 text-white' : 'bg-gray-200 text-text-secondary'"
                               >
                                   <?php echo esc_html((string) $item['count']); ?>
                               </span>
@@ -106,7 +106,7 @@ $alpine_config = [
                               <span class="relative z-10"><?php echo esc_html($item['label']); ?></span>
                               <span
                                 class="relative z-10 ml-2 inline-flex items-center justify-center min-w-[24px] h-6 px-2 rounded-full text-xs font-bold transition-all duration-300"
-                                :class="activeFilter === '<?php echo esc_attr($item['value']); ?>' ? 'bg-white/20 text-white' : 'bg-gray-200 text-text-secondary hover:bg-gray-300'"
+                                :class="activeFilter === '<?php echo esc_attr($item['value']); ?>' ? 'bg-surface/20 text-white' : 'bg-gray-200 text-text-secondary hover:bg-gray-300'"
                               >
                                   <?php echo esc_html((string) $item['count']); ?>
                               </span>

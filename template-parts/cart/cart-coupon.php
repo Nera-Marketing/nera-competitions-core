@@ -9,7 +9,7 @@ if (!defined('ABSPATH')) {
   exit();
 } ?>
 
-<div class="bg-white rounded-2xl border border-gray-100 p-4 mb-6 shadow-sm"
+<div class="bg-surface rounded-2xl border border-gray-100 p-4 mb-6 shadow-sm"
   x-data="{ open: <?php echo WC()->cart->has_discount() ? 'true' : 'false'; ?> }">
   <button type="button"
     class="flex w-full items-center justify-between text-text-primary font-semibold hover:text-primary transition-colors"

@@ -68,7 +68,7 @@ get_header();
             </article>
   
               <?php if (comments_open() || get_comments_number()) {
-                echo '<div class="container mx-auto px-4 pb-12"><div class="max-w-4xl mx-auto bg-white rounded-2xl p-8 shadow-sm">';
+                echo '<div class="container mx-auto px-4 pb-12"><div class="max-w-4xl mx-auto bg-surface rounded-2xl p-8 shadow-sm">';
                 comments_template();
                 echo '</div></div>';
               } ?>

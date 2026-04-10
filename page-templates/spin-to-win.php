@@ -85,7 +85,7 @@ get_header();
     </header>
     <?php if (!is_user_logged_in()): ?>
       <div
-        class="mx-auto max-w-xl rounded-3xl border border-gray-100 bg-white/95 p-8 text-center shadow-[0_24px_80px_-24px_rgba(192,23,46,0.2)] ring-1 ring-black/[0.04] backdrop-blur-sm"
+        class="mx-auto max-w-xl rounded-3xl border border-gray-100 bg-surface/95 p-8 text-center shadow-[0_24px_80px_-24px_rgba(192,23,46,0.2)] ring-1 ring-black/[0.04] backdrop-blur-sm"
       >
         <span class="material-symbols-outlined mb-3 block text-4xl text-primary">lock</span>
         <p class="mb-4 font-semibold text-text-primary"><?php esc_html_e(

@@ -101,7 +101,7 @@ $last_winner_prize = get_field('last_winner_prize') ?: 'Won This Prize';
 
           <!-- Winner Badge -->
           <div
-            class="absolute bottom-3 right-3 sm:bottom-4 sm:right-4 lg:bottom-8 lg:-right-8 bg-white rounded-xl sm:rounded-2xl shadow-xl p-2.5 sm:p-4 flex items-center gap-2 sm:gap-3">
+            class="absolute bottom-3 right-3 sm:bottom-4 sm:right-4 lg:bottom-8 lg:-right-8 bg-surface rounded-xl sm:rounded-2xl shadow-xl p-2.5 sm:p-4 flex items-center gap-2 sm:gap-3">
             <div
               class="w-9 h-9 sm:w-12 sm:h-12 rounded-full bg-gradient-primary flex items-center justify-center text-white font-bold text-sm sm:text-base">
               <?php echo esc_html(substr($last_winner_name, 0, 1)); ?>

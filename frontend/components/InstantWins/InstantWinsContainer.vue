@@ -35,7 +35,7 @@
 
       <!-- Card skeletons -->
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
-        <div v-for="i in 2" :key="i" class="rounded-2xl bg-white border border-gray-100 p-5">
+        <div v-for="i in 2" :key="i" class="rounded-2xl bg-surface border border-gray-100 p-5">
           <div class="flex items-center gap-4">
             <div
               class="w-28 h-28 shrink-0 rounded-xl bg-[linear-gradient(90deg,#f3f4f6_25%,#e5e7eb_50%,#f3f4f6_75%)] [background-size:200%_100%] animate-[instant-wins-skeleton-shimmer_1.5s_ease-in-out_infinite]"

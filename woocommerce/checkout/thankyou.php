@@ -17,7 +17,7 @@ defined('ABSPATH') || exit(); ?>
 <div class="bg-gray-50 border-b border-gray-200 py-10 lg:py-16 mb-0">
   <div class="container mx-auto px-4">
     <div class="flex items-center gap-4 mb-8">
-      <div class="w-12 h-12 rounded-xl bg-white shadow-sm flex items-center justify-center text-success">
+      <div class="w-12 h-12 rounded-xl bg-surface shadow-sm flex items-center justify-center text-success">
         <span class="material-symbols-outlined text-2xl">check_circle</span>
       </div>
       <div>
@@ -88,7 +88,7 @@ defined('ABSPATH') || exit(); ?>
 
       <?php if ($order->has_status('failed')): ?>
 
-        <div class="max-w-2xl mx-auto bg-white rounded-2xl border border-gray-100 shadow-sm p-8">
+        <div class="max-w-2xl mx-auto bg-surface rounded-2xl border border-gray-100 shadow-sm p-8">
           <p class="text-red-600 font-semibold mb-6">
             <?php esc_html_e(
               'Unfortunately your order cannot be processed as the originating bank/merchant has declined your transaction. Please attempt your purchase again.',
@@ -103,7 +103,7 @@ defined('ABSPATH') || exit(); ?>
             </a>
             <?php if (is_user_logged_in()): ?>
               <a href="<?php echo esc_url(wc_get_page_permalink('myaccount')); ?>"
-                 class="inline-flex items-center gap-2 px-6 py-3 bg-white border-2 border-gray-200 text-gray-700 font-semibold rounded-xl hover:border-primary hover:text-primary transition-all">
+                 class="inline-flex items-center gap-2 px-6 py-3 bg-surface border-2 border-gray-200 text-gray-700 font-semibold rounded-xl hover:border-primary hover:text-primary transition-all">
                 <span class="material-symbols-outlined text-xl">person</span>
                 <?php esc_html_e('My account', 'woocommerce'); ?>
               </a>
@@ -117,7 +117,7 @@ defined('ABSPATH') || exit(); ?>
 
         <!-- Order Summary Cards -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 mb-8">
-          <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 lg:p-5">
+          <div class="bg-surface rounded-2xl border border-gray-100 shadow-sm p-4 lg:p-5">
             <p class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1"><?php esc_html_e(
               'Order number',
               'woocommerce',
@@ -126,7 +126,7 @@ defined('ABSPATH') || exit(); ?>
               $order->get_order_number(),
             ); ?></p>
           </div>
-          <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 lg:p-5">
+          <div class="bg-surface rounded-2xl border border-gray-100 shadow-sm p-4 lg:p-5">
             <p class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1"><?php esc_html_e(
               'Date',
               'woocommerce',
@@ -140,7 +140,7 @@ defined('ABSPATH') || exit(); ?>
             $order->get_user_id() === get_current_user_id() &&
             $order->get_billing_email()
           ): ?>
-            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 lg:p-5">
+            <div class="bg-surface rounded-2xl border border-gray-100 shadow-sm p-4 lg:p-5">
               <p class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1"><?php esc_html_e(
                 'Email',
                 'woocommerce',
@@ -150,7 +150,7 @@ defined('ABSPATH') || exit(); ?>
               ); ?></p>
             </div>
           <?php endif; ?>
-          <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 lg:p-5">
+          <div class="bg-surface rounded-2xl border border-gray-100 shadow-sm p-4 lg:p-5">
             <p class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1"><?php esc_html_e(
               'Total',
               'woocommerce',
@@ -160,7 +160,7 @@ defined('ABSPATH') || exit(); ?>
             ); ?></p>
           </div>
           <?php if ($order->get_payment_method_title()): ?>
-            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 lg:p-5">
+            <div class="bg-surface rounded-2xl border border-gray-100 shadow-sm p-4 lg:p-5">
               <p class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1"><?php esc_html_e(
                 'Payment method',
                 'woocommerce',

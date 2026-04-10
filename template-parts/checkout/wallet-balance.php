@@ -64,7 +64,7 @@ $wallet_partial_enabled = 'on' === woo_wallet()->settings_api->get_option(
   </div>
 
   <!-- Balance Info -->
-  <div class="bg-white/80 backdrop-blur-sm rounded-xl p-4 mb-4">
+  <div class="bg-surface/80 backdrop-blur-sm rounded-xl p-4 mb-4">
     <div class="flex items-start gap-3">
       <div class="flex-shrink-0 w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center mt-0.5">
         <span class="material-symbols-outlined text-primary text-xl">info</span>

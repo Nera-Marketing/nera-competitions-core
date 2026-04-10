@@ -36,7 +36,7 @@ $is_manual_ticket = method_exists($product, 'is_manual_ticket') ? $product->is_m
 ?>
 
 <div>
-  <div class="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
+  <div class="bg-surface rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
 
     <?php if ($is_sold_out): ?>
 
@@ -527,7 +527,7 @@ $is_manual_ticket = method_exists($product, 'is_manual_ticket') ? $product->is_m
                       $key,
                     ); ?>')">
 
-                      <div class="flex items-center p-4 bg-white border-2 rounded-xl transition-all duration-200"
+                      <div class="flex items-center p-4 bg-surface border-2 rounded-xl transition-all duration-200"
                         :class="selectedAnswer === '<?php echo esc_js(
                           $key,
                         ); ?>' ? 'border-primary ring-1 ring-primary/20 shadow-sm' : 'border-slate-200 hover:border-primary/50'">
@@ -536,8 +536,8 @@ $is_manual_ticket = method_exists($product, 'is_manual_ticket') ? $product->is_m
                           class="w-6 h-6 rounded-full border-2 mr-4 flex items-center justify-center flex-shrink-0 transition-colors"
                           :class="selectedAnswer === '<?php echo esc_js(
                             $key,
-                          ); ?>' ? 'border-primary bg-primary' : 'border-slate-300 group-hover:border-primary/50 bg-white'">
-                          <div class="w-2.5 h-2.5 rounded-full bg-white transition-opacity duration-200"
+                          ); ?>' ? 'border-primary bg-primary' : 'border-slate-300 group-hover:border-primary/50 bg-surface'">
+                          <div class="w-2.5 h-2.5 rounded-full bg-surface transition-opacity duration-200"
                             :class="selectedAnswer === '<?php echo esc_js(
                               $key,
                             ); ?>' ? 'opacity-100' : 'opacity-0'">

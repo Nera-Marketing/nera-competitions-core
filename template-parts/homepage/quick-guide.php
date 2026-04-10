@@ -79,7 +79,7 @@ if (empty($steps)) {
         <div class="quick-guide-card group relative">
           <!-- Card -->
           <div
-            class="relative h-full bg-white rounded-2xl p-8 border border-gray-100 shadow-sm transition-all duration-300 hover:shadow-xl hover:border-primary/20 hover:-translate-y-1">
+            class="relative h-full bg-surface rounded-2xl p-8 border border-gray-100 shadow-sm transition-all duration-300 hover:shadow-xl hover:border-primary/20 hover:-translate-y-1">
 
             <!-- Step Number -->
             <div

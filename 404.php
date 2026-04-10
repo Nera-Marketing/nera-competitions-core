@@ -43,7 +43,7 @@ get_header();
                     <?php esc_html_e('Back to Home', 'nera-competitions'); ?>
                 </a>
 
-                <button onclick="history.back()" class="inline-flex items-center justify-center px-8 py-4 bg-white text-text-primary font-semibold rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors">
+                <button onclick="history.back()" class="inline-flex items-center justify-center px-8 py-4 bg-surface text-text-primary font-semibold rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors">
                     <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
                     </svg>
@@ -51,7 +51,7 @@ get_header();
                 </button>
             </div>
 
-            <div class="bg-white rounded-2xl p-8 shadow-sm">
+            <div class="bg-surface rounded-2xl p-8 shadow-sm">
                 <h2 class="text-xl font-bold text-text-primary mb-4">
                     <?php esc_html_e('Try searching instead', 'nera-competitions'); ?>
                 </h2>

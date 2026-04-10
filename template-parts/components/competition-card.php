@@ -124,7 +124,7 @@ $data_attributes = sprintf(
 
   <!-- Card Inner Wrapper -->
   <div
-    class="bg-white rounded-2xl overflow-hidden shadow-lg border border-gray-100 h-full flex flex-col transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl hover:border-gray-200">
+    class="bg-surface rounded-2xl overflow-hidden shadow-lg border border-gray-100 h-full flex flex-col transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl hover:border-gray-200">
 
     <!-- Image Container -->
     <div class="relative aspect-[4/3] overflow-hidden bg-gray-100">
@@ -169,7 +169,7 @@ $data_attributes = sprintf(
             <div class="relative group/tooltip">
               <!-- Counter Badge -->
               <div
-                class="px-2 py-1.5 text-xs font-bold rounded-full bg-white/90 backdrop-blur-sm border border-gray-200 text-text-secondary shadow-sm cursor-help hover:bg-white transition-colors">
+                class="px-2 py-1.5 text-xs font-bold rounded-full bg-surface/90 backdrop-blur-sm border border-gray-200 text-text-secondary shadow-sm cursor-help hover:bg-surface transition-colors">
                 +<?php echo esc_html($remaining_cats_count); ?>
               </div>
 
@@ -177,7 +177,7 @@ $data_attributes = sprintf(
               <div
                 class="absolute right-0 top-full mt-2 w-max max-w-[150px] p-2 bg-gray-900/95 backdrop-blur-md text-white text-[10px] font-medium rounded-lg shadow-xl opacity-0 translate-y-2 invisible group-hover/tooltip:opacity-100 group-hover/tooltip:translate-y-0 group-hover/tooltip:visible transition-all duration-200 z-50 flex flex-col gap-1 text-right">
                 <?php foreach ($other_cats as $other_cat): ?>
-                  <span class="block px-1.5 py-0.5 rounded hover:bg-white/10 transition-colors">
+                  <span class="block px-1.5 py-0.5 rounded hover:bg-surface/10 transition-colors">
                     <?php echo esc_html($other_cat->name); ?>
                   </span>
                 <?php endforeach; ?>
@@ -213,7 +213,7 @@ $data_attributes = sprintf(
 
       <!-- Price Badge (Bottom Right, Glassmorphism) -->
       <div
-        class="absolute bottom-4 right-4 z-10 px-4 py-2.5 bg-white/95 backdrop-blur-md rounded-xl border-[1.5px] border-white/80 shadow-lg"
+        class="absolute bottom-4 right-4 z-10 px-4 py-2.5 bg-surface/95 backdrop-blur-md rounded-xl border-[1.5px] border-white/80 shadow-lg"
         style="border-color: <?php echo esc_attr($base_accent_color); ?>30;">
         <div class="text-sm font-extrabold leading-none mb-0.5"
           style="color: <?php echo esc_attr($base_accent_color); ?>;">

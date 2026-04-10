@@ -25,7 +25,7 @@ $notes = $order->get_customer_order_notes();
   <div class="bg-gradient-to-br from-primary via-indigo-600 to-indigo-700 rounded-2xl shadow-xl p-5 sm:p-8 mb-8 relative overflow-hidden">
     <!-- Decorative background -->
     <div class="absolute inset-0 opacity-10">
-      <div class="absolute top-0 right-0 w-64 h-64 bg-white rounded-full blur-3xl transform translate-x-1/2 -translate-y-1/2"></div>
+      <div class="absolute top-0 right-0 w-64 h-64 bg-surface rounded-full blur-3xl transform translate-x-1/2 -translate-y-1/2"></div>
     </div>
     
     <div class="relative z-10">
@@ -80,7 +80,7 @@ $notes = $order->get_customer_order_notes();
           
           <?php if ($order->needs_payment()): ?>
             <a href="<?php echo esc_url($order->get_checkout_payment_url()); ?>" 
-               class="px-4 py-2 bg-white text-primary rounded-xl font-bold hover:bg-indigo-50 transition-all inline-flex items-center gap-2 justify-center">
+               class="px-4 py-2 bg-surface text-primary rounded-xl font-bold hover:bg-indigo-50 transition-all inline-flex items-center gap-2 justify-center">
               <span class="material-symbols-outlined text-xl">payment</span>
               <?php esc_html_e('Pay now', 'woocommerce'); ?>
             </a>
@@ -96,7 +96,7 @@ $notes = $order->get_customer_order_notes();
     <div class="lg:col-span-2 space-y-6">
       
       <!-- Order Items Card -->
-      <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+      <div class="bg-surface rounded-2xl border border-gray-100 shadow-sm p-6">
         <h2 class="text-xl font-bold text-gray-900 flex items-center gap-2 mb-6">
           <span class="material-symbols-outlined text-primary">shopping_bag</span>
           <?php esc_html_e('Order items', 'woocommerce'); ?>
@@ -119,7 +119,7 @@ $notes = $order->get_customer_order_notes();
             $thumbnail = $product->get_image('thumbnail');
             ?>
             <div class="flex items-center gap-4 p-4 bg-gray-50 rounded-xl">
-              <div class="w-16 h-16 flex-shrink-0 bg-white rounded-lg overflow-hidden border border-gray-200">
+              <div class="w-16 h-16 flex-shrink-0 bg-surface rounded-lg overflow-hidden border border-gray-200">
                 <?php echo wp_kses_post($thumbnail); ?>
               </div>
               <div class="flex-1 min-w-0">
@@ -160,7 +160,7 @@ $notes = $order->get_customer_order_notes();
 
       <!-- Customer Notes -->
       <?php if ($notes): ?>
-      <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+      <div class="bg-surface rounded-2xl border border-gray-100 shadow-sm p-6">
         <h2 class="text-xl font-bold text-gray-900 flex items-center gap-2 mb-6">
           <span class="material-symbols-outlined text-primary">chat</span>
           <?php esc_html_e('Order updates', 'woocommerce'); ?>
@@ -201,7 +201,7 @@ $notes = $order->get_customer_order_notes();
     <div class="space-y-6">
       
       <!-- Billing Address Card -->
-      <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+      <div class="bg-surface rounded-2xl border border-gray-100 shadow-sm p-6">
         <h3 class="text-lg font-bold text-gray-900 flex items-center gap-2 mb-4">
           <span class="material-symbols-outlined text-primary">receipt_long</span>
           <?php esc_html_e('Billing address', 'woocommerce'); ?>
@@ -237,7 +237,7 @@ $notes = $order->get_customer_order_notes();
 
       <!-- Shipping Address Card -->
       <?php if (!wc_ship_to_billing_address_only() && $order->needs_shipping_address()): ?>
-      <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+      <div class="bg-surface rounded-2xl border border-gray-100 shadow-sm p-6">
         <h3 class="text-lg font-bold text-gray-900 flex items-center gap-2 mb-4">
           <span class="material-symbols-outlined text-primary">local_shipping</span>
           <?php esc_html_e('Shipping address', 'woocommerce'); ?>
@@ -262,7 +262,7 @@ $notes = $order->get_customer_order_notes();
       <?php endif; ?>
 
       <!-- Payment Method Card -->
-      <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+      <div class="bg-surface rounded-2xl border border-gray-100 shadow-sm p-6">
         <h3 class="text-lg font-bold text-gray-900 flex items-center gap-2 mb-4">
           <span class="material-symbols-outlined text-primary">payment</span>
           <?php esc_html_e('Payment method', 'woocommerce'); ?>

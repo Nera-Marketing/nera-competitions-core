@@ -10,7 +10,7 @@ if (!defined('ABSPATH')) {
 } ?>
 
 <div
-  class="nera-cart-empty-state max-w-2xl mx-auto border-0 shadow-2xl shadow-primary/5 bg-white/80 backdrop-blur-sm rounded-3xl p-12 overflow-hidden relative">
+  class="nera-cart-empty-state max-w-2xl mx-auto border-0 shadow-2xl shadow-primary/5 bg-surface/80 backdrop-blur-sm rounded-3xl p-12 overflow-hidden relative">
 
   <!-- Decorative Background Elements -->
   <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-transparent via-primary/30 to-transparent"></div>

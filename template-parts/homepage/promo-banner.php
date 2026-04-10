@@ -135,7 +135,7 @@ endif;
 
                 <!-- Icon Container -->
                 <span
-                  class="flex items-center justify-center w-14 h-14 rounded-full bg-white/10 backdrop-blur-sm text-white group-hover:bg-white/20 group-hover:scale-110 transition-all duration-300">
+                  class="flex items-center justify-center w-14 h-14 rounded-full bg-surface/10 backdrop-blur-sm text-white group-hover:bg-surface/20 group-hover:scale-110 transition-all duration-300">
                   <?php echo $icon; ?>
                 </span>
 

@@ -17,7 +17,7 @@ if (!$product) {
 ?>
 
 <!-- Breadcrumb Navigation -->
-<nav class="bg-white border-b border-gray-100">
+<nav class="bg-surface border-b border-gray-100">
   <div class="max-w-7xl mx-auto px-4 lg:px-8 py-4">
     <ol class="flex items-center gap-2 text-sm">
       <li>

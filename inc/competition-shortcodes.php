@@ -101,7 +101,7 @@ function nera_shortcode_competition_price()
   ob_start();
   ?>
   <div
-    class="absolute bottom-4 right-4 z-10 bg-white/90 backdrop-blur-sm px-4 py-2 rounded-xl border border-white/20 shadow-sm">
+    class="absolute bottom-4 right-4 z-10 bg-surface/90 backdrop-blur-sm px-4 py-2 rounded-xl border border-white/20 shadow-sm">
     <span class="text-xs font-bold text-primary">
       <?php echo wc_price($price); ?>
       <?php _e('per entry', 'nera-competitions'); ?>

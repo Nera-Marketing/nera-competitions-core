@@ -1,7 +1,7 @@
 <template>
   <div
     :class="[
-      'relative bg-white rounded-2xl shadow-[0_2px_8px_-2px_rgba(0,0,0,0.08)]',
+      'relative bg-surface rounded-2xl shadow-[0_2px_8px_-2px_rgba(0,0,0,0.08)]',
       'hover:shadow-[0_8px_16px_-4px_rgba(0,0,0,0.12)]',
       'transition-all duration-300 p-6 group hover:scale-[1.02]',
       'animate-[winner-card-enter_0.4s_ease-out_forwards] opacity-0',

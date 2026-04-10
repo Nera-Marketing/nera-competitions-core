@@ -21,8 +21,11 @@
   --color-primary: #1313ec;
   --color-primary-dark: #0d0db3;
   --color-secondary: #f4f7ff;
+  /* Page canvas (site behind content). Child themes override for light/neutral/dark shells. */
   --color-background-light: #f6f6f8;
   --color-background-dark: #101022;
+  /* Elevated panels/cards above the canvas (default: white on light gray canvas). */
+  --color-surface: #ffffff;
   --color-accent: #1313ec;
   --color-success: #10b981;
   --color-danger: #dc2626;
@@ -118,7 +121,7 @@ html {
 }
 
 body {
-  @apply font-body text-base leading-[1.6] text-text-primary bg-white antialiased m-0 p-0;
+  @apply font-body text-base leading-[1.6] text-text-primary bg-background-light antialiased m-0 p-0;
   -moz-osx-font-smoothing: grayscale;
 }
 
@@ -700,7 +703,7 @@ button {
    ========================================================================== */
 
 @utility nera-cart-item {
-  @apply relative bg-white border border-gray-100 rounded-2xl p-4 transition-all duration-300;
+  @apply relative bg-surface border border-gray-100 rounded-2xl p-4 transition-all duration-300;
 
   &:hover {
     @apply border-primary/20 shadow-lg shadow-primary/5 transform -translate-y-0.5;
@@ -708,15 +711,15 @@ button {
 }
 
 @utility nera-cart-quantity {
-  @apply flex items-center border border-gray-200 rounded-lg overflow-hidden bg-white;
+  @apply flex items-center border border-gray-200 rounded-lg overflow-hidden bg-surface;
 }
 
 @utility nera-cart-empty-state {
-  @apply flex flex-col items-center justify-center py-20 px-4 text-center bg-white rounded-3xl border border-gray-100 shadow-xl;
+  @apply flex flex-col items-center justify-center py-20 px-4 text-center bg-surface rounded-3xl border border-gray-100 shadow-xl;
 }
 
 @utility nera-cart-totals {
-  @apply bg-white rounded-2xl border border-gray-100 shadow-xl p-6 lg:sticky lg:top-24 transition-all duration-300;
+  @apply bg-surface rounded-2xl border border-gray-100 shadow-xl p-6 lg:sticky lg:top-24 transition-all duration-300;
 }
 
 @utility btn-checkout {
@@ -783,7 +786,7 @@ button {
 .woocommerce-checkout .form-row select,
 .woocommerce-checkout .form-row textarea {
   @apply w-full h-12 px-4 rounded-xl border border-gray-200 text-sm font-medium
-         bg-white text-text-primary placeholder:text-gray-400
+         bg-surface text-text-primary placeholder:text-gray-400
          focus:border-primary focus:ring-1 focus:ring-primary outline-none
          transition-all duration-300;
 }
@@ -815,7 +818,7 @@ button {
 /* Select2 dropdown - Enhanced vertical alignment with flexbox */
 .woocommerce-checkout .select2-container .select2-selection--single {
   height: 3rem !important;
-  @apply rounded-xl border-gray-200 bg-white flex items-center;
+  @apply rounded-xl border-gray-200 bg-surface flex items-center;
 }
 
 .woocommerce-checkout .select2-container .select2-selection--single .select2-selection__rendered {
@@ -1005,7 +1008,7 @@ button {
 }
 
 .woocommerce-checkout .woocommerce-form-login {
-  @apply bg-white rounded-2xl border border-gray-100 shadow-sm p-6 mb-6;
+  @apply bg-surface rounded-2xl border border-gray-100 shadow-sm p-6 mb-6;
 }
 
 /* --- Accessibility: Keyboard Focus States --- */
@@ -1275,7 +1278,7 @@ button:focus-visible {
 
 @media print {
   .about-section-premium {
-    @apply !bg-white;
+    @apply !bg-surface;
   }
 
   .about-floating-badge,
@@ -1404,7 +1407,7 @@ button:focus-visible {
 }
 
 .skill-challenge-wrapper .lty-lottery-options-field-wrapper select {
-  @apply w-full px-4 py-3 border border-gray-200 rounded-md text-[15px] bg-white cursor-pointer;
+  @apply w-full px-4 py-3 border border-gray-200 rounded-md text-[15px] bg-surface cursor-pointer;
 }
 
 .skill-challenge-wrapper .lty-lottery-options-field-wrapper select:focus {
@@ -1771,7 +1774,7 @@ button:focus-visible {
 
 .lty-toggle-lottery-tickets {
   @apply block w-full py-2 text-center text-xs font-semibold text-primary
-         border border-primary/20 rounded-lg bg-white
+         border border-primary/20 rounded-lg bg-surface
          hover:bg-primary/5 transition-colors no-underline;
 }
 
@@ -2022,7 +2025,7 @@ body h6 {
 
 /* Toast card base */
 .nera-toast {
-  @apply bg-white rounded-lg border border-gray-200 p-4 flex gap-3 items-start min-h-[64px] max-w-[420px] relative overflow-hidden opacity-0 translate-x-full;
+  @apply bg-surface rounded-lg border border-gray-200 p-4 flex gap-3 items-start min-h-[64px] max-w-[420px] relative overflow-hidden opacity-0 translate-x-full;
   box-shadow: 0 10px 40px -10px rgba(13, 13, 27, 0.15);
 }
 
@@ -2378,7 +2381,7 @@ body.woocommerce-account .woocommerce form.woocommerce-form-login {
 
 /* Pagination inside entry list */
 .lty-page-btn {
-  @apply inline-flex h-8 w-8 items-center justify-center rounded-lg border border-gray-200 bg-white text-sm font-medium text-text-primary no-underline transition-colors;
+  @apply inline-flex h-8 w-8 items-center justify-center rounded-lg border border-gray-200 bg-surface text-sm font-medium text-text-primary no-underline transition-colors;
 }
 
 .lty-page-btn:hover {

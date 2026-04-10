@@ -10,7 +10,7 @@ if (!defined('ABSPATH')) {
 } ?>
 
 <!-- Payment Methods Card -->
-<div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+<div class="bg-surface rounded-2xl border border-gray-100 shadow-sm p-6">
 
   <h2 class="text-xl font-bold text-text-primary mb-6 flex items-center gap-2">
     <span class="material-symbols-outlined text-primary">credit_card</span>

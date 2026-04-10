@@ -1040,7 +1040,7 @@ function nera_customize_wallet_gateway_description($description, $gateway_id)
 
     if ($balance > 0) {
       $custom_description =
-        '<div class="nera-wallet-gateway-description mt-2 rounded-xl border border-gray-200 bg-white p-3 transition-all duration-300">';
+        '<div class="nera-wallet-gateway-description mt-2 rounded-xl border border-gray-200 bg-surface p-3 transition-all duration-300">';
       $custom_description .= '<div class="flex items-start gap-2">';
       $custom_description .=
         '<span class="material-symbols-outlined mt-0.5 text-[18px] text-text-secondary">info</span>';

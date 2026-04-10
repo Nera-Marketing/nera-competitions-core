@@ -42,7 +42,7 @@ $item_class = apply_filters(
   $item_class,
 ); ?> flex flex-col sm:flex-row sm:items-center gap-4 p-4 bg-gray-50 rounded-xl">
   <?php if ($product && $product->exists() && $product->get_image_id()): ?>
-    <div class="w-16 h-16 flex-shrink-0 bg-white rounded-lg overflow-hidden border border-gray-200">
+    <div class="w-16 h-16 flex-shrink-0 bg-surface rounded-lg overflow-hidden border border-gray-200">
       <?php echo wp_kses_post($product->get_image('thumbnail')); ?>
     </div>
   <?php endif; ?>

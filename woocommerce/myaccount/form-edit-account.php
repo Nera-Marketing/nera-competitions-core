@@ -39,7 +39,7 @@ do_action('woocommerce_before_edit_account_form');
     <?php do_action('woocommerce_edit_account_form_start'); ?>
 
     <!-- Personal Information Card -->
-    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 mb-6">
+    <div class="bg-surface rounded-2xl border border-gray-100 shadow-sm p-6 mb-6">
       <div class="flex items-center gap-3 mb-6 pb-4 border-b border-gray-200">
         <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center">
           <span class="material-symbols-outlined text-white text-xl">badge</span>
@@ -112,7 +112,7 @@ do_action('woocommerce_before_edit_account_form');
     </div>
 
     <!-- Password Change Card -->
-    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 mb-6">
+    <div class="bg-surface rounded-2xl border border-gray-100 shadow-sm p-6 mb-6">
       <div class="flex items-center gap-3 mb-6 pb-4 border-b border-gray-200">
         <div class="w-10 h-10 bg-gradient-to-br from-amber-500 to-amber-600 rounded-lg flex items-center justify-center">
           <span class="material-symbols-outlined text-white text-xl">lock</span>
@@ -178,7 +178,7 @@ do_action('woocommerce_before_edit_account_form');
           <input type="hidden" name="action" value="save_account_details" />
       
       <a href="<?php echo esc_url(wc_get_account_endpoint_url('dashboard')); ?>" 
-         class="inline-flex items-center justify-center gap-2 px-8 py-4 bg-white border-2 border-gray-200 text-gray-700 font-semibold rounded-xl hover:border-primary hover:text-primary transition-all w-full sm:w-auto">
+         class="inline-flex items-center justify-center gap-2 px-8 py-4 bg-surface border-2 border-gray-200 text-gray-700 font-semibold rounded-xl hover:border-primary hover:text-primary transition-all w-full sm:w-auto">
         <span class="material-symbols-outlined text-xl">cancel</span>
         <?php esc_html_e('Cancel', 'nera-competitions-standard'); ?>
       </a>

@@ -22,7 +22,7 @@ $tp_score = get_field('tp_score') ?: '4.8';
 $tp_reviews = get_field('tp_reviews') ?: '1,250';
 ?>
 
-<section class="stats-section py-5 lg:py-6 bg-white border-b border-gray-100" id="stats-section" data-aos="fade-up">
+<section class="stats-section py-5 lg:py-6 bg-surface border-b border-gray-100" id="stats-section" data-aos="fade-up">
 	<div class="max-w-7xl mx-auto px-4 lg:px-8">
 		<div class="flex flex-col md:flex-row items-center justify-between gap-6 md:gap-8">
 

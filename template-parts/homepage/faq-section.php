@@ -50,7 +50,7 @@ if (empty($faqs)) {
 }
 ?>
 
-<section class="faq-section py-20 bg-white" id="faq" data-aos="fade-up">
+<section class="faq-section py-20 bg-surface" id="faq" data-aos="fade-up">
   <div class="max-w-7xl mx-auto px-4 lg:px-8">
 
     <!-- Section Header -->

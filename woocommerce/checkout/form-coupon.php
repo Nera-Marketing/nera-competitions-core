@@ -16,7 +16,7 @@ if (!wc_coupons_enabled()) {
 }
 ?>
 
-<div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 lg:p-6 mb-6" x-data="{ open: false }">
+<div class="bg-surface rounded-2xl border border-gray-100 shadow-sm p-4 lg:p-6 mb-6" x-data="{ open: false }">
 
   <button type="button"
     class="flex w-full items-center justify-between text-text-primary font-semibold hover:text-primary transition-colors"

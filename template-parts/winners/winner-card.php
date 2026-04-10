@@ -22,7 +22,7 @@ $category_label = $winner['category_label'] ?? __('Live Draw', 'nera-competition
 $category_class = $category === 'instant-win' ? 'bg-purple-600' : 'bg-blue-600';
 ?>
 
-<article class="nera-winner-card group relative h-full flex flex-col bg-white rounded-xl md:rounded-3xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-500 ease-out border border-gray-100">
+<article class="nera-winner-card group relative h-full flex flex-col bg-surface rounded-xl md:rounded-3xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-500 ease-out border border-gray-100">
     <div class="relative aspect-[4/3] overflow-hidden">
         <div class="absolute top-4 left-4 z-10 <?php echo esc_attr($category_class); ?> text-white text-[10px] font-bold px-2 py-1 md:px-3 md:py-1.5 rounded-full uppercase tracking-widest">
             <?php echo esc_html($category_label); ?>

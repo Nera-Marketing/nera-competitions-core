@@ -86,7 +86,7 @@ if (!defined('ABSPATH')) {
     <a href="<?php echo esc_url(wc_get_checkout_url()); ?>"
       class="btn-checkout group relative overflow-hidden text-white">
       <span
-        class="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></span>
+        class="absolute inset-0 bg-surface/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></span>
       <span class="material-symbols-outlined relative z-10">lock</span>
       <span class="relative z-10">
         <?php _e('Secure Checkout', 'nera-competitions'); ?>

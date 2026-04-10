@@ -11,7 +11,7 @@ defined('ABSPATH') || exit();
 <div class="relative left-1/2 -translate-x-1/2 w-screen max-w-none bg-gray-50 border-b border-gray-200 py-10 lg:py-16">
   <div class="max-w-7xl mx-auto px-4 lg:px-8">
     <div class="flex items-center gap-4">
-      <div class="w-12 h-12 rounded-xl bg-white shadow-sm flex items-center justify-center text-primary">
+      <div class="w-12 h-12 rounded-xl bg-surface shadow-sm flex items-center justify-center text-primary">
         <span class="material-symbols-outlined text-2xl">shopping_cart</span>
       </div>
       <div>
@@ -57,7 +57,7 @@ defined('ABSPATH') || exit();
           <!-- Cart Items (Left Column) -->
           <div class="lg:col-span-8 space-y-4">
 
-            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 mb-6">
+            <div class="bg-surface rounded-2xl border border-gray-100 shadow-sm p-6 mb-6">
               <h2 class="text-xl font-bold text-text-primary mb-6 flex items-center gap-2">
                 <span class="material-symbols-outlined text-primary">list_alt</span>
                 <?php _e('Your Selections', 'nera-competitions'); ?>

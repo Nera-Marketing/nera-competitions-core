@@ -58,7 +58,7 @@ $current_showing = min($per_page, $total_products);
   <div class="max-w-[1200px] mx-auto px-4 lg:px-8">
 
     <!-- Loading Overlay -->
-    <div class="hidden fixed inset-0 bg-white/80 backdrop-blur-sm z-50 items-center justify-center" data-loading-overlay>
+    <div class="hidden fixed inset-0 bg-surface/80 backdrop-blur-sm z-50 items-center justify-center" data-loading-overlay>
       <div class="flex flex-col items-center gap-3">
         <div class="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
         <span class="text-sm font-medium text-text-secondary"><?php _e(
@@ -121,7 +121,7 @@ $current_showing = min($per_page, $total_products);
         <!-- Load More Button -->
         <button
           type="button"
-          class="inline-flex items-center gap-2 bg-white border-2 border-gray-200 hover:border-primary text-text-primary hover:text-primary font-bold px-8 py-3 rounded-xl shadow-sm hover:shadow transition-all"
+          class="inline-flex items-center gap-2 bg-surface border-2 border-gray-200 hover:border-primary text-text-primary hover:text-primary font-bold px-8 py-3 rounded-xl shadow-sm hover:shadow transition-all"
           data-load-more
           data-next-page="2">
           <span><?php _e('Load More', 'nera-competitions'); ?></span>

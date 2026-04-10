@@ -26,7 +26,7 @@ $is_sold_out = function_exists('nera_lottery_product_is_sold_out')
   : false;
 ?>
 
-<div class="bg-white rounded-3xl shadow-xl p-6 lg:p-8 space-y-6">
+<div class="bg-surface rounded-3xl shadow-xl p-6 lg:p-8 space-y-6">
 
   <!-- Product Title -->
   <div>

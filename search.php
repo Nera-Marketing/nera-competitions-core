@@ -65,7 +65,7 @@ get_header();
                   the_post(); ?>
 
                     <article id="post-<?php the_ID(); ?>" <?php post_class(
-  'bg-white rounded-2xl shadow-sm overflow-hidden hover:shadow-md transition-shadow',
+  'bg-surface rounded-2xl shadow-sm overflow-hidden hover:shadow-md transition-shadow',
 ); ?>>
                         <?php if (has_post_thumbnail()): ?>
                             <a href="<?php the_permalink(); ?>" class="block aspect-video overflow-hidden">
@@ -119,12 +119,12 @@ get_header();
                 $next_link = get_next_posts_link(__('Next &rarr;', 'nera-competitions'));
 
                 if ($prev_link) {
-                  echo '<span class="px-6 py-3 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow font-semibold text-text-primary">' .
+                  echo '<span class="px-6 py-3 bg-surface rounded-lg shadow-sm hover:shadow-md transition-shadow font-semibold text-text-primary">' .
                     $prev_link .
                     '</span>';
                 }
                 if ($next_link) {
-                  echo '<span class="px-6 py-3 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow font-semibold text-text-primary">' .
+                  echo '<span class="px-6 py-3 bg-surface rounded-lg shadow-sm hover:shadow-md transition-shadow font-semibold text-text-primary">' .
                     $next_link .
                     '</span>';
                 }

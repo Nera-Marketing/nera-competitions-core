@@ -21,7 +21,7 @@ $categories = get_terms([
 ]);
 ?>
 
-<section class="py-6 bg-white border-b border-gray-100 sticky top-[72px] z-30" data-product-filters>
+<section class="py-6 bg-surface border-b border-gray-100 sticky top-[72px] z-30" data-product-filters>
   <div class="max-w-[1200px] mx-auto px-4 lg:px-8">
     <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
 

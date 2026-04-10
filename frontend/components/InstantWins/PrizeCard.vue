@@ -1,6 +1,6 @@
 <template>
   <div
-    class="animate-card-enter bg-white rounded-2xl shadow-[0_4px_6px_-1px_rgba(0,0,0,0.05)] hover:shadow-[0_20px_25px_-5px_rgba(0,0,0,0.1)] transition-all duration-300 overflow-hidden"
+    class="animate-card-enter bg-surface rounded-2xl shadow-[0_4px_6px_-1px_rgba(0,0,0,0.05)] hover:shadow-[0_20px_25px_-5px_rgba(0,0,0,0.1)] transition-all duration-300 overflow-hidden"
     :style="{ animationDelay: `${index * 100}ms` }"
   >
     <!-- Won Prize - Accordion Header (Clickable) - Horizontal Layout -->
@@ -107,7 +107,7 @@
           <button
             v-if="hasMore"
             @click="handleShowAllWinners"
-            class="col-span-2 sm:col-span-3 lg:col-span-4 w-full text-sm font-semibold text-primary hover:text-primary-dark transition-colors py-2 px-3 bg-white rounded-lg border border-primary/20 hover:border-primary/40 hover:bg-primary/5"
+            class="col-span-2 sm:col-span-3 lg:col-span-4 w-full text-sm font-semibold text-primary hover:text-primary-dark transition-colors py-2 px-3 bg-surface rounded-lg border border-primary/20 hover:border-primary/40 hover:bg-primary/5"
           >
             See all winners →
           </button>

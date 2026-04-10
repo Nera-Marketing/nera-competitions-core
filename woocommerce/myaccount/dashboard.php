@@ -38,13 +38,13 @@ $total_orders = count(
   <div class="bg-gradient-to-br from-primary via-indigo-600 to-indigo-700 rounded-2xl shadow-[0_20px_25px_-5px_rgba(99,102,241,0.3)] p-5 sm:p-8 mb-8 relative overflow-hidden">
     <!-- Decorative background pattern -->
     <div class="absolute inset-0 opacity-10">
-      <div class="absolute top-0 right-0 w-64 h-64 bg-white rounded-full blur-3xl transform translate-x-1/2 -translate-y-1/2"></div>
-      <div class="absolute bottom-0 left-0 w-48 h-48 bg-white rounded-full blur-3xl transform -translate-x-1/2 translate-y-1/2"></div>
+      <div class="absolute top-0 right-0 w-64 h-64 bg-surface rounded-full blur-3xl transform translate-x-1/2 -translate-y-1/2"></div>
+      <div class="absolute bottom-0 left-0 w-48 h-48 bg-surface rounded-full blur-3xl transform -translate-x-1/2 translate-y-1/2"></div>
     </div>
     
     <div class="relative z-10">
       <div class="flex items-center gap-3 sm:gap-4">
-        <div class="w-12 h-12 sm:w-16 sm:h-16 bg-white/20 backdrop-blur-sm rounded-xl sm:rounded-2xl flex-shrink-0 flex items-center justify-center border border-white/30">
+        <div class="w-12 h-12 sm:w-16 sm:h-16 bg-surface/20 backdrop-blur-sm rounded-xl sm:rounded-2xl flex-shrink-0 flex items-center justify-center border border-white/30">
           <span class="material-symbols-outlined text-white text-2xl sm:text-4xl">person</span>
         </div>
         <div class="min-w-0">
@@ -68,7 +68,7 @@ $total_orders = count(
   <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
     
     <!-- Total Orders Card -->
-    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 hover:shadow-md transition-shadow">
+    <div class="bg-surface rounded-2xl border border-gray-100 shadow-sm p-6 hover:shadow-md transition-shadow">
       <div class="flex items-center justify-between mb-4">
         <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center">
           <span class="material-symbols-outlined text-white text-2xl">receipt_long</span>
@@ -85,7 +85,7 @@ $total_orders = count(
 
     <!-- Wallet Balance Card -->
     <?php if (function_exists('woo_wallet')): ?>
-    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 hover:shadow-md transition-shadow">
+    <div class="bg-surface rounded-2xl border border-gray-100 shadow-sm p-6 hover:shadow-md transition-shadow">
       <div class="flex items-center justify-between mb-4">
         <div class="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center">
           <span class="material-symbols-outlined text-white text-2xl">account_balance_wallet</span>
@@ -104,7 +104,7 @@ $total_orders = count(
     <?php endif; ?>
 
     <!-- Account Status Card -->
-    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 hover:shadow-md transition-shadow">
+    <div class="bg-surface rounded-2xl border border-gray-100 shadow-sm p-6 hover:shadow-md transition-shadow">
       <div class="flex items-center justify-between mb-4">
         <div class="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center">
           <span class="material-symbols-outlined text-white text-2xl">verified_user</span>
@@ -122,7 +122,7 @@ $total_orders = count(
   </div>
 
   <!-- Quick Actions Card -->
-  <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 mb-8">
+  <div class="bg-surface rounded-2xl border border-gray-100 shadow-sm p-6 mb-8">
     <h2 class="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
       <span class="material-symbols-outlined text-primary">bolt</span>
       Quick Actions
@@ -136,21 +136,21 @@ $total_orders = count(
       </a>
 
       <a href="<?php echo esc_url(wc_get_account_endpoint_url('orders')); ?>" 
-         class="inline-flex items-center justify-center gap-2 px-6 py-3 bg-white border-2 border-gray-200 text-gray-700 font-semibold rounded-xl hover:border-primary hover:text-primary transition-all">
+         class="inline-flex items-center justify-center gap-2 px-6 py-3 bg-surface border-2 border-gray-200 text-gray-700 font-semibold rounded-xl hover:border-primary hover:text-primary transition-all">
         <span class="material-symbols-outlined">receipt_long</span>
         <span>My Orders</span>
       </a>
 
       <?php if (function_exists('woo_wallet')): ?>
       <a href="<?php echo esc_url(wc_get_account_endpoint_url('woo-wallet')); ?>" 
-         class="inline-flex items-center justify-center gap-2 px-6 py-3 bg-white border-2 border-gray-200 text-gray-700 font-semibold rounded-xl hover:border-primary hover:text-primary transition-all">
+         class="inline-flex items-center justify-center gap-2 px-6 py-3 bg-surface border-2 border-gray-200 text-gray-700 font-semibold rounded-xl hover:border-primary hover:text-primary transition-all">
         <span class="material-symbols-outlined">account_balance_wallet</span>
         <span>My Wallet</span>
       </a>
       <?php endif; ?>
 
       <a href="<?php echo esc_url(wc_get_account_endpoint_url('edit-account')); ?>" 
-         class="inline-flex items-center justify-center gap-2 px-6 py-3 bg-white border-2 border-gray-200 text-gray-700 font-semibold rounded-xl hover:border-primary hover:text-primary transition-all">
+         class="inline-flex items-center justify-center gap-2 px-6 py-3 bg-surface border-2 border-gray-200 text-gray-700 font-semibold rounded-xl hover:border-primary hover:text-primary transition-all">
         <span class="material-symbols-outlined">settings</span>
         <span>Settings</span>
       </a>
@@ -160,7 +160,7 @@ $total_orders = count(
 
   <!-- Recent Orders Card -->
   <?php if (!empty($customer_orders)): ?>
-  <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+  <div class="bg-surface rounded-2xl border border-gray-100 shadow-sm p-6">
     <div class="flex items-center justify-between mb-6 gap-3">
       <h2 class="text-xl font-bold text-gray-900 flex items-center gap-2 shrink-0">
         <span class="material-symbols-outlined text-primary">schedule</span>
@@ -228,7 +228,7 @@ $total_orders = count(
     </div>
   </div>
   <?php else: ?>
-  <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-8 text-center">
+  <div class="bg-surface rounded-2xl border border-gray-100 shadow-sm p-8 text-center">
     <div class="w-20 h-20 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
       <span class="material-symbols-outlined text-gray-400 text-4xl">shopping_cart</span>
     </div>

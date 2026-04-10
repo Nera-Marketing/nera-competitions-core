@@ -90,7 +90,7 @@ $total_prizes = $available_count + $won_count;
       <!-- Badge: Available & Won -->
       <div class="hidden sm:flex items-center gap-2">
         <?php if ($available_count > 0): ?>
-          <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white/90 border border-amber-200/80 text-emerald-600 rounded-full text-xs font-semibold shadow-sm">
+          <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-surface/90 border border-amber-200/80 text-emerald-600 rounded-full text-xs font-semibold shadow-sm">
             <span class="relative flex h-2 w-2">
               <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-500 opacity-75"></span>
               <span class="relative inline-flex h-2 w-2 rounded-full bg-emerald-500"></span>
@@ -100,7 +100,7 @@ $total_prizes = $available_count + $won_count;
         <?php endif; ?>
 
         <?php if ($won_count > 0): ?>
-          <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white/90 border border-amber-200/80 text-amber-600 rounded-full text-xs font-semibold shadow-sm">
+          <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-surface/90 border border-amber-200/80 text-amber-600 rounded-full text-xs font-semibold shadow-sm">
             <span class="material-symbols-outlined text-sm">emoji_events</span>
             <?php echo $won_count; ?> <?php _e('Won', 'nera-competitions'); ?>
           </span>
@@ -145,7 +145,7 @@ $total_prizes = $available_count + $won_count;
         <!-- Card skeletons -->
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
           <?php for ($i = 0; $i < 2; $i++): ?>
-            <div class="rounded-2xl bg-white border border-gray-100 p-5">
+            <div class="rounded-2xl bg-surface border border-gray-100 p-5">
               <div class="flex items-center gap-4">
                 <div class="w-28 h-28 shrink-0 rounded-xl bg-[linear-gradient(90deg,#f3f4f6_25%,#e5e7eb_50%,#f3f4f6_75%)] [background-size:200%_100%] animate-[instant-wins-skeleton-shimmer_1.5s_ease-in-out_infinite]"></div>
                 <div class="flex-1 space-y-3">

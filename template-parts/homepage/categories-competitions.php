@@ -62,7 +62,7 @@ $category_icons = [
 ];
 ?>
 
-<section class="py-24 bg-white relative overflow-hidden" id="categories-competitions" data-aos="fade-up"
+<section class="py-24 bg-surface relative overflow-hidden" id="categories-competitions" data-aos="fade-up"
   x-data="{ activeCategory: 'all' }">
 
   <!-- Decorative Background Elements -->
@@ -121,7 +121,7 @@ $category_icons = [
               class="inline-flex items-center gap-2 px-6 py-3 text-sm font-semibold rounded-full shadow-sm transition-all duration-300 cursor-pointer hover:shadow-lg hover:scale-105"
               :class="activeCategory === 'all' 
                 ? 'bg-gradient-to-r from-primary to-indigo-600 text-white shadow-lg border-primary' 
-                : 'bg-white border-2 border-gray-200 text-text-secondary hover:border-gray-300'" role="tab"
+                : 'bg-surface border-2 border-gray-200 text-text-secondary hover:border-gray-300'" role="tab"
               :aria-selected="activeCategory === 'all'" aria-controls="categories-grid">
               <span class="flex items-center justify-center w-5 h-5">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -133,7 +133,7 @@ $category_icons = [
               </span>
               <span class="font-semibold">All Categories</span>
               <span class="inline-flex items-center justify-center min-w-[24px] h-6 px-2 rounded-full text-xs font-bold"
-                :class="activeCategory === 'all' ? 'bg-white/25 text-white' : 'bg-black/6 text-text-secondary'">
+                :class="activeCategory === 'all' ? 'bg-surface/25 text-white' : 'bg-black/6 text-text-secondary'">
                 <?php echo $competitions->found_posts; ?>
               </span>
             </button>
@@ -160,7 +160,7 @@ $category_icons = [
                   class="inline-flex items-center gap-2 px-6 py-3 text-sm font-semibold rounded-full shadow-sm transition-all duration-300 cursor-pointer hover:shadow-lg hover:scale-105"
                   :class="activeCategory === '<?php echo esc_js($category_slug); ?>'
                     ? 'bg-gradient-to-r from-primary to-indigo-600 text-white shadow-lg border-primary'
-                    : 'bg-white border-2 border-gray-200 text-text-secondary hover:border-gray-300'" role="tab"
+                    : 'bg-surface border-2 border-gray-200 text-text-secondary hover:border-gray-300'" role="tab"
                   :aria-selected="activeCategory === '<?php echo esc_attr($category_slug); ?>'"
                   aria-controls="categories-grid">
                   <span class="flex items-center justify-center w-5 h-5">
@@ -172,7 +172,7 @@ $category_icons = [
                   <span class="inline-flex items-center justify-center min-w-[24px] h-6 px-2 rounded-full text-xs font-bold"
                     :class="activeCategory === '<?php echo esc_js(
                       $category_slug,
-                    ); ?>' ? 'bg-white/25 text-white' : 'bg-black/6 text-text-secondary'">
+                    ); ?>' ? 'bg-surface/25 text-white' : 'bg-black/6 text-text-secondary'">
                     <?php echo esc_html($category_count); ?>
                   </span>
                 </button>

@@ -27,13 +27,13 @@ $current_action = isset($_GET['action']) ? sanitize_text_field($_GET['action']) 
   <!-- Wallet Balance Card -->
   <div class="bg-gradient-to-br from-primary via-indigo-600 to-indigo-700 rounded-2xl shadow-xl p-8 mb-8 relative overflow-hidden">
     <!-- Decorative background elements -->
-    <div class="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -mr-32 -mt-32"></div>
-    <div class="absolute bottom-0 left-0 w-48 h-48 bg-white/5 rounded-full -ml-24 -mb-24"></div>
+    <div class="absolute top-0 right-0 w-64 h-64 bg-surface/5 rounded-full -mr-32 -mt-32"></div>
+    <div class="absolute bottom-0 left-0 w-48 h-48 bg-surface/5 rounded-full -ml-24 -mb-24"></div>
     
     <div class="relative z-10">
       <div class="flex items-center justify-between mb-6">
         <div class="flex items-center gap-3">
-          <div class="w-12 h-12 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center">
+          <div class="w-12 h-12 rounded-full bg-surface/20 backdrop-blur-sm flex items-center justify-center">
             <span class="material-symbols-outlined text-white text-3xl">account_balance_wallet</span>
           </div>
           <div>
@@ -62,14 +62,14 @@ $current_action = isset($_GET['action']) ? sanitize_text_field($_GET['action']) 
         <a href="<?php echo esc_url(
           add_query_arg('action', 'add', wc_get_account_endpoint_url('woo-wallet')),
         ); ?>" 
-           class="flex items-center justify-center gap-2 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-xl py-3 px-4 text-white font-semibold transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg">
+           class="flex items-center justify-center gap-2 bg-surface/20 hover:bg-surface/30 backdrop-blur-sm rounded-xl py-3 px-4 text-white font-semibold transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg">
           <span class="material-symbols-outlined">add_circle</span>
           <?php esc_html_e('Top Up', 'nera-competitions'); ?>
         </a>
         <?php endif; ?>
         
         <a href="<?php echo esc_url(remove_query_arg('action')); ?>" 
-           class="flex items-center justify-center gap-2 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-xl py-3 px-4 text-white font-semibold transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg">
+           class="flex items-center justify-center gap-2 bg-surface/20 hover:bg-surface/30 backdrop-blur-sm rounded-xl py-3 px-4 text-white font-semibold transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg">
           <span class="material-symbols-outlined">receipt_long</span>
           <?php esc_html_e('Transactions', 'nera-competitions'); ?>
         </a>
@@ -78,7 +78,7 @@ $current_action = isset($_GET['action']) ? sanitize_text_field($_GET['action']) 
         <a href="<?php echo esc_url(
           add_query_arg('action', 'transfer', wc_get_account_endpoint_url('woo-wallet')),
         ); ?>" 
-           class="flex items-center justify-center gap-2 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-xl py-3 px-4 text-white font-semibold transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg">
+           class="flex items-center justify-center gap-2 bg-surface/20 hover:bg-surface/30 backdrop-blur-sm rounded-xl py-3 px-4 text-white font-semibold transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg">
           <span class="material-symbols-outlined">send</span>
           <?php esc_html_e('Transfer', 'nera-competitions'); ?>
         </a>
@@ -88,7 +88,7 @@ $current_action = isset($_GET['action']) ? sanitize_text_field($_GET['action']) 
   </div>
 
   <!-- Content Area -->
-  <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 md:p-8">
+  <div class="bg-surface rounded-2xl border border-gray-100 shadow-sm p-6 md:p-8">
     <?php // Display appropriate content based on action
 
 switch ($current_action) {

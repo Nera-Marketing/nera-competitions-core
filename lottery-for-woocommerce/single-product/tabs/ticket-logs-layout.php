@@ -33,7 +33,7 @@ $columns = $columns_ordered;
   <div class="mb-4 flex gap-2">
     <input
       type="text"
-      class="lty-ticket-logs-search lty-frontend-search flex-1 rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm text-text-primary placeholder:text-text-secondary focus:outline-none focus:ring-2 focus:ring-primary/40"
+      class="lty-ticket-logs-search lty-frontend-search flex-1 rounded-lg border border-gray-200 bg-surface px-4 py-2 text-sm text-text-primary placeholder:text-text-secondary focus:outline-none focus:ring-2 focus:ring-primary/40"
       value="<?php echo esc_attr($search); ?>"
       placeholder="<?php esc_attr_e('Search by ticket number…', 'lottery-for-woocommerce'); ?>"
     />

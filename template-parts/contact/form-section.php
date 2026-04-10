@@ -18,7 +18,7 @@ $form_description = function_exists('get_field') ? get_field('form_description')
 $form_id = function_exists('get_field') ? get_field('fluent_form_id') : 0;
 ?>
 
-<div class="bg-white rounded-2xl p-6 lg:p-8 shadow-md">
+<div class="bg-surface rounded-2xl p-6 lg:p-8 shadow-md">
     <!-- Form Header -->
     <?php if ($form_heading): ?>
         <h2 class="text-2xl font-heading font-bold text-text-primary mb-6 text-center">

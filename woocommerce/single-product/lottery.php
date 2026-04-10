@@ -77,7 +77,7 @@ $video_url = get_field('gallery_video_url', $product_id);
     </section>
 
     <!-- Product Tabs Section -->
-    <section class="py-12 bg-white">
+    <section class="py-12 bg-surface">
       <div class="max-w-7xl mx-auto px-4 lg:px-8">
         <?php get_template_part('template-parts/single-product/product-tabs', null, [
           'product' => $product,

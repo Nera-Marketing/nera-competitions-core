@@ -12,7 +12,7 @@ if (!defined('ABSPATH')) {
 $checkout = WC()->checkout();
 ?>
 
-<div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 lg:p-8" id="customer_details">
+<div class="bg-surface rounded-2xl border border-gray-100 shadow-sm p-6 lg:p-8" id="customer_details">
 
   <h2 class="text-xl font-bold text-text-primary mb-6 flex items-center gap-2">
     <span class="material-symbols-outlined text-primary">person</span>

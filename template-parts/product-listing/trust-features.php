@@ -89,7 +89,7 @@ if (function_exists('get_field')) {
 }
 ?>
 
-<section class="py-16 md:py-20 bg-white">
+<section class="py-16 md:py-20 bg-surface">
   <div class="max-w-[1200px] mx-auto px-4 lg:px-8">
 
     <!-- Section Header -->
