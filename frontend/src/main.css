@@ -1,0 +1,2440 @@
+/**
+ * Nera Competitions - Main CSS Entry
+ * TailwindCSS v4 with custom theme configuration
+ */
+
+@import 'tailwindcss';
+
+/* Tell Tailwind v4 where to scan for utility classes (paths relative to this file: frontend/src/) */
+@source "../../**/*.php";
+@source "../assets/**/*.js";
+@source "./**/*.{js,jsx}";
+@source "../**/*.{js,jsx,vue}";
+
+/* ==========================================================================
+   Theme Configuration (TailwindCSS v4 CSS-first config)
+   Migrated from design-tokens.css
+   ========================================================================== */
+
+@theme {
+  /* Brand Colors */
+  --color-primary: #1313ec;
+  --color-primary-dark: #0d0db3;
+  --color-secondary: #f4f7ff;
+  --color-background-light: #f6f6f8;
+  --color-background-dark: #101022;
+  --color-accent: #1313ec;
+  --color-success: #10b981;
+  --color-danger: #dc2626;
+  --color-warning: #f77f00;
+  --color-info: #3b82f6;
+
+  /* Text Colors */
+  --color-text-primary: #0d0d1b;
+  --color-text-secondary: #64748b;
+
+  /* Neutral Colors (Gray Scale) */
+  --color-gray-50: #f9fafb;
+  --color-gray-100: #f3f4f6;
+  --color-gray-200: #e5e7eb;
+  --color-gray-300: #d1d5db;
+  --color-gray-400: #9ca3af;
+  --color-gray-500: #6b7280;
+  --color-gray-600: #4b5563;
+  --color-gray-700: #374151;
+  --color-gray-800: #1f2937;
+  --color-gray-900: #111827;
+
+  /* Typography */
+  --font-heading: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-body: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+
+  /* Font Sizes - Responsive Scale */
+  --font-size-xs: 0.75rem;
+  --font-size-sm: 0.875rem;
+  --font-size-base: 1rem;
+  --font-size-lg: 1.125rem;
+  --font-size-xl: 1.25rem;
+  --font-size-2xl: 1.5rem;
+  --font-size-3xl: 1.875rem;
+  --font-size-4xl: 2.25rem;
+  --font-size-5xl: 3rem;
+  --font-size-6xl: 3.75rem;
+
+  /* Border Radius */
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.5rem;
+  --radius-2xl: 2rem;
+  --radius-full: 9999px;
+
+  /* Shadows */
+  --shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.03);
+  --shadow-sm: 0 2px 4px 0 rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+  --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.12);
+  --shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  --shadow-card-hover: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+  --shadow-primary: 0 10px 20px -10px rgba(19, 19, 236, 0.3);
+
+  /* Transitions */
+  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-base: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 500ms cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Container */
+  --container-xl: 1280px;
+
+  /* Animations */
+  --animate-pulse-slow: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  --animate-float: float 3s ease-in-out infinite;
+  --animate-shimmer: shimmer 2s infinite;
+}
+
+/* ==========================================================================
+   Hide Scrollbar Utility (for carousels)
+   Cross-browser scrollbar hiding — no Tailwind equivalent for pseudo-elements
+   ========================================================================== */
+
+@utility hide-scrollbar {
+  @apply [&::-webkit-scrollbar]:hidden [scrollbar-width:none] [-ms-overflow-style:none];
+}
+
+/* ==========================================================================
+   Base Styles (replacing Astra defaults)
+   ========================================================================== */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  @apply scroll-smooth leading-normal;
+}
+
+body {
+  @apply font-body text-base leading-[1.6] text-text-primary bg-white antialiased m-0 p-0;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* AlpineJS x-cloak - Hide elements until Alpine is initialized */
+[x-cloak] {
+  display: none !important;
+}
+
+/* Typography */
+p {
+  @apply mb-4;
+}
+
+/* Links - Reset Astra's global link color */
+a {
+  @apply text-primary no-underline transition-colors duration-200;
+}
+
+a:hover {
+  @apply text-primary-dark;
+}
+
+/* Images */
+img {
+  @apply max-w-full h-auto block;
+}
+
+/* Lists */
+ul,
+ol {
+  @apply m-0 p-0 list-none;
+}
+
+/* WordPress specific */
+.site-content {
+  @apply overflow-visible;
+}
+
+.entry-content {
+  @apply max-w-full;
+}
+
+/* Remove WordPress default container constraints */
+.ast-container {
+  @apply max-w-full w-full p-0 m-0;
+}
+
+#primary,
+.site-main {
+  @apply max-w-7xl w-full mx-auto px-0 pt-8 pb-8 lg:pt-12 lg:pb-12 m-0;
+}
+
+/* Prevent horizontal scrollbar on cart/checkout - fluid hero uses w-screen (100vw)
+   which includes scrollbar width and causes overflow */
+body.woocommerce-cart,
+body.woocommerce-checkout {
+  overflow-x: hidden;
+}
+
+/* Order-received: restore site header breakpoints when another stylesheet ships
+   global .flex/.hidden without responsive variants (loads after theme CSS). */
+@media (min-width: 64rem) {
+  body.woocommerce-order-received #site-header > div > nav > .hidden.lg\:flex,
+  body.nera-order-received-page #site-header > div > nav > .hidden.lg\:flex {
+    display: flex !important;
+  }
+
+  body.woocommerce-order-received #site-header > div > nav > .flex.lg\:hidden,
+  body.nera-order-received-page #site-header > div > nav > .flex.lg\:hidden {
+    display: none !important;
+  }
+
+  body.woocommerce-order-received #site-header #mobile-menu,
+  body.nera-order-received-page #site-header #mobile-menu {
+    display: none !important;
+  }
+}
+
+@media (max-width: 63.999rem) {
+  body.woocommerce-order-received #site-header > div > nav > .hidden.lg\:flex,
+  body.nera-order-received-page #site-header > div > nav > .hidden.lg\:flex {
+    display: none !important;
+  }
+
+  body.woocommerce-order-received #site-header > div > nav > .flex.lg\:hidden,
+  body.nera-order-received-page #site-header > div > nav > .flex.lg\:hidden {
+    display: flex !important;
+  }
+}
+
+.woocommerce img,
+.woocommerce-page img {
+  height: 100%;
+  object-fit: cover;
+}
+
+button {
+  @apply cursor-pointer;
+}
+
+/* ==========================================================================
+   Custom Animations (@keyframes — must remain raw CSS)
+   ========================================================================== */
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.8;
+    transform: scale(1.05);
+  }
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Winners Modal Animations */
+@keyframes modal-fade-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes modal-scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes winner-card-enter {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.3;
+  }
+}
+
+@keyframes countdown-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+@keyframes progress-stripes {
+  from {
+    background-position: 1rem 0;
+  }
+
+  to {
+    background-position: 0 0;
+  }
+}
+
+/* Extracted from template parts */
+@keyframes storyCardFadeIn {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes quickGuideCardFadeIn {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes float-particle {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+    opacity: 0.5;
+  }
+
+  25% {
+    transform: translate(30px, -30px) scale(1.1);
+    opacity: 0.3;
+  }
+
+  50% {
+    transform: translate(-20px, 20px) scale(0.9);
+    opacity: 0.6;
+  }
+
+  75% {
+    transform: translate(20px, 30px) scale(1.05);
+    opacity: 0.4;
+  }
+}
+
+@keyframes draw-path {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes ping-slow {
+  0% {
+    transform: scale(1);
+    opacity: 0.5;
+  }
+
+  75%,
+  100% {
+    transform: scale(1.5);
+    opacity: 0;
+  }
+}
+
+@keyframes aboutSectionReveal {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+    max-height: 0;
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    max-height: 500px;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+    max-height: 500px;
+  }
+
+  to {
+    opacity: 0;
+    transform: translateY(-10px);
+    max-height: 0;
+  }
+}
+
+@keyframes menuItemFadeIn {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes frameReveal {
+  from {
+    opacity: 0;
+    transform: rotate(0deg) scale(0.9);
+  }
+
+  to {
+    opacity: 1;
+    transform: rotate(2deg) scale(1);
+  }
+}
+
+@keyframes badgeFloat {
+  from {
+    opacity: 0;
+    transform: translateY(30px) scale(0.9);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes cornerDraw {
+  from {
+    opacity: 0;
+    clip-path: polygon(100% 0, 100% 0, 100% 0, 100% 0);
+  }
+
+  to {
+    opacity: 1;
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+  }
+}
+
+/* ==========================================================================
+   Instant Wins — Premium UI Keyframes
+   ========================================================================== */
+
+@keyframes instant-wins-shine {
+  0% {
+    transform: translateX(-100%) skewX(-15deg);
+  }
+  100% {
+    transform: translateX(200%) skewX(-15deg);
+  }
+}
+
+@keyframes instant-wins-progress-fill {
+  from {
+    width: 0%;
+  }
+  to {
+    width: var(--progress-width, 0%);
+  }
+}
+
+@keyframes instant-wins-card-enter {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes instant-wins-skeleton-shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+@keyframes instant-wins-celebrate-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(234, 179, 8, 0);
+  }
+  50% {
+    box-shadow: 0 0 20px 4px rgba(234, 179, 8, 0.15);
+  }
+}
+
+@keyframes instant-wins-glow-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 8px 3px rgba(16, 185, 129, 0.25);
+  }
+}
+
+@keyframes instant-wins-button-glow {
+  0%,
+  100% {
+    box-shadow: 0 4px 14px 0 rgba(251, 191, 36, 0.15);
+  }
+  50% {
+    box-shadow: 0 4px 20px 4px rgba(251, 191, 36, 0.22);
+  }
+}
+
+/* Spin-to-win wheel rim bulbs (SVG circles in WheelChrome.jsx) */
+@keyframes nera-bulb-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  45% {
+    opacity: 0.55;
+  }
+  50% {
+    opacity: 0.65;
+  }
+}
+
+/* ==========================================================================
+   Instant Wins — Utility Classes
+   ========================================================================== */
+
+@utility animate-card-enter {
+  animation: instant-wins-card-enter 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@utility animate-celebrate {
+  animation: instant-wins-celebrate-pulse 2s ease-in-out infinite;
+}
+
+@utility animate-glow {
+  animation: instant-wins-glow-pulse 2s ease-in-out infinite;
+}
+
+/* ==========================================================================
+   Instant Wins — Pseudo-element (requires CSS, no Tailwind equivalent)
+   ========================================================================== */
+
+/* Toggle button shine sweep overlay */
+.instant-wins-toggle-shine {
+  @apply relative overflow-hidden;
+}
+
+.instant-wins-toggle-shine::after {
+  content: '';
+  @apply absolute top-0 left-0 w-1/3 h-full opacity-0 pointer-events-none;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.08), transparent);
+  transition: opacity 0.3s;
+}
+
+.instant-wins-toggle-shine:hover::after {
+  @apply opacity-100;
+  animation: instant-wins-shine 1.5s ease-in-out;
+}
+
+/* ==========================================================================
+   Custom Utility Classes
+   ========================================================================== */
+
+@utility animate-pulse-slow {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@utility animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+@utility animate-shimmer {
+  animation: shimmer 2s infinite;
+}
+
+@utility animate-fade-in-up {
+  animation: fadeInUp 0.5s forwards;
+}
+
+@utility animate-blink {
+  animation: blink 1s infinite;
+}
+
+@utility text-gradient-primary {
+  background: linear-gradient(135deg, var(--color-primary) 0%, #6366f1 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+@utility bg-gradient-primary {
+  background: linear-gradient(135deg, var(--color-primary), #4f46e5);
+}
+
+@utility bg-gradient-dark {
+  background: linear-gradient(135deg, var(--color-background-dark), var(--color-primary));
+}
+
+@utility shadow-primary {
+  box-shadow: 0 10px 20px -10px rgba(19, 19, 236, 0.3);
+}
+
+/* ==========================================================================
+   Component Base Classes
+   ========================================================================== */
+
+/* Button Base */
+@utility btn-base {
+  @apply inline-flex items-center justify-center gap-2 px-8 py-4 rounded-2xl text-base font-semibold text-center no-underline transition-all duration-300 ease-in-out border-2 border-transparent cursor-pointer relative overflow-hidden;
+}
+
+/* Progress Bar */
+@utility progress-bar-base {
+  @apply w-full h-[6px] bg-[#F1F5F9] rounded-full overflow-hidden;
+}
+
+/* ==========================================================================
+   Cart Page Utilities
+   ========================================================================== */
+
+@utility nera-cart-item {
+  @apply relative bg-white border border-gray-100 rounded-2xl p-4 transition-all duration-300;
+
+  &:hover {
+    @apply border-primary/20 shadow-lg shadow-primary/5 transform -translate-y-0.5;
+  }
+}
+
+@utility nera-cart-quantity {
+  @apply flex items-center border border-gray-200 rounded-lg overflow-hidden bg-white;
+}
+
+@utility nera-cart-empty-state {
+  @apply flex flex-col items-center justify-center py-20 px-4 text-center bg-white rounded-3xl border border-gray-100 shadow-xl;
+}
+
+@utility nera-cart-totals {
+  @apply bg-white rounded-2xl border border-gray-100 shadow-xl p-6 lg:sticky lg:top-24 transition-all duration-300;
+}
+
+@utility btn-checkout {
+  @apply flex items-center justify-center gap-2 w-full py-4 rounded-xl bg-gradient-to-r from-primary to-indigo-600 text-white font-bold text-lg shadow-lg shadow-primary/30 transition-all duration-300;
+
+  &:hover {
+    @apply shadow-xl shadow-primary/40 -translate-y-0.5 brightness-110;
+  }
+}
+
+/* Hide spinners for quantity input */
+.qty::-webkit-outer-spin-button,
+.qty::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.qty[type='number'] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+/* ==========================================================================
+   Checkout Page Styles
+   ========================================================================== */
+
+/* --- Form Field Styling --- */
+
+/* Checkout form grid improvements - increased gap for better breathing room */
+.woocommerce-checkout .woocommerce-billing-fields__field-wrapper,
+.woocommerce-checkout .woocommerce-shipping-fields__field-wrapper {
+  @apply gap-y-4;
+}
+
+/* Neutralize WooCommerce legacy float-based layout classes inside grid */
+.woocommerce-billing-fields__field-wrapper.grid .form-row-first,
+.woocommerce-billing-fields__field-wrapper.grid .form-row-last,
+.woocommerce-billing-fields__field-wrapper.grid .form-row-wide,
+.woocommerce-shipping-fields__field-wrapper.grid .form-row-first,
+.woocommerce-shipping-fields__field-wrapper.grid .form-row-last,
+.woocommerce-shipping-fields__field-wrapper.grid .form-row-wide {
+  @apply w-full float-none;
+}
+
+/* Form row margin reset (grid gap handles spacing) */
+.woocommerce-checkout .form-row {
+  @apply mb-0;
+}
+
+.woocommerce-checkout .form-row label {
+  @apply block text-sm font-semibold text-text-primary mb-2;
+}
+
+.woocommerce-checkout .form-row label .required {
+  @apply text-danger ml-0.5;
+}
+
+/* Ensure all inputs have consistent height (48px/3rem) */
+.woocommerce-checkout .form-row input[type='text'],
+.woocommerce-checkout .form-row input[type='email'],
+.woocommerce-checkout .form-row input[type='tel'],
+.woocommerce-checkout .form-row input[type='number'],
+.woocommerce-checkout .form-row input[type='password'],
+.woocommerce-checkout .form-row select,
+.woocommerce-checkout .form-row textarea {
+  @apply w-full h-12 px-4 rounded-xl border border-gray-200 text-sm font-medium
+         bg-white text-text-primary placeholder:text-gray-400
+         focus:border-primary focus:ring-1 focus:ring-primary outline-none
+         transition-all duration-300;
+}
+
+.woocommerce-checkout .form-row textarea {
+  @apply h-24 py-3;
+}
+
+/* Validation states */
+.woocommerce-checkout .form-row.woocommerce-invalid label {
+  @apply text-danger;
+}
+
+.woocommerce-checkout .form-row.woocommerce-invalid input,
+.woocommerce-checkout .form-row.woocommerce-invalid select {
+  @apply border-danger focus:ring-danger/30;
+}
+
+.woocommerce-checkout .form-row.woocommerce-validated input,
+.woocommerce-checkout .form-row.woocommerce-validated select {
+  @apply border-success;
+}
+
+/* Checkbox styling */
+.woocommerce-checkout input[type='checkbox'] {
+  @apply w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary cursor-pointer;
+}
+
+/* Select2 dropdown - Enhanced vertical alignment with flexbox */
+.woocommerce-checkout .select2-container .select2-selection--single {
+  height: 3rem !important;
+  @apply rounded-xl border-gray-200 bg-white flex items-center;
+}
+
+.woocommerce-checkout .select2-container .select2-selection--single .select2-selection__rendered {
+  @apply px-4 text-sm font-medium text-text-primary flex items-center h-full;
+  line-height: 1.4;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.woocommerce-checkout .select2-container .select2-selection--single .select2-selection__arrow {
+  @apply h-12 right-3 flex items-center;
+}
+
+.woocommerce-checkout .select2-container--focus .select2-selection--single,
+.woocommerce-checkout .select2-container--open .select2-selection--single {
+  @apply border-primary ring-1 ring-primary outline-none;
+}
+
+/* Dropdown list styling - Enhanced shadows and spacing */
+.select2-dropdown {
+  @apply border-gray-200 rounded-xl mt-1 overflow-hidden;
+  box-shadow: 0 10px 40px -10px rgba(13, 13, 27, 0.15);
+}
+
+.select2-results__option {
+  @apply px-4 text-sm transition-colors duration-200;
+  padding-top: 0.625rem;
+  padding-bottom: 0.625rem;
+  line-height: 1.4;
+}
+
+.select2-results__option--highlighted {
+  @apply bg-primary/5 text-primary;
+}
+
+.select2-results__option--selected {
+  @apply bg-primary text-white;
+}
+
+.select2-search--dropdown .select2-search__field {
+  @apply h-10 px-4 border-gray-200 rounded-lg text-sm outline-none focus:border-primary;
+}
+
+/* Wallet transfer Select2 - recipient dropdown padding */
+#select2-woo_wallet_transfer_user_id-container,
+#woo_wallet_transfer_form .select2-selection__rendered {
+  @apply !pt-[22px] !pb-[22px];
+}
+#woo_wallet_transfer_form .select2-container .select2-selection--single {
+  @apply !h-auto min-h-[46px];
+}
+
+/* --- Payment Method Styling (white surfaces only, no purple tint) --- */
+.woocommerce-checkout-payment .wc_payment_methods,
+.woocommerce-checkout-payment .wc_payment_methods li {
+  background: #ffffff !important;
+  background-color: #ffffff !important;
+}
+
+.woocommerce-checkout-payment .wc_payment_methods {
+  @apply list-none p-0 m-0 flex flex-col gap-5;
+}
+
+.woocommerce-checkout-payment .wc_payment_method {
+  @apply border border-gray-200 rounded-xl p-4 transition-all duration-300 cursor-pointer;
+  background: #ffffff !important;
+  background-color: #ffffff !important;
+}
+
+.woocommerce-checkout-payment .wc_payment_method:hover {
+  @apply border-gray-300 shadow-sm;
+  background: #ffffff !important;
+}
+
+.woocommerce-checkout-payment .wc_payment_method.active {
+  @apply border-gray-400 ring-2 ring-gray-300 shadow-sm;
+  background: #ffffff !important;
+}
+
+.woocommerce-checkout-payment .wc_payment_method > div > label {
+  @apply mb-0 flex min-h-11 items-center gap-3 rounded-lg text-base font-semibold text-text-primary cursor-pointer;
+}
+
+.woocommerce-checkout-payment .wc_payment_method input[type='radio'] {
+  @apply mt-0.5 h-5 w-5 shrink-0 cursor-pointer border-gray-300 accent-gray-600 focus:ring-0 focus:outline-none;
+}
+
+.woocommerce-checkout-payment .wc_payment_method.active > div > label .material-symbols-outlined {
+  @apply text-text-primary;
+}
+
+.woocommerce-checkout-payment .wc_payment_method .gateway-title {
+  @apply flex-1 leading-tight;
+}
+
+.woocommerce-checkout-payment .wc_payment_method .gateway-brand-icons img {
+  @apply max-h-6 w-auto;
+}
+
+.woocommerce-checkout-payment .payment_box,
+.woocommerce-checkout-payment .payment_box .nera-wallet-gateway-description {
+  background-color: #ffffff !important;
+}
+
+.woocommerce-checkout-payment .payment_box {
+  @apply mt-4 p-4 rounded-lg border border-gray-200 text-sm text-text-secondary leading-relaxed;
+}
+
+.woocommerce-checkout-payment .payment_box .nera-wallet-gateway-description {
+  @apply rounded-xl border border-gray-200 p-3;
+}
+
+.woocommerce-checkout-payment .payment_box::before {
+  content: none;
+}
+
+.woocommerce-checkout-payment .payment_box p:last-child {
+  @apply mb-0;
+}
+
+.woocommerce-checkout-payment .payment_method_wallet label .inline-flex {
+  @apply animate-pulse;
+}
+
+.woocommerce-checkout-payment .payment_method_wallet.active .nera-wallet-gateway-description {
+  @apply border-gray-300;
+}
+
+/* --- Place Order Button States --- */
+#place_order:disabled,
+.nera-place-order-btn:disabled {
+  @apply opacity-70 cursor-not-allowed transform-none;
+}
+
+/* Spinner animation for processing state */
+.nera-place-order-btn .animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* --- WooCommerce Notices on Checkout --- */
+.woocommerce-checkout .woocommerce-NoticeGroup {
+  @apply mb-6;
+}
+
+.woocommerce-checkout .woocommerce-error {
+  @apply list-none p-4 rounded-xl border border-danger/20 bg-danger/5 text-danger text-sm font-medium;
+}
+
+.woocommerce-checkout .woocommerce-error li {
+  @apply mb-1 last:mb-0;
+}
+
+.woocommerce-checkout .woocommerce-message {
+  @apply p-4 rounded-xl border border-success/20 bg-success/5 text-success text-sm font-medium mb-6;
+}
+
+.woocommerce-checkout .woocommerce-message::before,
+.woocommerce-checkout .woocommerce-error::before {
+  content: none;
+  display: none;
+}
+
+/* --- Login / Create Account Forms on Checkout --- */
+.woocommerce-checkout .woocommerce-form-login-toggle .woocommerce-info::before,
+.woocommerce-checkout .woocommerce-form-coupon-toggle .woocommerce-info::before {
+  content: none;
+  display: none;
+}
+
+.woocommerce-checkout .woocommerce-form-login-toggle .woocommerce-info,
+.woocommerce-checkout .woocommerce-form-coupon-toggle .woocommerce-info {
+  @apply pl-6 pr-4 py-4 rounded-xl border border-primary/10 bg-primary/5 text-sm text-text-primary mb-6;
+}
+
+.woocommerce-checkout .woocommerce-form-login-toggle .woocommerce-info a,
+.woocommerce-checkout .woocommerce-form-coupon-toggle .woocommerce-info a {
+  @apply text-primary font-semibold;
+}
+
+.woocommerce-checkout .woocommerce-form-login {
+  @apply bg-white rounded-2xl border border-gray-100 shadow-sm p-6 mb-6;
+}
+
+/* --- Accessibility: Keyboard Focus States --- */
+.woocommerce-checkout input:focus-visible,
+.woocommerce-checkout select:focus-visible,
+.woocommerce-checkout textarea:focus-visible {
+  @apply ring-2 ring-primary ring-offset-2 outline-none;
+}
+
+button:focus-visible {
+  @apply ring-2 ring-primary ring-offset-2 outline-none;
+}
+
+/* ==========================================================================
+   Extracted Component Styles (from template <style> blocks)
+   ========================================================================== */
+
+/* --- Stats Section --- */
+.stats-section .stat-value {
+  @apply tabular-nums transition-transform duration-300;
+}
+
+.stats-section .stat-item:hover .stat-value {
+  @apply scale-105;
+}
+
+.stats-section .trustpilot-badge {
+  @apply transition-transform duration-300;
+}
+
+.stats-section .trustpilot-badge:hover {
+  @apply -translate-y-0.5;
+}
+
+.stats-section .stats-grid .stat-item:first-child {
+  @apply pl-0;
+}
+
+.stats-section .stats-grid .stat-item:last-child {
+  @apply pr-0;
+}
+
+@media (max-width: 768px) {
+  .stats-section .stats-grid {
+    @apply w-full justify-center;
+  }
+
+  .stats-section .stat-item {
+    @apply px-4;
+  }
+}
+
+/* --- Credibility Section --- */
+.credibility-item {
+  @apply transition-transform duration-300;
+}
+
+.credibility-item:hover {
+  @apply -translate-y-0.5;
+}
+
+/* --- Story Card Animations --- */
+.story-card {
+  @apply opacity-0 translate-y-5;
+  animation: storyCardFadeIn 0.6s ease forwards;
+}
+
+.story-card:nth-child(1) {
+  animation-delay: 0.1s;
+}
+
+.story-card:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+/* --- Quick Guide Card Animations --- */
+.quick-guide-card {
+  @apply opacity-0 translate-y-5;
+  animation: quickGuideCardFadeIn 0.5s ease forwards;
+}
+
+.quick-guide-card:nth-child(1) {
+  animation-delay: 0.1s;
+}
+
+.quick-guide-card:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.quick-guide-card:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+/* --- How It Works Section --- */
+.how-it-works-section {
+  --particle-color: rgba(99, 102, 241, 0.15);
+}
+
+.how-it-works-particles .particle {
+  @apply absolute rounded-full bg-[var(--particle-color)] animate-[float-particle_15s_ease-in-out_infinite];
+}
+
+.particle-1 {
+  @apply w-[300px] h-[300px] top-[10%] -left-[5%];
+  animation-delay: 0s;
+}
+
+.particle-2 {
+  @apply w-[200px] h-[200px] top-[60%] -right-[3%];
+  animation-delay: -3s;
+}
+
+.particle-3 {
+  @apply w-[150px] h-[150px] top-[20%] right-[10%];
+  animation-delay: -6s;
+}
+
+.particle-4 {
+  @apply w-[100px] h-[100px] bottom-[15%] left-[10%];
+  animation-delay: -9s;
+}
+
+.particle-5 {
+  @apply w-[80px] h-[80px] top-[40%] left-[15%];
+  animation-delay: -12s;
+}
+
+.particle-6 {
+  @apply w-[120px] h-[120px] bottom-[30%] right-[20%];
+  animation-delay: -4s;
+}
+
+/* Animated SVG Path — stroke properties have no Tailwind equivalent */
+.how-it-works-path-animated {
+  @apply [stroke-dasharray:1000] [stroke-dashoffset:1000] animate-[draw-path_2s_ease-out_forwards] [animation-play-state:paused];
+}
+
+.how-it-works-section.is-visible .how-it-works-path-animated {
+  @apply [animation-play-state:running];
+}
+
+/* Flowing Dots */
+.flow-dot {
+  @apply opacity-0 drop-shadow-[0_0_6px_currentColor];
+}
+
+.how-it-works-section.is-visible .flow-dot {
+  @apply opacity-100 transition-opacity duration-500;
+}
+
+.flow-dot-1 {
+  @apply delay-[500ms];
+}
+
+.flow-dot-2 {
+  @apply delay-[1000ms];
+}
+
+.flow-dot-3 {
+  @apply delay-[1500ms];
+}
+
+/* Ping Animation (slower) */
+.animate-ping-slow {
+  animation: ping-slow 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+/* Step Card Entrance Animations */
+.how-it-works-step {
+  @apply opacity-0 translate-y-10;
+  transition: all 600ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.how-it-works-step.is-visible {
+  @apply opacity-100 translate-y-0;
+}
+
+/* Header Animation */
+.how-it-works-header {
+  @apply opacity-0 translate-y-[30px] transition-all duration-[800ms] ease-linear;
+}
+
+.how-it-works-header.is-visible {
+  @apply opacity-100 translate-y-0;
+}
+
+/* Card 3D Tilt Effect — transform-style/perspective have no TW equivalent */
+.how-it-works-card {
+  @apply [transform-style:preserve-3d] [perspective:1000px];
+}
+
+.how-it-works-card::before {
+  content: '';
+  @apply absolute inset-0 opacity-0 transition-opacity duration-300 rounded-[1.5rem];
+  background: linear-gradient(
+    135deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.1) 50%,
+    transparent 100%
+  );
+}
+
+.group:hover .how-it-works-card::before {
+  @apply opacity-100;
+}
+
+@media (max-width: 1024px) {
+  .how-it-works-particles .particle {
+    @apply hidden;
+  }
+}
+
+@media (max-width: 768px) {
+  .how-it-works-section {
+    @apply py-16;
+  }
+}
+
+/* --- About Section (Premium Blue) --- */
+/* Prose styling for WYSIWYG content */
+.about-section-premium .prose p {
+  @apply mb-4 text-text-secondary;
+}
+
+.about-section-premium .prose p:last-child {
+  @apply mb-0;
+}
+
+.about-section-premium .prose strong {
+  @apply text-text-primary font-semibold;
+}
+
+.about-section-premium .prose em {
+  @apply italic text-primary;
+}
+
+@media (max-width: 1023px) {
+  .about-floating-badge {
+    @apply hidden;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .about-section-premium,
+  .about-badge,
+  .about-title,
+  .about-subtitle,
+  .about-divider,
+  .about-description,
+  .about-features,
+  .about-cta,
+  .about-feature-item,
+  .about-image-container,
+  .about-frame,
+  .about-floating-badge,
+  .about-corner-accent {
+    @apply opacity-100;
+    transform: none;
+    transition: none;
+  }
+
+  .about-image:hover,
+  a:hover {
+    transform: none;
+  }
+}
+
+@media print {
+  .about-section-premium {
+    @apply !bg-white;
+  }
+
+  .about-floating-badge,
+  .about-frame,
+  .about-corner-accent {
+    @apply hidden;
+  }
+}
+
+/* --- Mobile Menu Animations --- */
+#mobile-menu {
+  @apply overflow-hidden transition-all duration-300 ease-in-out;
+}
+
+#mobile-menu.menu-opening {
+  @apply animate-[slideDown_300ms_ease-in-out_forwards];
+}
+
+#mobile-menu.menu-closing {
+  @apply animate-[slideUp_300ms_ease-in-out_forwards];
+}
+
+#mobile-menu a,
+#mobile-menu hr {
+  @apply opacity-0 animate-[menuItemFadeIn_300ms_ease-in-out_forwards];
+}
+
+#mobile-menu.menu-opening a:nth-child(1),
+#mobile-menu.menu-opening hr {
+  @apply delay-[50ms];
+}
+
+#mobile-menu.menu-opening a:nth-child(2) {
+  @apply delay-[100ms];
+}
+
+#mobile-menu.menu-opening a:nth-child(3) {
+  @apply delay-[150ms];
+}
+
+#mobile-menu.menu-opening a:nth-child(4) {
+  @apply delay-[200ms];
+}
+
+#mobile-menu.menu-opening a:nth-child(5) {
+  @apply delay-[250ms];
+}
+
+#mobile-menu.menu-opening a:nth-child(6) {
+  @apply delay-[300ms];
+}
+
+/* Hamburger icon animation */
+#mobile-menu-toggle {
+  @apply transition-transform duration-200;
+}
+
+#mobile-menu-toggle:active {
+  @apply scale-95;
+}
+
+#menu-icon-open,
+#menu-icon-close {
+  @apply transition-all duration-300;
+}
+
+#menu-icon-open.rotating {
+  @apply rotate-90 opacity-0;
+}
+
+#menu-icon-close.rotating {
+  @apply -rotate-90;
+}
+
+/* --- Single Product Tab States --- */
+
+.tab-btn.active {
+  @apply text-primary border-b-2 border-primary -mb-px;
+}
+
+.tab-btn:not(.active) {
+  @apply border-b-2 border-transparent;
+}
+
+/* --- Lottery Plugin Q&A Override Styles --- */
+.skill-challenge-wrapper .lty-lottery-question-answer-container {
+  @apply m-0;
+}
+
+.skill-challenge-wrapper .lty-lottery-question-answer-container h3 {
+  @apply hidden;
+}
+
+.skill-challenge-wrapper .lty-lottery-question {
+  @apply text-[15px] text-text-primary mb-4 font-medium;
+}
+
+.skill-challenge-wrapper .lty-lottery-answers {
+  @apply list-none p-0 m-0 flex flex-col gap-2;
+}
+
+.skill-challenge-wrapper .lty-lottery-answers li {
+  @apply flex items-center px-4 py-3 border border-gray-200 rounded-md cursor-pointer transition-all duration-200 text-[15px];
+}
+
+.skill-challenge-wrapper .lty-lottery-answers li:hover {
+  @apply border-primary;
+}
+
+.skill-challenge-wrapper .lty-lottery-answers li.lty-selected {
+  @apply border-primary bg-primary/5;
+}
+
+/* Radio-style indicator — content: '' requires raw CSS */
+.skill-challenge-wrapper .lty-lottery-answers li::before {
+  @apply content-[''] w-[18px] h-[18px] border-2 border-gray-300 rounded-full mr-3 shrink-0 transition-all duration-200;
+}
+
+.skill-challenge-wrapper .lty-lottery-answers li.lty-selected::before {
+  @apply border-primary bg-primary shadow-[inset_0_0_0_3px_white];
+}
+
+/* Dropdown style Q&A */
+.skill-challenge-wrapper .lty-lottery-options-field-wrapper {
+  @apply m-0;
+}
+
+.skill-challenge-wrapper .lty-lottery-options-field-wrapper select {
+  @apply w-full px-4 py-3 border border-gray-200 rounded-md text-[15px] bg-white cursor-pointer;
+}
+
+.skill-challenge-wrapper .lty-lottery-options-field-wrapper select:focus {
+  @apply outline-none border-primary ring-2 ring-primary/10;
+}
+
+/* --- Answer Card Selection States (lottery Q&A override) --- */
+.answer-input:checked + .answer-card {
+  @apply border-primary bg-primary/5;
+}
+
+.answer-input:checked + .answer-card .answer-letter {
+  @apply bg-primary text-white;
+}
+
+.answer-input:checked + .answer-card .answer-check {
+  @apply block;
+}
+
+.answer-input:focus + .answer-card {
+  @apply outline-none ring-2 ring-primary/20;
+}
+
+.answer-option:hover .answer-card {
+  @apply -translate-y-0.5 shadow-md;
+}
+
+.answer-card {
+  @apply transition-all duration-200;
+}
+
+/* ==========================================================================
+   Nera Ticket Picker — Dialog variant
+   Explicit CSS (not @apply-only) ensures grid layout works regardless of build.
+   ========================================================================== */
+
+/* ── Shared: count badge ────────────────────────────────────────── */
+.nera-ticket-picker__count-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  background: color-mix(in srgb, var(--color-primary) 10%, transparent);
+  padding: 3px 10px 3px 7px;
+  border-radius: 999px;
+  transition: background 0.2s, color 0.2s;
+  white-space: nowrap;
+}
+
+.nera-ticket-picker__count-badge[data-has-selection="true"] {
+  background: var(--color-primary);
+  color: #fff;
+}
+
+/* ── Trigger button ─────────────────────────────────────────────── */
+.nera-ticket-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 2px dashed color-mix(in srgb, var(--color-primary) 35%, transparent);
+  background: color-mix(in srgb, var(--color-primary) 3%, white);
+  cursor: pointer;
+  transition: border-color 0.18s, background 0.18s, transform 0.12s;
+  text-align: left;
+}
+
+.nera-ticket-trigger:hover {
+  border-color: var(--color-primary);
+  background: color-mix(in srgb, var(--color-primary) 6%, white);
+  transform: translateY(-1px);
+}
+
+.nera-ticket-trigger:active {
+  transform: translateY(0);
+}
+
+.nera-ticket-trigger__icon {
+  color: var(--color-primary);
+  font-size: 20px !important;
+}
+
+.nera-ticket-trigger__arrow {
+  color: var(--color-primary);
+  font-size: 18px !important;
+  transition: transform 0.15s;
+}
+
+.nera-ticket-trigger:hover .nera-ticket-trigger__arrow {
+  transform: translateX(3px);
+}
+
+/* ── Dialog shell ───────────────────────────────────────────────── */
+.nera-ticket-dialog {
+  background: #fff;
+  border-radius: 24px 24px 0 0;
+  box-shadow: 0 -4px 60px rgba(0, 0, 0, 0.18);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  max-height: 90svh;
+}
+
+@media (min-width: 640px) {
+  .nera-ticket-dialog {
+    border-radius: 20px;
+    box-shadow: 0 20px 80px rgba(0, 0, 0, 0.2);
+    max-height: 85svh;
+  }
+}
+
+/* Drag handle on mobile */
+.nera-ticket-dialog::before {
+  content: '';
+  display: block;
+  width: 40px;
+  height: 4px;
+  background: #e2e8f0;
+  border-radius: 2px;
+  margin: 10px auto 0;
+  flex-shrink: 0;
+}
+
+@media (min-width: 640px) {
+  .nera-ticket-dialog::before {
+    display: none;
+  }
+}
+
+/* ── Dialog header ──────────────────────────────────────────────── */
+.nera-ticket-dialog__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px 14px;
+  border-bottom: 1px solid #f1f5f9;
+  flex-shrink: 0;
+}
+
+.nera-ticket-dialog__header-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--color-primary) 10%, transparent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.nera-ticket-dialog__header-icon .material-symbols-outlined {
+  color: var(--color-primary);
+  font-size: 18px !important;
+}
+
+.nera-ticket-dialog__close {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  flex-shrink: 0;
+}
+
+.nera-ticket-dialog__close:hover {
+  background: #f1f5f9;
+  color: var(--color-text-primary);
+}
+
+.nera-ticket-dialog__close .material-symbols-outlined {
+  font-size: 20px !important;
+}
+
+/* ── Dialog body ────────────────────────────────────────────────── */
+.nera-ticket-dialog__body {
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px 18px 12px;
+  min-height: 0;
+}
+
+.nera-ticket-dialog__inner {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: 1;
+  min-height: 0;
+}
+
+/* ── Range select dropdown navigator ───────────────────────────── */
+.nera-range-select-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  background: #f8fafc;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 0 12px 0 10px;
+  gap: 8px;
+  transition: border-color 0.14s, box-shadow 0.14s;
+}
+
+.nera-range-select-wrap:focus-within {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) 12%, transparent);
+}
+
+.nera-range-select__icon {
+  font-size: 17px !important;
+  color: var(--color-primary);
+  flex-shrink: 0;
+  pointer-events: none;
+}
+
+.nera-range-select {
+  appearance: none;
+  -webkit-appearance: none;
+  background: transparent;
+  border: none;
+  outline: none;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  cursor: pointer;
+  flex: 1;
+  padding: 10px 0;
+  min-width: 0;
+}
+
+.nera-range-select__chevron {
+  font-size: 18px !important;
+  color: var(--color-text-secondary);
+  flex-shrink: 0;
+  pointer-events: none;
+  transition: color 0.14s;
+}
+
+.nera-range-select-wrap:focus-within .nera-range-select__chevron {
+  color: var(--color-primary);
+}
+
+/* ── Tab pill (hidden from view, kept for plugin DOM needs) ─────── */
+.lty-lottery-ticket-tab {
+  display: none !important;
+}
+
+/* ── Ticket grid scroll area (dialog) ───────────────────────────── */
+.nera-ticket-picker__dialog-grid {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  min-height: 0;
+  border: 1.5px solid #f1f5f9;
+  border-radius: 12px;
+  padding: 10px;
+  background: #fafafa;
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in srgb, var(--color-primary) 40%, transparent) transparent;
+}
+
+.nera-ticket-picker__dialog-grid::-webkit-scrollbar {
+  width: 4px;
+  height: 0;
+}
+
+.nera-ticket-picker__dialog-grid::-webkit-scrollbar-thumb {
+  background: color-mix(in srgb, var(--color-primary) 40%, transparent);
+  border-radius: 2px;
+}
+
+/* ── Ticket number grid ─────────────────────────────────────────── */
+.nera-ticket-grid__list {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)) !important;
+  gap: 7px !important;
+  list-style: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* ── Ticket cell base ───────────────────────────────────────────── */
+.lty-ticket,
+.nera-ticket-grid__cell {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  height: 38px !important;
+  font-size: 0.68rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  border-radius: 8px;
+  border: 1.5px solid #e2e8f0 !important;
+  background: #fff;
+  color: var(--color-text-primary);
+  cursor: pointer;
+  user-select: none;
+  margin: 0 !important;
+  transition: border-color 0.12s, background 0.12s, color 0.12s, box-shadow 0.12s;
+}
+
+.lty-ticket:hover:not(.lty-booked-ticket):not(.lty-processing-ticket):not(.lty-reserved-ticket) {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  background: color-mix(in srgb, var(--color-primary) 6%, white);
+  box-shadow: 0 2px 8px color-mix(in srgb, var(--color-primary) 18%, transparent);
+}
+
+/* ── Ticket state variants ──────────────────────────────────────── */
+
+.lty-selected-ticket {
+  border-color: var(--color-primary) !important;
+  background: var(--color-primary) !important;
+  color: #fff !important;
+  box-shadow: 0 3px 10px color-mix(in srgb, var(--color-primary) 40%, transparent) !important;
+}
+
+.lty-booked-ticket {
+  background: #f8fafc !important;
+  border-color: #e2e8f0 !important;
+  color: #cbd5e1 !important;
+  cursor: not-allowed !important;
+  pointer-events: none;
+  text-decoration: line-through;
+}
+
+.lty-processing-ticket {
+  background: #eff6ff !important;
+  border-color: #bfdbfe !important;
+  color: #93c5fd !important;
+  cursor: not-allowed !important;
+  pointer-events: none;
+}
+
+.lty-reserved-ticket {
+  background: #fffbeb !important;
+  border-color: #fde68a !important;
+  color: #f59e0b !important;
+  cursor: not-allowed !important;
+  pointer-events: none;
+}
+
+.lty-hidden-ticket {
+  display: none !important;
+}
+
+/* ── View more button ───────────────────────────────────────────── */
+.lty-toggle-view-button {
+  @apply mt-3;
+}
+
+.lty-toggle-lottery-tickets {
+  @apply block w-full py-2 text-center text-xs font-semibold text-primary
+         border border-primary/20 rounded-lg bg-white
+         hover:bg-primary/5 transition-colors no-underline;
+}
+
+/* ── Legend ─────────────────────────────────────────────────────── */
+.nera-ticket-picker__legend {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  flex-shrink: 0;
+  padding-top: 2px;
+}
+
+.nera-ticket-picker__legend-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.7rem;
+  color: var(--color-text-secondary);
+}
+
+.nera-ticket-picker__legend-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+  border: 1.5px solid #e2e8f0;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+.nera-ticket-picker__legend-item--available .nera-ticket-picker__legend-dot {
+  background: #fff;
+  border-color: #cbd5e1;
+}
+
+.nera-ticket-picker__legend-item--selected .nera-ticket-picker__legend-dot {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+.nera-ticket-picker__legend-item--sold .nera-ticket-picker__legend-dot {
+  background: #f8fafc;
+  border-color: #e2e8f0;
+}
+
+.nera-ticket-picker__legend-item--cart .nera-ticket-picker__legend-dot {
+  background: #eff6ff;
+  border-color: #bfdbfe;
+}
+
+/* ── Dialog footer ──────────────────────────────────────────────── */
+.nera-ticket-dialog__footer {
+  padding: 12px 18px 18px;
+  border-top: 1px solid #f1f5f9;
+  flex-shrink: 0;
+  background: #fff;
+}
+
+.nera-ticket-dialog__confirm-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 14px 20px;
+  background: var(--color-primary);
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.95rem;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  transition: background 0.15s, transform 0.12s, box-shadow 0.15s;
+  box-shadow: 0 4px 16px color-mix(in srgb, var(--color-primary) 30%, transparent);
+}
+
+.nera-ticket-dialog__confirm-btn:hover {
+  background: color-mix(in srgb, var(--color-primary) 85%, black);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px color-mix(in srgb, var(--color-primary) 40%, transparent);
+}
+
+.nera-ticket-dialog__confirm-count {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 999px;
+  padding: 2px 10px;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+/* ── Strip plugin-injected margins ─────────────────────────────── */
+.lty-lottery-ticket-container {
+  margin: 0 !important;
+}
+
+.lty-lottery-ticket-panel,
+.lty-lottery-ticket-wrapper {
+  @apply m-0;
+}
+
+/* ── Lucky-dip / search wrappers ────────────────────────────────── */
+.lty-lucky-dip-wrapper,
+.lty-manual-ticket-search-wrapper {
+  @apply mb-2 flex-shrink-0;
+}
+
+/* ==========================================================================
+   Astra Theme Overrides (for WordPress integration)
+   These overrides ensure Tailwind utilities take precedence over Astra's styles
+   ========================================================================== */
+
+/* Container width fixes for homepage */
+body.nera-homepage-template #primary,
+body.nera-homepage-template .site-content,
+body.nera-homepage-template .ast-container,
+body.nera-homepage-template .site-main,
+body.nera-homepage-template #content {
+  @apply !max-w-full !w-full !px-0 !m-0;
+}
+
+body.nera-homepage-template .entry-content {
+  @apply !max-w-full !m-0 !p-0;
+}
+
+/* ==== CRITICAL: Override Astra's global link styles ==== */
+/* Astra sets: a { color: var(--ast-global-color-0); } which breaks text-white on links */
+
+body a.text-white,
+body .text-white a,
+a.text-white,
+.text-white > a {
+  @apply !text-white;
+}
+
+body a.text-primary,
+body .text-primary a,
+a.text-primary,
+.text-primary > a {
+  @apply !text-primary;
+}
+
+body a.text-text-primary,
+body .text-text-primary a,
+a.text-text-primary,
+.text-text-primary > a {
+  @apply !text-text-primary;
+}
+
+body a.text-text-secondary,
+body .text-text-secondary a:not(.wp-block-social-link-anchor),
+a.text-text-secondary,
+.text-text-secondary > a:not(.wp-block-social-link-anchor) {
+  @apply !text-text-secondary;
+}
+
+#site-footer a:not(.wp-block-social-link-anchor):hover {
+  @apply !underline;
+}
+
+/* Ensure hover states inherit correctly — color: inherit has no TW utility */
+a.hover\:text-primary:hover,
+a.hover\:text-white:hover {
+  @apply text-inherit;
+}
+
+/* Fix button text colors - Astra often overrides link colors globally */
+.bg-gradient-primary,
+.bg-primary,
+[class*='bg-gradient-primary'] {
+  @apply text-white;
+}
+
+.bg-gradient-primary a,
+.bg-primary a,
+[class*='bg-gradient-primary'] a {
+  @apply !text-white !no-underline;
+}
+
+/* Reset underlines Astra might add */
+.bg-gradient-primary a:hover,
+.bg-primary a:hover,
+a.bg-gradient-primary:hover,
+a.bg-primary:hover {
+  @apply !no-underline;
+}
+
+/* Astra heading fixes */
+body h1,
+body h2,
+body h3,
+body h4,
+body h5,
+body h6 {
+  @apply font-heading;
+}
+
+/* Ensure Tailwind's font utilities work */
+.font-heading {
+  @apply !font-heading;
+}
+
+.font-body {
+  @apply !font-body;
+}
+
+/* Transition fixes - Astra sometimes overrides transition properties */
+.transition-all {
+  @apply !transition-all;
+}
+
+.transition-colors {
+  @apply !transition-colors;
+}
+
+/* Hover transforms — forced !important to beat Astra specificity */
+.hover\:-translate-y-0\.5:hover {
+  @apply !-translate-y-0.5;
+}
+
+.hover\:-translate-y-1:hover {
+  @apply !-translate-y-1;
+}
+
+/* Force hide Astra's default scroll to top button */
+#ast-scroll-top {
+  @apply !hidden;
+}
+
+/* Cart badge - ensure flexible sizing overrides Astra/parent theme */
+.nera-header-cart-count-desktop-wrapper > span,
+.nera-header-cart-count-mobile-wrapper > span,
+.nera-header-cart-count-mobile-nav-wrapper > span {
+  @apply !min-w-5 !h-5 !w-auto !px-1.5 !flex !items-center !justify-center !leading-none;
+}
+
+/* ============================================
+   Toast Notification System
+   ============================================ */
+
+/* Container */
+.nera-toast-container {
+  @apply fixed top-20 right-6 z-[9999] flex flex-col gap-3 max-w-[420px] pointer-events-none;
+}
+
+.nera-toast-container > * {
+  @apply pointer-events-auto;
+}
+
+/* Toast card base */
+.nera-toast {
+  @apply bg-white rounded-lg border border-gray-200 p-4 flex gap-3 items-start min-h-[64px] max-w-[420px] relative overflow-hidden opacity-0 translate-x-full;
+  box-shadow: 0 10px 40px -10px rgba(13, 13, 27, 0.15);
+}
+
+/* Type-specific borders */
+.nera-toast--success {
+  @apply border-l-4 border-l-success;
+}
+
+.nera-toast--error {
+  @apply border-l-4 border-l-danger;
+}
+
+.nera-toast--warning {
+  @apply border-l-4 border-l-warning;
+}
+
+.nera-toast--info {
+  @apply border-l-4 border-l-info;
+}
+
+/* Icon */
+.nera-toast__icon {
+  @apply shrink-0 w-6 h-6 flex items-center justify-center;
+}
+
+.nera-toast__icon .material-symbols-outlined {
+  @apply text-2xl;
+}
+
+.nera-toast--success .nera-toast__icon {
+  @apply text-success;
+}
+
+.nera-toast--error .nera-toast__icon {
+  @apply text-danger;
+}
+
+.nera-toast--warning .nera-toast__icon {
+  @apply text-warning;
+}
+
+.nera-toast--info .nera-toast__icon {
+  @apply text-info;
+}
+
+/* Content */
+.nera-toast__content {
+  @apply flex-1 min-w-0;
+}
+
+.nera-toast__message {
+  @apply text-text-primary text-sm leading-normal font-medium break-words;
+}
+
+/* Action button */
+.nera-toast__action {
+  @apply mt-2;
+}
+
+.nera-toast__action button {
+  @apply text-[13px] font-semibold text-primary px-3 py-1 rounded-md transition-colors duration-200;
+}
+
+.nera-toast__action button:hover {
+  @apply bg-secondary;
+}
+
+/* Close button */
+.nera-toast__close {
+  @apply shrink-0 w-6 h-6 flex items-center justify-center text-text-secondary cursor-pointer rounded-sm transition-all duration-200;
+}
+
+.nera-toast__close:hover {
+  @apply text-text-primary bg-gray-100;
+}
+
+.nera-toast__close:focus {
+  @apply outline-2 outline-primary outline-offset-2;
+}
+
+.nera-toast__close .material-symbols-outlined {
+  @apply text-[20px];
+}
+
+/* Progress bar — background: currentColor and animation have no TW equivalent */
+.nera-toast__progress {
+  @apply absolute bottom-0 left-0 h-[3px] opacity-30 bg-current animate-[progress-countdown_linear_forwards];
+}
+
+.nera-toast:hover .nera-toast__progress {
+  @apply [animation-play-state:paused];
+}
+
+/* Toast animation keyframes */
+@keyframes slide-in-right {
+  from {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slide-out-right {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  to {
+    opacity: 0;
+    transform: translateX(calc(100% + 24px));
+  }
+}
+
+@keyframes progress-countdown {
+  from {
+    width: 100%;
+  }
+
+  to {
+    width: 0%;
+  }
+}
+
+/* Animation states */
+.nera-toast--entering {
+  animation: slide-in-right 300ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.nera-toast--exiting {
+  animation: slide-out-right 200ms cubic-bezier(0.7, 0, 0.84, 0) forwards;
+}
+
+/* Swipe gesture feedback */
+.nera-toast--swiping {
+  @apply transition-transform duration-100 ease-out cursor-grab;
+}
+
+/* Toast Responsive */
+@media (max-width: 640px) {
+  .nera-toast-container {
+    @apply left-4 right-4 max-w-none top-[70px];
+  }
+
+  .nera-toast {
+    @apply w-full max-w-none;
+  }
+}
+
+/* Alpine.js x-collapse Animation Enhancement */
+[x-cloak] {
+  @apply hidden;
+}
+
+/* Line Clamp Utility for Prize Titles */
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* =================================================================
+   Winners Modal Styles
+   ================================================================= */
+
+/* Modal Backdrop with Blur */
+.winners-modal-backdrop {
+  backdrop-filter: blur(4px);
+}
+
+/* Smooth scrollbar for winners list */
+.winners-modal-list {
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 #f1f5f9;
+}
+
+.winners-modal-list::-webkit-scrollbar {
+  width: 8px;
+}
+
+.winners-modal-list::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 4px;
+}
+
+.winners-modal-list::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+.winners-modal-list::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Spin To Win side lists custom scrollbar */
+.stw-side-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 #f8fafc;
+}
+
+.stw-side-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.stw-side-scrollbar::-webkit-scrollbar-track {
+  background: #f8fafc;
+  border-radius: 9999px;
+}
+
+.stw-side-scrollbar::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 9999px;
+  border: 2px solid #f8fafc;
+}
+
+.stw-side-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Winner item hover effect */
+.winners-modal-list > div > div {
+  @apply transition-all duration-200;
+}
+
+/* Mobile responsive adjustments for modal */
+@media (max-width: 640px) {
+  .winners-modal-list {
+    @apply max-h-[calc(80vh-100px)];
+  }
+}
+
+/* =================================================================
+   Demo Winner Notices (fixed toast-style notifications)
+   ================================================================= */
+
+.nera-demo-winner-notice,
+.nera-demo-winners-notice {
+  @apply fixed top-4 left-1/2 -translate-x-1/2 z-[999999] bg-success text-white py-3 px-6 rounded-lg text-sm max-w-[90%];
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.nera-demo-winners-notice {
+  @apply text-center;
+}
+
+/* =================================================================
+   Login Page Styles
+   ================================================================= */
+
+/* Remove all padding/margin and ensure gray background on login page */
+body.woocommerce-account.logged-out #content,
+body.woocommerce-account.logged-out .site-content,
+body.woocommerce-account.logged-out .site-main,
+body.woocommerce-account.logged-out #primary,
+body.woocommerce-account.logged-out .content-area,
+body.woocommerce-account.logged-out article,
+body.woocommerce-account.logged-out .prose {
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+body.woocommerce-account.logged-out #content,
+body.woocommerce-account.logged-out .site-main,
+body.woocommerce-account.logged-out #primary {
+  background-color: #f9fafb !important; /* gray-50 - ensure gray, not white */
+}
+
+/* Override lg breakpoint padding - base rule uses lg:pt-12 lg:pb-12 */
+@media (min-width: 64rem) {
+  body.woocommerce-account.logged-out #primary,
+  body.woocommerce-account.logged-out .site-main {
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+  }
+}
+
+/* Ensure login page takes full width and removes grid layout */
+body.woocommerce-account.logged-out .woocommerce {
+  @apply max-w-none;
+  display: block !important;
+  grid-template-columns: unset !important;
+  gap: unset !important;
+}
+
+/* Hide page title on My Account page (both logged-in and logged-out) */
+body.woocommerce-account article > header.mb-8,
+body.woocommerce-account .entry-header,
+body.woocommerce-account .page-header {
+  @apply hidden;
+}
+
+/* Override WooCommerce form border on My Account login page */
+body.woocommerce-account .woocommerce form.login,
+body.woocommerce-account .woocommerce form.woocommerce-form-login {
+  border: none !important;
+  padding: 0;
+  margin: 0;
+}
+
+/* Style for screen reader only class */
+.sr-only {
+  @apply absolute w-px h-px p-0 -m-px overflow-hidden whitespace-nowrap border-0;
+  clip: rect(0, 0, 0, 0);
+}
+
+/* ============================================
+   Entry List — Lottery for WooCommerce
+   ============================================ */
+
+.lty-data-table-wrapper,
+.lty-ticket-logs-wrapper {
+  border: none !important;
+  border-radius: 0 !important;
+  padding: 0 !important;
+  box-shadow: none !important;
+}
+
+.lty-ticket-logs-table.shop_table {
+  border: none !important;
+  border-radius: 0 !important;
+  margin: 0 !important;
+}
+
+.lty-ticket-logs-table td,
+.lty-winner-logs-table td {
+  @apply px-4 py-3 text-sm text-text-primary;
+}
+
+.lty-ticket-logs-table tr:hover td,
+.lty-winner-logs-table tr:hover td {
+  @apply bg-secondary;
+  transition: background-color 0.15s ease;
+}
+
+.lty-ticket-logs-table td[data-title='Ticket Number'],
+.lty-winner-logs-table td[data-title='Ticket Number'] {
+  @apply font-mono font-bold text-primary;
+}
+
+/* Plugin status badge — theme colours */
+.lty-entry-list-status .lty-lottery-status,
+.lty-status-badge .lty-lottery-status {
+  @apply inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold;
+  background-color: var(--color-secondary);
+  color: var(--color-primary);
+  border: 1px solid var(--color-gray-200);
+}
+
+/* Pagination inside entry list */
+.lty-page-btn {
+  @apply inline-flex h-8 w-8 items-center justify-center rounded-lg border border-gray-200 bg-white text-sm font-medium text-text-primary no-underline transition-colors;
+}
+
+.lty-page-btn:hover {
+  @apply border-gray-200 bg-secondary text-text-primary;
+}
+
+.lty-page-btn--active,
+.lty-page-btn.current {
+  @apply border-primary bg-primary font-bold text-white;
+}
+
+.lty-page-dot {
+  @apply inline-flex h-8 w-8 items-center justify-center text-sm text-text-secondary;
+}
+
+/* Dashed separator under PDF row — flex layout, no plugin floats (overrides frontend.css load order) */
+.lty-entry-list-summary-content-wrapper .lty-entry-list-header-wrapper {
+  float: none !important;
+  display: flex !important;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  width: 100%;
+  padding-bottom: 0.75rem;
+  margin-bottom: 1rem;
+  border-bottom: 1px dashed var(--color-gray-300);
+}
+
+/* ==========================================================================
+   Nera Attribution Page (page-templates/nera-marketing-attribution.php)
+   Pseudo-element and state-based styles that have no Tailwind equivalent.
+   All colours reference CSS variables so they flex with brand preset changes.
+   ========================================================================== */
+
+/* Hero badge — pulsing dot via ::before pseudo-element */
+.nera-attr-badge::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  flex-shrink: 0;
+  animation: nera-attr-pulse-dot 2s ease-in-out infinite;
+}
+
+@keyframes nera-attr-pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.4; transform: scale(0.75); }
+}
+
+/* Pillar card — accent top-border that sweeps in on hover */
+.nera-attr-pillar::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--color-primary);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.3s ease;
+}
+
+.nera-attr-pillar:hover::before {
+  transform: scaleX(1);
+}
+
+/* FAQ accordion — icon and open/close state handled by AlpineJS :class bindings.
+   Only the SVG transition lives here (animation property, no @apply equivalent). */
+.nera-attr-faq-icon svg {
+  transition: transform 0.2s ease;
+}
+
+/* ==========================================================================
+   End Nera Attribution Page styles
+   ========================================================================== */
+
+.lty-entry-list-summary-content-wrapper .lty-lottery-entry-list-pdf-download-button {
+  float: none !important;
+}

@@ -1,0 +1,21 @@
+{
+  "plugins": ["@prettier/plugin-php"],
+  "semi": true,
+  "singleQuote": true,
+  "tabWidth": 2,
+  "trailingComma": "es5",
+  "printWidth": 100,
+  "bracketSpacing": true,
+  "arrowParens": "avoid",
+  "vueIndentScriptAndStyle": false,
+  "endOfLine": "lf",
+  "overrides": [
+    {
+      "files": "*.php",
+      "options": {
+        "phpVersion": "8.2",
+        "tabWidth": 2
+      }
+    }
+  ]
+}

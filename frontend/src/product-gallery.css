@@ -1,0 +1,26 @@
+/* Product Gallery - Swiper (single product) */
+
+[data-gallery-main] {
+  background: linear-gradient(to bottom right, rgb(241 245 249), rgb(226 232 240));
+}
+
+[data-gallery-main] .swiper-slide {
+  width: 100%;
+  height: 100%;
+}
+
+.swiper-slide-thumb-active .thumb-border {
+  border-color: var(--color-primary, #ff6b35) !important;
+}
+
+.cursor-zoom-in {
+  cursor: zoom-in;
+}
+
+.cursor-zoom-out {
+  cursor: zoom-out;
+}
+
+img[style*='transform: scale'] {
+  transition: transform 0.3s ease;
+}

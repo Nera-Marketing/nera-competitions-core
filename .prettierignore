@@ -1,0 +1,11 @@
+node_modules
+dist
+package-lock.json
+yarn.lock
+*.min.js
+*.min.css
+vendor
+.git
+.claude
+docs/**/*
+reference/**/*
