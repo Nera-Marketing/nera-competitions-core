@@ -51,8 +51,8 @@ if (!$has_instant_wins) {
 $total_prizes = $available_count + $won_count;
 ?>
 
-<!-- Instant Wins Section (Full Width Below Columns) -->
-<div class="instant-wins-section mt-10 px-4 lg:px-8 max-w-7xl mx-auto">
+<!-- Instant Wins Section (Full Width Below Columns; width/padding from parent container) -->
+<div class="instant-wins-section mt-10 w-full">
 
   <!-- Toggle Button — Premium Light Card (frontend-design: playful/premium) -->
   <button

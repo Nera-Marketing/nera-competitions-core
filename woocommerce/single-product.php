@@ -122,8 +122,8 @@ $extra_images = max(0, count($gallery_images) - $visible_thumbs);
 
     <!-- Main Content Section -->
     <section class="py-8 lg:py-10">
-      <div class="max-w-7xl mx-auto px-4 lg:px-8">
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10">
+      <div class="max-w-7xl mx-auto flex w-full min-w-0 flex-col px-4 lg:px-8">
+        <div class="grid w-full min-w-0 grid-cols-1 gap-8 lg:grid-cols-12 lg:gap-10">
 
           <!-- Left Column: Gallery + Tabs (desktop) / Unwrapped for mobile ordering -->
           <div class="max-lg:contents lg:flex lg:flex-col lg:gap-8 lg:col-span-7">
@@ -170,12 +170,16 @@ $extra_images = max(0, count($gallery_images) - $visible_thumbs);
           </div>
 
         </div>
-        
-        <!-- Instant Wins Section (Full Width Below Columns) -->
+
+      </div>
+    </section>
+
+    <!-- Instant Win prizes: own section below hero grid (avoids WC flex/float fighting inner flex-col) -->
+    <section class="pb-8 lg:pb-10" aria-label="<?php esc_attr_e('Instant win prizes', 'nera-competitions'); ?>">
+      <div class="max-w-7xl mx-auto w-full min-w-0 px-4 lg:px-8">
         <?php get_template_part('template-parts/single-product/instant-wins-section', null, [
           'product' => $product,
         ]); ?>
-        
       </div>
     </section>
 

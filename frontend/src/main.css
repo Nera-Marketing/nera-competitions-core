@@ -171,6 +171,28 @@ ol {
   @apply max-w-7xl w-full mx-auto px-0 pt-8 pb-8 lg:pt-12 lg:pb-12 m-0;
 }
 
+/* Lottery single product: stack all .product children vertically (WC can use row flex);
+   keep Instant Win block below gallery + purchase, full width of inner column.
+   Use body.nera-single-lottery.woocommerce — not body .woocommerce div.product (no inner .woocommerce wrapper). */
+body.nera-single-lottery.woocommerce div.product,
+body.nera-single-lottery.single-product div.product {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  width: 100%;
+  max-width: 100%;
+}
+
+body.nera-single-lottery.woocommerce .instant-wins-section,
+body.nera-single-lottery .instant-wins-section {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  clear: both;
+  flex-shrink: 0;
+}
+
 /* Prevent horizontal scrollbar on cart/checkout - fluid hero uses w-screen (100vw)
    which includes scrollbar width and causes overflow */
 body.woocommerce-cart,

@@ -120,35 +120,37 @@ $extra_images = max(0, count($gallery_images) - $visible_thumbs);
     <!-- Breadcrumb Navigation -->
     <?php get_template_part('template-parts/single-product/breadcrumb'); ?>
 
-    <!-- Main Content Section -->
+    <!-- Main Content Section (kept in sync with woocommerce/single-product.php) -->
     <section class="py-8 lg:py-10">
-      <div class="max-w-7xl mx-auto px-4 lg:px-8">
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10">
+      <div class="max-w-7xl mx-auto flex w-full min-w-0 flex-col px-4 lg:px-8">
+        <div class="grid w-full min-w-0 grid-cols-1 gap-8 lg:grid-cols-12 lg:gap-10">
 
-          <!-- Left Column: Gallery + Tabs + Specs -->
-          <div class="lg:col-span-7">
+          <!-- Left Column: Gallery + Tabs (desktop) / Unwrapped for mobile ordering -->
+          <div class="max-lg:contents lg:flex lg:flex-col lg:gap-8 lg:col-span-7">
+            <!-- 1. Product Gallery (mobile: top) -->
+            <div class="order-1">
+              <?php get_template_part('template-parts/single-product/product-gallery', null, [
+                'images' => $gallery_images,
+                'product' => $product,
+                'badge_text' => nera_product_has_featured_tag($product)
+                  ? __('Featured Prize', 'nera-competitions')
+                  : '',
+                'badge_color' => 'red',
+              ]); ?>
+            </div>
 
-            <!-- Gallery -->
-            <?php get_template_part('template-parts/single-product/product-gallery', null, [
-              'images' => $gallery_images,
-              'product' => $product,
-              'badge_text' => nera_product_has_featured_tag($product)
-                ? __('Featured Prize', 'nera-competitions')
-                : '',
-              'badge_color' => 'red',
-            ]); ?>
-
-            <!-- Tabs Section -->
-            <?php get_template_part('template-parts/single-product/tabs', null, [
-              'product' => $product,
-              'specifications' => $specifications,
-              'end_date_gmt' => $end_date_gmt,
-            ]); ?>
-
+            <!-- 3. Tabs Section (mobile: bottom) -->
+            <div class="order-3 lg:order-2">
+              <?php get_template_part('template-parts/single-product/tabs', null, [
+                'product' => $product,
+                'specifications' => $specifications,
+                'end_date_gmt' => $end_date_gmt,
+              ]); ?>
+            </div>
           </div>
 
-          <!-- Right Column: Purchase Card -->
-          <div class="lg:col-span-5">
+          <!-- 2. Product Details / Purchase Card (mobile: middle) -->
+          <div class="order-2 lg:col-span-5">
             <?php get_template_part('template-parts/single-product/purchase-card', null, [
               'product' => $product,
               'countdown' => $countdown,
@@ -168,6 +170,15 @@ $extra_images = max(0, count($gallery_images) - $visible_thumbs);
           </div>
 
         </div>
+
+      </div>
+    </section>
+
+    <section class="pb-8 lg:pb-10" aria-label="<?php esc_attr_e('Instant win prizes', 'nera-competitions'); ?>">
+      <div class="max-w-7xl mx-auto w-full min-w-0 px-4 lg:px-8">
+        <?php get_template_part('template-parts/single-product/instant-wins-section', null, [
+          'product' => $product,
+        ]); ?>
       </div>
     </section>
 
