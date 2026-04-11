@@ -469,41 +469,6 @@
     if (ctaSection) {
       elementObserver.observe(ctaSection);
     }
-
-    // Optional: Add 3D tilt effect on mouse move (desktop only)
-    if (window.matchMedia('(min-width: 1024px)').matches) {
-      steps.forEach(function (step) {
-        const card = step.querySelector('.how-it-works-card');
-        if (!card) return;
-
-        step.addEventListener('mousemove', function (e) {
-          const rect = card.getBoundingClientRect();
-          const x = e.clientX - rect.left;
-          const y = e.clientY - rect.top;
-          const centerX = rect.width / 2;
-          const centerY = rect.height / 2;
-
-          const rotateX = (y - centerY) / 20;
-          const rotateY = (centerX - x) / 20;
-
-          card.style.transform =
-            'perspective(1000px) rotateX(' +
-            rotateX +
-            'deg) rotateY(' +
-            rotateY +
-            'deg) translateZ(10px)';
-        });
-
-        step.addEventListener('mouseleave', function () {
-          card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) translateZ(0)';
-          card.style.transition = 'transform 0.5s ease';
-        });
-
-        step.addEventListener('mouseenter', function () {
-          card.style.transition = 'transform 0.1s ease';
-        });
-      });
-    }
   }
 
   /**

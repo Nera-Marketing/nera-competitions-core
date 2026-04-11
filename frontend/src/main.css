@@ -1195,9 +1195,9 @@ button:focus-visible {
   @apply opacity-100 translate-y-0;
 }
 
-/* Card 3D Tilt Effect — transform-style/perspective have no TW equivalent */
+/* Card surface — keep compositing simple (3D tilt JS removed for hover perf) */
 .how-it-works-card {
-  @apply [transform-style:preserve-3d] [perspective:1000px];
+  @apply will-change-[transform] max-lg:will-change-auto;
 }
 
 .how-it-works-card::before {

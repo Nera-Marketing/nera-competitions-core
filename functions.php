@@ -565,6 +565,9 @@ require_once get_template_directory() . '/inc/acf-single-product.php';
 // ACF Contact Page Fields
 require_once get_template_directory() . '/inc/acf-contact.php';
 
+// ACF How It Works Page Fields
+require_once get_template_directory() . '/inc/acf-how-it-works.php';
+
 // ACF Product Listing Fields
 require_once get_template_directory() . '/inc/acf-product-listing.php';
 
@@ -747,6 +750,18 @@ function nera_product_listing_body_classes($classes)
   return $classes;
 }
 add_filter('body_class', 'nera_product_listing_body_classes');
+
+/**
+ * Add body class for How It Works template
+ */
+function nera_how_it_works_body_classes($classes)
+{
+  if (is_page_template('page-templates/how-it-works-template.php')) {
+    $classes[] = 'nera-how-it-works-template';
+  }
+  return $classes;
+}
+add_filter('body_class', 'nera_how_it_works_body_classes');
 
 /**
  * Category slug → hex colors for advanced filter chips and competition cards.

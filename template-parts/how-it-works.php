@@ -14,6 +14,7 @@
  * $args['steps']     - Array of steps (optional, uses default if not provided)
  * $args['title']     - Section title (optional)
  * $args['subtitle']  - Section subtitle (optional)
+ * $args['badge']     - Badge label next to pulse dot (optional)
  */
 
 // Exit if accessed directly
@@ -26,6 +27,9 @@ $title = isset($args['title']) ? $args['title'] : __('How It Works', 'nera-compe
 $subtitle = isset($args['subtitle'])
   ? $args['subtitle']
   : __('Win amazing prizes in just 4 simple steps', 'nera-competitions');
+$badge = isset($args['badge'])
+  ? $args['badge']
+  : __('Simple Process', 'nera-competitions');
 
 // Default steps if not provided
 $default_steps = [
@@ -109,7 +113,9 @@ $steps = isset($args['steps']) && is_array($args['steps']) ? $args['steps'] : $d
           <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
           <span class="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
         </span>
-        <span class="text-sm font-semibold text-primary uppercase tracking-wider">Simple Process</span>
+        <span class="text-sm font-semibold text-primary uppercase tracking-wider"><?php echo esc_html(
+          $badge,
+        ); ?></span>
       </div>
 
       <h2 class="font-heading text-4xl lg:text-5xl xl:text-6xl font-bold text-text-primary mb-6 leading-tight">
@@ -179,19 +185,19 @@ $steps = isset($args['steps']) && is_array($args['steps']) ? $args['steps'] : $d
               <div
                 class="absolute top-0 right-0 w-12 h-12 bg-gradient-to-br <?php echo esc_attr(
                   $color,
-                ); ?> rounded-2xl flex items-center justify-center text-white font-bold text-lg shadow-lg shadow-primary/25 rotate-12 group-hover:rotate-0 transition-transform duration-500 z-20">
+                ); ?> rounded-2xl flex items-center justify-center text-white font-bold text-lg shadow-lg shadow-primary/25 rotate-12 group-hover:rotate-0 transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] z-20 will-change-transform">
                 <?php echo esc_html($step_number); ?>
               </div>
 
               <!-- Glassmorphic Card -->
               <div
-                class="how-it-works-card relative h-full bg-surface/80 backdrop-blur-xl rounded-3xl p-8 border border-gray-100 shadow-lg shadow-gray-100/50 transition-all duration-500 group-hover:shadow-2xl group-hover:shadow-gray-200/80 group-hover:-translate-y-2 group-hover:border-gray-200 overflow-visible">
+                class="how-it-works-card relative h-full bg-surface/90 backdrop-blur-sm rounded-3xl p-8 border border-gray-100 shadow-lg shadow-gray-100/40 transition-[transform,box-shadow,border-color] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:shadow-xl group-hover:shadow-gray-200/60 group-hover:-translate-y-1 group-hover:border-gray-200 overflow-hidden [contain:layout_paint]">
 
-                <!-- Shine Effect -->
+                <!-- Shine Effect (short, avoids long paint on hover) -->
                 <div
-                  class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 overflow-hidden rounded-3xl">
+                  class="pointer-events-none absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] overflow-hidden rounded-3xl">
                   <div
-                    class="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000">
+                    class="absolute inset-0 bg-gradient-to-r from-transparent via-white/15 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none motion-reduce:translate-x-0 motion-reduce:group-hover:translate-x-0">
                   </div>
                 </div>
 
@@ -200,21 +206,19 @@ $steps = isset($args['steps']) && is_array($args['steps']) ? $args['steps'] : $d
                   <div
                     class="w-20 h-20 <?php echo esc_attr(
                       $bg_color,
-                    ); ?> rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-500">
-                    <div class="text-gray-700 group-hover:text-primary transition-colors duration-300">
+                    ); ?> rounded-2xl flex items-center justify-center group-hover:scale-105 transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] will-change-transform">
+                    <div class="text-gray-700 group-hover:text-primary transition-colors duration-250 ease-[cubic-bezier(0.22,1,0.36,1)]">
                       <?php echo $step['icon']; ?>
                     </div>
                   </div>
-                  <!-- Pulse Ring -->
+                  <!-- Subtle ring on hover (no infinite ping — cheaper than animate-ping-slow) -->
                   <div
-                    class="absolute inset-0 w-20 h-20 rounded-2xl opacity-0 group-hover:opacity-100 <?php echo esc_attr(
-                      $bg_color,
-                    ); ?> animate-ping-slow">
-                  </div>
+                    class="pointer-events-none absolute inset-0 w-20 h-20 rounded-2xl ring-0 ring-primary/25 group-hover:ring-2 transition-[box-shadow] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]"
+                    aria-hidden="true"></div>
                 </div>
 
                 <!-- Title -->
-                <h3 class="text-xl font-bold text-text-primary mb-3 group-hover:text-gray-900 transition-colors">
+                <h3 class="text-xl font-bold text-text-primary mb-3 group-hover:text-gray-900 transition-colors duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]">
                   <?php echo esc_html($step['title']); ?>
                 </h3>
 
