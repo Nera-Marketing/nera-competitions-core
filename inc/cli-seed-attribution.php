@@ -1,12 +1,15 @@
 <?php
 /**
- * WP-CLI command: wp nera seed-attribution
+ * WP-CLI: wp nera seed-attribution | wp nera seed-about
  *
- * Seeds all ACF attribution option fields with default placeholder content.
+ * - seed-attribution — ACF attribution option fields
+ * - seed-about — About Us page (Nera About Us template) with Luxora demo copy
  *
  * Usage:
  *   wp nera seed-attribution
- *   wp nera seed-attribution --force   (re-seeds even if fields already have values)
+ *   wp nera seed-attribution --force
+ *   wp nera seed-about
+ *   wp nera seed-about --force [--slug=about] [--hero-attachment-id=123]
  *
  * @package Nera_Competitions
  */
@@ -48,6 +51,209 @@ class Nera_CLI {
 		WP_CLI::log( 'Seeding attribution option fields…' );
 		$this->seed_options( $force );
 		WP_CLI::success( 'Done. Attribution options seeded.' );
+	}
+
+	/**
+	 * Seeds the About Us page (Nera About Us template) with Luxora-themed demo content.
+	 *
+	 * Creates the page if missing. Text fields are skipped when they already have values unless --force.
+	 * Hero image is only set when --hero-attachment-id is passed (never cleared by this command).
+	 *
+	 * ## OPTIONS
+	 *
+	 * [--force]
+	 * : Re-seed all text fields even if they already contain values.
+	 *
+	 * [--slug=<slug>]
+	 * : Page slug to find or create. Default: about
+	 *
+	 * [--hero-attachment-id=<id>]
+	 * : Media library attachment ID for the hero image.
+	 *
+	 * [--primary-url=<url>]
+	 * : Primary CTA URL. Default: home URL + /shop/
+	 *
+	 * [--secondary-url=<url>]
+	 * : Secondary CTA URL. Default: home URL + /contact/
+	 *
+	 * ## EXAMPLES
+	 *
+	 *   wp nera seed-about
+	 *   wp nera seed-about --force
+	 *   wp nera seed-about --hero-attachment-id=42
+	 *
+	 * @subcommand seed-about
+	 * @synopsis [--force] [--slug=<slug>] [--hero-attachment-id=<id>] [--primary-url=<url>] [--secondary-url=<url>]
+	 */
+	public function seed_about( $args, $assoc_args ) {
+		if ( ! function_exists( 'update_field' ) ) {
+			WP_CLI::error( 'ACF is not active. Please activate Advanced Custom Fields and try again.' );
+			return;
+		}
+
+		$force               = isset( $assoc_args['force'] );
+		$slug                = isset( $assoc_args['slug'] ) ? sanitize_title( $assoc_args['slug'] ) : 'about';
+		$hero_attachment_id  = isset( $assoc_args['hero-attachment-id'] ) ? absint( $assoc_args['hero-attachment-id'] ) : 0;
+		$primary_url         = isset( $assoc_args['primary-url'] ) ? esc_url_raw( $assoc_args['primary-url'] ) : home_url( '/shop/' );
+		$secondary_url       = isset( $assoc_args['secondary-url'] ) ? esc_url_raw( $assoc_args['secondary-url'] ) : home_url( '/contact/' );
+
+		WP_CLI::log( 'Seeding About Us page…' );
+		$post_id = $this->get_or_create_about_page( $slug );
+		if ( ! $post_id ) {
+			WP_CLI::error( 'Could not find or create the About page.' );
+			return;
+		}
+
+		WP_CLI::log( sprintf( '  → Page ID %d (%s)', (int) $post_id, get_permalink( $post_id ) ) );
+		$this->seed_about_page_fields( $post_id, $force, $hero_attachment_id, $primary_url, $secondary_url );
+		WP_CLI::success( 'Done. About Us page seeded.' );
+	}
+
+	/**
+	 * Find or create a page using the Nera About Us template.
+	 *
+	 * @param string $slug Post slug.
+	 * @return int Post ID or 0 on failure.
+	 */
+	private function get_or_create_about_page( $slug ) {
+		$template = 'page-templates/about-us-template.php';
+
+		$existing = get_posts(
+			[
+				'post_type'      => 'page',
+				'name'           => $slug,
+				'post_status'    => [ 'publish', 'draft', 'pending', 'private' ],
+				'posts_per_page' => 1,
+				'fields'         => 'ids',
+			]
+		);
+
+		if ( ! empty( $existing[0] ) ) {
+			$post_id = (int) $existing[0];
+			update_post_meta( $post_id, '_wp_page_template', $template );
+			WP_CLI::log( sprintf( '  Using existing page (slug: %s).', $slug ) );
+			return $post_id;
+		}
+
+		$post_id = wp_insert_post(
+			[
+				'post_title'   => __( 'About', 'nera-competitions' ),
+				'post_name'    => $slug,
+				'post_type'    => 'page',
+				'post_status'  => 'publish',
+				'post_content' => '',
+			],
+			true
+		);
+
+		if ( is_wp_error( $post_id ) ) {
+			WP_CLI::warning( $post_id->get_error_message() );
+			return 0;
+		}
+
+		update_post_meta( (int) $post_id, '_wp_page_template', $template );
+		WP_CLI::log( sprintf( '  Created new page (slug: %s).', $slug ) );
+		return (int) $post_id;
+	}
+
+	/**
+	 * Writes About Us ACF fields for a page.
+	 *
+	 * @param int    $post_id             Page ID.
+	 * @param bool   $force               Overwrite existing text values.
+	 * @param int    $hero_attachment_id  Attachment ID for hero image, or 0 to skip.
+	 * @param string $primary_url         Primary button URL.
+	 * @param string $secondary_url       Secondary button URL.
+	 */
+	private function seed_about_page_fields( $post_id, $force, $hero_attachment_id, $primary_url, $secondary_url ) {
+		$data = $this->about_field_data( $primary_url, $secondary_url );
+
+		if ( $hero_attachment_id > 0 ) {
+			if ( 'attachment' !== get_post_type( $hero_attachment_id ) ) {
+				WP_CLI::warning( sprintf( 'Invalid --hero-attachment-id=%d (not an attachment). Skipping hero image.', $hero_attachment_id ) );
+			} else {
+				$result = update_field( 'about_hero_image', $hero_attachment_id, $post_id );
+				if ( false !== $result ) {
+					WP_CLI::log( sprintf( '  ✓ seeded   about_hero_image (attachment %d)', $hero_attachment_id ) );
+				} else {
+					WP_CLI::warning( '  ✗ failed   about_hero_image' );
+				}
+			}
+		} else {
+			WP_CLI::log( '  — skipped  about_hero_image (pass --hero-attachment-id to set)' );
+		}
+
+		$seeded = 0;
+		foreach ( $data as $field_name => $value ) {
+			if ( ! $force ) {
+				$current = get_field( $field_name, $post_id );
+				if ( $this->about_field_has_value( $current ) ) {
+					WP_CLI::log( sprintf( '  — skipped  %s (already has value)', $field_name ) );
+					continue;
+				}
+			}
+
+			$result = update_field( $field_name, $value, $post_id );
+			if ( false !== $result ) {
+				WP_CLI::log( sprintf( '  ✓ seeded   %s', $field_name ) );
+				$seeded++;
+			} else {
+				WP_CLI::warning( sprintf( '  ✗ failed   %s', $field_name ) );
+			}
+		}
+
+		WP_CLI::log( sprintf( '  → %d text field(s) updated.', $seeded ) );
+	}
+
+	/**
+	 * Whether an ACF value counts as “has content” for skip-if-filled logic.
+	 *
+	 * @param mixed $value Raw field value.
+	 * @return bool
+	 */
+	private function about_field_has_value( $value ) {
+		if ( is_array( $value ) ) {
+			return ! empty( $value );
+		}
+		return null !== $value && '' !== trim( (string) $value );
+	}
+
+	/**
+	 * Luxora demo copy for About Us (matches Nera About Us template fields).
+	 *
+	 * @param string $primary_url   Primary CTA URL.
+	 * @param string $secondary_url Secondary CTA URL.
+	 * @return array<string, mixed>
+	 */
+	private function about_field_data( $primary_url, $secondary_url ) {
+		$narrative = implode(
+			'',
+			[
+				'<h2>' . esc_html__( 'Some competitions give you a ticket, Luxora gives you a standard.', 'nera-competitions' ) . '</h2>',
+				'<p>' . esc_html__( 'There\'s a version of this industry built on volume, noise, and prizes that look better in photos than they do in person. Luxora isn\'t that. We exist for people who expect more — from the brands they buy, the experiences they seek out, and yes, the competitions they enter. Every draw we run is chosen with the same eye for quality that our members bring to everything else in their lives.', 'nera-competitions' ) . '</p>',
+				'<h2>' . esc_html__( 'Curated for those who notice the difference', 'nera-competitions' ) . '</h2>',
+				'<p>' . esc_html__( 'We don\'t list prizes for the sake of filling a page. Every competition on Luxora is hand-selected — genuine luxury goods, premium tech, and meaningful cash prizes that are actually worth winning. If it doesn\'t meet our standard, it doesn\'t go live. Simple. Our draws are run with complete transparency. Winners are selected through certified randomization, publicly announced, and contacted directly. Because people who value quality also value integrity.', 'nera-competitions' ) . '</p>',
+				'<h2>' . esc_html__( 'A community built around living well', 'nera-competitions' ) . '</h2>',
+				'<p>' . esc_html__( 'Luxora is more than a competition platform. It\'s a space for people who believe life is worth doing properly — who choose quality over quantity, experience over excess, and who want to feel part of something that reflects that. When you enter a Luxora draw, you\'re not just buying a ticket. You\'re joining a community of people who think the same way.', 'nera-competitions' ) . '</p>',
+			]
+		);
+
+		return [
+			'about_hero_eyebrow'   => __( 'THE STORY BEHIND LUXORA', 'nera-competitions' ),
+			'about_title'          => __( 'You Don\'t Enter Luxora. You Join It.', 'nera-competitions' ),
+			'about_hero_tagline'   => __( 'A curated community of prize draws built around quality, transparency, and living well.', 'nera-competitions' ),
+			'about_narrative'      => $narrative,
+			'about_story_left_title'   => __( 'Our Promise', 'nera-competitions' ),
+			'about_story_left_content' => '<p>' . esc_html__( 'Certified draws every time. Wins or cash — the choice is always yours. No ambiguity, no small print surprises. Ever.', 'nera-competitions' ) . '</p>',
+			'about_story_right_title'   => __( 'Our Standard', 'nera-competitions' ),
+			'about_story_right_content' => '<p>' . esc_html__( 'Every prize is handpicked for quality. Every draw is verified and publicly announced. This is what a competition platform should look like.', 'nera-competitions' ) . '</p>',
+			'about_cta_heading'     => __( 'Join Our Community', 'nera-competitions' ),
+			'about_cta_description'   => __( 'Be a part of a transparent, supportive, and exciting journey where everyone has a chance to change their life.', 'nera-competitions' ),
+			'about_cta_primary_btn_text'   => __( 'Explore Competitions', 'nera-competitions' ),
+			'about_cta_primary_btn_url'    => $primary_url,
+			'about_cta_secondary_btn_text' => __( 'Get in Touch', 'nera-competitions' ),
+			'about_cta_secondary_btn_url'  => $secondary_url,
+		];
 	}
 
 	/**

@@ -565,6 +565,9 @@ require_once get_template_directory() . '/inc/acf-single-product.php';
 // ACF Contact Page Fields
 require_once get_template_directory() . '/inc/acf-contact.php';
 
+// ACF About Us Page Fields
+require_once get_template_directory() . '/inc/acf-about-us.php';
+
 // ACF How It Works Page Fields
 require_once get_template_directory() . '/inc/acf-how-it-works.php';
 

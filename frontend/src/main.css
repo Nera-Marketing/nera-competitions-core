@@ -1923,6 +1923,17 @@ a.text-text-primary,
   @apply !text-text-primary;
 }
 
+/* Win over rule above when a link is both inside .text-text-primary and styled as primary (e.g. About Us CTA) */
+body .text-text-primary a.text-white,
+body .text-text-primary a.bg-primary {
+  @apply !text-white !no-underline;
+}
+
+body .text-text-primary a.text-white:hover,
+body .text-text-primary a.bg-primary:hover {
+  @apply !text-white !no-underline;
+}
+
 body a.text-text-secondary,
 body .text-text-secondary a:not(.wp-block-social-link-anchor),
 a.text-text-secondary,
