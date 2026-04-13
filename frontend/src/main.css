@@ -1353,6 +1353,48 @@ button:focus-visible {
   @apply -rotate-90;
 }
 
+/* --- Header: 2-level primary menu (desktop dropdown + mobile accordion) --- */
+/* Invisible hover bridge so moving pointer from top link to panel does not close dropdown */
+#site-header nav .menu-item-has-children.group::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 100%;
+  height: 0.5rem;
+}
+
+#site-header nav .sub-menu .menu-item {
+  list-style: none;
+}
+
+/* Submenu links: explicit default + hover (beats global `a` / `a:hover` in this scope) */
+#site-header nav .sub-menu a {
+  @apply text-text-secondary no-underline transition-colors;
+}
+
+#site-header nav .sub-menu .current-menu-item > a {
+  @apply font-semibold text-primary;
+}
+
+#site-header nav .sub-menu a:hover {
+  @apply text-primary;
+}
+
+#site-header nav .sub-menu a:focus-visible {
+  @apply outline outline-2 outline-offset-2 outline-primary;
+}
+
+#mobile-menu .nera-mobile-submenu-toggle[aria-expanded='true'] .nera-mobile-submenu-chevron {
+  transform: rotate(180deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #mobile-menu .nera-mobile-submenu-chevron {
+    transition: none;
+  }
+}
+
 /* --- Single Product Tab States --- */
 
 .tab-btn.active {

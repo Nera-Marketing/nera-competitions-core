@@ -37,7 +37,7 @@ if (empty($cta_primary_url)) {
 $cta_secondary_logged_in_url = function_exists('wc_get_account_endpoint_url') ? wc_get_account_endpoint_url('dashboard') : home_url('/my-account/');
 ?>
 
-<header class="sticky top-0 z-50 bg-surface/95 backdrop-blur-sm border-b border-gray-100 shadow-sm" id="site-header">
+<header class="sticky top-0 z-50 overflow-visible bg-surface/95 backdrop-blur-sm border-b border-gray-100 shadow-sm" id="site-header">
   <div class="max-w-7xl mx-auto px-4 lg:px-8">
     <nav class="flex items-center justify-between h-16 lg:h-20">
 
@@ -62,18 +62,18 @@ $cta_secondary_logged_in_url = function_exists('wc_get_account_endpoint_url') ? 
       </a>
 
       <!-- Desktop Navigation -->
-      <div class="hidden lg:flex items-center gap-8">
+      <div class="relative hidden lg:flex items-center gap-8 overflow-visible">
         <?php
         if (has_nav_menu('primary-menu')) {
           wp_nav_menu(array(
             'theme_location' => 'primary-menu',
             'container' => false,
-            'menu_class' => 'flex items-center gap-8',
+            'menu_class' => 'flex items-center gap-8 overflow-visible',
             'fallback_cb' => false,
             'items_wrap' => '<ul id="%1$s" class="%2$s">%3$s</ul>',
             'link_before' => '',
             'link_after' => '',
-            'depth' => 1,
+            'depth' => 2,
             'walker' => new Nera_Header_Menu_Walker(),
           ));
         } else {
@@ -196,10 +196,10 @@ $cta_secondary_logged_in_url = function_exists('wc_get_account_endpoint_url') ? 
         wp_nav_menu(array(
           'theme_location' => 'primary-menu',
           'container' => false,
-          'menu_class' => 'space-y-2',
+          'menu_class' => 'space-y-2 nera-mobile-primary-nav',
           'fallback_cb' => false,
           'items_wrap' => '<ul id="%1$s" class="%2$s">%3$s</ul>',
-          'depth' => 1,
+          'depth' => 2,
           'walker' => new Nera_Mobile_Menu_Walker(),
         ));
       } else {
@@ -341,7 +341,29 @@ $cta_secondary_logged_in_url = function_exists('wc_get_account_endpoint_url') ? 
         }
       });
 
-      // Close menu when clicking a link
+      // Mobile: expand/collapse second-level submenu (delegated)
+      menu.addEventListener('click', function (e) {
+        const btn = e.target.closest('.nera-mobile-submenu-toggle');
+        if (!btn || !menu.contains(btn)) {
+          return;
+        }
+        e.preventDefault();
+        const subId = btn.getAttribute('aria-controls');
+        const sub = subId ? document.getElementById(subId) : null;
+        if (!sub) {
+          return;
+        }
+        const expanded = btn.getAttribute('aria-expanded') === 'true';
+        btn.setAttribute('aria-expanded', expanded ? 'false' : 'true');
+        sub.classList.toggle('hidden', expanded);
+        if (expanded) {
+          sub.setAttribute('hidden', '');
+        } else {
+          sub.removeAttribute('hidden');
+        }
+      });
+
+      // Close menu when clicking a navigational link (not submenu toggles)
       menu.querySelectorAll('a').forEach(function (link) {
         link.addEventListener('click', function () {
           if (isAnimating) return;
