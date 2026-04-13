@@ -24,6 +24,13 @@ if (!$product || !is_a($product, 'WC_Product')) {
   return;
 }
 
+/**
+ * CTA mode:
+ * - 'ajax' (default): Buy Tickets uses AJAX add-to-cart (listing/grid pages).
+ * - 'link': Buy Tickets is a permalink link (e.g. related competitions on single product).
+ */
+$cta_mode = isset($args['cta_mode']) && $args['cta_mode'] === 'link' ? 'link' : 'ajax';
+
 $product_id = $product->get_id();
 $image_id = $product->get_image_id();
 $price = $product->get_price();
@@ -200,11 +207,23 @@ if ($is_sold_out) {
           <span class="font-bold text-primary ml-1"><?php echo wc_price($price); ?></span>
         </div>
 
-        <button type="button"
-          class="add-to-cart-btn inline-flex items-center gap-2 bg-primary hover:bg-primary-dark text-white text-sm font-bold px-5 py-2.5 rounded-xl shadow-primary hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300"
-          data-product-id="<?php echo esc_attr($product_id); ?>" data-quantity="1">
-          <?php _e('Buy Tickets', 'nera-competitions'); ?>
-        </button>
+        <?php
+        $cta_classes =
+          'inline-flex items-center gap-2 bg-primary hover:bg-primary-dark text-white text-sm font-bold px-5 py-2.5 rounded-xl shadow-primary hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300';
+        if ($cta_mode === 'link'): ?>
+          <a
+            href="<?php echo esc_url($permalink); ?>"
+            class="<?php echo esc_attr($cta_classes); ?> no-underline"
+          >
+            <?php _e('Buy Tickets', 'nera-competitions'); ?>
+          </a>
+        <?php else: ?>
+          <button type="button"
+            class="add-to-cart-btn <?php echo esc_attr($cta_classes); ?>"
+            data-product-id="<?php echo esc_attr($product_id); ?>" data-quantity="1">
+            <?php _e('Buy Tickets', 'nera-competitions'); ?>
+          </button>
+        <?php endif; ?>
       </div>
     </div>
   </div>

@@ -51,6 +51,7 @@ if (empty($section_title)) {
       // Use the existing product card template
       get_template_part('template-parts/product-listing/product-card', null, [
         'product' => $related_product,
+        'cta_mode' => 'link',
       ]);
     } ?>
   </div>
