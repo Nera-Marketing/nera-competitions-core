@@ -223,29 +223,32 @@ do_action('woocommerce_before_account_orders', $has_orders);
     <?php do_action('woocommerce_before_account_orders_pagination'); ?>
 
     <?php if (1 < $customer_orders->max_num_pages): ?>
-      <div class="woocommerce-pagination woocommerce-pagination--without-numbers woocommerce-Pagination mt-8 flex items-center justify-center gap-3">
-        <?php if (1 !== $customer_orders->current_page): ?>
-          <a class="woocommerce-button woocommerce-button--previous woocommerce-Button woocommerce-Button--previous button inline-flex items-center gap-2 px-6 py-3 bg-surface border-2 border-gray-200 text-gray-700 font-semibold rounded-xl hover:border-primary hover:text-primary transition-all" 
+      <nav
+        class="woocommerce-pagination woocommerce-pagination--without-numbers woocommerce-Pagination mt-8 flex flex-wrap items-center justify-center gap-3 sm:gap-4"
+        aria-label="<?php esc_attr_e('Orders list pages', 'nera-competitions-standard'); ?>"
+      >
+        <?php if (1 !== $current_page): ?>
+          <a class="woocommerce-button woocommerce-button--previous woocommerce-Button woocommerce-Button--previous button !inline-flex !items-center !justify-center !gap-2 !min-h-12 !px-6 !py-3 !rounded-xl !font-semibold !border-2 !border-gray-200 !bg-surface !text-gray-800 !shadow-sm !transition-all hover:!border-primary hover:!text-primary hover:!shadow-md" 
              href="<?php echo esc_url(
-               wc_get_endpoint_url('orders', $customer_orders->current_page - 1),
+               wc_get_endpoint_url('orders', $current_page - 1),
              ); ?>">
-            <span class="material-symbols-outlined text-base">arrow_back</span>
+            <span class="material-symbols-outlined text-base !text-gray-800" aria-hidden="true">arrow_back</span>
             <?php esc_html_e('Previous', 'woocommerce'); ?>
           </a>
         <?php endif; ?>
 
         <?php if (
-          intval($customer_orders->current_page) !== intval($customer_orders->max_num_pages)
+          intval($current_page) !== intval($customer_orders->max_num_pages)
         ): ?>
-          <a class="woocommerce-button woocommerce-button--next woocommerce-Button woocommerce-Button--next button inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-primary to-indigo-600 text-white font-semibold rounded-xl hover:opacity-90 transition-all shadow-sm hover:shadow-md" 
+          <a class="woocommerce-button woocommerce-button--next woocommerce-Button woocommerce-Button--next button !inline-flex !items-center !justify-center !gap-2 !min-h-12 !px-6 !py-3 !rounded-xl !font-semibold !text-white !shadow-md !transition-all !bg-gradient-to-r !from-primary !to-indigo-600 hover:!opacity-95 hover:!shadow-lg" 
              href="<?php echo esc_url(
-               wc_get_endpoint_url('orders', $customer_orders->current_page + 1),
+               wc_get_endpoint_url('orders', $current_page + 1),
              ); ?>">
             <?php esc_html_e('Next', 'woocommerce'); ?>
-            <span class="material-symbols-outlined text-base">arrow_forward</span>
+            <span class="material-symbols-outlined text-base !text-white" aria-hidden="true">arrow_forward</span>
           </a>
         <?php endif; ?>
-      </div>
+      </nav>
     <?php endif; ?>
 
   <?php else: ?>

@@ -1806,3 +1806,114 @@ add_action('template_redirect', function () {
     exit;
   }
 });
+
+/**
+ * Self-service permanent account deletion from Edit Account (danger zone form).
+ *
+ * Verifies nonce and that the user only deletes their own account. Does not rely on
+ * `delete_users` capability (customers typically lack it).
+ */
+function nera_handle_deactivate_account_request()
+{
+  if (!isset($_POST['action']) || $_POST['action'] !== 'nera_deactivate_account') {
+    return;
+  }
+
+  if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') {
+    return;
+  }
+
+  if (!is_user_logged_in()) {
+    return;
+  }
+
+  $nonce = isset($_POST['nera-deactivate-account-nonce'])
+    ? sanitize_text_field(wp_unslash($_POST['nera-deactivate-account-nonce']))
+    : '';
+
+  if (!$nonce || !wp_verify_nonce($nonce, 'nera_deactivate_account')) {
+    wc_add_notice(
+      __('Security check failed. Please try again.', 'nera-competitions-standard'),
+      'error',
+    );
+    wp_safe_redirect(wc_get_account_endpoint_url('edit-account'));
+    exit;
+  }
+
+  $user_id = get_current_user_id();
+  $posted_id = isset($_POST['nera_deactivate_user_id']) ? absint($_POST['nera_deactivate_user_id']) : 0;
+
+  if ($posted_id !== $user_id || $user_id < 1) {
+    wc_add_notice(__('Invalid request.', 'nera-competitions-standard'), 'error');
+    wp_safe_redirect(wc_get_account_endpoint_url('edit-account'));
+    exit;
+  }
+
+  /** @var WP_User $current */
+  $current = wp_get_current_user();
+  if ($current && $current->exists() && in_array('administrator', (array) $current->roles, true)) {
+    wc_add_notice(
+      __(
+        'Administrator accounts cannot be deleted from this page. Please contact the site owner.',
+        'nera-competitions-standard',
+      ),
+      'error',
+    );
+    wp_safe_redirect(wc_get_account_endpoint_url('edit-account'));
+    exit;
+  }
+
+  if ((int) $user_id === 1) {
+    wc_add_notice(
+      __('This account cannot be deleted from here.', 'nera-competitions-standard'),
+      'error',
+    );
+    wp_safe_redirect(wc_get_account_endpoint_url('edit-account'));
+    exit;
+  }
+
+  require_once ABSPATH . 'wp-admin/includes/user.php';
+
+  $deleted = wp_delete_user($user_id);
+
+  if (!$deleted) {
+    wc_add_notice(
+      __('We could not delete your account. Please contact support.', 'nera-competitions-standard'),
+      'error',
+    );
+    wp_safe_redirect(wc_get_account_endpoint_url('edit-account'));
+    exit;
+  }
+
+  wp_clear_auth_cookie();
+  wp_set_current_user(0);
+
+  wp_safe_redirect(add_query_arg('nera_account_closed', '1', home_url('/')));
+  exit;
+}
+add_action('template_redirect', 'nera_handle_deactivate_account_request', 0);
+
+/**
+ * One-time success notice after account deletion (guest landing with query flag).
+ */
+function nera_account_closed_flash_notice()
+{
+  if (!isset($_GET['nera_account_closed']) || (string) $_GET['nera_account_closed'] !== '1') {
+    return;
+  }
+
+  if (is_user_logged_in()) {
+    return;
+  }
+
+  if (function_exists('wc_add_notice')) {
+    wc_add_notice(
+      __('Your account has been permanently deleted.', 'nera-competitions-standard'),
+      'success',
+    );
+  }
+
+  wp_safe_redirect(home_url('/'));
+  exit;
+}
+add_action('template_redirect', 'nera_account_closed_flash_notice', 1);
