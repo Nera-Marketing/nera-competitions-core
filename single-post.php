@@ -41,15 +41,15 @@ get_header();
         <article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
 
             <?php if (has_post_thumbnail()): ?>
-                <section class="relative min-h-[min(28rem,70vh)] w-full overflow-hidden" aria-label="<?php esc_attr_e('Post header', 'nera-competitions'); ?>">
-                    <div class="absolute inset-0">
+                <section class="relative flex min-h-[min(32rem,75svh)] w-full flex-col overflow-hidden md:min-h-[min(36rem,78vh)]" aria-label="<?php esc_attr_e('Post header', 'nera-competitions'); ?>">
+                    <div class="absolute inset-0 z-0">
                         <?php the_post_thumbnail('full', [
-                          'class' => 'h-full w-full object-cover',
+                          'class' => 'min-h-full w-full max-h-none object-cover !h-full',
                         ]); ?>
                     </div>
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/45 to-black/25" aria-hidden="true"></div>
+                    <div class="absolute inset-0 z-[1] bg-gradient-to-t from-black/80 via-black/45 to-black/25" aria-hidden="true"></div>
 
-                    <div class="relative z-10 flex min-h-[min(32rem,70vh)] flex-col justify-end">
+                    <div class="relative z-10 flex flex-1 flex-col justify-end">
                         <div class="container mx-auto max-w-7xl px-4 pb-10 pt-24 md:pb-14 md:pt-32">
                             <div class="max-w-3xl">
                                 <p class="mb-4 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs font-medium uppercase tracking-wide text-white/90">
