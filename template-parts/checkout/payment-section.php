@@ -88,11 +88,11 @@ if (!defined('ABSPATH')) {
       </div>
 
       <!-- Place Order Button -->
-      <div class="w-full md:w-auto shrink-0">
+      <div class="w-full shrink-0">
         <?php echo apply_filters(
           'woocommerce_order_button_html',
           '<button type="submit"
-        class="nera-place-order-btn btn-checkout relative overflow-hidden !w-full md:!w-auto md:min-w-[220px]"
+        class="nera-place-order-btn btn-checkout relative overflow-hidden !w-full"
         name="woocommerce_checkout_place_order"
         id="place_order"
         value="' .
