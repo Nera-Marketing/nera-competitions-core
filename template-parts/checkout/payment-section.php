@@ -54,9 +54,9 @@ if (!defined('ABSPATH')) {
   </div>
 
   <div class="pt-6">
-    <div class="flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
+    <div class="flex flex-col gap-5">
       <!-- Terms & Conditions -->
-      <div class="flex-1 w-full md:w-auto">
+      <div class="w-full">
       <?php do_action('woocommerce_checkout_before_terms_and_conditions'); ?>
 
       <?php
