@@ -568,6 +568,9 @@ require_once get_template_directory() . '/inc/acf-contact.php';
 // ACF About Us Page Fields
 require_once get_template_directory() . '/inc/acf-about-us.php';
 
+// How It Works hero defaults (shared by template + ACF merge)
+require_once get_template_directory() . '/inc/how-it-works-defaults.php';
+
 // ACF How It Works Page Fields
 require_once get_template_directory() . '/inc/acf-how-it-works.php';
 
@@ -588,11 +591,6 @@ require_once get_template_directory() . '/inc/acf-winners.php';
 
 // ACF Attribution Page Fields
 require_once get_template_directory() . '/inc/acf-attribution.php';
-
-// WP-CLI: Seed attribution page data
-if ( defined( 'WP_CLI' ) && WP_CLI ) {
-	require_once get_template_directory() . '/inc/cli-seed-attribution.php';
-}
 
 // Winners dataset helpers for server rendering
 require_once get_template_directory() . '/inc/winners-dataset.php';

@@ -20,6 +20,39 @@ $hero_subtitle =
   __('Win your dream prizes in just 4 simple steps', 'nera-competitions');
 $hero_badge = get_field('hiw_hero_badge') ?: __('Simple & Fair', 'nera-competitions');
 
+$acf_hero_steps = get_field('hiw_hero_steps');
+$hero_steps = nera_get_hiw_merged_hero_steps($acf_hero_steps);
+
+$hero_cta_button_text = __('Start Winning Today', 'nera-competitions');
+$hero_cta_url = '';
+if (function_exists('wc_get_page_id')) {
+  $hero_cta_url = (string) get_permalink(wc_get_page_id('shop'));
+}
+if ($hero_cta_url === '') {
+  $hero_cta_url = home_url('/');
+}
+$hero_cta_target = '';
+
+$hiw_cta_button_link = get_field('hiw_cta_button_link');
+if (is_array($hiw_cta_button_link) && !empty($hiw_cta_button_link['url'])) {
+  $parsed_cta_url = esc_url_raw($hiw_cta_button_link['url']);
+  if ($parsed_cta_url !== '') {
+    $hero_cta_url = $parsed_cta_url;
+  }
+  if (!empty($hiw_cta_button_link['title'])) {
+    $hero_cta_button_text = $hiw_cta_button_link['title'];
+  }
+  if (!empty($hiw_cta_button_link['target']) && $hiw_cta_button_link['target'] === '_blank') {
+    $hero_cta_target = '_blank';
+  }
+}
+
+$hiw_cta_footer_text = get_field('hiw_cta_footer_text');
+$hero_cta_footer_text =
+  $hiw_cta_footer_text !== null && $hiw_cta_footer_text !== ''
+    ? $hiw_cta_footer_text
+    : __('Join thousands of winners • New competitions added daily', 'nera-competitions');
+
 $draw_title = get_field('hiw_draw_title') ?: __('The Draw Process', 'nera-competitions');
 $draw_content = get_field('hiw_draw_content');
 $draw_image = get_field('hiw_draw_image');
@@ -137,6 +170,11 @@ if (!empty($acf_trans_features) && is_array($acf_trans_features)) {
     'title' => $hero_title,
     'subtitle' => $hero_subtitle,
     'badge' => $hero_badge,
+    'steps' => $hero_steps,
+    'cta_button_text' => $hero_cta_button_text,
+    'cta_url' => $hero_cta_url,
+    'cta_target' => $hero_cta_target,
+    'cta_footer_text' => $hero_cta_footer_text,
   ]);
   ?>
 
