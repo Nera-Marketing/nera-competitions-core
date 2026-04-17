@@ -71,7 +71,7 @@ $notes = $order->get_customer_order_notes();
             ? $status_colors[$status]
             : 'bg-gray-500 text-white';
           ?>
-          <span class="px-4 py-2 rounded-xl font-bold <?php echo esc_attr(
+          <span class="ncs-order-status ncs-order-status--<?php echo esc_attr($status); ?> px-4 py-2 rounded-xl font-bold <?php echo esc_attr(
             $status_class,
           ); ?> inline-flex items-center gap-2 justify-center md:justify-start">
             <span class="material-symbols-outlined text-xl">info</span>

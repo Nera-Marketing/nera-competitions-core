@@ -36,7 +36,7 @@ $last_winner_prize = get_field('last_winner_prize') ?: 'Won This Prize';
 ?>
 
 <section
-  class="hero-section relative py-16 lg:py-24 bg-gradient-to-br from-white via-gray-50 to-secondary overflow-hidden"
+  class="ncs-hero hero-section relative py-16 lg:py-24 bg-gradient-to-br from-white via-gray-50 to-secondary overflow-hidden"
   id="hero" data-aos="fade-up" data-aos-duration="600">
 
   <div class="max-w-7xl mx-auto px-5 sm:px-6 lg:px-8">
@@ -53,7 +53,7 @@ $last_winner_prize = get_field('last_winner_prize') ?: 'Won This Prize';
         </span>
 
         <!-- Title -->
-        <h1 class="font-heading text-4xl md:text-5xl lg:text-6xl font-bold text-text-primary leading-tight mb-6">
+        <h1 class="ncs-hero__title font-heading text-4xl md:text-5xl lg:text-6xl font-bold text-text-primary leading-tight mb-6">
           <?php echo esc_html($hero_title); ?>
           <br>
           <span class="text-gradient-primary">
@@ -67,7 +67,7 @@ $last_winner_prize = get_field('last_winner_prize') ?: 'Won This Prize';
         </p>
 
         <!-- CTA Buttons -->
-        <div class="flex flex-wrap gap-4 mb-8">
+        <div class="ncs-hero__cta flex flex-wrap gap-4 mb-8">
           <a href="<?php echo esc_url($hero_cta_url); ?>"
             class="inline-flex items-center gap-2 px-8 py-4 bg-gradient-primary text-white font-semibold rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all">
             <?php echo esc_html($hero_cta_text); ?>

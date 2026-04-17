@@ -65,7 +65,7 @@ $thumbnail = $product->get_image([280, 280], ['class' => 'w-full h-full object-c
 $answers = isset($cart_item['lty_lottery']['answers']) ? $cart_item['lty_lottery']['answers'] : '';
 ?>
 
-<div class="nera-cart-item relative"
+<div class="ncs-cart-item relative"
   id="cart-item-<?php echo esc_attr($cart_item_key); ?>"
   data-cart-item-key="<?php echo esc_attr($cart_item_key); ?>"
   data-product-id="<?php echo esc_attr($product_id); ?>">

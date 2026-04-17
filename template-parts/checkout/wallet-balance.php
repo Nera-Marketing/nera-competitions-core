@@ -48,7 +48,7 @@ $wallet_partial_enabled = 'on' === woo_wallet()->settings_api->get_option(
 );
 ?>
 
-<div class="nera-wallet-balance bg-gradient-to-br from-primary/5 to-secondary rounded-2xl border-2 border-primary/20 shadow-sm p-6 mb-6 hover:shadow-md hover:border-primary/30 transition-all duration-300">
+<div class="ncs-wallet-balance bg-gradient-to-br from-primary/5 to-secondary rounded-2xl border-2 border-primary/20 shadow-sm p-6 mb-6 hover:shadow-md hover:border-primary/30 transition-all duration-300">
   
   <!-- Header -->
   <div class="flex items-center justify-between mb-4">

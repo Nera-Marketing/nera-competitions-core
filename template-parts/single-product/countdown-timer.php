@@ -33,7 +33,7 @@ $is_expired = isset($countdown['expired']) && $countdown['expired'];
 $urgent_class = $is_urgent ? 'countdown--urgent' : '';
 ?>
 
-<div class="countdown-section">
+<div class="ncs-countdown countdown-section">
   <div class="flex items-center justify-between mb-3">
     <span class="text-sm font-semibold text-text-secondary uppercase tracking-wide">
       <?php _e('Competition Ends In', 'nera-competitions'); ?>

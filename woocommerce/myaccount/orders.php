@@ -96,7 +96,7 @@ do_action('woocommerce_before_account_orders', $has_orders);
               </div>
             </div>
             
-            <span class="px-3 py-1.5 text-sm font-semibold rounded-full border inline-flex items-center gap-1.5 <?php echo esc_attr(
+            <span class="ncs-order-status ncs-order-status--<?php echo esc_attr($order_status); ?> px-3 py-1.5 text-sm font-semibold rounded-full border inline-flex items-center gap-1.5 <?php echo esc_attr(
               $status_class,
             ); ?>">
               <span class="material-symbols-outlined text-base"><?php echo esc_html(

@@ -113,7 +113,7 @@ if ($is_sold_out) {
 ?>
 
 <article
-  class="group bg-surface rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100"
+  class="ncs-product-card group bg-surface rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100"
   data-product-id="<?php echo esc_attr($product_id); ?>"
   data-category="<?php echo esc_attr(
     implode(' ', wp_get_post_terms($product_id, 'product_cat', ['fields' => 'slugs'])),
@@ -160,7 +160,7 @@ if ($is_sold_out) {
   <!-- Product Content -->
   <div class="p-6">
     <!-- Title -->
-    <h3 class="text-lg font-bold text-text-primary mb-4 line-clamp-2">
+    <h3 class="ncs-product-card__title text-lg font-bold text-text-primary mb-4 line-clamp-2">
       <a href="<?php echo esc_url($permalink); ?>" class="hover:text-primary transition-colors">
         <?php echo esc_html($title); ?>
       </a>
@@ -204,7 +204,7 @@ if ($is_sold_out) {
       <div class="flex items-center justify-between pt-2">
         <div class="text-sm">
           <span class="text-text-secondary"><?php _e('Entry:', 'nera-competitions'); ?></span>
-          <span class="font-bold text-primary ml-1"><?php echo wc_price($price); ?></span>
+          <span class="ncs-product-card__price font-bold text-primary ml-1"><?php echo wc_price($price); ?></span>
         </div>
 
         <?php

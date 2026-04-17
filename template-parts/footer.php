@@ -24,7 +24,7 @@ $twitter_url = get_theme_mod('nera_twitter_url', '#');
 $youtube_url = get_theme_mod('nera_youtube_url', '#');
 ?>
 
-<footer class="bg-surface border-t border-gray-200" id="site-footer">
+<footer class="ncs-site-footer bg-surface border-t border-gray-200" id="site-footer">
 
   <!-- Main Footer -->
   <div class="max-w-7xl mx-auto px-4 lg:px-8 py-12 lg:py-16 text-text-secondary">

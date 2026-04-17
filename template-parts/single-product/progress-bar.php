@@ -32,7 +32,7 @@ $is_almost_sold_out = $progress >= 90;
 $is_low_stock = $remaining <= 50 && $remaining > 0;
 ?>
 
-<div class="progress-section">
+<div class="ncs-progress progress-section">
   <div class="flex items-center justify-between mb-2">
     <div class="flex items-center gap-2">
       <?php if ($is_low_stock): ?>
@@ -59,7 +59,7 @@ $is_low_stock = $remaining <= 50 && $remaining > 0;
 
   <div class="progress-bar-wrapper h-3 w-full bg-gray-200 rounded-full overflow-hidden">
     <div
-      class="progress-bar-fill h-full rounded-full transition-all duration-1000 ease-out <?php echo $is_almost_sold_out
+      class="ncs-progress__fill progress-bar-fill h-full rounded-full transition-all duration-1000 ease-out <?php echo $is_almost_sold_out
         ? 'bg-gradient-to-r from-danger to-warning'
         : 'bg-gradient-to-r from-primary to-primary'; ?>"
       style="width: 0%;"

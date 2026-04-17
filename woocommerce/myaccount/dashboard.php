@@ -35,7 +35,7 @@ $total_orders = count(
 <div class="nera-account-dashboard">
   
   <!-- Welcome Hero Card -->
-  <div class="bg-gradient-to-br from-primary via-primary to-primary-dark rounded-2xl shadow-[0_20px_25px_-5px_rgba(99,102,241,0.3)] p-5 sm:p-8 mb-8 relative overflow-hidden">
+  <div class="ncs-dashboard-welcome bg-gradient-to-br from-primary via-primary to-primary-dark rounded-2xl shadow-[0_20px_25px_-5px_rgba(99,102,241,0.3)] p-5 sm:p-8 mb-8 relative overflow-hidden">
     <!-- Decorative background pattern -->
     <div class="absolute inset-0 opacity-10">
       <div class="absolute top-0 right-0 w-64 h-64 bg-surface rounded-full blur-3xl transform translate-x-1/2 -translate-y-1/2"></div>
@@ -68,9 +68,9 @@ $total_orders = count(
   <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
     
     <!-- Total Orders Card -->
-    <div class="bg-surface rounded-2xl border border-gray-100 shadow-sm p-6 hover:shadow-md transition-shadow">
+    <div class="ncs-stat-card bg-surface rounded-2xl border border-gray-100 shadow-sm p-6 hover:shadow-md transition-shadow">
       <div class="flex items-center justify-between mb-4">
-        <div class="w-12 h-12 bg-gradient-to-br from-primary to-primary rounded-xl flex items-center justify-center">
+        <div class="ncs-stat-card__icon w-12 h-12 bg-gradient-to-br from-primary to-primary rounded-xl flex items-center justify-center">
           <span class="material-symbols-outlined text-white text-2xl">receipt_long</span>
         </div>
         <span class="text-3xl font-bold text-gray-900"><?php echo esc_html($total_orders); ?></span>
@@ -85,9 +85,9 @@ $total_orders = count(
 
     <!-- Wallet Balance Card -->
     <?php if (function_exists('woo_wallet')): ?>
-    <div class="bg-surface rounded-2xl border border-gray-100 shadow-sm p-6 hover:shadow-md transition-shadow">
+    <div class="ncs-stat-card bg-surface rounded-2xl border border-gray-100 shadow-sm p-6 hover:shadow-md transition-shadow">
       <div class="flex items-center justify-between mb-4">
-        <div class="w-12 h-12 bg-gradient-to-br from-success to-success rounded-xl flex items-center justify-center">
+        <div class="ncs-stat-card__icon w-12 h-12 bg-gradient-to-br from-success to-success rounded-xl flex items-center justify-center">
           <span class="material-symbols-outlined text-white text-2xl">account_balance_wallet</span>
         </div>
         <span class="text-3xl font-bold text-gray-900"><?php echo wc_price(
@@ -104,9 +104,9 @@ $total_orders = count(
     <?php endif; ?>
 
     <!-- Account Status Card -->
-    <div class="bg-surface rounded-2xl border border-gray-100 shadow-sm p-6 hover:shadow-md transition-shadow">
+    <div class="ncs-stat-card bg-surface rounded-2xl border border-gray-100 shadow-sm p-6 hover:shadow-md transition-shadow">
       <div class="flex items-center justify-between mb-4">
-        <div class="w-12 h-12 bg-gradient-to-br from-accent to-accent rounded-xl flex items-center justify-center">
+        <div class="ncs-stat-card__icon w-12 h-12 bg-gradient-to-br from-accent to-accent rounded-xl flex items-center justify-center">
           <span class="material-symbols-outlined text-white text-2xl">verified_user</span>
         </div>
         <span class="text-sm font-semibold text-success bg-success-bg px-3 py-1 rounded-full">Active</span>
