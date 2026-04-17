@@ -85,8 +85,8 @@ $is_manual_ticket = method_exists($product, 'is_manual_ticket') ? $product->is_m
             <?php _e('Competition Closed', 'nera-competitions'); ?>
           </span>
         <?php else: ?>
-          <span class="material-symbols-outlined text-red-500 text-lg">schedule</span>
-          <span class="text-xs font-bold text-red-500 uppercase tracking-wider">
+          <span class="material-symbols-outlined text-danger text-lg">schedule</span>
+          <span class="text-xs font-bold text-danger uppercase tracking-wider">
             <?php _e('Closes In', 'nera-competitions'); ?>
           </span>
         <?php endif; ?>
@@ -243,7 +243,7 @@ $is_manual_ticket = method_exists($product, 'is_manual_ticket') ? $product->is_m
 
       <!-- Low Stock Warning -->
       <?php if ($is_low_stock): ?>
-        <div class="mt-2 flex items-center gap-1 text-orange-500 text-sm">
+        <div class="mt-2 flex items-center gap-1 text-warning text-sm">
           <span class="material-symbols-outlined text-base">local_fire_department</span>
           <span>
             <?php printf(
@@ -503,12 +503,12 @@ $is_manual_ticket = method_exists($product, 'is_manual_ticket') ? $product->is_m
           <?php if ($has_qa && $qa_can_display && !empty($questions)): ?>
             <!-- Skill Challenge Section -->
             <!-- Q&A configured and can display -->
-            <div class="bg-slate-50 rounded-xl p-6 skill-challenge-wrapper border border-slate-100">
+            <div class="bg-background-light rounded-xl p-6 skill-challenge-wrapper border border-gray-100">
               <div class="flex items-center gap-3 mb-4">
                 <div class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary">
                   <span class="material-symbols-outlined text-xl">psychology</span>
                 </div>
-                <h4 class="font-bold text-slate-800 uppercase text-sm tracking-wide">
+                <h4 class="font-bold text-gray-800 uppercase text-sm tracking-wide">
                   <?php _e('Question Answers', 'nera-competitions'); ?>
                 </h4>
               </div>
@@ -517,7 +517,7 @@ $is_manual_ticket = method_exists($product, 'is_manual_ticket') ? $product->is_m
             // Manual rendering of Q&A section
             $question = $questions[0]; ?>
               <div class="nera-contest-qa-container mb-5">
-                <div class="nera-contest-question font-medium text-slate-900 text-lg mb-4">
+                <div class="nera-contest-question font-medium text-gray-900 text-lg mb-4">
                   <?php echo esc_html($question['question']); ?>
                 </div>
 
@@ -530,13 +530,13 @@ $is_manual_ticket = method_exists($product, 'is_manual_ticket') ? $product->is_m
                       <div class="flex items-center p-4 bg-surface border-2 rounded-xl transition-all duration-200"
                         :class="selectedAnswer === '<?php echo esc_js(
                           $key,
-                        ); ?>' ? 'border-primary ring-1 ring-primary/20 shadow-sm' : 'border-slate-200 hover:border-primary/50'">
+                        ); ?>' ? 'border-primary ring-1 ring-primary/20 shadow-sm' : 'border-gray-200 hover:border-primary/50'">
                         <!-- Radio Circle -->
                         <div
                           class="w-6 h-6 rounded-full border-2 mr-4 flex items-center justify-center flex-shrink-0 transition-colors"
                           :class="selectedAnswer === '<?php echo esc_js(
                             $key,
-                          ); ?>' ? 'border-primary bg-primary' : 'border-slate-300 group-hover:border-primary/50 bg-surface'">
+                          ); ?>' ? 'border-primary bg-primary' : 'border-gray-300 group-hover:border-primary/50 bg-surface'">
                           <div class="w-2.5 h-2.5 rounded-full bg-surface transition-opacity duration-200"
                             :class="selectedAnswer === '<?php echo esc_js(
                               $key,
@@ -548,7 +548,7 @@ $is_manual_ticket = method_exists($product, 'is_manual_ticket') ? $product->is_m
                         <span class="text-base font-medium"
                           :class="selectedAnswer === '<?php echo esc_js(
                             $key,
-                          ); ?>' ? 'text-slate-900' : 'text-slate-600 group-hover:text-slate-800'">
+                          ); ?>' ? 'text-gray-900' : 'text-gray-600 group-hover:text-gray-800'">
                           <?php echo esc_html($answer['label']); ?>
                         </span>
                       </div>
@@ -626,11 +626,11 @@ $is_manual_ticket = method_exists($product, 'is_manual_ticket') ? $product->is_m
     <div class="px-6 pb-6">
       <div class="flex items-center justify-center gap-6">
         <div class="flex items-center gap-1.5 text-sm text-text-secondary">
-          <span class="material-symbols-outlined text-green-500 text-lg">check_circle</span>
+          <span class="material-symbols-outlined text-success text-lg">check_circle</span>
           <?php _e('Guaranteed Draw', 'nera-competitions'); ?>
         </div>
         <div class="flex items-center gap-1.5 text-sm text-text-secondary">
-          <span class="material-symbols-outlined text-green-500 text-lg">lock</span>
+          <span class="material-symbols-outlined text-success text-lg">lock</span>
           <?php _e('Secure Payment', 'nera-competitions'); ?>
         </div>
       </div>

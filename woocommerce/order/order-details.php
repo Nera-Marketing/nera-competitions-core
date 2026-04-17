@@ -50,7 +50,7 @@ $after_order_details_html = trim((string) ob_get_clean());
 ?>
 
 <?php if ($after_order_details_html !== ''): ?>
-  <div class="w-full mb-6 rounded-2xl border border-primary/25 bg-gradient-to-r from-primary/[0.07] via-indigo-500/[0.06] to-emerald-500/[0.08] p-4 sm:p-6 shadow-[0_20px_45px_-28px_rgba(19,19,236,0.55)] [&>*]:w-full [&>*]:max-w-none [&_a]:inline-flex [&_a]:items-center [&_a]:justify-center [&_a]:gap-2 [&_a]:w-full [&_a]:rounded-xl [&_a]:border [&_a]:border-primary/20 [&_a]:bg-surface/95 [&_a]:px-5 [&_a]:py-3.5 [&_a]:text-[1.05rem] [&_a]:font-extrabold [&_a]:leading-tight [&_a]:text-primary [&_a]:shadow-[0_14px_35px_-24px_rgba(19,19,236,0.75)] [&_a]:transition-all [&_a]:duration-200 [&_a:hover]:-translate-y-0.5 [&_a:hover]:bg-primary [&_a:hover]:text-white [&_a:hover]:shadow-[0_20px_45px_-25px_rgba(19,19,236,0.8)] [&_a:focus-visible]:outline-none [&_a:focus-visible]:ring-2 [&_a:focus-visible]:ring-primary/45 [&_a:focus-visible]:ring-offset-2 sm:[&_a]:w-auto [&_h2]:mb-2 [&_h3]:mb-2 [&_h4]:mb-2 [&_h2]:text-base [&_h3]:text-base [&_h4]:text-base [&_h2]:font-bold [&_h3]:font-bold [&_h4]:font-bold [&_h2]:text-text-primary [&_h3]:text-text-primary [&_h4]:text-text-primary">
+  <div class="w-full mb-6 rounded-2xl border border-primary/25 bg-gradient-to-r from-primary/[0.07] via-primary/[0.06] to-success/[0.08] p-4 sm:p-6 shadow-[0_20px_45px_-28px_rgba(19,19,236,0.55)] [&>*]:w-full [&>*]:max-w-none [&_a]:inline-flex [&_a]:items-center [&_a]:justify-center [&_a]:gap-2 [&_a]:w-full [&_a]:rounded-xl [&_a]:border [&_a]:border-primary/20 [&_a]:bg-surface/95 [&_a]:px-5 [&_a]:py-3.5 [&_a]:text-[1.05rem] [&_a]:font-extrabold [&_a]:leading-tight [&_a]:text-primary [&_a]:shadow-[0_14px_35px_-24px_rgba(19,19,236,0.75)] [&_a]:transition-all [&_a]:duration-200 [&_a:hover]:-translate-y-0.5 [&_a:hover]:bg-primary [&_a:hover]:text-white [&_a:hover]:shadow-[0_20px_45px_-25px_rgba(19,19,236,0.8)] [&_a:focus-visible]:outline-none [&_a:focus-visible]:ring-2 [&_a:focus-visible]:ring-primary/45 [&_a:focus-visible]:ring-offset-2 sm:[&_a]:w-auto [&_h2]:mb-2 [&_h3]:mb-2 [&_h4]:mb-2 [&_h2]:text-base [&_h3]:text-base [&_h4]:text-base [&_h2]:font-bold [&_h3]:font-bold [&_h4]:font-bold [&_h2]:text-text-primary [&_h3]:text-text-primary [&_h4]:text-text-primary">
     <?php echo $after_order_details_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
   </div>
 <?php endif; ?>
@@ -140,7 +140,7 @@ $after_order_details_html = trim((string) ob_get_clean());
                 'inline-flex items-center gap-2 px-4 py-2 rounded-xl font-medium transition-all text-sm';
               $btn_class .=
                 'pay' === $key
-                  ? ' bg-gradient-to-r from-primary to-indigo-600 text-white hover:opacity-90 shadow-sm'
+                  ? ' bg-gradient-to-r from-primary to-primary text-white hover:opacity-90 shadow-sm'
                   : ' bg-gray-100 text-gray-700 hover:bg-gray-200';
               ?>
               <a href="<?php echo esc_url($action['url']); ?>"

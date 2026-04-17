@@ -19,7 +19,7 @@ $quote = $winner['quote'] ?? '';
 $image_url = $winner['image'] ?? '';
 $category = $winner['category'] ?? 'live-draw';
 $category_label = $winner['category_label'] ?? __('Live Draw', 'nera-competitions');
-$category_class = $category === 'instant-win' ? 'bg-purple-600' : 'bg-blue-600';
+$category_class = $category === 'instant-win' ? 'bg-accent' : 'bg-primary';
 ?>
 
 <article class="nera-winner-card group relative h-full flex flex-col bg-surface rounded-xl md:rounded-3xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-500 ease-out border border-gray-100">

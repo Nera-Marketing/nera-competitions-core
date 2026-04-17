@@ -48,7 +48,7 @@ $wallet_partial_enabled = 'on' === woo_wallet()->settings_api->get_option(
 );
 ?>
 
-<div class="nera-wallet-balance bg-gradient-to-br from-primary/5 to-indigo-50 rounded-2xl border-2 border-primary/20 shadow-sm p-6 mb-6 hover:shadow-md hover:border-primary/30 transition-all duration-300">
+<div class="nera-wallet-balance bg-gradient-to-br from-primary/5 to-secondary rounded-2xl border-2 border-primary/20 shadow-sm p-6 mb-6 hover:shadow-md hover:border-primary/30 transition-all duration-300">
   
   <!-- Header -->
   <div class="flex items-center justify-between mb-4">
@@ -129,7 +129,7 @@ $wallet_partial_enabled = 'on' === woo_wallet()->settings_api->get_option(
   <!-- Quick Actions -->
   <div class="flex items-center justify-between text-xs">
     <a href="<?php echo esc_url(wc_get_account_endpoint_url('woo-wallet')); ?>" 
-       class="inline-flex items-center gap-1 text-primary hover:text-indigo-700 font-medium transition-colors">
+       class="inline-flex items-center gap-1 text-primary hover:text-primary-dark font-medium transition-colors">
       <span class="material-symbols-outlined text-sm">history</span>
       <?php esc_html_e('View Transaction History', 'nera-competitions'); ?>
     </a>
@@ -138,7 +138,7 @@ $wallet_partial_enabled = 'on' === woo_wallet()->settings_api->get_option(
       <a href="<?php echo esc_url(
         add_query_arg('action', 'add', wc_get_account_endpoint_url('woo-wallet')),
       ); ?>" 
-         class="inline-flex items-center gap-1 text-primary hover:text-indigo-700 font-medium transition-colors">
+         class="inline-flex items-center gap-1 text-primary hover:text-primary-dark font-medium transition-colors">
         <span class="material-symbols-outlined text-sm">add_circle</span>
         <?php esc_html_e('Top Up Wallet', 'nera-competitions'); ?>
       </a>
@@ -149,13 +149,13 @@ $wallet_partial_enabled = 'on' === woo_wallet()->settings_api->get_option(
   <div class="mt-4 pt-4 border-t border-primary/10">
     <div class="flex items-center justify-center gap-2 text-xs text-text-secondary">
       <?php if ($can_pay_full): ?>
-        <span class="material-symbols-outlined text-sm text-green-500">verified_user</span>
+        <span class="material-symbols-outlined text-sm text-success">verified_user</span>
         <?php esc_html_e(
           'Select Wallet as your payment method below to use your balance.',
           'nera-competitions',
         ); ?>
       <?php elseif ($wallet_partial_enabled): ?>
-        <span class="material-symbols-outlined text-sm text-green-500">verified_user</span>
+        <span class="material-symbols-outlined text-sm text-success">verified_user</span>
         <?php esc_html_e(
           'Wallet credit will be applied at checkout.',
           'nera-competitions',

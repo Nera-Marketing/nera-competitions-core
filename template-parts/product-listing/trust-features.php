@@ -106,7 +106,7 @@ if (function_exists('get_field')) {
     <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
       <?php foreach ($trust_features as $index => $feature): ?>
         <div
-          class="text-center p-8 bg-slate-50 rounded-2xl border border-gray-100 hover:border-primary/20 hover:shadow-lg transition-all duration-300"
+          class="text-center p-8 bg-background-light rounded-2xl border border-gray-100 hover:border-primary/20 hover:shadow-lg transition-all duration-300"
           data-aos="fade-up" data-aos-delay="<?php echo esc_attr(($index + 1) * 100); ?>">
 
           <!-- Icon -->

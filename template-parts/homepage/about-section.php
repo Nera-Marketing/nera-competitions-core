@@ -39,7 +39,7 @@ $bg_class = 'bg-surface';
 if ($background === 'gray') {
   $bg_class = 'bg-gray-50';
 } elseif ($background === 'gradient') {
-  $bg_class = 'bg-gradient-to-b from-white via-indigo-50/30 to-white';
+  $bg_class = 'bg-gradient-to-b from-white via-secondary/30 to-white';
 }
 
 // Determine layout order classes
@@ -58,7 +58,7 @@ $image_order = $image_position === 'right' ? 'order-2' : 'order-1';
     <div
       class="absolute <?php echo $image_position === 'right'
         ? 'top-1/4 -left-32'
-        : 'top-1/4 -right-32'; ?> w-96 h-96 bg-gradient-to-br from-primary/20 via-indigo-500/10 to-transparent rounded-full blur-3xl">
+        : 'top-1/4 -right-32'; ?> w-96 h-96 bg-gradient-to-br from-primary/20 via-primary/10 to-transparent rounded-full blur-3xl">
     </div>
     <!-- Secondary orb -->
     <div
@@ -79,7 +79,7 @@ $image_order = $image_position === 'right' ? 'order-2' : 'order-1';
         <!-- Badge with blue accent -->
         <?php if ($badge): ?>
           <div
-            class="inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-gradient-to-r from-primary/10 to-indigo-500/10 border border-primary/20 about-badge">
+            class="inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-gradient-to-r from-primary/10 to-primary/10 border border-primary/20 about-badge">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" class="text-primary">
               <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
                 fill="currentColor" />
@@ -139,7 +139,7 @@ $image_order = $image_position === 'right' ? 'order-2' : 'order-1';
         <?php if ($show_cta): ?>
           <div class="mt-5 about-cta">
             <a href="<?php echo esc_url($cta_url); ?>"
-              class="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-primary to-indigo-600 text-white font-semibold rounded-xl shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 hover:-translate-y-1 transition-all duration-300 group relative overflow-hidden">
+              class="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-primary to-primary text-white font-semibold rounded-xl shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 hover:-translate-y-1 transition-all duration-300 group relative overflow-hidden">
               <span class="relative z-10"><?php echo esc_html($cta_text); ?></span>
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
                 class="relative z-10 transition-transform duration-300 group-hover:translate-x-1">
@@ -159,7 +159,7 @@ $image_order = $image_position === 'right' ? 'order-2' : 'order-1';
 
         <!-- Decorative frame element -->
         <div class="absolute -inset-6 border border-primary/10 rounded-3xl transform rotate-2 about-frame"></div>
-        <div class="absolute -inset-4 bg-gradient-to-br from-primary/5 to-indigo-500/5 rounded-3xl blur-2xl opacity-60">
+        <div class="absolute -inset-4 bg-gradient-to-br from-primary/5 to-primary/5 rounded-3xl blur-2xl opacity-60">
         </div>
 
         <!-- Main image container -->
@@ -176,7 +176,7 @@ $image_order = $image_position === 'right' ? 'order-2' : 'order-1';
           <?php else: ?>
             <!-- Placeholder -->
             <div
-              class="aspect-[4/5] bg-gradient-to-br from-gray-100 via-indigo-50/30 to-gray-50 flex items-center justify-center">
+              class="aspect-[4/5] bg-gradient-to-br from-gray-100 via-secondary/30 to-gray-50 flex items-center justify-center">
               <div class="text-center space-y-4">
                 <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="0.5"
                   class="text-gray-300 mx-auto">
@@ -197,10 +197,10 @@ $image_order = $image_position === 'right' ? 'order-2' : 'order-1';
 
         <!-- Floating credibility badge -->
         <div
-          class="absolute -bottom-8 -left-8 bg-surface rounded-2xl p-6 lg:p-8 shadow-2xl shadow-primary/10 border border-indigo-100 hidden lg:block about-floating-badge">
+          class="absolute -bottom-8 -left-8 bg-surface rounded-2xl p-6 lg:p-8 shadow-2xl shadow-primary/10 border border-secondary hidden lg:block about-floating-badge">
           <div class="flex items-center gap-5">
             <div
-              class="w-16 h-16 bg-gradient-to-br from-primary to-indigo-600 rounded-2xl flex items-center justify-center shadow-lg shadow-primary/30">
+              class="w-16 h-16 bg-gradient-to-br from-primary to-primary rounded-2xl flex items-center justify-center shadow-lg shadow-primary/30">
               <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
                 <path
                   d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />

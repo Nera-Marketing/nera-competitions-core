@@ -41,8 +41,8 @@ $default_steps = [
       'Browse our exciting competitions and choose your favourite prize from our curated selection.',
       'nera-competitions',
     ),
-    'color' => 'from-violet-500 to-purple-600',
-    'bg_color' => 'bg-violet-500/10',
+    'color' => 'from-accent to-accent',
+    'bg_color' => 'bg-accent/10',
   ],
   [
     'icon' =>
@@ -52,8 +52,8 @@ $default_steps = [
       'Select how many entries you want and pick your lucky numbers from the available options.',
       'nera-competitions',
     ),
-    'color' => 'from-blue-500 to-cyan-500',
-    'bg_color' => 'bg-blue-500/10',
+    'color' => 'from-primary to-info',
+    'bg_color' => 'bg-primary/10',
   ],
   [
     'icon' =>
@@ -63,8 +63,8 @@ $default_steps = [
       'Answer a simple skill-based question correctly to validate and confirm your entry.',
       'nera-competitions',
     ),
-    'color' => 'from-emerald-500 to-teal-500',
-    'bg_color' => 'bg-emerald-500/10',
+    'color' => 'from-success to-success',
+    'bg_color' => 'bg-success/10',
   ],
   [
     'icon' =>
@@ -74,8 +74,8 @@ $default_steps = [
       'Watch the live draw and be our next lucky winner! We deliver prizes directly to you.',
       'nera-competitions',
     ),
-    'color' => 'from-amber-500 to-orange-500',
-    'bg_color' => 'bg-amber-500/10',
+    'color' => 'from-warning to-warning',
+    'bg_color' => 'bg-warning/10',
   ],
 ];
 

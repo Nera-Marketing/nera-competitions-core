@@ -86,10 +86,10 @@ $col = 1;
 
       // Icon colors
       $icon_colors = [
-        'billing' => 'from-blue-500 to-blue-600',
-        'shipping' => 'from-green-500 to-green-600',
+        'billing' => 'from-primary to-primary',
+        'shipping' => 'from-success to-success',
       ];
-      $icon_color = isset($icon_colors[$name]) ? $icon_colors[$name] : 'from-primary to-indigo-600';
+      $icon_color = isset($icon_colors[$name]) ? $icon_colors[$name] : 'from-primary to-primary';
       ?>
 
       <!-- Address Card -->
@@ -112,11 +112,11 @@ $col = 1;
             </div>
             
             <?php if (!$address): ?>
-              <span class="px-3 py-1 text-xs font-semibold text-amber-700 bg-amber-50 border border-amber-200 rounded-full">
+              <span class="px-3 py-1 text-xs font-semibold text-warning-text bg-warning-bg border border-warning-border rounded-full">
                 Not set
               </span>
             <?php else: ?>
-              <span class="px-3 py-1 text-xs font-semibold text-green-700 bg-green-50 border border-green-200 rounded-full">
+              <span class="px-3 py-1 text-xs font-semibold text-success-text bg-success-bg border border-success-border rounded-full">
                 Active
               </span>
             <?php endif; ?>
@@ -167,7 +167,7 @@ $col = 1;
           <a href="<?php echo esc_url(wc_get_endpoint_url('edit-address', $name)); ?>" 
              class="inline-flex items-center justify-center gap-2 w-full px-6 py-3 <?php echo $address
                ? 'bg-surface border-2 border-gray-200 text-gray-700 hover:border-primary hover:text-primary'
-               : 'bg-gradient-to-r from-primary to-indigo-600 text-white hover:opacity-90 shadow-sm hover:shadow-md'; ?> font-semibold rounded-xl transition-all">
+               : 'bg-gradient-to-r from-primary to-primary text-white hover:opacity-90 shadow-sm hover:shadow-md'; ?> font-semibold rounded-xl transition-all">
             <span class="material-symbols-outlined text-base"><?php echo $address
               ? 'edit'
               : 'add'; ?></span>
@@ -195,18 +195,18 @@ $col = 1;
   </div>
 
   <!-- Additional Info Card -->
-  <div class="mt-6 bg-blue-50 border border-blue-100 rounded-2xl p-6">
+  <div class="mt-6 bg-info-bg border border-info-bg rounded-2xl p-6">
     <div class="flex gap-4">
       <div class="flex-shrink-0">
-        <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-          <span class="material-symbols-outlined text-blue-600 text-xl">info</span>
+        <div class="w-10 h-10 bg-info-bg rounded-lg flex items-center justify-center">
+          <span class="material-symbols-outlined text-primary text-xl">info</span>
         </div>
       </div>
       <div>
-        <h4 class="font-semibold text-blue-900 mb-1">
+        <h4 class="font-semibold text-info-text mb-1">
           <?php esc_html_e('Address Information', 'nera-competitions-standard'); ?>
         </h4>
-        <p class="text-sm text-blue-700">
+        <p class="text-sm text-info-text">
           <?php esc_html_e(
             'These addresses will be pre-filled during checkout. Make sure they are accurate to ensure smooth delivery of your prizes.',
             'nera-competitions-standard',

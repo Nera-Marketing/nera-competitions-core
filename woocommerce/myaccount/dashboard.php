@@ -35,7 +35,7 @@ $total_orders = count(
 <div class="nera-account-dashboard">
   
   <!-- Welcome Hero Card -->
-  <div class="bg-gradient-to-br from-primary via-indigo-600 to-indigo-700 rounded-2xl shadow-[0_20px_25px_-5px_rgba(99,102,241,0.3)] p-5 sm:p-8 mb-8 relative overflow-hidden">
+  <div class="bg-gradient-to-br from-primary via-primary to-primary-dark rounded-2xl shadow-[0_20px_25px_-5px_rgba(99,102,241,0.3)] p-5 sm:p-8 mb-8 relative overflow-hidden">
     <!-- Decorative background pattern -->
     <div class="absolute inset-0 opacity-10">
       <div class="absolute top-0 right-0 w-64 h-64 bg-surface rounded-full blur-3xl transform translate-x-1/2 -translate-y-1/2"></div>
@@ -51,7 +51,7 @@ $total_orders = count(
           <h1 class="text-xl sm:text-3xl font-bold text-white mb-0.5 sm:mb-1 leading-tight">
             Welcome back, <?php echo esc_html($user->display_name); ?>!
           </h1>
-          <p class="text-indigo-100 text-sm sm:text-lg">
+          <p class="text-secondary text-sm sm:text-lg">
              <?php printf(
                esc_html__(
                  'Ready to win big? Check out our latest competitions!',
@@ -70,14 +70,14 @@ $total_orders = count(
     <!-- Total Orders Card -->
     <div class="bg-surface rounded-2xl border border-gray-100 shadow-sm p-6 hover:shadow-md transition-shadow">
       <div class="flex items-center justify-between mb-4">
-        <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center">
+        <div class="w-12 h-12 bg-gradient-to-br from-primary to-primary rounded-xl flex items-center justify-center">
           <span class="material-symbols-outlined text-white text-2xl">receipt_long</span>
         </div>
         <span class="text-3xl font-bold text-gray-900"><?php echo esc_html($total_orders); ?></span>
       </div>
       <h3 class="text-sm font-semibold text-gray-600 uppercase tracking-wide">Total Orders</h3>
       <a href="<?php echo esc_url(wc_get_account_endpoint_url('orders')); ?>" 
-         class="mt-3 inline-flex items-center text-sm font-medium text-primary hover:text-indigo-700 transition-colors">
+         class="mt-3 inline-flex items-center text-sm font-medium text-primary hover:text-primary-dark transition-colors">
         View all
         <span class="material-symbols-outlined text-base ml-1">arrow_forward</span>
       </a>
@@ -87,7 +87,7 @@ $total_orders = count(
     <?php if (function_exists('woo_wallet')): ?>
     <div class="bg-surface rounded-2xl border border-gray-100 shadow-sm p-6 hover:shadow-md transition-shadow">
       <div class="flex items-center justify-between mb-4">
-        <div class="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center">
+        <div class="w-12 h-12 bg-gradient-to-br from-success to-success rounded-xl flex items-center justify-center">
           <span class="material-symbols-outlined text-white text-2xl">account_balance_wallet</span>
         </div>
         <span class="text-3xl font-bold text-gray-900"><?php echo wc_price(
@@ -96,7 +96,7 @@ $total_orders = count(
       </div>
       <h3 class="text-sm font-semibold text-gray-600 uppercase tracking-wide">Wallet Balance</h3>
       <a href="<?php echo esc_url(wc_get_account_endpoint_url('woo-wallet')); ?>" 
-         class="mt-3 inline-flex items-center text-sm font-medium text-primary hover:text-indigo-700 transition-colors">
+         class="mt-3 inline-flex items-center text-sm font-medium text-primary hover:text-primary-dark transition-colors">
         Manage wallet
         <span class="material-symbols-outlined text-base ml-1">arrow_forward</span>
       </a>
@@ -106,14 +106,14 @@ $total_orders = count(
     <!-- Account Status Card -->
     <div class="bg-surface rounded-2xl border border-gray-100 shadow-sm p-6 hover:shadow-md transition-shadow">
       <div class="flex items-center justify-between mb-4">
-        <div class="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center">
+        <div class="w-12 h-12 bg-gradient-to-br from-accent to-accent rounded-xl flex items-center justify-center">
           <span class="material-symbols-outlined text-white text-2xl">verified_user</span>
         </div>
-        <span class="text-sm font-semibold text-green-600 bg-green-50 px-3 py-1 rounded-full">Active</span>
+        <span class="text-sm font-semibold text-success bg-success-bg px-3 py-1 rounded-full">Active</span>
       </div>
       <h3 class="text-sm font-semibold text-gray-600 uppercase tracking-wide">Account Status</h3>
       <a href="<?php echo esc_url(wc_get_account_endpoint_url('edit-account')); ?>" 
-         class="mt-3 inline-flex items-center text-sm font-medium text-primary hover:text-indigo-700 transition-colors">
+         class="mt-3 inline-flex items-center text-sm font-medium text-primary hover:text-primary-dark transition-colors">
         Edit details
         <span class="material-symbols-outlined text-base ml-1">arrow_forward</span>
       </a>
@@ -130,7 +130,7 @@ $total_orders = count(
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
       
       <a href="<?php echo esc_url(get_permalink(wc_get_page_id('shop'))); ?>" 
-         class="inline-flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-primary to-indigo-600 text-white font-semibold rounded-xl hover:opacity-90 transition-all shadow-sm hover:shadow-md">
+         class="inline-flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-primary to-primary text-white font-semibold rounded-xl hover:opacity-90 transition-all shadow-sm hover:shadow-md">
         <span class="material-symbols-outlined">shopping_bag</span>
         <span>Browse Competitions</span>
       </a>
@@ -167,7 +167,7 @@ $total_orders = count(
         Recent Orders
       </h2>
       <a href="<?php echo esc_url(wc_get_account_endpoint_url('orders')); ?>" 
-         class="text-sm font-medium text-primary hover:text-indigo-700 transition-colors whitespace-nowrap">
+         class="text-sm font-medium text-primary hover:text-primary-dark transition-colors whitespace-nowrap">
         View all
       </a>
     </div>
@@ -183,13 +183,13 @@ $total_orders = count(
 
         // Status badge colors
         $status_colors = [
-          'completed' => 'bg-green-50 text-green-700 border-green-200',
-          'processing' => 'bg-blue-50 text-blue-700 border-blue-200',
-          'pending' => 'bg-yellow-50 text-yellow-700 border-yellow-200',
-          'on-hold' => 'bg-orange-50 text-orange-700 border-orange-200',
-          'cancelled' => 'bg-red-50 text-red-700 border-red-200',
+          'completed' => 'bg-success-bg text-success-text border-success-border',
+          'processing' => 'bg-info-bg text-info-text border-info-border',
+          'pending' => 'bg-warning-bg text-warning-text border-warning-border',
+          'on-hold' => 'bg-warning-bg text-warning-text border-warning-border',
+          'cancelled' => 'bg-danger-bg text-danger-text border-danger-border',
           'refunded' => 'bg-gray-50 text-gray-700 border-gray-200',
-          'failed' => 'bg-red-50 text-red-700 border-red-200',
+          'failed' => 'bg-danger-bg text-danger-text border-danger-border',
         ];
         $status_class = isset($status_colors[$order_status])
           ? $status_colors[$order_status]
@@ -235,7 +235,7 @@ $total_orders = count(
     <h3 class="text-xl font-bold text-gray-900 mb-2">No orders yet</h3>
     <p class="text-gray-600 mb-6">Start browsing our exciting competitions and place your first order!</p>
     <a href="<?php echo esc_url(get_permalink(wc_get_page_id('shop'))); ?>" 
-       class="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-primary to-indigo-600 text-white font-semibold rounded-xl hover:opacity-90 transition-all shadow-sm hover:shadow-md">
+       class="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-primary to-primary text-white font-semibold rounded-xl hover:opacity-90 transition-all shadow-sm hover:shadow-md">
       <span class="material-symbols-outlined">shopping_bag</span>
       <span>Browse Competitions</span>
     </a>

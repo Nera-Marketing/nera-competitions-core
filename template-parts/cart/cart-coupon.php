@@ -49,14 +49,14 @@ if (!defined('ABSPATH')) {
       <div class="mt-4 flex flex-wrap gap-2">
         <?php foreach (WC()->cart->get_coupons() as $code => $coupon): ?>
           <div
-            class="inline-flex items-center gap-2 bg-green-50 text-green-700 px-3 py-1.5 rounded-lg border border-green-100 text-sm font-medium">
+            class="inline-flex items-center gap-2 bg-success-bg text-success-text px-3 py-1.5 rounded-lg border border-success-bg text-sm font-medium">
             <span>
               <?php echo esc_html($code); ?>
             </span>
             <a href="<?php echo esc_url(
               wc_get_cart_url() . '?remove_coupon=' . urlencode($code),
             ); ?>"
-              class="flex items-center justify-center w-5 h-5 rounded-full bg-green-200 hover:bg-green-300 text-green-800 transition-colors"
+              class="flex items-center justify-center w-5 h-5 rounded-full bg-success-border hover:bg-success-border text-success-text transition-colors"
               aria-label="<?php esc_attr_e('Remove coupon', 'nera-competitions'); ?>">
               <span class="material-symbols-outlined !text-xs !font-bold">close</span>
             </a>

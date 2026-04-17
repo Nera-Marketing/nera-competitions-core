@@ -54,7 +54,7 @@ function nera_shortcode_competition_badge()
 
   // Determine status badge
   $badge_text = '';
-  $badge_class = 'bg-red-600';
+  $badge_class = 'bg-danger';
   if ($max_tickets && $remaining <= 0) {
     $badge_text = __('Sold Out', 'nera-competitions');
   } elseif ($remaining > 0 && $remaining <= 50) {
@@ -63,7 +63,7 @@ function nera_shortcode_competition_badge()
     $badge_text = __('Ending Soon', 'nera-competitions');
   } elseif ($progress >= 90) {
     $badge_text = __('Almost Gone', 'nera-competitions');
-    $badge_class = 'bg-orange-500';
+    $badge_class = 'bg-warning';
   }
 
   if (!$badge_text) {

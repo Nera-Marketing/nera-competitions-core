@@ -71,7 +71,7 @@ $category_icons = [
       class="absolute top-0 right-0 w-[600px] h-[600px] bg-gradient-to-bl from-primary/5 to-transparent rounded-full blur-3xl">
     </div>
     <div
-      class="absolute bottom-0 left-0 w-[400px] h-[400px] bg-gradient-to-tr from-purple-500/5 to-transparent rounded-full blur-3xl">
+      class="absolute bottom-0 left-0 w-[400px] h-[400px] bg-gradient-to-tr from-accent/5 to-transparent rounded-full blur-3xl">
     </div>
   </div>
 
@@ -81,7 +81,7 @@ $category_icons = [
     <div class="mb-16 text-center">
       <!-- Badge Label -->
       <div
-        class="inline-flex items-center gap-2 mb-5 px-4 py-2 rounded-full bg-gradient-to-r from-primary/10 to-purple-500/10 border border-primary/20">
+        class="inline-flex items-center gap-2 mb-5 px-4 py-2 rounded-full bg-gradient-to-r from-primary/10 to-accent/10 border border-primary/20">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
           class="text-primary">
           <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
@@ -120,7 +120,7 @@ $category_icons = [
             <button @click.prevent="activeCategory = 'all'"
               class="inline-flex items-center gap-2 px-6 py-3 text-sm font-semibold rounded-full shadow-sm transition-all duration-300 cursor-pointer hover:shadow-lg hover:scale-105"
               :class="activeCategory === 'all' 
-                ? 'bg-gradient-to-r from-primary to-indigo-600 text-white shadow-lg border-primary' 
+                ? 'bg-gradient-to-r from-primary to-primary text-white shadow-lg border-primary' 
                 : 'bg-surface border-2 border-gray-200 text-text-secondary hover:border-gray-300'" role="tab"
               :aria-selected="activeCategory === 'all'" aria-controls="categories-grid">
               <span class="flex items-center justify-center w-5 h-5">
@@ -159,7 +159,7 @@ $category_icons = [
                 <button @click.prevent="activeCategory = '<?php echo esc_js($category_slug); ?>'"
                   class="inline-flex items-center gap-2 px-6 py-3 text-sm font-semibold rounded-full shadow-sm transition-all duration-300 cursor-pointer hover:shadow-lg hover:scale-105"
                   :class="activeCategory === '<?php echo esc_js($category_slug); ?>'
-                    ? 'bg-gradient-to-r from-primary to-indigo-600 text-white shadow-lg border-primary'
+                    ? 'bg-gradient-to-r from-primary to-primary text-white shadow-lg border-primary'
                     : 'bg-surface border-2 border-gray-200 text-text-secondary hover:border-gray-300'" role="tab"
                   :aria-selected="activeCategory === '<?php echo esc_attr($category_slug); ?>'"
                   aria-controls="categories-grid">
@@ -237,7 +237,7 @@ $category_icons = [
     <?php if ($show_view_all): ?>
       <div class="text-center mt-16">
         <a href="<?php echo esc_url(home_url('/all-competitions')); ?>"
-          class="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-primary to-purple-600 text-white font-bold rounded-full shadow-lg transition-all duration-300 hover:shadow-2xl hover:shadow-primary/30 hover:-translate-y-0.5">
+          class="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-primary to-accent text-white font-bold rounded-full shadow-lg transition-all duration-300 hover:shadow-2xl hover:shadow-primary/30 hover:-translate-y-0.5">
           <span>View All Competitions</span>
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
             class="transition-transform group-hover:translate-x-1">

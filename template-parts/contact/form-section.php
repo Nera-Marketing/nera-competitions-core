@@ -41,12 +41,12 @@ $form_id = function_exists('get_field') ? get_field('fluent_form_id') : 0;
     } elseif ($form_id && !function_exists('wpFluentForm')) {
         // Fluent Forms plugin not active
         ?>
-        <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-6 text-center">
-            <span class="material-symbols-outlined text-yellow-600 text-4xl mb-3 block">warning</span>
-            <p class="text-yellow-800 font-semibold mb-2">
+        <div class="bg-warning-bg border border-warning-border rounded-lg p-6 text-center">
+            <span class="material-symbols-outlined text-warning text-4xl mb-3 block">warning</span>
+            <p class="text-warning-text font-semibold mb-2">
                 <?php _e('Fluent Forms Plugin Required', 'nera-competitions'); ?>
             </p>
-            <p class="text-yellow-700 text-sm">
+            <p class="text-warning-text text-sm">
                 <?php _e('Please install and activate the Fluent Forms plugin to display the contact form.', 'nera-competitions'); ?>
             </p>
         </div>
@@ -54,12 +54,12 @@ $form_id = function_exists('get_field') ? get_field('fluent_form_id') : 0;
     } else {
         // No form ID configured
         ?>
-        <div class="bg-blue-50 border border-blue-200 rounded-lg p-6 text-center">
-            <span class="material-symbols-outlined text-blue-600 text-4xl mb-3 block">info</span>
-            <p class="text-blue-800 font-semibold mb-2">
+        <div class="bg-info-bg border border-info-border rounded-lg p-6 text-center">
+            <span class="material-symbols-outlined text-primary text-4xl mb-3 block">info</span>
+            <p class="text-info-text font-semibold mb-2">
                 <?php _e('Contact Form Not Configured', 'nera-competitions'); ?>
             </p>
-            <p class="text-blue-700 text-sm mb-3">
+            <p class="text-info-text text-sm mb-3">
                 <?php _e('Please configure a Fluent Form ID in the page settings to display the contact form.', 'nera-competitions'); ?>
             </p>
             <?php if (current_user_can('edit_pages')): ?>

@@ -39,7 +39,7 @@ $urgent_class = $is_urgent ? 'countdown--urgent' : '';
       <?php _e('Competition Ends In', 'nera-competitions'); ?>
     </span>
     <?php if ($is_urgent && !$is_expired): ?>
-      <span class="inline-flex items-center gap-1 text-red-500 text-xs font-bold animate-pulse">
+      <span class="inline-flex items-center gap-1 text-danger text-xs font-bold animate-pulse">
         <span class="material-symbols-outlined text-sm">schedule</span>
         <?php _e('Ending Soon!', 'nera-competitions'); ?>
       </span>
@@ -54,11 +54,11 @@ $urgent_class = $is_urgent ? 'countdown--urgent' : '';
     <div class="countdown-item text-center">
       <div
         class="countdown-value-wrapper bg-gray-100 rounded-xl p-3 lg:p-4 <?php echo $is_urgent
-          ? 'bg-red-50'
+          ? 'bg-danger-bg'
           : ''; ?>">
         <span
           class="countdown-value block text-2xl lg:text-3xl font-bold text-text-primary <?php echo $is_urgent
-            ? 'text-red-600'
+            ? 'text-danger'
             : ''; ?>"
           x-text="days">
           00
@@ -73,11 +73,11 @@ $urgent_class = $is_urgent ? 'countdown--urgent' : '';
     <div class="countdown-item text-center">
       <div
         class="countdown-value-wrapper bg-gray-100 rounded-xl p-3 lg:p-4 <?php echo $is_urgent
-          ? 'bg-red-50'
+          ? 'bg-danger-bg'
           : ''; ?>">
         <span
           class="countdown-value block text-2xl lg:text-3xl font-bold text-text-primary <?php echo $is_urgent
-            ? 'text-red-600'
+            ? 'text-danger'
             : ''; ?>"
           x-text="hours">
           00
@@ -92,11 +92,11 @@ $urgent_class = $is_urgent ? 'countdown--urgent' : '';
     <div class="countdown-item text-center">
       <div
         class="countdown-value-wrapper bg-gray-100 rounded-xl p-3 lg:p-4 <?php echo $is_urgent
-          ? 'bg-red-50'
+          ? 'bg-danger-bg'
           : ''; ?>">
         <span
           class="countdown-value block text-2xl lg:text-3xl font-bold text-text-primary <?php echo $is_urgent
-            ? 'text-red-600'
+            ? 'text-danger'
             : ''; ?>"
           x-text="minutes">
           00
@@ -111,11 +111,11 @@ $urgent_class = $is_urgent ? 'countdown--urgent' : '';
     <div class="countdown-item text-center">
       <div
         class="countdown-value-wrapper bg-gray-100 rounded-xl p-3 lg:p-4 <?php echo $is_urgent
-          ? 'bg-red-50'
+          ? 'bg-danger-bg'
           : ''; ?>">
         <span
           class="countdown-value block text-2xl lg:text-3xl font-bold text-text-primary <?php echo $is_urgent
-            ? 'text-red-600'
+            ? 'text-danger'
             : ''; ?>"
           x-text="seconds">
           00

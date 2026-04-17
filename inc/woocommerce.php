@@ -350,9 +350,9 @@ function nera_get_badge_color_classes($color = 'primary')
 {
   $colors = [
     'primary' => 'bg-primary text-white',
-    'success' => 'bg-green-500 text-white',
-    'danger' => 'bg-red-500 text-white',
-    'warning' => 'bg-orange-500 text-white',
+    'success' => 'bg-success text-white',
+    'danger' => 'bg-danger text-white',
+    'warning' => 'bg-warning text-white',
   ];
 
   return isset($colors[$color]) ? $colors[$color] : $colors['primary'];
@@ -1009,7 +1009,7 @@ function nera_customize_wallet_gateway_title($title, $gateway_id)
     if ($balance >= $cart_total && $balance > 0) {
       // Add badge for full payment capability
       $title .=
-        ' <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-green-100 text-green-800 ml-2">✓ ' .
+        ' <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-success-bg text-success-text ml-2">✓ ' .
         esc_html__('Sufficient Balance', 'nera-competitions') .
         '</span>';
     }
@@ -1128,7 +1128,7 @@ function nera_add_wallet_balance_script()
       badge.textContent = '<?php echo esc_js($currency_symbol . $formatted_balance); ?>';
       
       // Apply inline styles
-      badge.style.cssText = 'display: inline-flex; align-items: center; justify-content: center; padding: 2px 8px; margin-left: 8px; background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%); color: white; border-radius: 12px; font-size: 11px; font-weight: 700; box-shadow: 0 2px 4px rgba(99, 102, 241, 0.3); vertical-align: middle;';
+      badge.style.cssText = 'display: inline-flex; align-items: center; justify-content: center; padding: 2px 8px; margin-left: 8px; background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%); color: var(--color-on-primary); border-radius: 12px; font-size: 11px; font-weight: 700; box-shadow: 0 2px 4px color-mix(in srgb, var(--color-primary) 30%, transparent); vertical-align: middle;';
       
       // Append badge to menu item
       walletMenuItem.appendChild(badge);
@@ -1309,11 +1309,11 @@ function nera_my_account_styles()
       display: flex;
       align-items: center;
       padding: 1rem 1.25rem;
-      background: white;
-      color: #4b5563;
+      background: var(--color-surface);
+      color: var(--color-text-secondary);
       text-decoration: none;
       font-weight: 500;
-      border: 1px solid #f3f4f6;
+      border: 1px solid var(--color-gray-100);
       border-radius: 1rem;
       box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
       transition: all 0.3s ease;
@@ -1322,22 +1322,22 @@ function nera_my_account_styles()
     }
 
     body.woocommerce-account.logged-in .woocommerce-MyAccount-navigation-link a:hover {
-      background: #f9fafb;
-      border-color: #e5e7eb;
+      background: var(--color-gray-50);
+      border-color: var(--color-gray-200);
       box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
       transform: translateX(4px);
     }
 
     body.woocommerce-account.logged-in .woocommerce-MyAccount-navigation-link.is-active a {
-      background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
-      color: white;
+      background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+      color: var(--color-on-primary);
       border-color: transparent;
-      box-shadow: 0 10px 15px -3px rgba(99, 102, 241, 0.3);
+      box-shadow: 0 10px 15px -3px color-mix(in srgb, var(--color-primary) 30%, transparent);
     }
 
     body.woocommerce-account.logged-in .woocommerce-MyAccount-navigation-link.is-active a:hover {
       transform: translateX(4px);
-      box-shadow: 0 20px 25px -5px rgba(99, 102, 241, 0.4);
+      box-shadow: 0 20px 25px -5px color-mix(in srgb, var(--color-primary) 40%, transparent);
     }
 
     /* Icon Styling - Only for logged-in users */
@@ -1351,9 +1351,9 @@ function nera_my_account_styles()
 
     /* Content Area - Only for logged-in users */
     body.woocommerce-account.logged-in .woocommerce-MyAccount-content {
-      background: white;
+      background: var(--color-surface);
       border-radius: 1.5rem;
-      border: 1px solid #f3f4f6;
+      border: 1px solid var(--color-gray-100);
       box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
       padding: 2rem;
       width: 100%;
@@ -1413,13 +1413,13 @@ function nera_my_account_styles()
     body.woocommerce-account.logged-in .page-title {
       font-size: 2.25rem;
       font-weight: 700;
-      color: #111827;
+      color: var(--color-text-primary);
       margin-bottom: 0.5rem;
     }
 
     /* Dashboard Heading - Only for logged-in users */
     body.woocommerce-account.logged-in .woocommerce-MyAccount-content > h2 {
-      color: #111827;
+      color: var(--color-text-primary);
       font-size: 1.875rem;
       font-weight: 700;
       margin-bottom: 1.5rem;
@@ -1612,14 +1612,14 @@ function nera_coupon_remove_trash_icon($coupon_html, $coupon, $discount_amount_h
   // Style as inline button matching cart/form coupon remove buttons
   $coupon_html = str_replace(
     'class="woocommerce-remove-coupon"',
-    'class="woocommerce-remove-coupon remove-coupon inline-flex items-center justify-center w-5 h-5 rounded-full bg-red-100 hover:bg-red-200 text-red-500 ml-1 transition-colors"',
+    'class="woocommerce-remove-coupon remove-coupon inline-flex items-center justify-center w-5 h-5 rounded-full bg-danger-bg hover:bg-danger-border text-danger ml-1 transition-colors"',
     $coupon_html
   );
 
   // Replace [Remove] text with trash icon (works with translations)
   $coupon_html = preg_replace(
     '/>([^<]*)<\/a>\s*$/',
-    '><span class="material-symbols-outlined !text-xs !font-bold text-red-500">delete</span></a>',
+    '><span class="material-symbols-outlined !text-xs !font-bold text-danger">delete</span></a>',
     $coupon_html
   );
 
@@ -1645,12 +1645,12 @@ function nera_get_applied_coupons_html()
       </p>
       <div class="flex flex-wrap gap-2">
         <?php foreach ($applied_coupons as $code): ?>
-          <div class="inline-flex items-center gap-2 bg-green-50 text-green-700 px-3 py-1.5 rounded-lg border border-green-100 text-sm font-medium">
+          <div class="inline-flex items-center gap-2 bg-success-bg text-success-text px-3 py-1.5 rounded-lg border border-success-bg text-sm font-medium">
             <span class="material-symbols-outlined text-base">local_offer</span>
             <span><?php echo esc_html($code); ?></span>
             <a href="#"
               data-coupon="<?php echo esc_attr($code); ?>"
-              class="remove-coupon flex items-center justify-center w-5 h-5 rounded-full bg-green-200 hover:bg-green-300 text-green-800 transition-colors"
+              class="remove-coupon flex items-center justify-center w-5 h-5 rounded-full bg-success-border hover:bg-success-border text-success-text transition-colors"
               aria-label="<?php esc_attr_e('Remove coupon', 'nera-competitions'); ?>"
               role="button">
               <span class="material-symbols-outlined !text-xs">close</span>

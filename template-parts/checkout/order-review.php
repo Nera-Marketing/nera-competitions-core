@@ -172,7 +172,7 @@ if (!defined('ABSPATH')) {
   }
   ?>
   <?php if ($show_wallet_partial_payment): ?>
-    <div class="mb-6 rounded-xl border border-primary/20 bg-gradient-to-r from-primary/5 to-indigo-50 p-4">
+    <div class="mb-6 rounded-xl border border-primary/20 bg-gradient-to-r from-primary/5 to-secondary p-4">
       <div class="flex items-start gap-3">
         <span class="material-symbols-outlined text-primary text-xl">account_balance_wallet</span>
         <div class="flex-1 min-w-0">
@@ -313,7 +313,7 @@ if (!defined('ABSPATH')) {
   <!-- Trust / Payment Methods -->
   <div class="text-center">
     <p class="text-xs text-text-secondary mb-3 flex items-center justify-center gap-1">
-      <span class="material-symbols-outlined text-sm text-green-500">verified_user</span>
+      <span class="material-symbols-outlined text-sm text-success">verified_user</span>
       <?php esc_html_e('SSL Encrypted Payment', 'nera-competitions'); ?>
     </p>
 

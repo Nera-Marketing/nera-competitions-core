@@ -34,11 +34,11 @@ if (empty($images)) {
 }
 
 $badge_classes_map = [
-  'red' => 'bg-red-500 text-white',
+  'red' => 'bg-danger text-white',
   'primary' => 'bg-primary text-white',
-  'orange' => 'bg-orange-500 text-white',
-  'green' => 'bg-green-500 text-white',
-  'blue' => 'bg-blue-500 text-white',
+  'orange' => 'bg-warning text-white',
+  'green' => 'bg-success text-white',
+  'blue' => 'bg-primary text-white',
 ];
 $badge_classes = $badge_classes_map[$badge_color] ?? $badge_classes_map['red'];
 

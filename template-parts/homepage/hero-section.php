@@ -36,7 +36,7 @@ $last_winner_prize = get_field('last_winner_prize') ?: 'Won This Prize';
 ?>
 
 <section
-  class="hero-section relative py-16 lg:py-24 bg-gradient-to-br from-white via-gray-50 to-indigo-50 overflow-hidden"
+  class="hero-section relative py-16 lg:py-24 bg-gradient-to-br from-white via-gray-50 to-secondary overflow-hidden"
   id="hero" data-aos="fade-up" data-aos-duration="600">
 
   <div class="max-w-7xl mx-auto px-5 sm:px-6 lg:px-8">
@@ -114,7 +114,7 @@ $last_winner_prize = get_field('last_winner_prize') ?: 'Won This Prize';
                 <?php echo esc_html($last_winner_name); ?>
               </span>
             </div>
-            <span class="text-green-500 text-base sm:text-xl">✓</span>
+            <span class="text-success text-base sm:text-xl">✓</span>
           </div>
         </div>
       </div>

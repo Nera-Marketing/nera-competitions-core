@@ -22,7 +22,7 @@ $notes = $order->get_customer_order_notes();
   </a>
 
   <!-- Order Header Card -->
-  <div class="bg-gradient-to-br from-primary via-indigo-600 to-indigo-700 rounded-2xl shadow-xl p-5 sm:p-8 mb-8 relative overflow-hidden">
+  <div class="bg-gradient-to-br from-primary via-primary to-primary-dark rounded-2xl shadow-xl p-5 sm:p-8 mb-8 relative overflow-hidden">
     <!-- Decorative background -->
     <div class="absolute inset-0 opacity-10">
       <div class="absolute top-0 right-0 w-64 h-64 bg-surface rounded-full blur-3xl transform translate-x-1/2 -translate-y-1/2"></div>
@@ -31,7 +31,7 @@ $notes = $order->get_customer_order_notes();
     <div class="relative z-10">
       <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
-          <p class="text-indigo-200 text-sm font-semibold mb-2">
+          <p class="text-secondary text-sm font-semibold mb-2">
             <?php esc_html_e('Order Details', 'nera-competitions-standard'); ?>
           </p>
           <h1 class="text-2xl sm:text-3xl font-bold text-white mb-2">
@@ -40,7 +40,7 @@ $notes = $order->get_customer_order_notes();
              '<span class="text-white">' . esc_html($order->get_order_number()) . '</span>',
            ); ?>
           </h1>
-          <p class="text-indigo-100">
+          <p class="text-secondary">
             <?php
             /* translators: 1: order date */
             printf(
@@ -59,13 +59,13 @@ $notes = $order->get_customer_order_notes();
           <?php
           $status = $order->get_status();
           $status_colors = [
-            'completed' => 'bg-green-500 text-white',
-            'processing' => 'bg-blue-500 text-white',
-            'pending' => 'bg-yellow-500 text-white',
-            'on-hold' => 'bg-orange-500 text-white',
-            'cancelled' => 'bg-red-500 text-white',
+            'completed' => 'bg-success text-white',
+            'processing' => 'bg-primary text-white',
+            'pending' => 'bg-warning text-white',
+            'on-hold' => 'bg-warning text-white',
+            'cancelled' => 'bg-danger text-white',
             'refunded' => 'bg-gray-500 text-white',
-            'failed' => 'bg-red-600 text-white',
+            'failed' => 'bg-danger text-white',
           ];
           $status_class = isset($status_colors[$status])
             ? $status_colors[$status]
@@ -80,7 +80,7 @@ $notes = $order->get_customer_order_notes();
           
           <?php if ($order->needs_payment()): ?>
             <a href="<?php echo esc_url($order->get_checkout_payment_url()); ?>" 
-               class="px-4 py-2 bg-surface text-primary rounded-xl font-bold hover:bg-indigo-50 transition-all inline-flex items-center gap-2 justify-center">
+               class="px-4 py-2 bg-surface text-primary rounded-xl font-bold hover:bg-secondary transition-all inline-flex items-center gap-2 justify-center">
               <span class="material-symbols-outlined text-xl">payment</span>
               <?php esc_html_e('Pay now', 'woocommerce'); ?>
             </a>
@@ -168,10 +168,10 @@ $notes = $order->get_customer_order_notes();
 
         <ol class="space-y-4">
           <?php foreach ($notes as $note): ?>
-          <li class="flex gap-4 p-4 bg-blue-50 rounded-xl border border-blue-100">
+          <li class="flex gap-4 p-4 bg-info-bg rounded-xl border border-info-bg">
             <div class="flex-shrink-0">
-              <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                <span class="material-symbols-outlined text-blue-600">comment</span>
+              <div class="w-10 h-10 bg-info-bg rounded-lg flex items-center justify-center">
+                <span class="material-symbols-outlined text-primary">comment</span>
               </div>
             </div>
             <div class="flex-1">

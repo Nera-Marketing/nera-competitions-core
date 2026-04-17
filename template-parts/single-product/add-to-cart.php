@@ -75,7 +75,7 @@ $is_ended = $end_date_gmt && strtotime($end_date_gmt) < time();
 
       <button
         type="submit"
-        class="add-to-cart-btn w-full py-4 px-6 rounded-2xl bg-gradient-to-r from-primary to-indigo-500 text-white font-bold text-lg shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+        class="add-to-cart-btn w-full py-4 px-6 rounded-2xl bg-gradient-to-r from-primary to-primary text-white font-bold text-lg shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
         data-product-id="<?php echo esc_attr($product_id); ?>"
       >
         <span class="flex items-center justify-center gap-2">
@@ -89,7 +89,7 @@ $is_ended = $end_date_gmt && strtotime($end_date_gmt) < time();
 
     <!-- Quick Buy Notice -->
     <p class="mt-3 text-xs text-text-secondary text-center flex items-center justify-center gap-1">
-      <span class="material-symbols-outlined text-green-500 text-sm">lock</span>
+      <span class="material-symbols-outlined text-success text-sm">lock</span>
       <?php _e('Secure checkout powered by Stripe', 'nera-competitions'); ?>
     </p>
   <?php endif; ?>

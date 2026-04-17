@@ -48,7 +48,7 @@ get_header();
     aria-hidden="true"
   ></div>
   <div
-    class="pointer-events-none absolute right-0 top-1/4 h-[min(60vw,28rem)] w-[min(60vw,28rem)] translate-x-1/3 rounded-full bg-amber-400/10 blur-3xl"
+    class="pointer-events-none absolute right-0 top-1/4 h-[min(60vw,28rem)] w-[min(60vw,28rem)] translate-x-1/3 rounded-full bg-warning/10 blur-3xl"
     aria-hidden="true"
   ></div>
   <div
@@ -59,10 +59,10 @@ get_header();
   <div class="container relative mx-auto px-4 py-10 lg:py-14">
     <header class="mb-8 text-center lg:mb-10">
       <p
-        class="mb-4 inline-flex items-center gap-2 rounded-full border border-amber-400/35 bg-gradient-to-r from-[#c0172e]/[0.07] via-amber-50/90 to-[#c0172e]/[0.07] px-4 py-1.5 text-xs font-bold uppercase tracking-[0.2em] text-[#c0172e] shadow-[0_4px_24px_-8px_rgba(192,23,46,0.25)]"
+        class="mb-4 inline-flex items-center gap-2 rounded-full border border-warning/35 bg-gradient-to-r from-[#c0172e]/[0.07] via-warning-bg/90 to-[#c0172e]/[0.07] px-4 py-1.5 text-xs font-bold uppercase tracking-[0.2em] text-[#c0172e] shadow-[0_4px_24px_-8px_rgba(192,23,46,0.25)]"
       >
         <span
-          class="inline-block h-1.5 w-1.5 animate-pulse rounded-full bg-amber-400 shadow-[0_0_10px_rgba(251,191,36,0.85)]"
+          class="inline-block h-1.5 w-1.5 animate-pulse rounded-full bg-warning shadow-[0_0_10px_rgba(251,191,36,0.85)]"
           aria-hidden="true"
         ></span>
         <?php esc_html_e('Spin to win', 'nera-competitions'); ?>
@@ -100,14 +100,14 @@ get_header();
     <?php else: ?>
       <div
         id="nera-spin-root"
-        class="nera-spin-to-win relative overflow-hidden rounded-[1.75rem] border border-amber-400/20 bg-gradient-to-br from-white via-secondary/80 to-amber-50/30 p-5 shadow-[0_32px_90px_-28px_rgba(192,23,46,0.18)] ring-1 ring-black/[0.05] sm:p-7 lg:p-8 xl:h-[60dvh] xl:overflow-y-hidden"
+        class="nera-spin-to-win relative overflow-hidden rounded-[1.75rem] border border-warning/20 bg-gradient-to-br from-white via-secondary/80 to-warning-bg/30 p-5 shadow-[0_32px_90px_-28px_rgba(192,23,46,0.18)] ring-1 ring-black/[0.05] sm:p-7 lg:p-8 xl:h-[60dvh] xl:overflow-y-hidden"
       >
         <div
           class="pointer-events-none absolute -right-16 top-0 h-56 w-56 rounded-full bg-[#c0172e]/[0.06] blur-3xl"
           aria-hidden="true"
         ></div>
         <div
-          class="pointer-events-none absolute -bottom-12 -left-10 h-48 w-48 rounded-full bg-amber-400/15 blur-3xl"
+          class="pointer-events-none absolute -bottom-12 -left-10 h-48 w-48 rounded-full bg-warning/15 blur-3xl"
           aria-hidden="true"
         ></div>
         <div

@@ -97,7 +97,7 @@ if (!defined('ABSPATH')) {
   <!-- Trust / Payment Methods -->
   <div class="text-center">
     <p class="text-xs text-text-secondary mb-3 flex items-center justify-center gap-1">
-      <span class="material-symbols-outlined text-sm text-green-500">verified_user</span>
+      <span class="material-symbols-outlined text-sm text-success">verified_user</span>
       <?php _e('SSL Encrypted Payment', 'nera-competitions'); ?>
     </p>
 

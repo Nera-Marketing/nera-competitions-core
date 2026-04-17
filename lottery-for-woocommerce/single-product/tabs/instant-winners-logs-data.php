@@ -110,7 +110,7 @@ foreach ($instant_winner_ids as $instant_winner_id) {
 					</div>
 				<?php else: ?>
 					<!-- Gold Coin Badge Overlay -->
-					<div class="coin-badge absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-20 h-20 rounded-full bg-gradient-to-br from-yellow-400 via-yellow-500 to-yellow-600 shadow-2xl flex items-center justify-center border-4 border-white">
+					<div class="coin-badge absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-20 h-20 rounded-full bg-gradient-to-br from-warning via-warning to-warning shadow-2xl flex items-center justify-center border-4 border-white">
 						<div class="text-center">
 							<span class="material-symbols-outlined text-white text-2xl mb-1 block">stars</span>
 							<span class="text-white font-bold text-xs uppercase tracking-wide">Prize</span>
@@ -157,7 +157,7 @@ foreach ($instant_winner_ids as $instant_winner_id) {
 
 							<!-- Won Badge with Count and Progress -->
 							<div class="flex items-center gap-2 flex-wrap">
-								<span class="inline-flex items-center gap-1.5 px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-semibold">
+								<span class="inline-flex items-center gap-1.5 px-3 py-1 bg-info-bg text-info-text rounded-full text-xs font-semibold">
 									<span class="material-symbols-outlined text-sm">check_circle</span>
 									<?php echo $winner_count; ?> Winner<?php echo $winner_count !== 1 ? 's' : ''; ?>
 								</span>
@@ -229,7 +229,7 @@ foreach ($instant_winner_ids as $instant_winner_id) {
 
 						<!-- Available Badge with Count -->
 						<div class="flex items-center gap-2 flex-wrap">
-							<span class="inline-flex items-center gap-1.5 px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-semibold">
+							<span class="inline-flex items-center gap-1.5 px-3 py-1 bg-success-bg text-success-text rounded-full text-xs font-semibold">
 								<span class="material-symbols-outlined text-sm">card_giftcard</span>
 								<?php echo esc_html(lty_get_instant_winners_prize_available_label()); ?>
 							</span>
