@@ -85,6 +85,8 @@ $video_url = get_field('gallery_video_url', $product_id);
       </div>
     </section>
 
+    <?php do_action('nera_before_related_competitions', $product); ?>
+
     <!-- Related Competitions Section -->
     <?php
     $related_ids = nera_get_related_lottery_products($product_id, 4);
