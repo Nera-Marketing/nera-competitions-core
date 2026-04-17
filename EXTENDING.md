@@ -98,47 +98,65 @@ Override `--font-heading` and `--font-body` in your child `@theme` to switch typ
 
 ## 4. BEM slot classes (`.ncs-*` hooks)
 
-Parent templates add `.ncs-*` classes to the ~15 components child themes most often need to reshape. Target these in your child CSS instead of overriding utility classes.
+Parent templates add `.ncs-*` classes to the components child themes most often need to reshape. Target these in your child CSS instead of overriding utility classes.
 
-> **Added in Phase C.** Hooks not yet present in parent templates are listed here as the planned contract.
+### Active hooks (all present in parent templates)
 
 | BEM class | Component | Template |
 |---|---|---|
 | `.ncs-hero` | Homepage hero strip | `template-parts/homepage/hero-section.php` |
 | `.ncs-hero__title` | Hero heading | same |
-| `.ncs-hero__cta` | Hero CTA button | same |
+| `.ncs-hero__cta` | Hero CTA button group | same |
 | `.ncs-product-card` | Competition card | `template-parts/product-listing/product-card.php` |
 | `.ncs-product-card__title` | Card title | same |
 | `.ncs-product-card__price` | Card price | same |
-| `.ncs-page-hero` | Cart/checkout hero strip | `template-parts/checkout/*`, `woocommerce/cart/*` |
 | `.ncs-payment-method` | Checkout payment tile | `woocommerce/checkout/payment-method.php` |
 | `.ncs-wallet-balance` | Checkout wallet card | `template-parts/checkout/wallet-balance.php` |
 | `.ncs-cart-item` | Cart item row | `template-parts/cart/cart-item.php` |
-| `.ncs-account-nav__link` | My Account nav link | `woocommerce/myaccount/dashboard.php` |
 | `.ncs-dashboard-welcome` | My Account welcome hero | `woocommerce/myaccount/dashboard.php` |
 | `.ncs-stat-card` | Dashboard stat tile | same |
-| `.ncs-stat-card__icon` | Stat tile icon | same |
-| `.ncs-order-status` | Order status badge | `woocommerce/myaccount/orders.php`, `view-order.php` |
-| `.ncs-order-status--{paid\|pending\|refunded\|…}` | Status modifier | same |
+| `.ncs-stat-card__icon` | Stat tile icon div | same |
+| `.ncs-order-status` | Order status badge base | `woocommerce/myaccount/orders.php`, `view-order.php` |
+| `.ncs-order-status--processing` | Processing modifier | same |
+| `.ncs-order-status--completed` | Completed modifier | same |
+| `.ncs-order-status--pending` | Pending modifier | same |
+| `.ncs-order-status--on-hold` | On-hold modifier | same |
+| `.ncs-order-status--cancelled` | Cancelled modifier | same |
+| `.ncs-order-status--failed` | Failed modifier | same |
 | `.ncs-progress` | Competition progress bar | `template-parts/single-product/progress-bar.php` |
 | `.ncs-progress__fill` | Progress fill element | same |
-| `.ncs-countdown` | Countdown timer | `template-parts/single-product/countdown-timer.php` |
-| `.ncs-site-footer` | Site footer strip | `footer.php`, `template-parts/footer.php` |
-| `.ncs-form-input` | Checkout / account input | checkout + my-account edit forms |
-| `.ncs-badge` | Generic badge / pill | dashboards, product card |
-| `.ncs-badge--{info\|success\|warning\|danger}` | Badge modifier | same |
+| `.ncs-countdown` | Countdown timer root | `template-parts/single-product/countdown-timer.php` |
+| `.ncs-site-footer` | Site footer strip | `template-parts/footer.php` |
 
-**Style these hooks at equal specificity — no `!important` needed:**
+### Hooks not yet in parent templates
+
+These are reserved names — add them to the parent when the need arises:
+
+| BEM class | Intended target |
+|---|---|
+| `.ncs-page-hero` | Cart/checkout page hero (currently child-specific `.llp-earthy-hero`) |
+| `.ncs-account-nav__link` | My Account sidebar nav link (no `navigation.php` override in parent) |
+| `.ncs-form-input` | Checkout / account text inputs |
+| `.ncs-badge` / `.ncs-badge--*` | Generic badge / pill |
+
+**Child selectors with a body-class scope beat parent utilities (0-1-0) by specificity — no `!important` needed:**
 
 ```css
 /* child-theme/assets/css/brand-overrides.css */
 
-.ncs-hero {
+/* Compound selector (0-2-1) beats parent utility (0-1-0) — no !important */
+body.home .ncs-hero {
   background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
 }
 
-.ncs-hero__title {
+body.home .ncs-hero__title {
   color: var(--color-on-primary);
+}
+
+/* Order status badges — hook modifier gives clean specificity */
+body.woocommerce-account .ncs-order-status--processing {
+  background-color: color-mix(in srgb, var(--color-primary) 20%, var(--color-surface));
+  color: var(--color-text-primary);
 }
 ```
 
@@ -226,7 +244,7 @@ add_action('wp_enqueue_scripts', function () {
 
 The parent Vite build runs `frontend/scripts/lint-templates.js` on every `yarn dev` and `yarn build`. It reports any PHP template that contains a forbidden raw-palette color utility.
 
-- **Phase A/B**: `mode: 'warn'` — violations are printed; build succeeds.
-- **Post-Phase B**: `mode: 'error'` — violations block the build. Edit `frontend/vite.config.js` to flip.
+- `mode: 'warn'` — violations are printed; build succeeds.
+- `mode: 'error'` — violations block the build (recommended for production). Edit `frontend/vite.config.js` to flip.
 
 If you add a new component to the parent and trigger a violation, replace the raw utility with the appropriate semantic token before committing.
