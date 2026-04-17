@@ -54,7 +54,7 @@ $total_pages = $competitions->max_num_pages;
 $current_showing = min($per_page, $total_products);
 ?>
 
-<section class="py-12 md:py-16 bg-slate-50" data-product-listing>
+<section class="py-12 md:py-16 bg-background-light" data-product-listing>
   <div class="max-w-[1200px] mx-auto px-4 lg:px-8">
 
     <!-- Loading Overlay -->

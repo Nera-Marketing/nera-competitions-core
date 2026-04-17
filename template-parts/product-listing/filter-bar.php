@@ -31,7 +31,7 @@ $categories = get_terms([
         <!-- Category Filter -->
         <div class="relative">
           <select name="category" data-filter="category"
-            class="appearance-none bg-slate-50 border border-gray-200 rounded-xl px-4 py-2.5 pr-10 text-sm font-medium text-text-primary cursor-pointer hover:border-primary focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none transition-all">
+            class="appearance-none bg-background-light border border-gray-200 rounded-xl px-4 py-2.5 pr-10 text-sm font-medium text-text-primary cursor-pointer hover:border-primary focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none transition-all">
             <option value=""><?php _e('All Categories', 'nera-competitions'); ?></option>
             <?php if (!empty($categories) && !is_wp_error($categories)): ?>
               <?php foreach ($categories as $category): ?>
@@ -46,7 +46,7 @@ $categories = get_terms([
         <!-- Price Filter -->
         <div class="relative">
           <select name="price" data-filter="price"
-            class="appearance-none bg-slate-50 border border-gray-200 rounded-xl px-4 py-2.5 pr-10 text-sm font-medium text-text-primary cursor-pointer hover:border-primary focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none transition-all">
+            class="appearance-none bg-background-light border border-gray-200 rounded-xl px-4 py-2.5 pr-10 text-sm font-medium text-text-primary cursor-pointer hover:border-primary focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none transition-all">
             <option value=""><?php _e('All Prices', 'nera-competitions'); ?></option>
             <option value="0-5"><?php _e('Under £5', 'nera-competitions'); ?></option>
             <option value="5-10"><?php _e('£5 - £10', 'nera-competitions'); ?></option>
@@ -58,7 +58,7 @@ $categories = get_terms([
         <!-- Status Filter -->
         <div class="relative">
           <select name="status" data-filter="status"
-            class="appearance-none bg-slate-50 border border-gray-200 rounded-xl px-4 py-2.5 pr-10 text-sm font-medium text-text-primary cursor-pointer hover:border-primary focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none transition-all">
+            class="appearance-none bg-background-light border border-gray-200 rounded-xl px-4 py-2.5 pr-10 text-sm font-medium text-text-primary cursor-pointer hover:border-primary focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none transition-all">
             <option value=""><?php _e('All Status', 'nera-competitions'); ?></option>
             <option value="ending-soon"><?php _e('Ending Soon', 'nera-competitions'); ?></option>
             <option value="last-tickets"><?php _e('Last Tickets', 'nera-competitions'); ?></option>
@@ -68,7 +68,7 @@ $categories = get_terms([
 
         <!-- Clear Filters Button (hidden by default) -->
         <button type="button" data-clear-filters
-          class="hidden items-center gap-1.5 px-3 py-2 text-sm font-medium text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg transition-all">
+          class="hidden items-center gap-1.5 px-3 py-2 text-sm font-medium text-danger hover:text-danger-text hover:bg-danger-bg rounded-lg transition-all">
           <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
             stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <line x1="18" y1="6" x2="6" y2="18"></line>
@@ -81,7 +81,7 @@ $categories = get_terms([
       <!-- Sort Dropdown -->
       <div class="relative">
         <select name="sort" data-filter="sort"
-          class="appearance-none bg-slate-50 border border-gray-200 rounded-xl px-4 py-2.5 pr-10 text-sm font-medium text-text-primary cursor-pointer hover:border-primary focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none transition-all">
+          class="appearance-none bg-background-light border border-gray-200 rounded-xl px-4 py-2.5 pr-10 text-sm font-medium text-text-primary cursor-pointer hover:border-primary focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none transition-all">
           <option value="ending-soon"><?php _e('Ending Soon', 'nera-competitions'); ?></option>
           <option value="newest"><?php _e('Newest First', 'nera-competitions'); ?></option>
           <option value="price-low"><?php _e('Price: Low to High', 'nera-competitions'); ?></option>

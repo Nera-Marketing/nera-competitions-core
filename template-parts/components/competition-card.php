@@ -73,7 +73,7 @@ $hours_left = $countdown_parts['hours'] ?? 0;
 
 // Status badge
 $badge_text = '';
-$badge_class = 'bg-gradient-to-r from-red-600 to-red-700';
+$badge_class = 'bg-gradient-to-r from-danger to-danger-text';
 $is_urgent = !empty($countdown_parts['urgent']);
 
 if ($max_tickets && $remaining <= 0) {
@@ -87,7 +87,7 @@ if ($max_tickets && $remaining <= 0) {
   $is_urgent = true;
 } elseif ($progress >= 90) {
   $badge_text = __('Almost Gone', 'nera-competitions');
-  $badge_class = 'bg-gradient-to-r from-orange-500 to-orange-600';
+  $badge_class = 'bg-gradient-to-r from-warning to-warning';
 }
 
 // Product categories

@@ -32,11 +32,11 @@ $is_almost_sold_out = $progress >= 90;
 $is_low_stock = $remaining <= 50 && $remaining > 0;
 ?>
 
-<div class="progress-section">
+<div class="ncs-progress progress-section">
   <div class="flex items-center justify-between mb-2">
     <div class="flex items-center gap-2">
       <?php if ($is_low_stock): ?>
-        <span class="inline-flex items-center gap-1 text-red-500 text-xs font-bold">
+        <span class="inline-flex items-center gap-1 text-danger text-xs font-bold">
           <span class="material-symbols-outlined text-sm">local_fire_department</span>
           <?php printf(__('Only %d left!', 'nera-competitions'), $remaining); ?>
         </span>
@@ -51,7 +51,7 @@ $is_low_stock = $remaining <= 50 && $remaining > 0;
       <?php endif; ?>
     </div>
     <span class="text-sm font-bold <?php echo $is_almost_sold_out
-      ? 'text-red-500'
+      ? 'text-danger'
       : 'text-primary'; ?>">
       <?php echo esc_html($progress); ?>%
     </span>
@@ -59,9 +59,9 @@ $is_low_stock = $remaining <= 50 && $remaining > 0;
 
   <div class="progress-bar-wrapper h-3 w-full bg-gray-200 rounded-full overflow-hidden">
     <div
-      class="progress-bar-fill h-full rounded-full transition-all duration-1000 ease-out <?php echo $is_almost_sold_out
-        ? 'bg-gradient-to-r from-red-500 to-orange-500'
-        : 'bg-gradient-to-r from-primary to-indigo-500'; ?>"
+      class="ncs-progress__fill progress-bar-fill h-full rounded-full transition-all duration-1000 ease-out <?php echo $is_almost_sold_out
+        ? 'bg-gradient-to-r from-danger to-warning'
+        : 'bg-gradient-to-r from-primary to-primary'; ?>"
       style="width: 0%;"
       data-progress="<?php echo esc_attr($progress); ?>"
     ></div>

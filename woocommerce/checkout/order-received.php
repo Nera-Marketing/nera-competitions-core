@@ -20,7 +20,7 @@ $message = apply_filters(
 );
 ?>
 
-<div class="bg-green-50 border border-green-200 rounded-2xl p-6 mb-8 flex items-center gap-4">
+<div class="bg-success-bg border border-success-border rounded-2xl p-6 mb-8 flex items-center gap-4">
   <div class="w-12 h-12 flex-shrink-0 rounded-full bg-success flex items-center justify-center">
     <span class="material-symbols-outlined text-white text-2xl">check</span>
   </div>

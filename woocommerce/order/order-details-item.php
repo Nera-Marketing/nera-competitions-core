@@ -92,7 +92,7 @@ $item_class = apply_filters(
 </div>
 
 <?php if (!empty($show_purchase_note) && !empty($purchase_note)): ?>
-  <div class="woocommerce-table__product-purchase-note product-purchase-note p-4 bg-blue-50 rounded-xl border border-blue-100 mt-2">
+  <div class="woocommerce-table__product-purchase-note product-purchase-note p-4 bg-info-bg rounded-xl border border-info-bg mt-2">
     <?php echo wpautop(do_shortcode(wp_kses_post($purchase_note))); ?>
   </div>
 <?php endif; ?>

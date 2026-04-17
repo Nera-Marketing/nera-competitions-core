@@ -76,7 +76,7 @@ do_action('woocommerce_before_edit_address_form_' . $load_address);
     <div class="flex flex-col sm:flex-row gap-3">
       <p>
         <button type="submit" 
-                class="woocommerce-Button button inline-flex items-center justify-center gap-2 px-8 py-4 bg-gradient-to-r from-primary to-indigo-600 text-white font-semibold rounded-xl hover:opacity-90 transition-all shadow-sm hover:shadow-md w-full sm:w-auto" 
+                class="woocommerce-Button button inline-flex items-center justify-center gap-2 px-8 py-4 bg-gradient-to-r from-primary to-primary text-white font-semibold rounded-xl hover:opacity-90 transition-all shadow-sm hover:shadow-md w-full sm:w-auto" 
                 name="save_address" 
                 value="<?php esc_attr_e('Save address', 'woocommerce'); ?>">
           <span class="material-symbols-outlined text-xl">save</span>

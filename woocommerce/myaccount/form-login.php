@@ -97,7 +97,7 @@ $active_tab = isset($_GET['action']) && $_GET['action'] === 'register' ? 'regist
 					<div class="mb-5">
 						<label for="username" class="block text-sm font-semibold text-text-primary mb-2">
 							<?php esc_html_e('Username or email address', 'woocommerce'); ?>&nbsp;
-							<span class="text-red-500" aria-hidden="true">*</span>
+							<span class="text-danger" aria-hidden="true">*</span>
 							<span class="sr-only"><?php esc_html_e('Required', 'woocommerce'); ?></span>
 						</label>
 						<input
@@ -120,7 +120,7 @@ $active_tab = isset($_GET['action']) && $_GET['action'] === 'register' ? 'regist
 					<div class="mb-5">
 						<label for="password" class="block text-sm font-semibold text-text-primary mb-2">
 							<?php esc_html_e('Password', 'woocommerce'); ?>&nbsp;
-							<span class="text-red-500" aria-hidden="true">*</span>
+							<span class="text-danger" aria-hidden="true">*</span>
 							<span class="sr-only"><?php esc_html_e('Required', 'woocommerce'); ?></span>
 						</label>
 						<input
@@ -154,7 +154,7 @@ $active_tab = isset($_GET['action']) && $_GET['action'] === 'register' ? 'regist
 
 						<button
 							type="submit"
-							class="w-full inline-flex items-center justify-center gap-2 px-8 py-4 bg-gradient-to-r from-primary to-indigo-600 text-white font-semibold rounded-xl hover:opacity-90 transition-all shadow-sm hover:shadow-md"
+							class="w-full inline-flex items-center justify-center gap-2 px-8 py-4 bg-gradient-to-r from-primary to-primary text-white font-semibold rounded-xl hover:opacity-90 transition-all shadow-sm hover:shadow-md"
 							name="login"
 							value="<?php esc_attr_e('Log in', 'woocommerce'); ?>">
 							<span class="material-symbols-outlined text-xl">login</span>
@@ -199,7 +199,7 @@ $active_tab = isset($_GET['action']) && $_GET['action'] === 'register' ? 'regist
 					<div class="mb-5">
 						<label for="reg_full_name" class="block text-sm font-semibold text-text-primary mb-2">
 							<?php esc_html_e('Full Name', 'woocommerce'); ?>&nbsp;
-							<span class="text-red-500" aria-hidden="true">*</span>
+							<span class="text-danger" aria-hidden="true">*</span>
 							<span class="sr-only"><?php esc_html_e('Required', 'woocommerce'); ?></span>
 						</label>
 						<input
@@ -220,7 +220,7 @@ $active_tab = isset($_GET['action']) && $_GET['action'] === 'register' ? 'regist
 					<div class="mb-5">
 						<label for="reg_email" class="block text-sm font-semibold text-text-primary mb-2">
 							<?php esc_html_e('Email address', 'woocommerce'); ?>&nbsp;
-							<span class="text-red-500" aria-hidden="true">*</span>
+							<span class="text-danger" aria-hidden="true">*</span>
 							<span class="sr-only"><?php esc_html_e('Required', 'woocommerce'); ?></span>
 						</label>
 						<input
@@ -241,7 +241,7 @@ $active_tab = isset($_GET['action']) && $_GET['action'] === 'register' ? 'regist
 					<div class="mb-2">
 						<label for="reg_password" class="block text-sm font-semibold text-text-primary mb-2">
 							<?php esc_html_e('Password', 'woocommerce'); ?>&nbsp;
-							<span class="text-red-500" aria-hidden="true">*</span>
+							<span class="text-danger" aria-hidden="true">*</span>
 							<span class="sr-only"><?php esc_html_e('Required', 'woocommerce'); ?></span>
 						</label>
 						<div class="relative">
@@ -281,7 +281,7 @@ $active_tab = isset($_GET['action']) && $_GET['action'] === 'register' ? 'regist
 					<div class="mb-5">
 						<label for="reg_password2" class="block text-sm font-semibold text-text-primary mb-2">
 							<?php esc_html_e('Confirm Password', 'woocommerce'); ?>&nbsp;
-							<span class="text-red-500" aria-hidden="true">*</span>
+							<span class="text-danger" aria-hidden="true">*</span>
 							<span class="sr-only"><?php esc_html_e('Required', 'woocommerce'); ?></span>
 						</label>
 						<div class="relative">
@@ -452,19 +452,19 @@ $active_tab = isset($_GET['action']) && $_GET['action'] === 'register' ? 'regist
   var strengthConfig = [
     { label: '<?php echo esc_js(
       __('Password strength: Too short', 'woocommerce'),
-    ); ?>',   color: 'bg-red-400',    bars: 1 },
+    ); ?>',   color: 'bg-danger',    bars: 1 },
     { label: '<?php echo esc_js(
       __('Password strength: Weak', 'woocommerce'),
-    ); ?>',        color: 'bg-orange-400', bars: 1 },
+    ); ?>',        color: 'bg-warning', bars: 1 },
     { label: '<?php echo esc_js(
       __('Password strength: Fair', 'woocommerce'),
-    ); ?>',        color: 'bg-yellow-400', bars: 2 },
+    ); ?>',        color: 'bg-warning', bars: 2 },
     { label: '<?php echo esc_js(
       __('Password strength: Good', 'woocommerce'),
-    ); ?>',        color: 'bg-blue-400',   bars: 3 },
+    ); ?>',        color: 'bg-primary',   bars: 3 },
     { label: '<?php echo esc_js(
       __('Password strength: Strong', 'woocommerce'),
-    ); ?>',      color: 'bg-green-500',  bars: 4 },
+    ); ?>',      color: 'bg-success',  bars: 4 },
   ];
 
   function getStrengthScore(pw) {
@@ -516,8 +516,8 @@ $active_tab = isset($_GET['action']) && $_GET['action'] === 'register' ? 'regist
       return;
     }
     var match = regPassword.value === regPassword2.value;
-    matchMsg.classList.remove('hidden', 'text-green-600', 'text-red-500');
-    matchMsg.classList.add(match ? 'text-green-600' : 'text-red-500');
+    matchMsg.classList.remove('hidden', 'text-success', 'text-danger');
+    matchMsg.classList.add(match ? 'text-success' : 'text-danger');
     matchMsg.textContent = match
       ? '<?php echo esc_js(__('Passwords match', 'woocommerce')); ?>'
       : '<?php echo esc_js(__('Passwords do not match', 'woocommerce')); ?>';

@@ -3,9 +3,16 @@ import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
 import vue from '@vitejs/plugin-vue';
 import { resolve } from 'path';
+import { templateColorLintPlugin } from './scripts/lint-templates.js';
 
 export default defineConfig({
-  plugins: [react(), vue(), tailwindcss()],
+  plugins: [
+    react(),
+    vue(),
+    tailwindcss(),
+    // Phase B complete: error mode — forbidden palette utilities block the build.
+    templateColorLintPlugin({ mode: 'error' }),
+  ],
 
   resolve: {
     alias: {

@@ -198,6 +198,11 @@ The theme dequeues Astra styles and uses TailwindCSS exclusively. Astra override
    - `assets/css/editor.css` — Gutenberg block editor runs in an iframe; Tailwind utilities are not available there.
    - `assets/css/admin-brand-manager.css` — WordPress admin pages; Tailwind is not compiled for `wp-admin`.
 
+7. **No default-palette color utilities in templates.** Parent PHP templates must never use raw Tailwind named-hue utilities. These are **forbidden** in any `*.php` file under this theme:
+   `slate-*`, `zinc-*`, `stone-*`, `neutral-*`, `red-*`, `orange-*`, `amber-*`, `yellow-*`, `lime-*`, `green-*`, `emerald-*`, `teal-*`, `cyan-*`, `sky-*`, `blue-*`, `indigo-*`, `violet-*`, `purple-*`, `fuchsia-*`, `pink-*`, `rose-*`
+
+   **Use semantic tokens instead** (e.g. `bg-primary`, `text-success-text`, `border-info-border`, `bg-surface`). `gray-*` is permitted as a neutral scale. The build-time lint in `frontend/scripts/lint-templates.js` reports all violations. See `EXTENDING.md` for the full token list and mapping guide.
+
 ## PHP Conventions
 
 ### Template Parts

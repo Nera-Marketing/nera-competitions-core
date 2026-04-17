@@ -65,7 +65,7 @@ $thumbnail = $product->get_image([280, 280], ['class' => 'w-full h-full object-c
 $answers = isset($cart_item['lty_lottery']['answers']) ? $cart_item['lty_lottery']['answers'] : '';
 ?>
 
-<div class="nera-cart-item relative"
+<div class="ncs-cart-item relative"
   id="cart-item-<?php echo esc_attr($cart_item_key); ?>"
   data-cart-item-key="<?php echo esc_attr($cart_item_key); ?>"
   data-product-id="<?php echo esc_attr($product_id); ?>">
@@ -92,7 +92,7 @@ $answers = isset($cart_item['lty_lottery']['answers']) ? $cart_item['lty_lottery
           ); ?> / ticket</span>
           <?php if ($end_date): ?>
             <span class="flex items-center gap-1 <?php echo strtotime($end_date) < time()
-              ? 'text-red-500'
+              ? 'text-danger'
               : ''; ?>">
               <span class="material-symbols-outlined text-xs">schedule</span>
               <?php echo date_i18n(get_option('date_format'), strtotime($end_date)); ?>
@@ -143,7 +143,7 @@ $answers = isset($cart_item['lty_lottery']['answers']) ? $cart_item['lty_lottery
         $product,
         $quantity,
       ); ?></span>
-      <button type="button" class="p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all" aria-label="<?php esc_attr_e(
+      <button type="button" class="p-1.5 text-gray-400 hover:text-danger hover:bg-danger-bg rounded-lg transition-all" aria-label="<?php esc_attr_e(
         'Remove item',
         'nera-competitions',
       ); ?>" onclick="NeraCart.removeItem('<?php echo esc_js($cart_item_key); ?>')">
@@ -176,7 +176,7 @@ $answers = isset($cart_item['lty_lottery']['answers']) ? $cart_item['lty_lottery
             </span>
             <?php if ($end_date): ?>
               <span class="flex items-center gap-1 text-xs <?php echo strtotime($end_date) < time()
-                ? 'text-red-500'
+                ? 'text-danger'
                 : 'text-text-secondary'; ?>">
                 <span class="material-symbols-outlined text-sm">schedule</span>
                 <?php echo date_i18n(get_option('date_format'), strtotime($end_date)); ?>
@@ -189,7 +189,7 @@ $answers = isset($cart_item['lty_lottery']['answers']) ? $cart_item['lty_lottery
             ); ?></div>
           <?php endif; ?>
         </div>
-        <button type="button" class="md:ml-auto p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all" aria-label="<?php esc_attr_e(
+        <button type="button" class="md:ml-auto p-2 text-gray-400 hover:text-danger hover:bg-danger-bg rounded-lg transition-all" aria-label="<?php esc_attr_e(
           'Remove item',
           'nera-competitions',
         ); ?>" onclick="NeraCart.removeItem('<?php echo esc_js($cart_item_key); ?>')">

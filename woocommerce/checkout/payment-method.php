@@ -19,7 +19,7 @@ if ($gateway->id === 'wallet') {
   $gateway_icon_name = 'local_shipping';
 }
 ?>
-<li class="wc_payment_method payment_method_<?php echo esc_attr($gateway->id); ?>">
+<li class="ncs-payment-method wc_payment_method payment_method_<?php echo esc_attr($gateway->id); ?>">
   <div class="flex items-center gap-3">
     <input
       id="payment_method_<?php echo esc_attr($gateway->id); ?>"

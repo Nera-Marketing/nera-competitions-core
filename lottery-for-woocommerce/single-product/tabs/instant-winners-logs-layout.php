@@ -17,30 +17,30 @@ if (!defined('ABSPATH')) {
 	<!-- Summary Stats -->
 	<div class="instant-wins-stats mb-6 flex flex-wrap gap-4">
 		<!-- Available Prizes Badge -->
-		<div class="stat-badge flex items-center gap-3 bg-green-50 border border-green-200 rounded-xl px-5 py-3">
-			<div class="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
-				<span class="material-symbols-outlined text-green-600 text-xl">card_giftcard</span>
+		<div class="stat-badge flex items-center gap-3 bg-success-bg border border-success-border rounded-xl px-5 py-3">
+			<div class="w-10 h-10 rounded-full bg-success-bg flex items-center justify-center">
+				<span class="material-symbols-outlined text-success text-xl">card_giftcard</span>
 			</div>
 			<div>
-				<p class="text-xs font-semibold text-green-600 uppercase tracking-wide mb-0.5">
+				<p class="text-xs font-semibold text-success uppercase tracking-wide mb-0.5">
 					<?php echo esc_html(lty_get_instant_winner_available_prices_count_label()); ?>
 				</p>
-				<p class="text-2xl font-bold text-green-700 mb-0">
+				<p class="text-2xl font-bold text-success-text mb-0">
 					<?php echo absint($product->get_instant_winner_available_prizes_count()); ?>
 				</p>
 			</div>
 		</div>
 
 		<!-- Won Prizes Badge -->
-		<div class="stat-badge flex items-center gap-3 bg-blue-50 border border-blue-200 rounded-xl px-5 py-3">
-			<div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
-				<span class="material-symbols-outlined text-blue-600 text-xl">emoji_events</span>
+		<div class="stat-badge flex items-center gap-3 bg-info-bg border border-info-border rounded-xl px-5 py-3">
+			<div class="w-10 h-10 rounded-full bg-info-bg flex items-center justify-center">
+				<span class="material-symbols-outlined text-primary text-xl">emoji_events</span>
 			</div>
 			<div>
-				<p class="text-xs font-semibold text-blue-600 uppercase tracking-wide mb-0.5">
+				<p class="text-xs font-semibold text-primary uppercase tracking-wide mb-0.5">
 					<?php echo esc_html(lty_get_instant_winner_won_prices_count_label()); ?>
 				</p>
-				<p class="text-2xl font-bold text-blue-700 mb-0">
+				<p class="text-2xl font-bold text-info-text mb-0">
 					<?php echo absint($product->get_instant_winner_won_prizes_count()); ?>
 				</p>
 			</div>

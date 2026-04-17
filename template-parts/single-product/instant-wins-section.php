@@ -58,7 +58,7 @@ $total_prizes = $available_count + $won_count;
   <button
     id="instant-wins-toggle-btn"
     onclick="window.toggleInstantWins()"
-    class="instant-wins-toggle-shine w-full flex items-center justify-between gap-4 px-6 py-5 rounded-2xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-amber-400 focus:ring-offset-2 bg-gradient-to-br from-amber-50 via-yellow-50 to-amber-100/90 ring-1 ring-amber-200/60 shadow-[0_4px_14px_0_rgba(251,191,36,0.15)] active:scale-[0.98] animate-[instant-wins-button-glow_5s_ease-in-out_infinite]"
+    class="instant-wins-toggle-shine w-full flex items-center justify-between gap-4 px-6 py-5 rounded-2xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-warning focus:ring-offset-2 bg-gradient-to-br from-warning-bg via-warning-bg to-warning-bg/90 ring-1 ring-warning-border/60 shadow-[0_4px_14px_0_rgba(251,191,36,0.15)] active:scale-[0.98] animate-[instant-wins-button-glow_5s_ease-in-out_infinite]"
     aria-expanded="false"
     aria-controls="instant-wins-container"
   >
@@ -66,8 +66,8 @@ $total_prizes = $available_count + $won_count;
     <div class="flex items-center gap-4">
       <!-- Star icon with glow ring -->
       <div class="relative">
-        <div class="absolute inset-0 rounded-full bg-amber-200/50 blur-md"></div>
-        <div class="relative w-14 h-14 rounded-full bg-gradient-to-br from-amber-400 via-amber-500 to-amber-600 flex items-center justify-center shadow-[0_4px_14px_rgba(245,158,11,0.4)]">
+        <div class="absolute inset-0 rounded-full bg-warning-border/50 blur-md"></div>
+        <div class="relative w-14 h-14 rounded-full bg-gradient-to-br from-warning via-warning to-warning flex items-center justify-center shadow-[0_4px_14px_rgba(245,158,11,0.4)]">
           <span class="material-symbols-outlined text-white text-2xl">stars</span>
         </div>
       </div>
@@ -79,7 +79,7 @@ $total_prizes = $available_count + $won_count;
         <p class="text-sm text-gray-600 mb-0">
           <?php printf(
             _n('%s prize available', '%s prizes available', $total_prizes, 'nera-competitions'),
-            '<span class="font-semibold text-amber-600">' . $total_prizes . '</span>',
+            '<span class="font-semibold text-warning">' . $total_prizes . '</span>',
           ); ?>
         </p>
       </div>
@@ -90,17 +90,17 @@ $total_prizes = $available_count + $won_count;
       <!-- Badge: Available & Won -->
       <div class="hidden sm:flex items-center gap-2">
         <?php if ($available_count > 0): ?>
-          <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-surface/90 border border-amber-200/80 text-emerald-600 rounded-full text-xs font-semibold shadow-sm">
+          <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-surface/90 border border-warning-border/80 text-success rounded-full text-xs font-semibold shadow-sm">
             <span class="relative flex h-2 w-2">
-              <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-500 opacity-75"></span>
-              <span class="relative inline-flex h-2 w-2 rounded-full bg-emerald-500"></span>
+              <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-success opacity-75"></span>
+              <span class="relative inline-flex h-2 w-2 rounded-full bg-success"></span>
             </span>
             <?php echo $available_count; ?> <?php _e('Available', 'nera-competitions'); ?>
           </span>
         <?php endif; ?>
 
         <?php if ($won_count > 0): ?>
-          <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-surface/90 border border-amber-200/80 text-amber-600 rounded-full text-xs font-semibold shadow-sm">
+          <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-surface/90 border border-warning-border/80 text-warning rounded-full text-xs font-semibold shadow-sm">
             <span class="material-symbols-outlined text-sm">emoji_events</span>
             <?php echo $won_count; ?> <?php _e('Won', 'nera-competitions'); ?>
           </span>
@@ -129,7 +129,7 @@ $total_prizes = $available_count + $won_count;
       <!-- Loading Skeleton (visible until React mounts) -->
       <div class="instant-wins-loading space-y-4">
         <!-- Stats skeleton -->
-        <div class="rounded-2xl bg-gradient-to-br from-amber-50 to-yellow-50 border-2 border-amber-200 p-6">
+        <div class="rounded-2xl bg-gradient-to-br from-warning-bg to-warning-bg border-2 border-warning-border p-6">
           <div class="flex items-center justify-around gap-4">
             <div class="flex-1 space-y-3">
               <div class="h-3 w-20 rounded-lg bg-[linear-gradient(90deg,#f3f4f6_25%,#e5e7eb_50%,#f3f4f6_75%)] [background-size:200%_100%] animate-[instant-wins-skeleton-shimmer_1.5s_ease-in-out_infinite]"></div>

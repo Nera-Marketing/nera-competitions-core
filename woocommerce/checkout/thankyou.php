@@ -89,7 +89,7 @@ defined('ABSPATH') || exit(); ?>
       <?php if ($order->has_status('failed')): ?>
 
         <div class="max-w-2xl mx-auto bg-surface rounded-2xl border border-gray-100 shadow-sm p-8">
-          <p class="text-red-600 font-semibold mb-6">
+          <p class="text-danger font-semibold mb-6">
             <?php esc_html_e(
               'Unfortunately your order cannot be processed as the originating bank/merchant has declined your transaction. Please attempt your purchase again.',
               'woocommerce',
@@ -97,7 +97,7 @@ defined('ABSPATH') || exit(); ?>
           </p>
           <div class="flex flex-wrap gap-3">
             <a href="<?php echo esc_url($order->get_checkout_payment_url()); ?>"
-               class="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-primary to-indigo-600 text-white font-semibold rounded-xl hover:opacity-90 transition-all shadow-sm hover:shadow-md">
+               class="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-primary to-primary text-white font-semibold rounded-xl hover:opacity-90 transition-all shadow-sm hover:shadow-md">
               <span class="material-symbols-outlined text-xl">payment</span>
               <?php esc_html_e('Pay', 'woocommerce'); ?>
             </a>

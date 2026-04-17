@@ -29,7 +29,7 @@ if (empty($page_tagline)) {
 }
 ?>
 
-<section class="py-16 md:py-20 bg-slate-50">
+<section class="py-16 md:py-20 bg-background-light">
   <div class="max-w-[1200px] mx-auto px-4 lg:px-8">
     <div class="text-center max-w-2xl mx-auto">
       <!-- Page Title -->

@@ -45,13 +45,13 @@ do_action('woocommerce_before_account_orders', $has_orders);
 
         // Status badge colors
         $status_colors = [
-          'completed' => 'bg-green-50 text-green-700 border-green-200',
-          'processing' => 'bg-blue-50 text-blue-700 border-blue-200',
-          'pending' => 'bg-yellow-50 text-yellow-700 border-yellow-200',
-          'on-hold' => 'bg-orange-50 text-orange-700 border-orange-200',
-          'cancelled' => 'bg-red-50 text-red-700 border-red-200',
+          'completed' => 'bg-success-bg text-success-text border-success-border',
+          'processing' => 'bg-info-bg text-info-text border-info-border',
+          'pending' => 'bg-warning-bg text-warning-text border-warning-border',
+          'on-hold' => 'bg-warning-bg text-warning-text border-warning-border',
+          'cancelled' => 'bg-danger-bg text-danger-text border-danger-border',
           'refunded' => 'bg-gray-50 text-gray-700 border-gray-200',
-          'failed' => 'bg-red-50 text-red-700 border-red-200',
+          'failed' => 'bg-danger-bg text-danger-text border-danger-border',
         ];
         $status_class = isset($status_colors[$order_status])
           ? $status_colors[$order_status]
@@ -96,7 +96,7 @@ do_action('woocommerce_before_account_orders', $has_orders);
               </div>
             </div>
             
-            <span class="px-3 py-1.5 text-sm font-semibold rounded-full border inline-flex items-center gap-1.5 <?php echo esc_attr(
+            <span class="ncs-order-status ncs-order-status--<?php echo esc_attr($order_status); ?> px-3 py-1.5 text-sm font-semibold rounded-full border inline-flex items-center gap-1.5 <?php echo esc_attr(
               $status_class,
             ); ?>">
               <span class="material-symbols-outlined text-base"><?php echo esc_html(
@@ -182,7 +182,7 @@ do_action('woocommerce_before_account_orders', $has_orders);
 
                   if ($key === 'pay') {
                     $action_classes .=
-                      ' bg-gradient-to-r from-primary to-indigo-600 text-white hover:opacity-90 shadow-sm hover:shadow-md';
+                      ' bg-gradient-to-r from-primary to-primary text-white hover:opacity-90 shadow-sm hover:shadow-md';
                   } elseif ($key === 'view') {
                     $action_classes .=
                       ' bg-surface border-2 border-gray-200 text-gray-700 hover:border-primary hover:text-primary';
@@ -240,7 +240,7 @@ do_action('woocommerce_before_account_orders', $has_orders);
         <?php if (
           intval($current_page) !== intval($customer_orders->max_num_pages)
         ): ?>
-          <a class="woocommerce-button woocommerce-button--next woocommerce-Button woocommerce-Button--next button !inline-flex !items-center !justify-center !gap-2 !min-h-12 !px-6 !py-3 !rounded-xl !font-semibold !text-white !shadow-md !transition-all !bg-gradient-to-r !from-primary !to-indigo-600 hover:!opacity-95 hover:!shadow-lg" 
+          <a class="woocommerce-button woocommerce-button--next woocommerce-Button woocommerce-Button--next button !inline-flex !items-center !justify-center !gap-2 !min-h-12 !px-6 !py-3 !rounded-xl !font-semibold !text-white !shadow-md !transition-all !bg-gradient-to-r !from-primary !to-primary hover:!opacity-95 hover:!shadow-lg" 
              href="<?php echo esc_url(
                wc_get_endpoint_url('orders', $current_page + 1),
              ); ?>">
@@ -265,7 +265,7 @@ do_action('woocommerce_before_account_orders', $has_orders);
       <a href="<?php echo esc_url(
         apply_filters('woocommerce_return_to_shop_redirect', wc_get_page_permalink('shop')),
       ); ?>" 
-         class="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-primary to-indigo-600 text-white font-semibold rounded-xl hover:opacity-90 transition-all shadow-sm hover:shadow-md">
+         class="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-primary to-primary text-white font-semibold rounded-xl hover:opacity-90 transition-all shadow-sm hover:shadow-md">
         <span class="material-symbols-outlined">shopping_bag</span>
         <span>Browse Competitions</span>
       </a>

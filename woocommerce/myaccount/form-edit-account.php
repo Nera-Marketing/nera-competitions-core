@@ -41,7 +41,7 @@ do_action('woocommerce_before_edit_account_form');
     <!-- Personal Information Card -->
     <div class="bg-surface rounded-2xl border border-gray-100 shadow-sm p-6 mb-6">
       <div class="flex items-center gap-3 mb-6 pb-4 border-b border-gray-200">
-        <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center">
+        <div class="w-10 h-10 bg-gradient-to-br from-primary to-primary rounded-lg flex items-center justify-center">
           <span class="material-symbols-outlined text-white text-xl">badge</span>
         </div>
         <h3 class="text-xl font-bold text-gray-900">Personal Information</h3>
@@ -51,7 +51,7 @@ do_action('woocommerce_before_edit_account_form');
         <p class="woocommerce-form-row woocommerce-form-row--first form-row ">
           <label for="account_first_name" class="block text-sm font-semibold text-gray-700 mb-2">
             <?php esc_html_e('First name', 'woocommerce'); ?>&nbsp;
-            <span class="required text-red-500">*</span>
+            <span class="required text-danger">*</span>
           </label>
           <input type="text" 
                  class="woocommerce-Input woocommerce-Input--text input-text w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all" 
@@ -64,7 +64,7 @@ do_action('woocommerce_before_edit_account_form');
         <p class="woocommerce-form-row woocommerce-form-row--last form-row">
           <label for="account_last_name" class="block text-sm font-semibold text-gray-700 mb-2">
             <?php esc_html_e('Last name', 'woocommerce'); ?>&nbsp;
-            <span class="required text-red-500">*</span>
+            <span class="required text-danger">*</span>
           </label>
           <input type="text" 
                  class="woocommerce-Input woocommerce-Input--text input-text w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all" 
@@ -79,7 +79,7 @@ do_action('woocommerce_before_edit_account_form');
         <p class="woocommerce-form-row woocommerce-form-row--wide form-row form-row-wide">
           <label for="account_display_name" class="block text-sm font-semibold text-gray-700 mb-2">
             <?php esc_html_e('Display name', 'woocommerce'); ?>&nbsp;
-            <span class="required text-red-500">*</span>
+            <span class="required text-danger">*</span>
           </label>
           <input type="text" 
                  class="woocommerce-Input woocommerce-Input--text input-text w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all" 
@@ -99,7 +99,7 @@ do_action('woocommerce_before_edit_account_form');
         <p class="woocommerce-form-row woocommerce-form-row--wide form-row form-row-wide">
           <label for="account_email" class="block text-sm font-semibold text-gray-700 mb-2">
             <?php esc_html_e('Email address', 'woocommerce'); ?>&nbsp;
-            <span class="required text-red-500">*</span>
+            <span class="required text-danger">*</span>
           </label>
           <input type="email" 
                  class="woocommerce-Input woocommerce-Input--email input-text w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all" 
@@ -114,7 +114,7 @@ do_action('woocommerce_before_edit_account_form');
     <!-- Password Change Card -->
     <div class="bg-surface rounded-2xl border border-gray-100 shadow-sm p-6 mb-6">
       <div class="flex items-center gap-3 mb-6 pb-4 border-b border-gray-200">
-        <div class="w-10 h-10 bg-gradient-to-br from-amber-500 to-amber-600 rounded-lg flex items-center justify-center">
+        <div class="w-10 h-10 bg-gradient-to-br from-warning to-warning rounded-lg flex items-center justify-center">
           <span class="material-symbols-outlined text-white text-xl">lock</span>
         </div>
         <h3 class="text-xl font-bold text-gray-900">Password change</h3>
@@ -169,7 +169,7 @@ do_action('woocommerce_before_edit_account_form');
     <div class="flex flex-col sm:flex-row gap-3">
           <?php wp_nonce_field('save_account_details', 'save-account-details-nonce'); ?>
           <button type="submit" 
-                  class="woocommerce-Button button !inline-flex items-center justify-center gap-2 px-8 py-4 bg-gradient-to-r from-primary to-indigo-600 text-white font-semibold rounded-xl hover:opacity-90 transition-all shadow-sm hover:shadow-md w-full sm:w-auto" 
+                  class="woocommerce-Button button !inline-flex items-center justify-center gap-2 px-8 py-4 bg-gradient-to-r from-primary to-primary text-white font-semibold rounded-xl hover:opacity-90 transition-all shadow-sm hover:shadow-md w-full sm:w-auto" 
                   name="save_account_details" 
                   value="<?php esc_attr_e('Save changes', 'woocommerce'); ?>">
             <span class="material-symbols-outlined text-xl">save</span>
@@ -188,10 +188,10 @@ do_action('woocommerce_before_edit_account_form');
   </form>
 
   <!-- Deactivate account (separate POST; does not submit with Save changes) -->
-  <div class="mt-10 pt-8 border-t border-red-100">
-    <div class="bg-red-50/80 rounded-2xl border border-red-200/80 shadow-sm p-6">
+  <div class="mt-10 pt-8 border-t border-danger-bg">
+    <div class="bg-danger-bg/80 rounded-2xl border border-danger-border/80 shadow-sm p-6">
       <div class="flex items-start gap-3 mb-4">
-        <div class="w-10 h-10 shrink-0 bg-gradient-to-br from-red-500 to-red-700 rounded-lg flex items-center justify-center">
+        <div class="w-10 h-10 shrink-0 bg-gradient-to-br from-danger to-danger-text rounded-lg flex items-center justify-center">
           <span class="material-symbols-outlined text-white text-xl">warning</span>
         </div>
         <div class="min-w-0 flex-1">
@@ -220,7 +220,7 @@ do_action('woocommerce_before_edit_account_form');
         <button
           type="button"
           id="nera-deactivate-account-open"
-          class="inline-flex items-center justify-center gap-2 px-6 py-3.5 w-full sm:w-auto rounded-xl font-semibold text-white bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 border border-red-800/30 shadow-sm hover:shadow-md transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2"
+          class="inline-flex items-center justify-center gap-2 px-6 py-3.5 w-full sm:w-auto rounded-xl font-semibold text-white bg-gradient-to-r from-danger to-danger-text hover:from-danger-text hover:to-danger-text border border-danger-text/30 shadow-sm hover:shadow-md transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-danger focus-visible:ring-offset-2"
         >
           <span class="material-symbols-outlined text-xl">person_off</span>
           <?php esc_html_e('Deactivate Account', 'nera-competitions-standard'); ?>
@@ -235,7 +235,7 @@ do_action('woocommerce_before_edit_account_form');
         <div class="flex max-h-[min(100vh-2rem,90dvh)] min-h-0 flex-col overflow-y-auto">
           <div class="p-6 border-b border-gray-100">
             <h4 id="nera-deactivate-account-dialog-title" class="text-lg font-bold text-gray-900 flex items-center gap-2">
-              <span class="material-symbols-outlined text-red-600">help</span>
+              <span class="material-symbols-outlined text-danger">help</span>
               <?php esc_html_e('Delete your account?', 'nera-competitions-standard'); ?>
             </h4>
             <p class="text-sm text-gray-600 mt-2">
@@ -256,7 +256,7 @@ do_action('woocommerce_before_edit_account_form');
             <button
               type="button"
               id="nera-deactivate-account-confirm"
-              class="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl font-semibold text-white bg-red-600 hover:bg-red-700 border border-red-700 shadow-sm transition-colors w-full sm:w-auto"
+              class="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl font-semibold text-white bg-danger hover:bg-danger-text border border-danger-text shadow-sm transition-colors w-full sm:w-auto"
             >
               <?php esc_html_e('Yes', 'nera-competitions-standard'); ?>
             </button>

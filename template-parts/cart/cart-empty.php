@@ -15,19 +15,19 @@ if (!defined('ABSPATH')) {
   <!-- Decorative Background Elements -->
   <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-transparent via-primary/30 to-transparent"></div>
   <div class="absolute -top-24 -right-24 w-64 h-64 bg-primary/5 rounded-full blur-3xl"></div>
-  <div class="absolute -bottom-24 -left-24 w-64 h-64 bg-indigo-500/5 rounded-full blur-3xl"></div>
+  <div class="absolute -bottom-24 -left-24 w-64 h-64 bg-primary/5 rounded-full blur-3xl"></div>
 
   <div class="relative z-10 flex flex-col items-center justify-center">
 
     <!-- Icon with Gradient Glow -->
     <div class="relative mb-8 group">
       <div
-        class="absolute inset-0 bg-gradient-to-tr from-primary to-indigo-500 rounded-full blur-xl opacity-20 group-hover:opacity-30 transition-opacity duration-500 animate-pulse-slow">
+        class="absolute inset-0 bg-gradient-to-tr from-primary to-primary rounded-full blur-xl opacity-20 group-hover:opacity-30 transition-opacity duration-500 animate-pulse-slow">
       </div>
       <div
         class="relative w-20 h-20 bg-gradient-to-br from-white to-gray-50 rounded-full flex items-center justify-center border border-gray-100 shadow-xl shadow-primary/10 animate-float">
         <span
-          class="material-symbols-outlined !text-2xl text-transparent bg-clip-text bg-gradient-to-br from-primary to-indigo-600">shopping_cart_off</span>
+          class="material-symbols-outlined !text-2xl text-transparent bg-clip-text bg-gradient-to-br from-primary to-primary">shopping_cart_off</span>
       </div>
     </div>
 
@@ -48,7 +48,7 @@ if (!defined('ABSPATH')) {
     <a href="<?php echo esc_url(
       apply_filters('woocommerce_return_to_shop_redirect', wc_get_page_permalink('shop')),
     ); ?>"
-      class="group relative inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl bg-gradient-to-r from-primary to-indigo-600 text-white font-bold text-lg shadow-lg shadow-primary/30 overflow-hidden transition-all duration-300 hover:shadow-xl hover:shadow-primary/40 hover:-translate-y-1">
+      class="group relative inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl bg-gradient-to-r from-primary to-primary text-white font-bold text-lg shadow-lg shadow-primary/30 overflow-hidden transition-all duration-300 hover:shadow-xl hover:shadow-primary/40 hover:-translate-y-1">
 
       <!-- Shine Effect -->
       <span
@@ -69,7 +69,7 @@ if (!defined('ABSPATH')) {
 
       <div class="flex flex-col items-center gap-2 group cursor-default">
         <div
-          class="p-2 bg-green-50 rounded-full text-green-600 mb-1 transition-transform group-hover:scale-110 duration-300">
+          class="p-2 bg-success-bg rounded-full text-success mb-1 transition-transform group-hover:scale-110 duration-300">
           <span class="material-symbols-outlined text-xl">verified_user</span>
         </div>
         <div>
@@ -86,7 +86,7 @@ if (!defined('ABSPATH')) {
 
       <div class="flex flex-col items-center gap-2 group cursor-default">
         <div
-          class="p-2 bg-blue-50 rounded-full text-blue-600 mb-1 transition-transform group-hover:scale-110 duration-300">
+          class="p-2 bg-info-bg rounded-full text-primary mb-1 transition-transform group-hover:scale-110 duration-300">
           <span class="material-symbols-outlined text-xl">lock</span>
         </div>
         <div>
@@ -103,7 +103,7 @@ if (!defined('ABSPATH')) {
 
       <div class="flex flex-col items-center gap-2 group cursor-default">
         <div
-          class="p-2 bg-purple-50 rounded-full text-purple-600 mb-1 transition-transform group-hover:scale-110 duration-300">
+          class="p-2 bg-secondary rounded-full text-accent mb-1 transition-transform group-hover:scale-110 duration-300">
           <span class="material-symbols-outlined text-xl">card_giftcard</span>
         </div>
         <div>

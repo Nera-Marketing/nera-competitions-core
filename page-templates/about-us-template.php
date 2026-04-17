@@ -47,7 +47,7 @@ $cta_secondary_url = get_field('about_cta_secondary_btn_url') ?: home_url('/cont
     aria-labelledby="about-us-hero-heading">
     <div class="absolute inset-0 z-0 pointer-events-none opacity-30">
       <div class="absolute -top-[10%] -left-[10%] w-[40%] h-[40%] rounded-full bg-white/10 blur-[120px]"></div>
-      <div class="absolute -bottom-[10%] -right-[10%] w-[40%] h-[40%] rounded-full bg-indigo-400/20 blur-[120px]"></div>
+      <div class="absolute -bottom-[10%] -right-[10%] w-[40%] h-[40%] rounded-full bg-primary/20 blur-[120px]"></div>
     </div>
     <div class="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_at_top_right,rgba(255,255,255,0.15)_0%,transparent_55%)]"></div>
 

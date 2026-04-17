@@ -128,7 +128,7 @@ $default_logos = nera_get_default_payment_logos();
         <?php foreach ($trust_badges as $badge): ?>
           <?php if (!empty($badge['icon']) && !empty($badge['text'])): ?>
             <div class="flex items-center gap-2 text-sm text-text-secondary">
-              <span class="material-symbols-outlined text-green-500 text-lg">
+              <span class="material-symbols-outlined text-success text-lg">
                 <?php echo esc_html($badge['icon']); ?>
               </span>
               <span><?php echo esc_html($badge['text']); ?></span>
@@ -142,15 +142,15 @@ $default_logos = nera_get_default_payment_logos();
     <div class="default-trust-badges">
       <div class="flex flex-wrap items-center justify-center gap-4">
         <div class="flex items-center gap-2 text-sm text-text-secondary">
-          <span class="material-symbols-outlined text-green-500 text-lg">verified_user</span>
+          <span class="material-symbols-outlined text-success text-lg">verified_user</span>
           <span><?php _e('SSL Encrypted', 'nera-competitions'); ?></span>
         </div>
         <div class="flex items-center gap-2 text-sm text-text-secondary">
-          <span class="material-symbols-outlined text-green-500 text-lg">shield</span>
+          <span class="material-symbols-outlined text-success text-lg">shield</span>
           <span><?php _e('Secure Checkout', 'nera-competitions'); ?></span>
         </div>
         <div class="flex items-center gap-2 text-sm text-text-secondary">
-          <span class="material-symbols-outlined text-green-500 text-lg">support_agent</span>
+          <span class="material-symbols-outlined text-success text-lg">support_agent</span>
           <span><?php _e('24/7 Support', 'nera-competitions'); ?></span>
         </div>
       </div>

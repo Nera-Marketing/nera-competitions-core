@@ -25,7 +25,7 @@ $current_action = isset($_GET['action']) ? sanitize_text_field($_GET['action']) 
   </a>
 
   <!-- Wallet Balance Card -->
-  <div class="bg-gradient-to-br from-primary via-indigo-600 to-indigo-700 rounded-2xl shadow-xl p-8 mb-8 relative overflow-hidden">
+  <div class="bg-gradient-to-br from-primary via-primary to-primary-dark rounded-2xl shadow-xl p-8 mb-8 relative overflow-hidden">
     <!-- Decorative background elements -->
     <div class="absolute top-0 right-0 w-64 h-64 bg-surface/5 rounded-full -mr-32 -mt-32"></div>
     <div class="absolute bottom-0 left-0 w-48 h-48 bg-surface/5 rounded-full -ml-24 -mb-24"></div>
@@ -132,10 +132,10 @@ switch ($current_action) {
   </div>
 
   <!-- How Wallet Works (Info Box) -->
-  <div class="mt-8 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl border border-blue-100 shadow-sm p-6">
+  <div class="mt-8 bg-gradient-to-br from-info-bg to-secondary rounded-2xl border border-info-bg shadow-sm p-6">
     <div class="flex items-start gap-4">
-      <div class="flex-shrink-0 w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center">
-        <span class="material-symbols-outlined text-blue-600 text-2xl">help</span>
+      <div class="flex-shrink-0 w-12 h-12 rounded-full bg-info-bg flex items-center justify-center">
+        <span class="material-symbols-outlined text-primary text-2xl">help</span>
       </div>
       <div class="flex-1">
         <h4 class="text-lg font-bold text-text-primary mb-3">
@@ -143,21 +143,21 @@ switch ($current_action) {
         </h4>
         <div class="space-y-2 text-sm text-text-secondary">
           <div class="flex items-start gap-2">
-            <span class="material-symbols-outlined text-green-500 text-lg mt-0.5">check_circle</span>
+            <span class="material-symbols-outlined text-success text-lg mt-0.5">check_circle</span>
             <p><?php esc_html_e(
               'Earn credit by winning instant win prizes on competitions',
               'nera-competitions',
             ); ?></p>
           </div>
           <div class="flex items-start gap-2">
-            <span class="material-symbols-outlined text-green-500 text-lg mt-0.5">check_circle</span>
+            <span class="material-symbols-outlined text-success text-lg mt-0.5">check_circle</span>
             <p><?php esc_html_e(
               'Use your credit to pay for competition entries at checkout',
               'nera-competitions',
             ); ?></p>
           </div>
           <div class="flex items-start gap-2">
-            <span class="material-symbols-outlined text-green-500 text-lg mt-0.5">check_circle</span>
+            <span class="material-symbols-outlined text-success text-lg mt-0.5">check_circle</span>
             <p><?php esc_html_e(
               'Your balance carries over - no expiration on wallet credit',
               'nera-competitions',
@@ -165,7 +165,7 @@ switch ($current_action) {
           </div>
           <?php if (apply_filters('woo_wallet_is_enable_top_up', true)): ?>
           <div class="flex items-start gap-2">
-            <span class="material-symbols-outlined text-green-500 text-lg mt-0.5">check_circle</span>
+            <span class="material-symbols-outlined text-success text-lg mt-0.5">check_circle</span>
             <p><?php esc_html_e(
               'Top up your wallet anytime to have credit ready for quick entries',
               'nera-competitions',

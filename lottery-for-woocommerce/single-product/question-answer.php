@@ -47,11 +47,11 @@ if (!is_array($answers) || empty($answers)) {
   <!-- Question Header -->
   <div class="question-header mb-4">
     <div class="flex items-center gap-3">
-      <div class="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center">
-        <span class="material-symbols-outlined text-amber-600">quiz</span>
+      <div class="w-10 h-10 rounded-xl bg-warning-bg flex items-center justify-center">
+        <span class="material-symbols-outlined text-warning">quiz</span>
       </div>
       <div>
-        <span class="text-xs font-bold text-amber-600 uppercase tracking-wide">
+        <span class="text-xs font-bold text-warning uppercase tracking-wide">
           <?php _e('Skill Question', 'nera-competitions'); ?>
         </span>
         <p class="text-sm text-text-secondary">
@@ -109,7 +109,7 @@ if (!is_array($answers) || empty($answers)) {
   </div>
 
   <!-- Validation Message -->
-  <div class="question-validation hidden mt-3 p-3 rounded-xl bg-red-50 text-red-600 text-sm" data-validation-message>
+  <div class="question-validation hidden mt-3 p-3 rounded-xl bg-danger-bg text-danger text-sm" data-validation-message>
     <span class="flex items-center gap-2">
       <span class="material-symbols-outlined text-lg">error</span>
       <?php _e('Please select an answer to continue.', 'nera-competitions'); ?>
