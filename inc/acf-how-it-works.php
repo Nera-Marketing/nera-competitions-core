@@ -120,6 +120,14 @@ function nera_register_how_it_works_fields()
         'placement' => 'top',
       ],
       [
+        'key' => 'field_hiw_draw_eyebrow',
+        'label' => __('Eyebrow Label', 'nera-competitions'),
+        'name' => 'hiw_draw_eyebrow',
+        'type' => 'text',
+        'instructions' => __('Small uppercase label above the section title.', 'nera-competitions'),
+        'default_value' => __('Fair & Transparent', 'nera-competitions'),
+      ],
+      [
         'key' => 'field_hiw_draw_title',
         'label' => __('Section Title', 'nera-competitions'),
         'name' => 'hiw_draw_title',
@@ -135,6 +143,18 @@ function nera_register_how_it_works_fields()
         'tabs' => 'all',
         'toolbar' => 'basic',
         'media_upload' => 1,
+        'default_value' =>
+          '<p>' .
+          __(
+            'Our draws are conducted with absolute transparency. We use the <strong>Google Random Number Generator</strong> to ensure every entry has an equal and fair chance of winning.',
+            'nera-competitions',
+          ) .
+          '</p><p>' .
+          __(
+            'Join us live on our social media channels for every draw! We broadcast the entire process in real-time, announcing winners as they happen and celebrating with our community.',
+            'nera-competitions',
+          ) .
+          '</p>',
       ],
       [
         'key' => 'field_hiw_draw_image',
@@ -144,6 +164,29 @@ function nera_register_how_it_works_fields()
         'return_format' => 'array',
         'preview_size' => 'medium',
         'library' => 'all',
+      ],
+      [
+        'key' => 'field_hiw_draw_placeholder_title',
+        'label' => __('No-Image Placeholder — Title', 'nera-competitions'),
+        'name' => 'hiw_draw_placeholder_title',
+        'type' => 'text',
+        'instructions' => __('Shown in the image area when no image is set.', 'nera-competitions'),
+        'default_value' => __('Live Draw Streams', 'nera-competitions'),
+      ],
+      [
+        'key' => 'field_hiw_draw_placeholder_text',
+        'label' => __('No-Image Placeholder — Subtitle', 'nera-competitions'),
+        'name' => 'hiw_draw_placeholder_text',
+        'type' => 'text',
+        'default_value' => __('Watch us live on Facebook and Instagram', 'nera-competitions'),
+      ],
+      [
+        'key' => 'field_hiw_draw_placeholder_icon',
+        'label' => __('No-Image Placeholder — Material Icon', 'nera-competitions'),
+        'name' => 'hiw_draw_placeholder_icon',
+        'type' => 'text',
+        'instructions' => __('Material SymbolsOutlined ligature name (e.g. videocam).', 'nera-competitions'),
+        'default_value' => 'videocam',
       ],
       [
         'key' => 'field_hiw_tab_postal',
@@ -157,6 +200,18 @@ function nera_register_how_it_works_fields()
         'name' => 'hiw_postal_title',
         'type' => 'text',
         'default_value' => __('Free Postal Entry Route', 'nera-competitions'),
+      ],
+      [
+        'key' => 'field_hiw_postal_intro',
+        'label' => __('Intro Text', 'nera-competitions'),
+        'name' => 'hiw_postal_intro',
+        'type' => 'textarea',
+        'rows' => 2,
+        'instructions' => __('Line of text below the section heading.', 'nera-competitions'),
+        'default_value' => __(
+          'We offer a free entry route via post for all of our competitions.',
+          'nera-competitions',
+        ),
       ],
       [
         'key' => 'field_hiw_postal_steps',
@@ -222,6 +277,18 @@ function nera_register_how_it_works_fields()
         'name' => 'hiw_transparency_title',
         'type' => 'text',
         'default_value' => __('Transparency & Fairness', 'nera-competitions'),
+      ],
+      [
+        'key' => 'field_hiw_transparency_subtitle',
+        'label' => __('Intro Text', 'nera-competitions'),
+        'name' => 'hiw_transparency_subtitle',
+        'type' => 'textarea',
+        'rows' => 3,
+        'instructions' => __('Paragraph below the section heading.', 'nera-competitions'),
+        'default_value' => __(
+          'We pride ourselves on being a registered UK business that operates with full integrity and a passion for giving back.',
+          'nera-competitions',
+        ),
       ],
       [
         'key' => 'field_hiw_transparency_features',

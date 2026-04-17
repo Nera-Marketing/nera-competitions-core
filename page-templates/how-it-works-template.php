@@ -66,7 +66,37 @@ if (is_array($draw_image) && !empty($draw_image['url'])) {
   $draw_image_alt = '';
 }
 
+$hiw_draw_eyebrow = get_field('hiw_draw_eyebrow');
+$draw_eyebrow =
+  $hiw_draw_eyebrow !== null && $hiw_draw_eyebrow !== ''
+    ? $hiw_draw_eyebrow
+    : __('Fair & Transparent', 'nera-competitions');
+
+$hiw_draw_placeholder_title = get_field('hiw_draw_placeholder_title');
+$draw_placeholder_title =
+  $hiw_draw_placeholder_title !== null && $hiw_draw_placeholder_title !== ''
+    ? $hiw_draw_placeholder_title
+    : __('Live Draw Streams', 'nera-competitions');
+
+$hiw_draw_placeholder_text = get_field('hiw_draw_placeholder_text');
+$draw_placeholder_text =
+  $hiw_draw_placeholder_text !== null && $hiw_draw_placeholder_text !== ''
+    ? $hiw_draw_placeholder_text
+    : __('Watch us live on Facebook and Instagram', 'nera-competitions');
+
+$hiw_draw_placeholder_icon = get_field('hiw_draw_placeholder_icon');
+$draw_placeholder_icon_raw = is_string($hiw_draw_placeholder_icon) ? trim($hiw_draw_placeholder_icon) : '';
+$draw_placeholder_icon = $draw_placeholder_icon_raw !== '' ? $draw_placeholder_icon_raw : 'videocam';
+
 $postal_title = get_field('hiw_postal_title') ?: __('Free Postal Entry Route', 'nera-competitions');
+$hiw_postal_intro = get_field('hiw_postal_intro');
+$postal_intro =
+  $hiw_postal_intro !== null && $hiw_postal_intro !== ''
+    ? $hiw_postal_intro
+    : __(
+      'We offer a free entry route via post for all of our competitions.',
+      'nera-competitions',
+    );
 $acf_postal_steps = get_field('hiw_postal_steps');
 $postal_note = get_field('hiw_postal_note');
 
@@ -119,6 +149,14 @@ if (empty($postal_steps)) {
 }
 
 $trans_title = get_field('hiw_transparency_title') ?: __('Transparency & Fairness', 'nera-competitions');
+$hiw_transparency_subtitle = get_field('hiw_transparency_subtitle');
+$trans_subtitle =
+  $hiw_transparency_subtitle !== null && $hiw_transparency_subtitle !== ''
+    ? $hiw_transparency_subtitle
+    : __(
+      'We pride ourselves on being a registered UK business that operates with full integrity and a passion for giving back.',
+      'nera-competitions',
+    );
 $acf_trans_features = get_field('hiw_transparency_features');
 
 $default_trans_features = [
@@ -186,7 +224,7 @@ if (!empty($acf_trans_features) && is_array($acf_trans_features)) {
         <div data-aos="fade-right">
           <span
             class="inline-block bg-primary/10 text-primary py-1.5 px-4 rounded-full text-[11px] tracking-[2px] uppercase mb-6 font-medium">
-            <?php esc_html_e('Fair & Transparent', 'nera-competitions'); ?>
+            <?php echo esc_html($draw_eyebrow); ?>
           </span>
           <h2 id="hiw-draw-heading" class="font-heading text-4xl lg:text-5xl text-text-primary mb-8 leading-tight">
             <?php echo esc_html($draw_title); ?>
@@ -233,13 +271,15 @@ if (!empty($acf_trans_features) && is_array($acf_trans_features)) {
               <div class="text-center p-8">
                 <div
                   class="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
-                  <span class="material-symbols-outlined text-primary text-5xl" aria-hidden="true">videocam</span>
+                  <span class="material-symbols-outlined text-primary text-5xl" aria-hidden="true"><?php echo esc_html(
+                    $draw_placeholder_icon,
+                  ); ?></span>
                 </div>
                 <h3 class="text-xl font-bold text-text-primary mb-2">
-                  <?php esc_html_e('Live Draw Streams', 'nera-competitions'); ?>
+                  <?php echo esc_html($draw_placeholder_title); ?>
                 </h3>
                 <p class="text-sm text-text-secondary">
-                  <?php esc_html_e('Watch us live on Facebook and Instagram', 'nera-competitions'); ?>
+                  <?php echo esc_html($draw_placeholder_text); ?>
                 </p>
               </div>
             </div>
@@ -259,7 +299,7 @@ if (!empty($acf_trans_features) && is_array($acf_trans_features)) {
           <?php echo esc_html($postal_title); ?>
         </h2>
         <p class="text-white/80 text-lg">
-          <?php esc_html_e('We offer a free entry route via post for all of our competitions.', 'nera-competitions'); ?>
+          <?php echo esc_html($postal_intro); ?>
         </p>
       </div>
 
@@ -337,12 +377,7 @@ if (!empty($acf_trans_features) && is_array($acf_trans_features)) {
           <?php echo esc_html($trans_title); ?>
         </h2>
         <p class="text-text-secondary text-lg max-w-2xl mx-auto">
-          <?php
-          esc_html_e(
-            'We pride ourselves on being a registered UK business that operates with full integrity and a passion for giving back.',
-            'nera-competitions',
-          );
-          ?>
+          <?php echo esc_html($trans_subtitle); ?>
         </p>
       </div>
 
