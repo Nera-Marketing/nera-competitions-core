@@ -197,7 +197,7 @@ class Nera_Mobile_Menu_Walker extends Walker_Nav_Menu
 
     $visually_hidden = $open ? '' : ' hidden';
     $panel_classes =
-      'sub-menu nera-mobile-sub-menu mt-1 ml-3 space-y-0 border-l-2 border-gray-100 pl-3 overflow-hidden transition-[max-height] duration-300 ease-out' .
+      'sub-menu nera-mobile-sub-menu mt-1 ml-2 space-y-0 border-l-2 border-gray-100 pl-2 overflow-hidden transition-[max-height] duration-300 ease-out' .
       $visually_hidden;
 
     $output .= '<ul id="' . esc_attr($id) . '" class="' . esc_attr($panel_classes) . '"' . ($open ? '' : ' hidden') . '>';
@@ -289,7 +289,7 @@ class Nera_Mobile_Menu_Walker extends Walker_Nav_Menu
       );
 
       $item_output = isset($args->before) ? $args->before : '';
-      $item_output .= '<div class="flex items-stretch gap-0 border-b border-gray-100/80 last:border-b-0">';
+      $item_output .= '<div class="flex items-stretch gap-0">';
       $item_output .= '<a' . $attributes . '>';
       $item_output .= (isset($args->link_before) ? $args->link_before : '') . $title . (isset($args->link_after) ? $args->link_after : '');
       $item_output .= '</a>';
