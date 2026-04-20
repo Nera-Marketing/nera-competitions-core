@@ -63,13 +63,19 @@ if (!$cta_label) {
 
 <article
   class="ncs-entry-list-card group bg-surface rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100"
-  data-product-id="<?php echo esc_attr($product_id); ?>">
+  data-product-id="<?php echo esc_attr($product_id); ?>"
+  data-entry-fallback-url="<?php echo esc_url($entry_list_url); ?>">
   <div class="relative aspect-4/3 overflow-hidden">
     <div class="absolute top-4 left-4 z-10 <?php echo esc_attr($status_badge_class); ?> text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-widest">
       <?php echo esc_html($status_label); ?>
     </div>
 
-    <a href="<?php echo esc_url($entry_list_url); ?>" class="block w-full h-full" aria-label="<?php echo esc_attr($title); ?>">
+    <a
+      href="<?php echo esc_url($entry_list_url); ?>"
+      class="block w-full h-full"
+      aria-label="<?php echo esc_attr($title); ?>"
+      @click.prevent='$dispatch("nera-open-entry-list", { id: <?php echo (int) $product_id; ?>, title: <?php echo wp_json_encode($title); ?> })'
+    >
       <?php if ($image_id): ?>
         <?php $image_url = wp_get_attachment_image_url($image_id, 'large'); ?>
         <div
@@ -91,7 +97,11 @@ if (!$cta_label) {
 
   <div class="p-6">
     <h3 class="text-lg font-bold text-text-primary mb-3 line-clamp-2">
-      <a href="<?php echo esc_url($entry_list_url); ?>" class="hover:text-primary transition-colors">
+      <a
+        href="<?php echo esc_url($entry_list_url); ?>"
+        class="hover:text-primary transition-colors"
+        @click.prevent='$dispatch("nera-open-entry-list", { id: <?php echo (int) $product_id; ?>, title: <?php echo wp_json_encode($title); ?> })'
+      >
         <?php echo esc_html($title); ?>
       </a>
     </h3>
@@ -160,7 +170,9 @@ if (!$cta_label) {
       <div class="pt-2">
         <a
           href="<?php echo esc_url($entry_list_url); ?>"
+          role="button"
           class="inline-flex items-center gap-2 bg-primary hover:bg-primary-dark text-white text-sm font-bold px-5 py-2.5 rounded-xl shadow-primary hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 no-underline w-full justify-center"
+          @click.prevent='$dispatch("nera-open-entry-list", { id: <?php echo (int) $product_id; ?>, title: <?php echo wp_json_encode($title); ?> })'
         >
           <span class="material-symbols-outlined text-base">groups</span>
           <?php echo esc_html($cta_label); ?>

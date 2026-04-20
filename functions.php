@@ -151,6 +151,113 @@ function nera_entry_list_template_loader($template)
 add_filter('template_include', 'nera_entry_list_template_loader', 50);
 
 /**
+ * Register query var for theme entry-list PDF downloads.
+ *
+ * @param string[] $vars Query vars.
+ * @return string[]
+ */
+function nera_register_entry_list_pdf_query_var($vars)
+{
+  $vars[] = 'nera_entry_list_pdf';
+  return $vars;
+}
+add_filter('query_vars', 'nera_register_entry_list_pdf_query_var');
+
+/**
+ * URL for downloading the lottery entry-list PDF (theme endpoint; avoids plugin ?action=lty-download nonce issues).
+ *
+ * @param int $product_id Product ID.
+ * @return string Empty if disabled or invalid.
+ */
+function nera_get_entry_list_pdf_download_url($product_id)
+{
+  $product_id = absint($product_id);
+  if ($product_id < 1) {
+    return '';
+  }
+  if (
+    !function_exists('lty_can_display_lottery_entry_list_pdf_download_button') ||
+    !lty_can_display_lottery_entry_list_pdf_download_button()
+  ) {
+    return '';
+  }
+
+  return esc_url_raw(
+    add_query_arg('nera_entry_list_pdf', $product_id, home_url('/')),
+  );
+}
+
+/**
+ * Stream entry-list PDF via Lottery plugin generator when ?nera_entry_list_pdf={id} is requested.
+ *
+ * @return void
+ */
+function nera_handle_entry_list_pdf_download()
+{
+  if (!isset($_GET['nera_entry_list_pdf'])) {
+    return;
+  }
+
+  if (defined('REST_REQUEST') && REST_REQUEST) {
+    return;
+  }
+
+  $product_id = absint(wp_unslash($_GET['nera_entry_list_pdf']));
+  if ($product_id < 1) {
+    return;
+  }
+
+  if (
+    !function_exists('lty_can_display_lottery_entry_list_pdf_download_button') ||
+    !lty_can_display_lottery_entry_list_pdf_download_button()
+  ) {
+    status_header(403);
+    nocache_headers();
+    wp_die(
+      esc_html__('PDF download is disabled.', 'nera-competitions'),
+      '',
+      ['response' => 403],
+    );
+  }
+
+  if (!function_exists('wc_get_product') || !function_exists('lty_is_lottery_product')) {
+    status_header(503);
+    nocache_headers();
+    wp_die(
+      esc_html__('Service unavailable.', 'nera-competitions'),
+      '',
+      ['response' => 503],
+    );
+  }
+
+  $product = wc_get_product($product_id);
+  if (!$product || !$product->exists() || !lty_is_lottery_product($product)) {
+    status_header(404);
+    nocache_headers();
+    wp_die(
+      esc_html__('Competition not found.', 'nera-competitions'),
+      '',
+      ['response' => 404],
+    );
+  }
+
+  if (!class_exists('LTY_Generate_PDF_Handler')) {
+    status_header(503);
+    nocache_headers();
+    wp_die(
+      esc_html__('Service unavailable.', 'nera-competitions'),
+      '',
+      ['response' => 503],
+    );
+  }
+
+  nocache_headers();
+  LTY_Generate_PDF_Handler::download_lottery_entry_list($product_id);
+  exit;
+}
+add_action('template_redirect', 'nera_handle_entry_list_pdf_download', 5);
+
+/**
  * Set a stable SEO title for the virtual attribution route.
  */
 function nera_attribution_document_title($title)
@@ -641,6 +748,11 @@ if (class_exists('WooCommerce')) {
 // REST API for instant wins lazy loading
 if (class_exists('WooCommerce')) {
   require_once NERA_DIR . '/inc/api/instant-wins-api.php';
+}
+
+// REST API for entry-list modal (Lottery for WooCommerce)
+if (class_exists('WooCommerce') && function_exists('lty_is_lottery_product')) {
+  require_once NERA_DIR . '/inc/api/entry-list-api.php';
 }
 
 // Giveaway plugin customizations
