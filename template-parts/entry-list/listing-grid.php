@@ -22,6 +22,26 @@ $has_more   = $query->max_num_pages > 1;
 $ajax_url   = admin_url('admin-ajax.php');
 $ajax_nonce = wp_create_nonce('nera_nonce');
 $rest_base  = esc_url_raw(trailingslashit(rest_url('nera/v1')));
+
+$entry_list_alpine_config = [
+  'restBase'   => $rest_base,
+  'hasMore'    => $has_more,
+  'ajaxUrl'    => $ajax_url,
+  'ajaxNonce'  => $ajax_nonce,
+  'strings'    => [
+    'loading'                 => __('Loading…', 'nera-competitions'),
+    'loadMore'                => __('Load More', 'nera-competitions'),
+    'hourglassIcon'           => 'hourglass_empty',
+    'expandIcon'              => 'expand_more',
+    'loadParticipantsError'   => __('Could not load participants.', 'nera-competitions'),
+    'loadTicketsError'        => __('Could not load ticket list.', 'nera-competitions'),
+  ],
+];
+
+// Valid JS inside x-data — do not use JSON_HEX_QUOT (\u0022 breaks the object literal).
+$json_flags  = JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_UNESCAPED_SLASHES;
+$config_json = wp_json_encode($entry_list_alpine_config, $json_flags);
+$x_data_expr = 'neraEntryListGrid(' . $config_json . ')';
 ?>
 
 <script>
@@ -34,10 +54,11 @@ document.addEventListener('alpine:init', () => {
   Alpine.data('neraEntryListGrid', (config) => ({
     restBase: config.restBase || '',
     page: 1,
-    hasMore: config.hasMore,
+    hasMore: !!config.hasMore,
     loading: false,
-    ajaxUrl: config.ajaxUrl,
-    ajaxNonce: config.ajaxNonce,
+    ajaxUrl: config.ajaxUrl || '',
+    ajaxNonce: config.ajaxNonce || '',
+    strings: config.strings || {},
 
     modalOpen: false,
     modalLoading: false,
@@ -138,8 +159,7 @@ document.addEventListener('alpine:init', () => {
         this.syncTicketState(body.data.ticket_logs);
       } catch (e) {
         this.modalError =
-          (e && e.message) ||
-          <?php echo wp_json_encode(__('Could not load participants.', 'nera-competitions')); ?>;
+          (e && e.message) || this.strings.loadParticipantsError;
       } finally {
         this.modalLoading = false;
         this.$nextTick(() => {
@@ -176,8 +196,7 @@ document.addEventListener('alpine:init', () => {
         }
         this.syncTicketState(body.data);
       } catch (e) {
-        this.modalError =
-          <?php echo wp_json_encode(__('Could not load ticket list.', 'nera-competitions')); ?>;
+        this.modalError = this.strings.loadTicketsError;
       } finally {
         this.ticketsLoading = false;
       }
@@ -207,12 +226,7 @@ document.addEventListener('alpine:init', () => {
 <section class="py-8 sm:py-12 px-3 sm:px-6 bg-background-light">
   <div
     class="max-w-[1200px] mx-auto"
-    x-data='neraEntryListGrid({
-      restBase: <?php echo wp_json_encode($rest_base); ?>,
-      hasMore: <?php echo $has_more ? 'true' : 'false'; ?>,
-      ajaxUrl: <?php echo wp_json_encode($ajax_url); ?>,
-      ajaxNonce: <?php echo wp_json_encode($ajax_nonce); ?>
-    })'
+    x-data="<?php echo esc_attr($x_data_expr); ?>"
     @nera-open-entry-list="openParticipants($event.detail)"
     @keydown.escape.window="handleEscape()"
   >
@@ -252,11 +266,11 @@ document.addEventListener('alpine:init', () => {
           class="group relative px-8 py-4 bg-surface text-text-primary border border-gray-200 rounded-xl font-bold text-sm shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 disabled:opacity-60 disabled:cursor-not-allowed"
         >
           <span class="flex items-center justify-center gap-2">
-            <span class="material-symbols-outlined transition-transform duration-300 group-hover:translate-y-1"
-              x-text="loading ? 'hourglass_empty' : 'expand_more'">expand_more</span>
-            <span x-text="loading
-              ? <?php echo wp_json_encode(__('Loading…', 'nera-competitions')); ?>
-              : <?php echo wp_json_encode(__('Load More', 'nera-competitions')); ?>">
+            <span
+              class="material-symbols-outlined transition-transform duration-300 group-hover:translate-y-1"
+              x-text="loading ? strings.hourglassIcon : strings.expandIcon"
+            >expand_more</span>
+            <span x-text="loading ? strings.loading : strings.loadMore">
               <?php esc_html_e('Load More', 'nera-competitions'); ?>
             </span>
           </span>
@@ -337,19 +351,19 @@ document.addEventListener('alpine:init', () => {
               </div>
             </template>
 
-            <div class="grid gap-4 sm:grid-cols-2" x-show="modalPayload && modalPayload.summary">
-              <div class="rounded-xl border border-gray-100 bg-secondary/40 p-4">
+            <div class="grid grid-cols-2 gap-2.5 sm:gap-4" x-show="modalPayload && modalPayload.summary">
+              <div class="min-w-0 rounded-xl border border-gray-100 bg-secondary/40 p-3 sm:p-4">
                 <p class="text-xs font-semibold uppercase tracking-wide text-text-secondary"><?php esc_html_e('Tickets sold', 'nera-competitions'); ?></p>
-                <p class="mt-1 text-lg font-bold text-text-primary">
+                <p class="mt-1 text-base font-bold text-text-primary sm:text-lg">
                   <span x-text="modalPayload && modalPayload.summary ? modalPayload.summary.sold : 0"></span>/<span x-text="modalPayload && modalPayload.summary ? modalPayload.summary.max_tickets : 0"></span>
-                  <span class="text-sm font-semibold text-primary">(<span x-text="modalPayload && modalPayload.summary ? modalPayload.summary.progress : 0"></span>%)</span>
+                  <span class="text-xs font-semibold text-primary sm:text-sm">(<span x-text="modalPayload && modalPayload.summary ? modalPayload.summary.progress : 0"></span>%)</span>
                 </p>
               </div>
-              <div class="rounded-xl border border-gray-100 bg-secondary/40 p-4">
+              <div class="min-w-0 rounded-xl border border-gray-100 bg-secondary/40 p-3 sm:p-4">
                 <p class="text-xs font-semibold uppercase tracking-wide text-text-secondary"><?php esc_html_e('Draw', 'nera-competitions'); ?></p>
                 <template x-if="modalPayload && modalPayload.summary && modalPayload.summary.is_active && modalPayload.summary.countdown_timestamp_ms > 0">
                   <div class="mt-1" x-data="countdown(String(modalPayload.summary.countdown_timestamp_ms))">
-                    <p class="text-xs font-bold uppercase tabular-nums text-text-primary">
+                    <p class="text-[11px] font-bold uppercase tabular-nums text-text-primary sm:text-xs">
                       <span x-text="days">00</span>d :
                       <span x-text="hours">00</span>h :
                       <span x-text="minutes">00</span>m :
@@ -358,7 +372,7 @@ document.addEventListener('alpine:init', () => {
                   </div>
                 </template>
                 <template x-if="modalPayload && modalPayload.summary && !modalPayload.summary.is_active && modalPayload.summary.draw_date">
-                  <p class="mt-1 text-sm font-semibold text-text-primary" x-text="modalPayload.summary.draw_date"></p>
+                  <p class="mt-1 break-words text-xs font-semibold text-text-primary sm:text-sm" x-text="modalPayload.summary.draw_date"></p>
                 </template>
               </div>
             </div>
@@ -366,7 +380,7 @@ document.addEventListener('alpine:init', () => {
             <template x-if="modalPayload && modalPayload.winner_logs">
               <div>
                 <h3 class="mb-3 text-base font-bold text-text-primary" x-text="modalPayload.winner_logs.heading"></h3>
-                <div class="overflow-x-auto rounded-xl border border-gray-200">
+                <div class="overflow-x-auto rounded-none border border-gray-200">
                   <table class="w-full min-w-[480px] text-sm">
                     <thead>
                       <tr class="bg-primary text-white">
@@ -420,7 +434,7 @@ document.addEventListener('alpine:init', () => {
                 </div>
               </template>
 
-              <div class="overflow-x-auto rounded-xl border border-gray-200" x-show="ticketRows.length > 0">
+              <div class="overflow-x-auto rounded-none border border-gray-200" x-show="ticketRows.length > 0">
                 <table class="w-full min-w-[480px] text-sm">
                   <thead>
                     <tr class="bg-primary text-white">

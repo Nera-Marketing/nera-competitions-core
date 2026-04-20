@@ -5,6 +5,9 @@
  * Server-renders first page of closed/finished competitions.
  * Subsequent pages load via AJAX (nera_closed_prizes_load_more).
  *
+ * Alpine state uses a small factory (see script below). Inline x-data objects with
+ * embedded JSON break HTML attribute parsing and cause Alpine syntax/ReferenceErrors.
+ *
  * @package Nera_Competitions
  */
 
@@ -18,22 +21,46 @@ $query = new WP_Query(
     : [],
 );
 
-$has_more      = $query->max_num_pages > 1;
-$ajax_url      = admin_url('admin-ajax.php');
-$ajax_nonce    = wp_create_nonce('nera_nonce');
+$has_more   = $query->max_num_pages > 1;
+$ajax_url   = admin_url('admin-ajax.php');
+$ajax_nonce = wp_create_nonce('nera_nonce');
+
+$alpine_config = [
+  'hasMore'   => $has_more,
+  'ajaxUrl'   => $ajax_url,
+  'ajaxNonce' => $ajax_nonce,
+  'strings'   => [
+    'loading'       => __('Loading…', 'nera-competitions'),
+    'loadMore'      => __('Load More', 'nera-competitions'),
+    'hourglassIcon' => 'hourglass_empty',
+    'expandIcon'    => 'expand_more',
+  ],
+];
+
+// Valid JS inside x-data — do not use JSON_HEX_QUOT (\u0022 breaks the object literal).
+$json_flags  = JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_UNESCAPED_SLASHES;
+$config_json = wp_json_encode($alpine_config, $json_flags);
+$x_data_expr = 'neraClosedPrizesGrid(' . $config_json . ')';
 ?>
 
-<section class="py-8 sm:py-12 px-3 sm:px-6 bg-background-light">
-  <div class="max-w-[1200px] mx-auto"
-    x-data="{
+<script>
+(function () {
+  window.neraClosedPrizesGrid = function (config) {
+    config = config || {};
+    const strings = config.strings || {};
+
+    return {
       page: 1,
-      hasMore: <?php echo $has_more ? 'true' : 'false'; ?>,
+      hasMore: !!config.hasMore,
       loading: false,
-      ajaxUrl: <?php echo wp_json_encode($ajax_url); ?>,
-      ajaxNonce: <?php echo wp_json_encode($ajax_nonce); ?>,
+      ajaxUrl: config.ajaxUrl || '',
+      ajaxNonce: config.ajaxNonce || '',
+      strings,
 
       async loadMore() {
-        if (this.loading || !this.hasMore) return;
+        if (this.loading || !this.hasMore) {
+          return;
+        }
         this.loading = true;
         this.page++;
         try {
@@ -56,8 +83,16 @@ $ajax_nonce    = wp_create_nonce('nera_nonce');
         } finally {
           this.loading = false;
         }
-      }
-    }"
+      },
+    };
+  };
+})();
+</script>
+
+<section class="py-8 sm:py-12 px-3 sm:px-6 bg-background-light">
+  <div
+    class="max-w-[1200px] mx-auto"
+    x-data="<?php echo esc_attr($x_data_expr); ?>"
   >
 
     <?php if (!$query->have_posts()): ?>
@@ -102,11 +137,11 @@ $ajax_nonce    = wp_create_nonce('nera_nonce');
           class="group relative px-8 py-4 bg-surface text-text-primary border border-gray-200 rounded-xl font-bold text-sm shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 disabled:opacity-60 disabled:cursor-not-allowed"
         >
           <span class="flex items-center justify-center gap-2">
-            <span class="material-symbols-outlined transition-transform duration-300 group-hover:translate-y-1"
-              x-text="loading ? 'hourglass_empty' : 'expand_more'">expand_more</span>
-            <span x-text="loading
-              ? <?php echo wp_json_encode(__('Loading…', 'nera-competitions')); ?>
-              : <?php echo wp_json_encode(__('Load More', 'nera-competitions')); ?>">
+            <span
+              class="material-symbols-outlined transition-transform duration-300 group-hover:translate-y-1"
+              x-text="loading ? strings.hourglassIcon : strings.expandIcon"
+            >expand_more</span>
+            <span x-text="loading ? strings.loading : strings.loadMore">
               <?php esc_html_e('Load More', 'nera-competitions'); ?>
             </span>
           </span>
