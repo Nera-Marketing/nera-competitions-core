@@ -2061,3 +2061,292 @@ function nera_get_closed_lottery_won_instant_prize_count($product_id)
 
   return count(lty_get_instant_winner_log_ids((int) $product_id, false, false, ['lty_won']));
 }
+
+/**
+ * Items per page for the dynamic Winners page grid.
+ *
+ * @return int
+ */
+function nera_winners_dynamic_per_page()
+{
+  return (int) apply_filters('nera_winners_dynamic_per_page', 12);
+}
+
+/**
+ * Whether a lottery product is ended (finished or closed) for public winner listings.
+ *
+ * @param WC_Product|null $product Product.
+ * @return bool
+ */
+function nera_winners_dynamic_is_ended_lottery_product($product)
+{
+  if (!$product || !function_exists('lty_is_lottery_product') || !lty_is_lottery_product($product)) {
+    return false;
+  }
+
+  $status = get_post_meta($product->get_id(), '_lty_lottery_status', true);
+
+  return in_array((string) $status, ['lty_lottery_finished', 'lty_lottery_closed'], true);
+}
+
+/**
+ * Whether an instant winner log should appear on the Dynamic Winners page.
+ *
+ * By default, won instant prizes show for any lottery product (including live).
+ * Set filter `nera_winners_dynamic_show_instant_for_live` to false to require ended products only.
+ *
+ * @param object          $log     LTY_Instant_Winner_Log instance.
+ * @param WC_Product|null $product Lottery product.
+ * @return bool
+ */
+function nera_winners_dynamic_can_show_instant_log($log, $product)
+{
+  if (!$product || !function_exists('lty_is_lottery_product') || !lty_is_lottery_product($product)) {
+    return false;
+  }
+
+  $show_for_live = apply_filters('nera_winners_dynamic_show_instant_for_live', true, $log, $product);
+
+  $eligible = $show_for_live ? true : nera_winners_dynamic_is_ended_lottery_product($product);
+
+  return (bool) apply_filters('nera_winners_dynamic_can_show_instant_log', $eligible, $log, $product);
+}
+
+/**
+ * Build merged, sorted list of main winner rows (ended only) + instant winner rows (won logs).
+ *
+ * @return array<int, array<string, mixed>>
+ */
+function nera_winners_dynamic_get_merged_entries()
+{
+  static $cache = null;
+  if ($cache !== null) {
+    return $cache;
+  }
+
+  $cache = [];
+
+  if (!function_exists('lty_get_lottery_winner') || !function_exists('lty_get_instant_winner_log')) {
+    return $cache;
+  }
+
+  $main_ids = get_posts([
+    'post_type'              => 'lty_lottery_winner',
+    'post_status'            => 'lty_publish',
+    'posts_per_page'         => -1,
+    'orderby'                => 'post_date',
+    'order'                  => 'DESC',
+    'fields'                 => 'ids',
+    'no_found_rows'          => true,
+    'update_post_meta_cache' => false,
+    'update_post_term_cache' => false,
+  ]);
+
+  foreach ($main_ids as $winner_post_id) {
+    $winner = lty_get_lottery_winner((int) $winner_post_id);
+    if (!is_object($winner) || !method_exists($winner, 'get_product')) {
+      continue;
+    }
+    $product = $winner->get_product();
+    if (!$product || !nera_winners_dynamic_is_ended_lottery_product($product)) {
+      continue;
+    }
+
+    $product_id = (int) $product->get_id();
+    $end_gmt    = get_post_meta($product_id, '_lty_end_date_gmt', true);
+    $draw_label = $end_gmt && function_exists('nera_format_draw_date') ? nera_format_draw_date($end_gmt) : '';
+
+    $winner_gmt = (string) get_post_field('post_date_gmt', (int) $winner_post_id, 'raw');
+    $sort_ts    = $winner_gmt ? (int) strtotime($winner_gmt . ' GMT') : 0;
+
+    $prize_line = '';
+    if (method_exists($winner, 'get_winning_details')) {
+      $prize_line = wp_strip_all_tags((string) $winner->get_winning_details());
+    }
+
+    $name = method_exists($winner, 'display_user_name') ? (string) $winner->display_user_name() : '';
+    if (function_exists('nera_mask_username')) {
+      $name = nera_mask_username($name);
+    }
+
+    $ticket = method_exists($winner, 'get_lottery_ticket_number') ? (string) $winner->get_lottery_ticket_number() : '';
+
+    $cache[] = [
+      'type'          => 'main',
+      'source_id'     => (int) $winner_post_id,
+      'sort_ts'       => $sort_ts,
+      'product_id'    => $product_id,
+      'product_title' => $product->get_name(),
+      'product_url'   => get_permalink($product_id),
+      'image_id'      => (int) $product->get_image_id(),
+      'draw_label'    => $draw_label,
+      'ticket_number' => $ticket,
+      'winner_name'   => $name,
+      'prize_line'    => $prize_line,
+      'badge_label'   => __('Main winner', 'nera-competitions'),
+    ];
+  }
+
+  $instant_ids = get_posts([
+    'post_type'              => 'lty_ins_winner_log',
+    'post_status'            => 'lty_won',
+    'posts_per_page'         => -1,
+    'orderby'                => 'post_date',
+    'order'                  => 'DESC',
+    'fields'                 => 'ids',
+    'no_found_rows'          => true,
+    'update_post_meta_cache' => false,
+    'update_post_term_cache' => false,
+  ]);
+
+  foreach ($instant_ids as $log_id) {
+    $log = lty_get_instant_winner_log((int) $log_id);
+    if (!is_object($log) || !method_exists($log, 'get_product')) {
+      continue;
+    }
+    $product = $log->get_product();
+    if (!nera_winners_dynamic_can_show_instant_log($log, $product)) {
+      continue;
+    }
+
+    $product_id = (int) $product->get_id();
+    $end_gmt    = get_post_meta($product_id, '_lty_end_date_gmt', true);
+    $draw_label = $end_gmt && function_exists('nera_format_draw_date') ? nera_format_draw_date($end_gmt) : '';
+
+    $post_gmt = (string) get_post_field('post_date_gmt', (int) $log_id, 'raw');
+    $sort_ts  = $post_gmt ? (int) strtotime($post_gmt . ' GMT') : 0;
+
+    $prize_line = '';
+    if (method_exists($log, 'get_prize_message')) {
+      $prize_line = wp_strip_all_tags((string) $log->get_prize_message());
+    }
+
+    $name = method_exists($log, 'display_user_name') ? (string) $log->display_user_name() : '';
+    if (function_exists('nera_mask_username')) {
+      $name = nera_mask_username($name);
+    }
+
+    $ticket = method_exists($log, 'get_ticket_number') ? (string) $log->get_ticket_number() : '';
+
+    $cache[] = [
+      'type'          => 'instant',
+      'source_id'     => (int) $log_id,
+      'sort_ts'       => $sort_ts,
+      'product_id'    => $product_id,
+      'product_title' => $product->get_name(),
+      'product_url'   => get_permalink($product_id),
+      'image_id'      => (int) $product->get_image_id(),
+      'draw_label'    => $draw_label,
+      'ticket_number' => $ticket,
+      'winner_name'   => $name,
+      'prize_line'    => $prize_line,
+      'badge_label'   => __('Instant winner', 'nera-competitions'),
+    ];
+  }
+
+  usort(
+    $cache,
+    static function ($a, $b) {
+      return (int) ($b['sort_ts'] ?? 0) <=> (int) ($a['sort_ts'] ?? 0);
+    },
+  );
+
+  return $cache;
+}
+
+/**
+ * Whitelist filter key for dynamic winners (tab bar).
+ *
+ * @param string $filter Raw filter slug.
+ * @return string One of all|main|instant.
+ */
+function nera_winners_dynamic_whitelist_filter($filter)
+{
+  $filter = is_string($filter) ? strtolower(trim($filter)) : '';
+  $allowed = ['all', 'main', 'instant'];
+
+  return in_array($filter, $allowed, true) ? $filter : 'all';
+}
+
+/**
+ * Filter merged winner rows by tab (live draw / instant win / all).
+ *
+ * @param array<int, array<string, mixed>> $rows Merged entries.
+ * @param string                           $filter all|main|instant.
+ * @return array<int, array<string, mixed>>
+ */
+function nera_winners_dynamic_filter_entries(array $rows, $filter)
+{
+  $filter = nera_winners_dynamic_whitelist_filter((string) $filter);
+  if ($filter === 'all') {
+    return $rows;
+  }
+
+  $want = $filter === 'main' ? 'main' : 'instant';
+
+  return array_values(
+    array_filter(
+      $rows,
+      static function ($row) use ($want) {
+        return isset($row['type']) && (string) $row['type'] === $want;
+      },
+    ),
+  );
+}
+
+/**
+ * Badge counts per tab from the merged dataset (single pass).
+ *
+ * @return array{all:int,main:int,instant:int}
+ */
+function nera_winners_dynamic_get_filter_counts()
+{
+  $merged  = nera_winners_dynamic_get_merged_entries();
+  $main    = 0;
+  $instant = 0;
+
+  foreach ($merged as $row) {
+    $t = isset($row['type']) ? (string) $row['type'] : '';
+    if ($t === 'main') {
+      $main++;
+    } elseif ($t === 'instant') {
+      $instant++;
+    }
+  }
+
+  return [
+    'all'     => count($merged),
+    'main'    => $main,
+    'instant' => $instant,
+  ];
+}
+
+/**
+ * Paginated slice of dynamic winner rows (filter-aware).
+ *
+ * @param int    $page   Page (1-based).
+ * @param string $filter all|main|instant.
+ * @return array{rows:array,total:int,max_pages:int,per_page:int,has_more:bool,filter:string}
+ */
+function nera_winners_dynamic_get_page_dataset($page, $filter = 'all')
+{
+  $filter     = nera_winners_dynamic_whitelist_filter((string) $filter);
+  $per        = nera_winners_dynamic_per_page();
+  $merged     = nera_winners_dynamic_get_merged_entries();
+  $filtered   = nera_winners_dynamic_filter_entries($merged, $filter);
+  $total      = count($filtered);
+  $max_pages  = $total > 0 && $per > 0 ? (int) ceil($total / $per) : 0;
+  $page       = max(1, (int) $page);
+  $offset     = ($page - 1) * $per;
+  $rows       = $per > 0 ? array_slice($filtered, $offset, $per) : [];
+  $has_more   = $max_pages > 0 && $page < $max_pages;
+
+  return [
+    'rows'       => $rows,
+    'total'      => $total,
+    'max_pages'  => $max_pages,
+    'per_page'   => $per,
+    'has_more'   => $has_more,
+    'filter'     => $filter,
+  ];
+}

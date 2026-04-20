@@ -1231,6 +1231,58 @@ function nera_ajax_entry_list_load_more()
 add_action('wp_ajax_nera_entry_list_load_more',        'nera_ajax_entry_list_load_more');
 add_action('wp_ajax_nopriv_nera_entry_list_load_more', 'nera_ajax_entry_list_load_more');
 
+/**
+ * AJAX: append next page of cards for the dynamic Winners page.
+ */
+function nera_ajax_winners_dynamic_load_more()
+{
+  check_ajax_referer('nera_nonce', 'nonce');
+
+  $paged = isset($_POST['paged']) ? max(1, absint($_POST['paged'])) : 1;
+  $raw_filter = isset($_POST['filter']) ? wp_unslash($_POST['filter']) : 'all';
+  $filter = function_exists('nera_winners_dynamic_whitelist_filter')
+    ? nera_winners_dynamic_whitelist_filter(sanitize_text_field($raw_filter))
+    : 'all';
+
+  if (!function_exists('nera_winners_dynamic_get_page_dataset')) {
+    wp_send_json_success([
+      'html'     => '',
+      'has_more' => false,
+      'total'    => 0,
+      'showing'  => 0,
+      'per_page' => 0,
+      'page'     => $paged,
+      'filter'   => $filter,
+    ]);
+  }
+
+  $dataset = nera_winners_dynamic_get_page_dataset($paged, $filter);
+  $rows    = isset($dataset['rows']) && is_array($dataset['rows']) ? $dataset['rows'] : [];
+
+  ob_start();
+  foreach ($rows as $row) {
+    get_template_part('template-parts/winners-dynamic/winner-card', null, [
+      'row' => $row,
+    ]);
+  }
+  $html = ob_get_clean();
+
+  $per_page = isset($dataset['per_page']) ? (int) $dataset['per_page'] : 0;
+  $total    = isset($dataset['total']) ? (int) $dataset['total'] : 0;
+  $showing  = $per_page > 0 ? min($paged * $per_page, $total) : $total;
+
+  wp_send_json_success([
+    'html'     => $html,
+    'has_more' => !empty($dataset['has_more']),
+    'total'    => $total,
+    'showing'  => $showing,
+    'per_page' => $per_page,
+    'page'     => $paged,
+    'filter'   => isset($dataset['filter']) ? (string) $dataset['filter'] : $filter,
+  ]);
+}
+add_action('wp_ajax_nera_winners_dynamic_load_more',        'nera_ajax_winners_dynamic_load_more');
+add_action('wp_ajax_nopriv_nera_winners_dynamic_load_more', 'nera_ajax_winners_dynamic_load_more');
 
 /**
  * AJAX handler for filtering products
