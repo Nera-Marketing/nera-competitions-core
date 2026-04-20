@@ -1,6 +1,6 @@
 <?php
 /**
- * Template Name: Nera Winners Page
+ * Template Name: Nera Winners Page (Manual Entry)
  * Template Post Type: page
  *
  * Winners page template with ACF fields and AlpineJS filtering.

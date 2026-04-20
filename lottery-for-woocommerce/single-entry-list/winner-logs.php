@@ -14,17 +14,17 @@ if (empty($lottery_winners)) {
 }
 ?>
 
-<div class="mt-8">
+<div class="mt-8 mb-10">
   <h3 class="mb-4 text-lg font-bold text-text-primary">
     <?php echo wp_kses_post(lty_get_single_product_lottery_winner_label()); ?>
   </h3>
 
-  <div class="overflow-x-auto rounded-xl border border-gray-200">
+  <div class="overflow-x-auto border border-gray-200">
     <table class="lty-winner-logs-table shop_table w-full text-sm">
       <thead>
         <tr class="bg-primary text-white">
           <?php foreach ($columns as $column_name): ?>
-            <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider first:rounded-tl-xl last:rounded-tr-xl">
+            <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">
               <?php echo esc_html($column_name); ?>
             </th>
           <?php endforeach; ?>

@@ -115,6 +115,149 @@ function nera_maybe_load_attribution_template($template)
 add_filter('template_include', 'nera_maybe_load_attribution_template', 99);
 
 /**
+ * Detect Lottery for WooCommerce entry-list archive context.
+ *
+ * The plugin sets this query var in pre_get_posts and also forces is_page false,
+ * so this must be used instead of is_page() checks.
+ *
+ * @return bool
+ */
+function nera_is_entry_list_archive()
+{
+  return (bool) get_query_var('is_lottery_entry_list_archive', false);
+}
+
+/**
+ * Replace the default WooCommerce archive output on /giveaway-entry-list/
+ * with a custom themed listing template.
+ *
+ * @param string $template Resolved template path.
+ * @return string
+ */
+function nera_entry_list_template_loader($template)
+{
+  if (!nera_is_entry_list_archive()) {
+    return $template;
+  }
+
+  // Let the plugin keep full control for /giveaway-entry-list/{product-slug}/.
+  if (get_query_var('lottery_single_entry_list')) {
+    return $template;
+  }
+
+  $custom = locate_template('page-templates/entry-list-listing-template.php');
+  return $custom ?: $template;
+}
+add_filter('template_include', 'nera_entry_list_template_loader', 50);
+
+/**
+ * Register query var for theme entry-list PDF downloads.
+ *
+ * @param string[] $vars Query vars.
+ * @return string[]
+ */
+function nera_register_entry_list_pdf_query_var($vars)
+{
+  $vars[] = 'nera_entry_list_pdf';
+  return $vars;
+}
+add_filter('query_vars', 'nera_register_entry_list_pdf_query_var');
+
+/**
+ * URL for downloading the lottery entry-list PDF (theme endpoint; avoids plugin ?action=lty-download nonce issues).
+ *
+ * @param int $product_id Product ID.
+ * @return string Empty if disabled or invalid.
+ */
+function nera_get_entry_list_pdf_download_url($product_id)
+{
+  $product_id = absint($product_id);
+  if ($product_id < 1) {
+    return '';
+  }
+  if (
+    !function_exists('lty_can_display_lottery_entry_list_pdf_download_button') ||
+    !lty_can_display_lottery_entry_list_pdf_download_button()
+  ) {
+    return '';
+  }
+
+  return esc_url_raw(
+    add_query_arg('nera_entry_list_pdf', $product_id, home_url('/')),
+  );
+}
+
+/**
+ * Stream entry-list PDF via Lottery plugin generator when ?nera_entry_list_pdf={id} is requested.
+ *
+ * @return void
+ */
+function nera_handle_entry_list_pdf_download()
+{
+  if (!isset($_GET['nera_entry_list_pdf'])) {
+    return;
+  }
+
+  if (defined('REST_REQUEST') && REST_REQUEST) {
+    return;
+  }
+
+  $product_id = absint(wp_unslash($_GET['nera_entry_list_pdf']));
+  if ($product_id < 1) {
+    return;
+  }
+
+  if (
+    !function_exists('lty_can_display_lottery_entry_list_pdf_download_button') ||
+    !lty_can_display_lottery_entry_list_pdf_download_button()
+  ) {
+    status_header(403);
+    nocache_headers();
+    wp_die(
+      esc_html__('PDF download is disabled.', 'nera-competitions'),
+      '',
+      ['response' => 403],
+    );
+  }
+
+  if (!function_exists('wc_get_product') || !function_exists('lty_is_lottery_product')) {
+    status_header(503);
+    nocache_headers();
+    wp_die(
+      esc_html__('Service unavailable.', 'nera-competitions'),
+      '',
+      ['response' => 503],
+    );
+  }
+
+  $product = wc_get_product($product_id);
+  if (!$product || !$product->exists() || !lty_is_lottery_product($product)) {
+    status_header(404);
+    nocache_headers();
+    wp_die(
+      esc_html__('Competition not found.', 'nera-competitions'),
+      '',
+      ['response' => 404],
+    );
+  }
+
+  if (!class_exists('LTY_Generate_PDF_Handler')) {
+    status_header(503);
+    nocache_headers();
+    wp_die(
+      esc_html__('Service unavailable.', 'nera-competitions'),
+      '',
+      ['response' => 503],
+    );
+  }
+
+  nocache_headers();
+  LTY_Generate_PDF_Handler::download_lottery_entry_list($product_id);
+  exit;
+}
+add_action('template_redirect', 'nera_handle_entry_list_pdf_download', 5);
+
+/**
  * Set a stable SEO title for the virtual attribution route.
  */
 function nera_attribution_document_title($title)
@@ -607,6 +750,11 @@ if (class_exists('WooCommerce')) {
   require_once NERA_DIR . '/inc/api/instant-wins-api.php';
 }
 
+// REST API for entry-list modal (Lottery for WooCommerce)
+if (class_exists('WooCommerce') && function_exists('lty_is_lottery_product')) {
+  require_once NERA_DIR . '/inc/api/entry-list-api.php';
+}
+
 // Giveaway plugin customizations
 if (class_exists('WooCommerce_Lottery')) {
   require_once NERA_DIR . '/inc/giveaway-custom.php';
@@ -1018,6 +1166,123 @@ function nera_ajax_advanced_filter_competitions()
 add_action('wp_ajax_nera_advanced_filter_competitions', 'nera_ajax_advanced_filter_competitions');
 add_action('wp_ajax_nopriv_nera_advanced_filter_competitions', 'nera_ajax_advanced_filter_competitions');
 
+/**
+ * AJAX: append next page of cards for the Closed Prizes page.
+ */
+function nera_ajax_closed_prizes_load_more()
+{
+  check_ajax_referer('nera_nonce', 'nonce');
+
+  $paged = isset($_POST['paged']) ? max(1, absint($_POST['paged'])) : 1;
+  $args  = function_exists('nera_closed_prizes_wp_query_args')
+    ? nera_closed_prizes_wp_query_args($paged)
+    : [];
+
+  $query = new WP_Query($args);
+
+  ob_start();
+  while ($query->have_posts()) {
+    $query->the_post();
+    get_template_part('template-parts/closed-prizes/closed-prize-card', null, [
+      'product' => wc_get_product(get_the_ID()),
+    ]);
+  }
+  $html = ob_get_clean();
+  $has_more = $paged < (int) $query->max_num_pages;
+  wp_reset_postdata();
+
+  wp_send_json_success([
+    'html'     => $html,
+    'has_more' => $has_more,
+  ]);
+}
+add_action('wp_ajax_nera_closed_prizes_load_more',        'nera_ajax_closed_prizes_load_more');
+add_action('wp_ajax_nopriv_nera_closed_prizes_load_more', 'nera_ajax_closed_prizes_load_more');
+
+/**
+ * AJAX: append next page of cards for the Entry List archive.
+ */
+function nera_ajax_entry_list_load_more()
+{
+  check_ajax_referer('nera_nonce', 'nonce');
+
+  $paged = isset($_POST['paged']) ? max(1, absint($_POST['paged'])) : 1;
+  $args  = function_exists('nera_entry_list_wp_query_args')
+    ? nera_entry_list_wp_query_args($paged)
+    : [];
+  $query = new WP_Query($args);
+
+  ob_start();
+  while ($query->have_posts()) {
+    $query->the_post();
+    get_template_part('template-parts/entry-list/entry-list-card', null, [
+      'product' => wc_get_product(get_the_ID()),
+    ]);
+  }
+  $html = ob_get_clean();
+  $has_more = $paged < (int) $query->max_num_pages;
+  wp_reset_postdata();
+
+  wp_send_json_success([
+    'html'     => $html,
+    'has_more' => $has_more,
+  ]);
+}
+add_action('wp_ajax_nera_entry_list_load_more',        'nera_ajax_entry_list_load_more');
+add_action('wp_ajax_nopriv_nera_entry_list_load_more', 'nera_ajax_entry_list_load_more');
+
+/**
+ * AJAX: append next page of cards for the dynamic Winners page.
+ */
+function nera_ajax_winners_dynamic_load_more()
+{
+  check_ajax_referer('nera_nonce', 'nonce');
+
+  $paged = isset($_POST['paged']) ? max(1, absint($_POST['paged'])) : 1;
+  $raw_filter = isset($_POST['filter']) ? wp_unslash($_POST['filter']) : 'all';
+  $filter = function_exists('nera_winners_dynamic_whitelist_filter')
+    ? nera_winners_dynamic_whitelist_filter(sanitize_text_field($raw_filter))
+    : 'all';
+
+  if (!function_exists('nera_winners_dynamic_get_page_dataset')) {
+    wp_send_json_success([
+      'html'     => '',
+      'has_more' => false,
+      'total'    => 0,
+      'showing'  => 0,
+      'per_page' => 0,
+      'page'     => $paged,
+      'filter'   => $filter,
+    ]);
+  }
+
+  $dataset = nera_winners_dynamic_get_page_dataset($paged, $filter);
+  $rows    = isset($dataset['rows']) && is_array($dataset['rows']) ? $dataset['rows'] : [];
+
+  ob_start();
+  foreach ($rows as $row) {
+    get_template_part('template-parts/winners-dynamic/winner-card', null, [
+      'row' => $row,
+    ]);
+  }
+  $html = ob_get_clean();
+
+  $per_page = isset($dataset['per_page']) ? (int) $dataset['per_page'] : 0;
+  $total    = isset($dataset['total']) ? (int) $dataset['total'] : 0;
+  $showing  = $per_page > 0 ? min($paged * $per_page, $total) : $total;
+
+  wp_send_json_success([
+    'html'     => $html,
+    'has_more' => !empty($dataset['has_more']),
+    'total'    => $total,
+    'showing'  => $showing,
+    'per_page' => $per_page,
+    'page'     => $paged,
+    'filter'   => isset($dataset['filter']) ? (string) $dataset['filter'] : $filter,
+  ]);
+}
+add_action('wp_ajax_nera_winners_dynamic_load_more',        'nera_ajax_winners_dynamic_load_more');
+add_action('wp_ajax_nopriv_nera_winners_dynamic_load_more', 'nera_ajax_winners_dynamic_load_more');
 
 /**
  * AJAX handler for filtering products

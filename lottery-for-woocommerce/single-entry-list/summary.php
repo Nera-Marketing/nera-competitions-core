@@ -19,29 +19,12 @@ if (!defined('ABSPATH')) {
 
 $pdf_download_button_url = isset($pdf_download_button_url) ? $pdf_download_button_url : '';
 
-// Match LTY_Lottery_Page_Handler::render_entry_list_overview_content when URL was not passed.
-if (
-  $pdf_download_button_url === '' &&
-  function_exists('lty_can_display_lottery_entry_list_pdf_download_button') &&
-  lty_can_display_lottery_entry_list_pdf_download_button() &&
-  isset($product) &&
-  is_object($product)
-) {
-  $pdf_download_button_url = esc_url(
-    add_query_arg(
-      [
-        'action'        => 'lty-download',
-        'lty_pdf_nonce' => wp_create_nonce('lty-lottery-entry-list-pdf'),
-        'lty_key'       => lty_encode(
-          [
-            'lty_lottery_id' => $product->get_id(),
-          ],
-          true
-        ),
-      ],
-      get_site_url()
-    )
-  );
+// Prefer theme PDF endpoint (avoids plugin ?action=lty-download + nonce issues).
+if (isset($product) && is_object($product) && function_exists('nera_get_entry_list_pdf_download_url')) {
+  $theme_pdf_url = nera_get_entry_list_pdf_download_url($product->get_id());
+  if ($theme_pdf_url !== '') {
+    $pdf_download_button_url = $theme_pdf_url;
+  }
 }
 
 if ($pdf_download_button_url === '') {
