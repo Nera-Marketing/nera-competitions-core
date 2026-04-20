@@ -17,8 +17,8 @@ if (empty($page_excerpt)) {
 }
 ?>
 
-<section class="py-16 md:py-20 bg-background-light">
-  <div class="max-w-[1200px] mx-auto px-4 lg:px-8">
+<section class="py-10 sm:py-16 md:py-20 bg-background-light">
+  <div class="max-w-[1200px] mx-auto px-3 sm:px-4 lg:px-8">
     <div class="text-center max-w-2xl mx-auto">
 
       <div class="flex justify-center mb-6" data-aos="fade-up">
@@ -28,7 +28,7 @@ if (empty($page_excerpt)) {
         </span>
       </div>
 
-      <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold text-text-primary tracking-tight mb-4"
+      <h1 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-text-primary tracking-tight mb-4"
         data-aos="fade-up" data-aos-delay="100">
         <?php echo esc_html($page_title); ?>
       </h1>

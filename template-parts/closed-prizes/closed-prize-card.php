@@ -47,14 +47,14 @@ $won_count = function_exists('nera_get_closed_lottery_won_instant_prize_count')
 ?>
 
 <article
-  class="ncs-closed-prize-card group bg-surface rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100"
+  class="ncs-closed-prize-card group bg-surface rounded-[0.8rem] sm:rounded-[1.2rem] overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100"
   data-product-id="<?php echo esc_attr($product_id); ?>">
 
   <!-- Product Image -->
-  <div class="relative aspect-[4/3] overflow-hidden">
+  <div class="relative aspect-5/3 sm:aspect-4/3 overflow-hidden">
 
     <!-- Status Badge -->
-    <div class="absolute top-4 left-4 z-10 bg-gray-500 text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-widest">
+    <div class="absolute top-2 left-2 z-10 sm:top-4 sm:left-4 bg-gray-500 text-white text-[9px] sm:text-[10px] font-bold px-2 py-0.5 sm:px-3 sm:py-1 rounded-full uppercase tracking-widest max-w-[calc(100%-1rem)] truncate">
       <?php echo esc_html($status_label); ?>
     </div>
 
@@ -80,10 +80,10 @@ $won_count = function_exists('nera_get_closed_lottery_won_instant_prize_count')
   </div>
 
   <!-- Card Content -->
-  <div class="p-6">
+  <div class="p-3 sm:p-5 md:p-6">
 
     <!-- Title -->
-    <h3 class="text-lg font-bold text-text-primary mb-3 line-clamp-2">
+    <h3 class="text-sm sm:text-lg font-bold text-text-primary mb-2 sm:mb-3 line-clamp-2">
       <a href="<?php echo esc_url($permalink); ?>" class="hover:text-primary transition-colors">
         <?php echo esc_html($title); ?>
       </a>
@@ -91,8 +91,8 @@ $won_count = function_exists('nera_get_closed_lottery_won_instant_prize_count')
 
     <!-- Instant-win prizes awarded chip -->
     <?php if ($won_count > 0): ?>
-      <div class="mb-3">
-        <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-success-bg text-success-text rounded-full text-xs font-semibold">
+      <div class="mb-2 sm:mb-3">
+        <span class="inline-flex items-center gap-1 px-2 py-0.5 sm:gap-1.5 sm:px-3 sm:py-1 bg-success-bg text-success-text rounded-full text-[10px] sm:text-xs font-semibold">
           <span class="material-symbols-outlined text-sm" style="font-variation-settings:'FILL' 1">check_circle</span>
           <?php
           echo esc_html(
@@ -106,47 +106,42 @@ $won_count = function_exists('nera_get_closed_lottery_won_instant_prize_count')
       </div>
     <?php endif; ?>
 
-    <div class="space-y-4">
+    <div class="space-y-2 sm:space-y-4">
 
       <!-- Draw date (replaces countdown) -->
       <?php if ($draw_date): ?>
-        <div class="flex items-center gap-1.5 text-text-secondary">
-          <span class="material-symbols-outlined text-base opacity-60">calendar_today</span>
-          <span class="text-xs font-semibold uppercase tabular-nums">
-            <?php
-            echo esc_html(
-              sprintf(
-                /* translators: %s: formatted date */
-                __('Drawn: %s', 'nera-competitions'),
-                $draw_date,
-              ),
-            );
-            ?>
+        <div
+          class="flex items-center gap-1 sm:gap-1.5 text-text-secondary min-w-0"
+          aria-label="<?php echo esc_attr(sprintf(__('Drawn %s', 'nera-competitions'), $draw_date)); ?>"
+        >
+          <span class="material-symbols-outlined text-sm sm:text-base opacity-60 shrink-0" aria-hidden="true">calendar_today</span>
+          <span class="text-[11px] sm:text-xs font-semibold uppercase tabular-nums leading-snug">
+            <?php echo esc_html($draw_date); ?>
           </span>
         </div>
       <?php endif; ?>
 
       <!-- Progress bar (always 100% for closed) -->
       <?php if ($max_tickets > 0): ?>
-        <div class="space-y-2">
-          <div class="flex justify-between items-center text-xs font-bold">
+        <div class="space-y-1.5 sm:space-y-2">
+          <div class="flex justify-between items-center gap-2 text-[11px] sm:text-xs font-bold">
             <span class="text-text-secondary">
               <?php echo esc_html($sold_tickets); ?>/<?php echo esc_html($max_tickets); ?>
               <?php esc_html_e('sold', 'nera-competitions'); ?>
             </span>
             <span class="text-text-secondary"><?php echo esc_html($progress); ?>%</span>
           </div>
-          <div class="h-2 w-full bg-gray-100 rounded-full overflow-hidden">
+          <div class="h-1.5 sm:h-2 w-full bg-gray-100 rounded-full overflow-hidden">
             <div class="h-full bg-gray-300 rounded-full" style="width: <?php echo esc_attr($progress); ?>%"></div>
           </div>
         </div>
       <?php endif; ?>
 
       <!-- View Results CTA -->
-      <div class="pt-2">
+      <div class="pt-1 sm:pt-2">
         <a
           href="<?php echo esc_url($permalink); ?>"
-          class="inline-flex items-center gap-2 bg-gray-100 hover:bg-gray-200 text-text-secondary text-sm font-bold px-5 py-2.5 rounded-xl transition-all duration-300 no-underline w-full justify-center"
+          class="inline-flex items-center gap-1.5 sm:gap-2 bg-gray-100 hover:bg-gray-200 text-text-secondary text-xs sm:text-sm font-bold px-3 py-2 sm:px-5 sm:py-2.5 rounded-lg sm:rounded-xl transition-all duration-300 no-underline w-full justify-center min-h-[44px] sm:min-h-0"
         >
           <span class="material-symbols-outlined text-base">open_in_new</span>
           <?php esc_html_e('View Results', 'nera-competitions'); ?>
