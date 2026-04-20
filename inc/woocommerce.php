@@ -1917,3 +1917,68 @@ function nera_account_closed_flash_notice()
   exit;
 }
 add_action('template_redirect', 'nera_account_closed_flash_notice', 1);
+
+/**
+ * Meta query for closed/finished lottery products (excludes active and failed).
+ *
+ * @return array Single meta query clause.
+ */
+function nera_closed_lottery_meta_query()
+{
+  return [
+    'key'     => '_lty_lottery_status',
+    'value'   => ['lty_lottery_finished', 'lty_lottery_closed'],
+    'compare' => 'IN',
+  ];
+}
+
+/**
+ * WP_Query args for the Closed Prizes page grid.
+ *
+ * Orders by _lty_end_date_gmt DESC (most recently closed first).
+ * Products without that meta are excluded by the INNER JOIN — safe since
+ * every lottery product requires an end date at creation.
+ *
+ * @param int $paged    Page number (1-based).
+ * @param int $per_page Results per page.
+ * @return array
+ */
+function nera_closed_prizes_wp_query_args($paged = 1, $per_page = 12)
+{
+  return [
+    'post_type'      => 'product',
+    'post_status'    => 'publish',
+    'posts_per_page' => (int) $per_page,
+    'paged'          => max(1, (int) $paged),
+    'tax_query'      => [
+      [
+        'taxonomy' => 'product_type',
+        'field'    => 'slug',
+        'terms'    => 'lottery',
+      ],
+    ],
+    'meta_query'     => [nera_closed_lottery_meta_query()],
+    'meta_key'       => '_lty_end_date_gmt',
+    'meta_type'      => 'DATETIME',
+    'orderby'        => 'meta_value',
+    'order'          => 'DESC',
+  ];
+}
+
+/**
+ * Count won instant-win prizes for a closed lottery product.
+ *
+ * Used for the "N Prizes Awarded" chip on closed-prize cards.
+ * Main-draw winners are ACF-managed and not auto-queryable here.
+ *
+ * @param int $product_id
+ * @return int
+ */
+function nera_get_closed_lottery_won_instant_prize_count($product_id)
+{
+  if (!function_exists('lty_get_instant_winner_log_ids')) {
+    return 0;
+  }
+
+  return count(lty_get_instant_winner_log_ids((int) $product_id, false, false, ['lty_won']));
+}

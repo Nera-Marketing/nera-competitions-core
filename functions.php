@@ -1018,6 +1018,39 @@ function nera_ajax_advanced_filter_competitions()
 add_action('wp_ajax_nera_advanced_filter_competitions', 'nera_ajax_advanced_filter_competitions');
 add_action('wp_ajax_nopriv_nera_advanced_filter_competitions', 'nera_ajax_advanced_filter_competitions');
 
+/**
+ * AJAX: append next page of cards for the Closed Prizes page.
+ */
+function nera_ajax_closed_prizes_load_more()
+{
+  check_ajax_referer('nera_nonce', 'nonce');
+
+  $paged = isset($_POST['paged']) ? max(1, absint($_POST['paged'])) : 1;
+  $args  = function_exists('nera_closed_prizes_wp_query_args')
+    ? nera_closed_prizes_wp_query_args($paged)
+    : [];
+
+  $query = new WP_Query($args);
+
+  ob_start();
+  while ($query->have_posts()) {
+    $query->the_post();
+    get_template_part('template-parts/closed-prizes/closed-prize-card', null, [
+      'product' => wc_get_product(get_the_ID()),
+    ]);
+  }
+  $html = ob_get_clean();
+  $has_more = $paged < (int) $query->max_num_pages;
+  wp_reset_postdata();
+
+  wp_send_json_success([
+    'html'     => $html,
+    'has_more' => $has_more,
+  ]);
+}
+add_action('wp_ajax_nera_closed_prizes_load_more',        'nera_ajax_closed_prizes_load_more');
+add_action('wp_ajax_nopriv_nera_closed_prizes_load_more', 'nera_ajax_closed_prizes_load_more');
+
 
 /**
  * AJAX handler for filtering products
