@@ -1966,6 +1966,85 @@ function nera_closed_prizes_wp_query_args($paged = 1, $per_page = 12)
 }
 
 /**
+ * Build the lottery entry-list permalink for a product.
+ *
+ * Mirrors Lottery for WooCommerce URL pattern:
+ * /giveaway-entry-list/{product-slug}/
+ *
+ * @param int $product_id Product ID.
+ * @return string
+ */
+function nera_get_entry_list_url($product_id)
+{
+  $page_id = function_exists('wc_get_page_id') ? (int) wc_get_page_id('lty_lottery_entry_list') : 0;
+  if ($page_id < 1) {
+    return '';
+  }
+
+  $slug = get_post_field('post_name', (int) $product_id);
+  if (!$slug) {
+    return '';
+  }
+
+  return wc_get_endpoint_url($slug, '', get_page_link($page_id));
+}
+
+/**
+ * Meta query for entry-list archive products.
+ *
+ * Includes all lottery statuses except failed, and also includes products
+ * without the status meta key for backward compatibility.
+ *
+ * @return array
+ */
+function nera_entry_list_meta_query()
+{
+  return [
+    [
+      'relation' => 'OR',
+      [
+        'key'     => '_lty_lottery_status',
+        'compare' => 'NOT EXISTS',
+      ],
+      [
+        'key'     => '_lty_lottery_status',
+        'value'   => 'lty_lottery_failed',
+        'compare' => '!=',
+      ],
+    ],
+  ];
+}
+
+/**
+ * WP_Query args for the Entry List archive grid.
+ *
+ * @param int $paged    Page number (1-based).
+ * @param int $per_page Results per page.
+ * @return array
+ */
+function nera_entry_list_wp_query_args($paged = 1, $per_page = 12)
+{
+  return [
+    'post_type'      => 'product',
+    'post_status'    => 'publish',
+    'posts_per_page' => (int) $per_page,
+    'paged'          => max(1, (int) $paged),
+    'tax_query'      => [
+      [
+        'taxonomy' => 'product_type',
+        'field'    => 'slug',
+        'terms'    => 'lottery',
+      ],
+    ],
+    'meta_query'     => nera_entry_list_meta_query(),
+    'meta_key'       => '_lty_end_date_gmt',
+    'meta_type'      => 'DATETIME',
+    'orderby'        => 'meta_value',
+    'order'          => 'ASC',
+  ];
+}
+
+/**
  * Count won instant-win prizes for a closed lottery product.
  *
  * Used for the "N Prizes Awarded" chip on closed-prize cards.

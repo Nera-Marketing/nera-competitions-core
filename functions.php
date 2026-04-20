@@ -115,6 +115,42 @@ function nera_maybe_load_attribution_template($template)
 add_filter('template_include', 'nera_maybe_load_attribution_template', 99);
 
 /**
+ * Detect Lottery for WooCommerce entry-list archive context.
+ *
+ * The plugin sets this query var in pre_get_posts and also forces is_page false,
+ * so this must be used instead of is_page() checks.
+ *
+ * @return bool
+ */
+function nera_is_entry_list_archive()
+{
+  return (bool) get_query_var('is_lottery_entry_list_archive', false);
+}
+
+/**
+ * Replace the default WooCommerce archive output on /giveaway-entry-list/
+ * with a custom themed listing template.
+ *
+ * @param string $template Resolved template path.
+ * @return string
+ */
+function nera_entry_list_template_loader($template)
+{
+  if (!nera_is_entry_list_archive()) {
+    return $template;
+  }
+
+  // Let the plugin keep full control for /giveaway-entry-list/{product-slug}/.
+  if (get_query_var('lottery_single_entry_list')) {
+    return $template;
+  }
+
+  $custom = locate_template('page-templates/entry-list-listing-template.php');
+  return $custom ?: $template;
+}
+add_filter('template_include', 'nera_entry_list_template_loader', 50);
+
+/**
  * Set a stable SEO title for the virtual attribution route.
  */
 function nera_attribution_document_title($title)
@@ -1050,6 +1086,38 @@ function nera_ajax_closed_prizes_load_more()
 }
 add_action('wp_ajax_nera_closed_prizes_load_more',        'nera_ajax_closed_prizes_load_more');
 add_action('wp_ajax_nopriv_nera_closed_prizes_load_more', 'nera_ajax_closed_prizes_load_more');
+
+/**
+ * AJAX: append next page of cards for the Entry List archive.
+ */
+function nera_ajax_entry_list_load_more()
+{
+  check_ajax_referer('nera_nonce', 'nonce');
+
+  $paged = isset($_POST['paged']) ? max(1, absint($_POST['paged'])) : 1;
+  $args  = function_exists('nera_entry_list_wp_query_args')
+    ? nera_entry_list_wp_query_args($paged)
+    : [];
+  $query = new WP_Query($args);
+
+  ob_start();
+  while ($query->have_posts()) {
+    $query->the_post();
+    get_template_part('template-parts/entry-list/entry-list-card', null, [
+      'product' => wc_get_product(get_the_ID()),
+    ]);
+  }
+  $html = ob_get_clean();
+  $has_more = $paged < (int) $query->max_num_pages;
+  wp_reset_postdata();
+
+  wp_send_json_success([
+    'html'     => $html,
+    'has_more' => $has_more,
+  ]);
+}
+add_action('wp_ajax_nera_entry_list_load_more',        'nera_ajax_entry_list_load_more');
+add_action('wp_ajax_nopriv_nera_entry_list_load_more', 'nera_ajax_entry_list_load_more');
 
 
 /**
