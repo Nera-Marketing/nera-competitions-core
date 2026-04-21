@@ -36,6 +36,25 @@ if (function_exists('acf_add_local_field_group')) {
     'title' => 'Footer Settings',
     'fields' => [
       [
+        'key' => 'field_footer_legal_disclaimer',
+        'label' => 'Legal Disclaimer',
+        'name' => 'footer_legal_disclaimer',
+        'type' => 'textarea',
+        'instructions' => 'Shown above the copyright line in the footer bottom strip. Leave empty to use the theme default text.',
+        'required' => 0,
+        'conditional_logic' => 0,
+        'wrapper' => [
+          'width' => '100',
+          'class' => '',
+          'id' => '',
+        ],
+        'default_value' => '',
+        'placeholder' => '',
+        'maxlength' => '',
+        'rows' => 4,
+        'new_lines' => '',
+      ],
+      [
         'key' => 'field_footer_copyright',
         'label' => 'Copyright Text',
         'name' => 'footer_copyright',
