@@ -34,12 +34,19 @@ if (
 ) {
   $has_instant_wins = true;
 
-  // Get prize counts
-  if (method_exists($product, 'get_instant_winner_available_prizes_count')) {
-    $available_count = absint($product->get_instant_winner_available_prizes_count());
-  }
-  if (method_exists($product, 'get_instant_winner_won_prizes_count')) {
-    $won_count = absint($product->get_instant_winner_won_prizes_count());
+  $iwt_counts = function_exists('nera_iwt_get_public_instant_wins_section_counts')
+    ? nera_iwt_get_public_instant_wins_section_counts($product)
+    : null;
+  if (is_array($iwt_counts) && isset($iwt_counts['available'], $iwt_counts['won'], $iwt_counts['total'])) {
+    $available_count = absint($iwt_counts['available']);
+    $won_count = absint($iwt_counts['won']);
+  } else {
+    if (method_exists($product, 'get_instant_winner_available_prizes_count')) {
+      $available_count = absint($product->get_instant_winner_available_prizes_count());
+    }
+    if (method_exists($product, 'get_instant_winner_won_prizes_count')) {
+      $won_count = absint($product->get_instant_winner_won_prizes_count());
+    }
   }
 }
 

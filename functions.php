@@ -743,6 +743,7 @@ require_once get_template_directory() . '/inc/winners-dataset.php';
  */
 if (class_exists('WooCommerce')) {
   require_once NERA_DIR . '/inc/woocommerce.php';
+  require_once NERA_DIR . '/inc/instant-win-prizes-section.php';
 }
 
 // REST API for instant wins lazy loading
