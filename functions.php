@@ -694,49 +694,49 @@ add_filter(
  * Include required files
  */
 // Menu Walker Classes
-require_once NERA_DIR . '/inc/menu-walkers.php';
+require_once NERA_DIR . '/inc/helpers/menu-walkers.php';
 
 // Custom Competition Shortcodes
 require_once get_template_directory() . '/inc/competition-shortcodes.php';
 
 // ACF Homepage Fields
-require_once get_template_directory() . '/inc/acf-homepage.php';
+require_once get_template_directory() . '/inc/acf/homepage/acf-homepage.php';
 
 // ACF Single Product Competition Fields
-require_once get_template_directory() . '/inc/acf-single-product.php';
+require_once get_template_directory() . '/inc/acf/single-product/acf-single-product.php';
 
 // ACF Contact Page Fields
-require_once get_template_directory() . '/inc/acf-contact.php';
+require_once get_template_directory() . '/inc/acf/contact/acf-contact.php';
 
 // ACF About Us Page Fields
-require_once get_template_directory() . '/inc/acf-about-us.php';
+require_once get_template_directory() . '/inc/acf/about-us/acf-about-us.php';
 
 // How It Works hero defaults (shared by template + ACF merge)
-require_once get_template_directory() . '/inc/how-it-works-defaults.php';
+require_once get_template_directory() . '/inc/helpers/how-it-works-defaults.php';
 
 // ACF How It Works Page Fields
-require_once get_template_directory() . '/inc/acf-how-it-works.php';
+require_once get_template_directory() . '/inc/acf/how-it-works/acf-how-it-works.php';
 
 // ACF Product Listing Fields
-require_once get_template_directory() . '/inc/acf-product-listing.php';
+require_once get_template_directory() . '/inc/acf/product-listing/acf-product-listing.php';
 
 // ACF Postal Entry Fields
-require_once get_template_directory() . '/inc/acf-postal-entry.php';
+require_once get_template_directory() . '/inc/acf/postal-entry/acf-postal-entry.php';
 
 // ACF WooCommerce Settings
-require_once get_template_directory() . '/inc/acf-woocommerce.php';
+require_once get_template_directory() . '/inc/acf/woocommerce/acf-woocommerce.php';
 
 // Legal Placeholders for T&C and Privacy Policy
 require_once get_template_directory() . '/inc/legal-placeholders.php';
 
 // ACF Winners Page Fields
-require_once get_template_directory() . '/inc/acf-winners.php';
+require_once get_template_directory() . '/inc/acf/winners/acf-winners.php';
 
 // ACF Attribution Page Fields
-require_once get_template_directory() . '/inc/acf-attribution.php';
+require_once get_template_directory() . '/inc/acf/attribution/acf-attribution.php';
 
 // Winners dataset helpers for server rendering
-require_once get_template_directory() . '/inc/winners-dataset.php';
+require_once get_template_directory() . '/inc/helpers/winners-dataset.php';
 
 /**
  * Enqueue scripts and styles.
@@ -1928,4 +1928,4 @@ function nera_sample_winners_admin_notice()
 add_action('admin_notices', 'nera_sample_winners_admin_notice');
 
 // ACE Footer Fields
-require_once get_template_directory() . '/inc/acf-footer.php';
+require_once get_template_directory() . '/inc/acf/footer/acf-footer.php';

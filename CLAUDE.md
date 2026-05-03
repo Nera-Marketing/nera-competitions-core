@@ -31,9 +31,30 @@ competitions-standard/
 │   ├── components/             # Vue SFCs
 │   └── instant-wins-vue-init.js
 ├── inc/                        # PHP includes
-│   ├── giveaway-custom.php     # Lottery plugin customizations
-│   ├── menu-walkers.php        # Custom menu walker classes
-│   └── woocommerce.php         # WooCommerce customizations
+│   ├── acf/                    # ACF field group registrations (one subdir per page)
+│   │   ├── homepage/acf-homepage.php
+│   │   ├── single-product/acf-single-product.php
+│   │   ├── contact/acf-contact.php
+│   │   ├── about-us/acf-about-us.php
+│   │   ├── how-it-works/acf-how-it-works.php
+│   │   ├── product-listing/acf-product-listing.php
+│   │   ├── postal-entry/acf-postal-entry.php
+│   │   ├── woocommerce/acf-woocommerce.php
+│   │   ├── winners/acf-winners.php
+│   │   ├── attribution/acf-attribution.php
+│   │   └── footer/acf-footer.php
+│   ├── helpers/                # Pure utility files — no side-effects on include
+│   │   ├── menu-walkers.php    # Custom Walker classes for nav menus
+│   │   ├── how-it-works-defaults.php  # Default step data/icons for HIW section
+│   │   └── winners-dataset.php        # Winner data normalisation helper
+│   ├── api/                    # REST API endpoint registrations
+│   ├── env-loader.php          # Loads .env.local and defines NERA_DEV_MODE constant
+│   ├── competition-shortcodes.php     # Shortcode registrations
+│   ├── legal-placeholders.php  # ACF options page + content filter for legal pages
+│   ├── woocommerce.php         # WooCommerce hooks and customisations
+│   ├── giveaway-custom.php     # Lottery plugin customisations (placeholder)
+│   ├── lty-result-screens-loader.php  # Instantiates LTY_Result_Screens singleton
+│   └── demo-instant-winner.php        # Admin utility: set demo instant winner
 ├── page-templates/
 │   └── homepage-template.php   # Main homepage template
 ├── reference/
@@ -204,6 +225,17 @@ The theme dequeues Astra styles and uses TailwindCSS exclusively. Astra override
    **Use semantic tokens instead** (e.g. `bg-primary`, `text-success-text`, `border-info-border`, `bg-surface`). `gray-*` is permitted as a neutral scale. The build-time lint in `frontend/scripts/lint-templates.js` reports all violations. See `EXTENDING.md` for the full token list and mapping guide.
 
 ## PHP Conventions
+
+### inc/ directory structure
+
+Files in `inc/` are organised by role, not alphabetically:
+
+| Subdirectory / file | Rule |
+|---|---|
+| `inc/acf/<pagename>/acf-<pagename>.php` | One file per page/context. Pure ACF field group registration — no hooks, no options pages outside ACF API calls. New ACF files always go here. |
+| `inc/helpers/` | Pure utility: class definitions, data providers, transformation functions. **No `add_action`, `add_filter`, `add_shortcode`, or options-page calls allowed.** |
+| `inc/api/` | REST API route registrations. |
+| `inc/*.php` (root) | Bootstrappers and feature files that register hooks or have side-effects on include (loaders, shortcodes, WooCommerce integration, etc.). |
 
 ### Template Parts
 
