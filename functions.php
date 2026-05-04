@@ -3,7 +3,7 @@
  * Nera Competitions Standard Theme
  *
  * @package Nera_Competitions
- * @version 1.0.3
+ * @version 1.0.4
  */
 
 use YahnisElsts\PluginUpdateChecker\v5p5\Vcs\GitHubApi;
@@ -17,7 +17,7 @@ if (!defined('ABSPATH')) {
 require_once __DIR__ . '/inc/env-loader.php';
 
 // Define theme constants (template directory = parent theme; child-safe when used as a parent)
-define('NERA_VERSION', '1.0.3');
+define('NERA_VERSION', '1.0.4');
 define('NERA_DIR', get_template_directory());
 define('NERA_URI', get_template_directory_uri());
 define('NERA_FRONTEND_DIST_DIR', NERA_DIR . '/frontend/dist');
@@ -74,11 +74,11 @@ if (!function_exists('nera_cstd_theme_update_json_raw_url')) {
   function nera_cstd_theme_update_json_raw_url($repository_url, $branch = 'main')
   {
     $repository_url = rtrim((string) $repository_url, '/') . '/';
-    if (!preg_match('#^https?://github\.com/(?P<owner>[^/]+)/(?P<repo>[^/#]+)/#i', $repository_url, $m)) {
+    if (!preg_match('~^https?://github\.com/(?P<owner>[^/]+)/(?P<repo>[^/#]+)/~i', $repository_url, $m)) {
       return null;
     }
     $branch = is_string($branch) && $branch !== ''
-      ? preg_replace('#[^a-zA-Z0-9._/-]#', '', $branch)
+      ? preg_replace('~[^a-zA-Z0-9._/-]~', '', $branch)
       : 'main';
     if ($branch === '') {
       $branch = 'main';
