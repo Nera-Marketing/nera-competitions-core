@@ -6,7 +6,7 @@
 #   ./release.sh          # reads version from style.css (Version header)
 #   ./release.sh 1.2.0    # override version (optional leading v: v1.2.0)
 #
-# Requirements: git, ssh key for git@github.com-nera, gh (optional), npm (for Vite/Tailwind builds).
+# Requirements: git, npm, php + build-wp-release-zip.php (or zip), gh (optional). Optional SSH: origin → $GITHUB_REMOTE
 #
 # What it does:
 #   1. Resolves version from argument or style.css
@@ -19,13 +19,15 @@
 #   6. gh release create / upload on github.com
 #
 # Excludes from the work tree copy: .git, node_modules, .env*, release artifact zip, release.sh.
-# github.com-nera is an SSH Host alias only. gh always uses GH_HOST=github.com (HTTPS).
+# Push uses your repo's `origin` URL (set to $GITHUB_REMOTE or HTTPS). gh uses github.com.
 # ─────────────────────────────────────────────────────────────────────────────
 set -e
 
 THEME_DIR="$(cd "$(dirname "$0")" && pwd)"
 THEME_SLUG="nera-competitions-standard"
 GITHUB_REPO="Nera-Marketing/nera-competitions-core"
+GITHUB_REMOTE="git@github.com-nera:${GITHUB_REPO}.git"
+# github.com-nera = SSH Host alias only (same as plugin release.sh). gh uses GH_HOST=github.com (HTTPS).
 
 PID="$$"
 WORK_DIR="/tmp/${THEME_SLUG}-release-${PID}"
@@ -186,6 +188,11 @@ echo "▶ Zip OK ($(wc -c < "$ZIP_PATH" | tr -d ' ') bytes)"
 # ── 5. Commit + push (protected main: no orphan temp repo / no --force on main) ──
 echo "▶ Syncing release tree into git working tree..."
 cd "$THEME_DIR"
+
+# Release commit identity (parity with wp-content/plugins/nera-spin-to-win/release.sh).
+git config user.name "Minh Le"
+git config user.email "minh@nera.marketing"
+
 if command -v rsync >/dev/null 2>&1; then
   rsync -a "$WORK_DIR/" "$THEME_DIR/"
 else
