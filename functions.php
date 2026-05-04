@@ -3,7 +3,7 @@
  * Nera Competitions Standard Theme
  *
  * @package Nera_Competitions
- * @version 1.0.1
+ * @version 1.0.2
  */
 
 use YahnisElsts\PluginUpdateChecker\v5p5\Vcs\GitHubApi;
@@ -17,7 +17,7 @@ if (!defined('ABSPATH')) {
 require_once __DIR__ . '/inc/env-loader.php';
 
 // Define theme constants (template directory = parent theme; child-safe when used as a parent)
-define('NERA_VERSION', '1.0.1');
+define('NERA_VERSION', '1.0.2');
 define('NERA_DIR', get_template_directory());
 define('NERA_URI', get_template_directory_uri());
 define('NERA_FRONTEND_DIST_DIR', NERA_DIR . '/frontend/dist');
@@ -33,16 +33,66 @@ define('NERA_ATTRIBUTION_TEMPLATE_PATH', NERA_DIR . '/page-templates/nera-market
  * Private repo: `define( 'NERA_CSTD_GITHUB_TOKEN', 'ghp_...' );`
  * Custom URL: `define( 'NERA_CSTD_GITHUB_REPO_URL', 'https://github.com/Owner/repo/' );` or filter `nera_cstd_github_repo_url`.
  *
- * PUC compares the remote `Version` in `style.css` to the installed theme. Bump `Version`, `NERA_VERSION`, and
- * `@version` in this file for every release, then tag/push to match.
+ * PUC compares the **available** version to the installed `Version` in `style.css`: with the default JSON metadata
+ * URL that comes from `version` in `nera-theme-update.json`; with GitHub VCS mode it prefers the remote `style.css`
+ * on the chosen ref. Bump `Version`, `NERA_VERSION`, and `@version` in this file every release, keep
+ * `nera-theme-update.json` in sync (`release.sh` does both), then tag/push to match.
  *
- * The 4th argument to `PucFactory::buildUpdateChecker` is the check interval in hours (default in library is 12).
+ * When using GitHub VCS (`NERA_CSTD_USE_GITHUB_VCS_FOR_THEME_UPDATES`), `GET /repos/.../releases/latest` can 404
+ * when there is no GitHub "latest" stable release. A custom `setReleaseFilter` callback plus `maxReleases` > 1
+ * makes `GitHubApi` use the paginated `/releases` list instead of `/latest`. Releases must not be drafts;
+ * GitHub "pre-release" flags are skipped via `RELEASE_FILTER_SKIP_PRERELEASE`.
  *
- * `nera-theme-update.json` is optional metadata for a self-hosted JSON update URL only; GitHub mode does not read it.
+ * The 4th argument to `PucFactory::buildUpdateChecker` is the check interval in hours (here: 6), not a release count.
+ *
+ * Release zips must use `/` path separators only (`release.sh` uses `zip` or `build-wp-release-zip.php` + PHP
+ * `ZipArchive` — never PowerShell `Compress-Archive`, which breaks WordPress theme updates on many hosts).
+ *
+ * Updates use `nera-theme-update.json` by default: PUC’s metadata URL is the raw GitHub file on `main`
+ * (`https://raw.githubusercontent.com/…/main/nera-theme-update.json`), which `release.sh` keeps in sync with each
+ * release (`version`, `details_url`, `download_url`). That avoids relying on the GitHub Releases API for every
+ * check (rate limits / connectivity) while still serving the same zip URL as in the JSON file.
+ *
+ * Private GitHub repo: `define( 'NERA_CSTD_USE_GITHUB_VCS_FOR_THEME_UPDATES', true );` plus
+ * `NERA_CSTD_GITHUB_TOKEN` so PUC can use the repository URL and the GitHub API (releases + remote `style.css`).
+ *
+ * Custom JSON host: `define( 'NERA_CSTD_THEME_UPDATE_METADATA_URL', 'https://example.com/theme-update.json' );`
+ * or filter `nera_cstd_theme_update_metadata_url`. Optional: filter `nera_cstd_theme_update_json_branch` (default `main`)
+ * when using the built-in raw-github URL.
  *
  * @link https://github.com/YahnisElsts/plugin-update-checker
  * @link https://github.com/Nera-Marketing/nera-competitions-core/
  */
+if (!function_exists('nera_cstd_theme_update_json_raw_url')) {
+  /**
+   * Map a github.com repo URL to raw.githubusercontent.com …/nera-theme-update.json for PUC JSON mode.
+   *
+   * @param string $repository_url e.g. https://github.com/Org/repo/
+   * @param string $branch         Branch or tag name (default main).
+   * @return string|null Full JSON URL, or null if $repository_url is not a github.com repo.
+   */
+  function nera_cstd_theme_update_json_raw_url($repository_url, $branch = 'main')
+  {
+    $repository_url = rtrim((string) $repository_url, '/') . '/';
+    if (!preg_match('#^https?://github\.com/(?P<owner>[^/]+)/(?P<repo>[^/#]+)/#i', $repository_url, $m)) {
+      return null;
+    }
+    $branch = is_string($branch) && $branch !== ''
+      ? preg_replace('#[^a-zA-Z0-9._/-]#', '', $branch)
+      : 'main';
+    if ($branch === '') {
+      $branch = 'main';
+    }
+
+    return sprintf(
+      'https://raw.githubusercontent.com/%s/%s/%s/nera-theme-update.json',
+      $m['owner'],
+      $m['repo'],
+      $branch
+    );
+  }
+}
+
 if (!defined('NERA_CSTD_DISABLE_GITHUB_UPDATES') || !NERA_CSTD_DISABLE_GITHUB_UPDATES) {
   $nera_cstd_github_repo_default = 'https://github.com/Nera-Marketing/nera-competitions-core/';
   if (defined('NERA_CSTD_GITHUB_REPO_URL') && is_string(NERA_CSTD_GITHUB_REPO_URL) && NERA_CSTD_GITHUB_REPO_URL !== '') {
@@ -53,29 +103,56 @@ if (!defined('NERA_CSTD_DISABLE_GITHUB_UPDATES') || !NERA_CSTD_DISABLE_GITHUB_UP
   $nera_cstd_puc_loader = NERA_DIR . '/lib/plugin-update-checker/load-v5p5.php';
   if (is_readable($nera_cstd_puc_loader)) {
     require_once $nera_cstd_puc_loader;
+
+    $nera_cstd_puc_branch = apply_filters('nera_cstd_theme_update_json_branch', 'main');
+
+    if (defined('NERA_CSTD_THEME_UPDATE_METADATA_URL') && is_string(NERA_CSTD_THEME_UPDATE_METADATA_URL) && NERA_CSTD_THEME_UPDATE_METADATA_URL !== '') {
+      $nera_cstd_puc_metadata_url = NERA_CSTD_THEME_UPDATE_METADATA_URL;
+    } elseif (defined('NERA_CSTD_USE_GITHUB_VCS_FOR_THEME_UPDATES') && NERA_CSTD_USE_GITHUB_VCS_FOR_THEME_UPDATES) {
+      $nera_cstd_puc_metadata_url = $nera_cstd_github_repo;
+    } else {
+      $nera_cstd_json_default = nera_cstd_theme_update_json_raw_url($nera_cstd_github_repo, $nera_cstd_puc_branch);
+      $nera_cstd_puc_metadata_url = apply_filters(
+        'nera_cstd_theme_update_metadata_url',
+        $nera_cstd_json_default ? $nera_cstd_json_default : $nera_cstd_github_repo,
+        $nera_cstd_github_repo,
+        $nera_cstd_puc_branch
+      );
+    }
+
     $nera_cstd_update_checker = YahnisElsts\PluginUpdateChecker\v5\PucFactory::buildUpdateChecker(
-      $nera_cstd_github_repo,
+      $nera_cstd_puc_metadata_url,
       NERA_DIR . '/style.css',
       'nera-competitions-standard',
       6
     );
-    $nera_cstd_update_checker->setBranch('main');
 
-    if (defined('NERA_CSTD_GITHUB_TOKEN') && is_string(NERA_CSTD_GITHUB_TOKEN) && NERA_CSTD_GITHUB_TOKEN !== '') {
+    if (method_exists($nera_cstd_update_checker, 'setBranch')) {
+      $nera_cstd_update_checker->setBranch($nera_cstd_puc_branch);
+    }
+
+    if (
+      defined('NERA_CSTD_GITHUB_TOKEN')
+      && is_string(NERA_CSTD_GITHUB_TOKEN)
+      && NERA_CSTD_GITHUB_TOKEN !== ''
+      && method_exists($nera_cstd_update_checker, 'setAuthentication')
+    ) {
       $nera_cstd_update_checker->setAuthentication(NERA_CSTD_GITHUB_TOKEN);
     }
 
-    $nera_cstd_puc_vcs = $nera_cstd_update_checker->getVcsApi();
-    if ($nera_cstd_puc_vcs instanceof GitHubApi) {
-      $nera_cstd_puc_vcs->setReleaseFilter(
-        static function ($version_number, $release_object) {
-          unset($version_number, $release_object);
-          return true;
-        },
-        \YahnisElsts\PluginUpdateChecker\v5p5\Vcs\Api::RELEASE_FILTER_SKIP_PRERELEASE,
-        20
-      );
-      $nera_cstd_puc_vcs->enableReleaseAssets();
+    if (method_exists($nera_cstd_update_checker, 'getVcsApi')) {
+      $nera_cstd_puc_vcs = $nera_cstd_update_checker->getVcsApi();
+      if ($nera_cstd_puc_vcs instanceof GitHubApi) {
+        $nera_cstd_puc_vcs->setReleaseFilter(
+          static function ($version_number, $release_object) {
+            unset($version_number, $release_object);
+            return true;
+          },
+          \YahnisElsts\PluginUpdateChecker\v5p5\Vcs\Api::RELEASE_FILTER_SKIP_PRERELEASE,
+          20
+        );
+        $nera_cstd_puc_vcs->enableReleaseAssets();
+      }
     }
   }
 }

@@ -12,12 +12,13 @@
 #   1. Resolves version from argument or style.css
 #   2. npm run build in frontend/ and lty-result-screens/
 #   3. Copies theme to a clean temp dir; sets Version (style.css), NERA_VERSION, @version in functions.php;
-#      syncs readme.txt Stable tag and nera-theme-update.json when present
-#   4. Builds zip from the clean tree, syncs back into this git repo, commits, pushes main + tag
-#      (no force-push to main — works with GitHub branch protection on nera-competitions-core)
-#   5. gh release create / upload on github.com
+#      syncs readme.txt Stable tag and nera-theme-update.json (version, details_url, download_url, last_updated)
+#   4. Builds nera-competitions-standard-VERSION.zip (PHP ZipArchive preferred; then zip.exe — never PowerShell
+#      Compress-Archive, which uses backslashes and breaks WordPress theme updates)
+#   5. Syncs the clean tree into this git repo, commits, pushes main + tag (no force-push to main — branch protection)
+#   6. gh release create / upload on github.com
 #
-# Excludes from the zip: .git, node_modules, .env*, release artifact zip, release.sh.
+# Excludes from the work tree copy: .git, node_modules, .env*, release artifact zip, release.sh.
 # github.com-nera is an SSH Host alias only. gh always uses GH_HOST=github.com (HTTPS).
 # ─────────────────────────────────────────────────────────────────────────────
 set -e
@@ -82,6 +83,7 @@ if command -v rsync >/dev/null 2>&1; then
     --exclude='lty-result-screens/node_modules' \
     --exclude='release.sh' \
     --exclude='.DS_Store' \
+    --exclude='*.bak' \
     --exclude='.env.local' \
     --exclude='.env' \
     --exclude='.env.*' \
@@ -94,6 +96,7 @@ else
   rm -f "$WORK_DIR/release.sh" "$WORK_DIR/.DS_Store" 2>/dev/null || true
   rm -f "$WORK_DIR/.env" "$WORK_DIR/.env.local" 2>/dev/null || true
   rm -f "$WORK_DIR/${THEME_SLUG}"-*.zip 2>/dev/null || true
+  find "$WORK_DIR" -name '*.bak' -type f -delete 2>/dev/null || true
 fi
 
 echo "▶ Setting Version in style.css + NERA_VERSION + @version in functions.php (for PUC)..."
@@ -140,18 +143,12 @@ if [ -f "$JSON_META" ]; then
     sed -i "s/\"version\": *\"[^\"]*\"/\"version\": \"${VERSION}\"/" "$JSON_META"
     sed -i "s|\"details_url\": *\"[^\"]*\"|\"details_url\": \"${DETAILS_URL}\"|" "$JSON_META"
     sed -i "s|\"download_url\": *\"[^\"]*\"|\"download_url\": \"${DOWNLOAD_URL}\"|" "$JSON_META"
+    sed -i "s/\"last_updated\": *\"[^\"]*\"/\"last_updated\": \"${LAST_UPDATED}\"/" "$JSON_META"
   else
     sed -i '' "s/\"version\": *\"[^\"]*\"/\"version\": \"${VERSION}\"/" "$JSON_META"
     sed -i '' "s|\"details_url\": *\"[^\"]*\"|\"details_url\": \"${DETAILS_URL}\"|" "$JSON_META"
     sed -i '' "s|\"download_url\": *\"[^\"]*\"|\"download_url\": \"${DOWNLOAD_URL}\"|" "$JSON_META"
-  fi
-  # Optional last_updated line — add only if file already has key (theme JSON minimal set omits it)
-  if grep -q '"last_updated"' "$JSON_META" 2>/dev/null; then
-    if sed --version >/dev/null 2>&1; then
-      sed -i "s/\"last_updated\": *\"[^\"]*\"/\"last_updated\": \"${LAST_UPDATED}\"/" "$JSON_META"
-    else
-      sed -i '' "s/\"last_updated\": *\"[^\"]*\"/\"last_updated\": \"${LAST_UPDATED}\"/" "$JSON_META"
-    fi
+    sed -i '' "s/\"last_updated\": *\"[^\"]*\"/\"last_updated\": \"${LAST_UPDATED}\"/" "$JSON_META"
   fi
 fi
 
@@ -162,17 +159,21 @@ rm -f "$ZIP_PATH"
 rm -rf "$STAGE_ZIP_PARENT"
 mkdir -p "$STAGE_ZIP_PARENT"
 cp -a "$WORK_DIR" "$STAGE_ZIP_PARENT/${THEME_SLUG}"
-if command -v zip >/dev/null 2>&1; then
+STAGE_SLUG_DIR="$STAGE_ZIP_PARENT/${THEME_SLUG}"
+# WordPress expects `/` path separators inside the zip. Prefer PHP ZipArchive first:
+# Windows `zip.exe` / some tools can still produce archives that confuse core on update
+# ("Could not copy file …\assets\"). PHP addFile uses forward slashes reliably.
+if command -v php >/dev/null 2>&1 && [ -f "$THEME_DIR/build-wp-release-zip.php" ]; then
+  echo "▶ Building zip with PHP ZipArchive (WP-safe paths)..."
+  php "$THEME_DIR/build-wp-release-zip.php" "$STAGE_SLUG_DIR" "$ZIP_PATH"
+elif command -v zip >/dev/null 2>&1; then
   ( cd "$STAGE_ZIP_PARENT" && zip -rq "$ZIP_PATH" "${THEME_SLUG}" )
+elif [ -x "/c/Program Files/Git/usr/bin/zip.exe" ]; then
+  ( cd "$STAGE_ZIP_PARENT" && "/c/Program Files/Git/usr/bin/zip.exe" -rq "$ZIP_PATH" "${THEME_SLUG}" )
 else
-  if command -v cygpath >/dev/null 2>&1; then
-    ZIP_WIN=$(cygpath -w "$ZIP_PATH")
-    SRC_WIN=$(cygpath -w "$STAGE_ZIP_PARENT/${THEME_SLUG}")
-  else
-    ZIP_WIN="$ZIP_PATH"
-    SRC_WIN="$STAGE_ZIP_PARENT/${THEME_SLUG}"
-  fi
-  MSYS2_ARG_CONV_EXCL='*' powershell.exe -NoProfile -Command "Compress-Archive -LiteralPath '$SRC_WIN' -DestinationPath '$ZIP_WIN' -Force"
+  echo "ERROR: Need php + build-wp-release-zip.php, or zip (e.g. Git usr/bin/zip.exe)."
+  echo "       Do not use PowerShell Compress-Archive for WordPress theme zips."
+  exit 1
 fi
 rm -rf "$STAGE_ZIP_PARENT"
 
