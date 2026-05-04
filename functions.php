@@ -6,6 +6,8 @@
  * @version 1.0.0
  */
 
+use YahnisElsts\PluginUpdateChecker\v5p5\Vcs\GitHubApi;
+
 // Exit if accessed directly
 if (!defined('ABSPATH')) {
   exit();
@@ -23,6 +25,60 @@ define('NERA_FRONTEND_DIST_URI', NERA_URI . '/frontend/dist');
 define('NERA_ASSETS_URI', NERA_URI . '/frontend/assets');
 define('NERA_ATTRIBUTION_ROUTE_SLUG', 'competition-website-by-nera-marketing');
 define('NERA_ATTRIBUTION_TEMPLATE_PATH', NERA_DIR . '/page-templates/nera-marketing-attribution.php');
+
+/**
+ * GitHub theme updates (Plugin Update Checker v5.5). On by default when `lib/plugin-update-checker/load-v5p5.php` exists.
+ *
+ * Disable: `define( 'NERA_CSTD_DISABLE_GITHUB_UPDATES', true );`
+ * Private repo: `define( 'NERA_CSTD_GITHUB_TOKEN', 'ghp_...' );`
+ * Custom URL: `define( 'NERA_CSTD_GITHUB_REPO_URL', 'https://github.com/Owner/repo/' );` or filter `nera_cstd_github_repo_url`.
+ *
+ * PUC compares the remote `Version` in `style.css` to the installed theme. Bump `Version`, `NERA_VERSION`, and
+ * `@version` in this file for every release, then tag/push to match.
+ *
+ * The 4th argument to `PucFactory::buildUpdateChecker` is the check interval in hours (default in library is 12).
+ *
+ * `nera-theme-update.json` is optional metadata for a self-hosted JSON update URL only; GitHub mode does not read it.
+ *
+ * @link https://github.com/YahnisElsts/plugin-update-checker
+ * @link https://github.com/Nera-Marketing/nera-competitions-standard/
+ */
+if (!defined('NERA_CSTD_DISABLE_GITHUB_UPDATES') || !NERA_CSTD_DISABLE_GITHUB_UPDATES) {
+  $nera_cstd_github_repo_default = 'https://github.com/Nera-Marketing/nera-competitions-standard/';
+  if (defined('NERA_CSTD_GITHUB_REPO_URL') && is_string(NERA_CSTD_GITHUB_REPO_URL) && NERA_CSTD_GITHUB_REPO_URL !== '') {
+    $nera_cstd_github_repo_default = NERA_CSTD_GITHUB_REPO_URL;
+  }
+  $nera_cstd_github_repo = apply_filters('nera_cstd_github_repo_url', $nera_cstd_github_repo_default);
+
+  $nera_cstd_puc_loader = NERA_DIR . '/lib/plugin-update-checker/load-v5p5.php';
+  if (is_readable($nera_cstd_puc_loader)) {
+    require_once $nera_cstd_puc_loader;
+    $nera_cstd_update_checker = YahnisElsts\PluginUpdateChecker\v5\PucFactory::buildUpdateChecker(
+      $nera_cstd_github_repo,
+      NERA_DIR . '/style.css',
+      'nera-competitions-standard',
+      6
+    );
+    $nera_cstd_update_checker->setBranch('main');
+
+    if (defined('NERA_CSTD_GITHUB_TOKEN') && is_string(NERA_CSTD_GITHUB_TOKEN) && NERA_CSTD_GITHUB_TOKEN !== '') {
+      $nera_cstd_update_checker->setAuthentication(NERA_CSTD_GITHUB_TOKEN);
+    }
+
+    $nera_cstd_puc_vcs = $nera_cstd_update_checker->getVcsApi();
+    if ($nera_cstd_puc_vcs instanceof GitHubApi) {
+      $nera_cstd_puc_vcs->setReleaseFilter(
+        static function ($version_number, $release_object) {
+          unset($version_number, $release_object);
+          return true;
+        },
+        \YahnisElsts\PluginUpdateChecker\v5p5\Vcs\Api::RELEASE_FILTER_SKIP_PRERELEASE,
+        20
+      );
+      $nera_cstd_puc_vcs->enableReleaseAssets();
+    }
+  }
+}
 
 /**
  * Register virtual public route for the attribution PR page.

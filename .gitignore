@@ -10,3 +10,6 @@ lty-result-screens/node_modules/
 .DS_Store
 *.log
 *.bak
+
+# Release zip (next to release.sh)
+/nera-competitions-standard-*.zip

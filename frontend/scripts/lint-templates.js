@@ -11,8 +11,7 @@
  * OK to use: gray-*, semantic tokens (primary, secondary, surface, success, …)
  */
 
-import globPkg from 'glob';
-const { sync: globSync } = globPkg;
+import { sync as globSync } from 'glob';
 import { readFileSync } from 'fs';
 import path from 'path';
 
