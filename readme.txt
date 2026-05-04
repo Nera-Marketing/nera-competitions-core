@@ -4,7 +4,7 @@ Tags: competition, giveaway, lottery, woocommerce
 Requires at least: 6.0
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 1.0.0
+Stable tag: 1.0.1
 License: GPLv2 or later
 
 Premium competition and giveaway theme for WooCommerce, with Tailwind-powered front-end assets.
@@ -20,6 +20,9 @@ Nera Competitions Standard is built for competition and lottery sites: product t
 3. Run `yarn build` or `npm run build` in `frontend/` and `lty-result-screens/` after pulling updates that change assets.
 
 == Changelog ==
+
+= 1.0.1 =
+* Release pipeline test (PUC + GitHub release + zip asset).
 
 = 1.0.0 =
 * Initial documented release track for GitHub / Plugin Update Checker.

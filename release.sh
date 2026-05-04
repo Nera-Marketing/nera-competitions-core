@@ -13,9 +13,9 @@
 #   2. npm run build in frontend/ and lty-result-screens/
 #   3. Copies theme to a clean temp dir; sets Version (style.css), NERA_VERSION, @version in functions.php;
 #      syncs readme.txt Stable tag and nera-theme-update.json when present
-#   4. git push to Nera-Marketing/nera-competitions-standard (main + tag vX.Y.Z)
-#   5. Builds nera-competitions-standard-VERSION.zip next to this script
-#   6. gh release create / upload on github.com
+#   4. Builds zip from the clean tree, syncs back into this git repo, commits, pushes main + tag
+#      (no force-push to main — works with GitHub branch protection on nera-competitions-core)
+#   5. gh release create / upload on github.com
 #
 # Excludes from the zip: .git, node_modules, .env*, release artifact zip, release.sh.
 # github.com-nera is an SSH Host alias only. gh always uses GH_HOST=github.com (HTTPS).
@@ -25,7 +25,6 @@ set -e
 THEME_DIR="$(cd "$(dirname "$0")" && pwd)"
 THEME_SLUG="nera-competitions-standard"
 GITHUB_REPO="Nera-Marketing/nera-competitions-core"
-GITHUB_REMOTE="git@github.com-nera:${GITHUB_REPO}.git"
 
 PID="$$"
 WORK_DIR="/tmp/${THEME_SLUG}-release-${PID}"
@@ -156,22 +155,7 @@ if [ -f "$JSON_META" ]; then
   fi
 fi
 
-# ── 4. Push to GitHub ─────────────────────────────────────────────────────────
-echo "▶ Pushing to GitHub ($GITHUB_REMOTE)..."
-cd "$WORK_DIR"
-
-git init -b main >/dev/null
-git config user.name "Tan Nguyen"
-git config user.email "tan@neramarketing.co.uk"
-git remote add origin "$GITHUB_REMOTE"
-
-git add -A
-git commit -m "Release $TAG" -q
-git tag "$TAG"
-git push origin main --force
-git push origin "$TAG" --force
-
-# ── 5. Create zip ─────────────────────────────────────────────────────────────
+# ── 4. Build distributable zip (PUC uses the release asset URL) ─────────────────
 ZIP_PATH="$THEME_DIR/${THEME_SLUG}-${VERSION}.zip"
 echo "▶ Creating zip..."
 rm -f "$ZIP_PATH"
@@ -198,7 +182,35 @@ if [ ! -s "$ZIP_PATH" ]; then
 fi
 echo "▶ Zip OK ($(wc -c < "$ZIP_PATH" | tr -d ' ') bytes)"
 
-# ── gh release ────────────────────────────────────────────────────────────────
+# ── 5. Commit + push (protected main: no orphan temp repo / no --force on main) ──
+echo "▶ Syncing release tree into git working tree..."
+cd "$THEME_DIR"
+if command -v rsync >/dev/null 2>&1; then
+  rsync -a "$WORK_DIR/" "$THEME_DIR/"
+else
+  echo "▶ rsync not found — using cp -a (Git Bash / Windows)..."
+  ( cd "$WORK_DIR" && cp -a . "$THEME_DIR/" )
+fi
+
+git add -A
+if git diff --staged --quiet; then
+  echo "▶ No staged changes after sync — skipping commit (tree already matches release)."
+else
+  git commit -m "Release $TAG" -q
+fi
+
+echo "▶ Pushing main to origin..."
+git push origin main
+
+if git rev-parse "$TAG" >/dev/null 2>&1; then
+  git tag -d "$TAG" 2>/dev/null || true
+fi
+git tag -a "$TAG" -m "Release $TAG" 2>/dev/null || git tag "$TAG"
+
+echo "▶ Pushing tag $TAG..."
+git push origin "refs/tags/${TAG}" --force
+
+# ── 6. GitHub Release (gh) ─────────────────────────────────────────────────────
 GH_CMD=""
 if command -v gh >/dev/null 2>&1; then
   GH_CMD="gh"

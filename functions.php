@@ -3,7 +3,7 @@
  * Nera Competitions Standard Theme
  *
  * @package Nera_Competitions
- * @version 1.0.0
+ * @version 1.0.1
  */
 
 use YahnisElsts\PluginUpdateChecker\v5p5\Vcs\GitHubApi;
@@ -17,7 +17,7 @@ if (!defined('ABSPATH')) {
 require_once __DIR__ . '/inc/env-loader.php';
 
 // Define theme constants (template directory = parent theme; child-safe when used as a parent)
-define('NERA_VERSION', '1.0.0');
+define('NERA_VERSION', '1.0.1');
 define('NERA_DIR', get_template_directory());
 define('NERA_URI', get_template_directory_uri());
 define('NERA_FRONTEND_DIST_DIR', NERA_DIR . '/frontend/dist');
@@ -41,10 +41,10 @@ define('NERA_ATTRIBUTION_TEMPLATE_PATH', NERA_DIR . '/page-templates/nera-market
  * `nera-theme-update.json` is optional metadata for a self-hosted JSON update URL only; GitHub mode does not read it.
  *
  * @link https://github.com/YahnisElsts/plugin-update-checker
- * @link https://github.com/Nera-Marketing/nera-competitions-standard/
+ * @link https://github.com/Nera-Marketing/nera-competitions-core/
  */
 if (!defined('NERA_CSTD_DISABLE_GITHUB_UPDATES') || !NERA_CSTD_DISABLE_GITHUB_UPDATES) {
-  $nera_cstd_github_repo_default = 'https://github.com/Nera-Marketing/nera-competitions-standard/';
+  $nera_cstd_github_repo_default = 'https://github.com/Nera-Marketing/nera-competitions-core/';
   if (defined('NERA_CSTD_GITHUB_REPO_URL') && is_string(NERA_CSTD_GITHUB_REPO_URL) && NERA_CSTD_GITHUB_REPO_URL !== '') {
     $nera_cstd_github_repo_default = NERA_CSTD_GITHUB_REPO_URL;
   }
