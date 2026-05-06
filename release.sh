@@ -8,6 +8,9 @@
 #
 # Requirements: git, npm, php + build-wp-release-zip.php (or zip), gh (optional). Optional SSH: origin → $GITHUB_REMOTE
 #
+# Cross-platform: Linux, macOS, Windows Git Bash (MSYS). WSL behaves like Linux (rsync/cp).
+# Push branch: default main; override with RELEASE_GIT_BRANCH=master if needed.
+#
 # What it does:
 #   1. Resolves version from argument or style.css
 #   2. npm run build in frontend/ and lty-result-screens/
@@ -15,7 +18,7 @@
 #      syncs readme.txt Stable tag and nera-theme-update.json (version, details_url, download_url, last_updated)
 #   4. Builds nera-competitions-standard-VERSION.zip (PHP ZipArchive preferred; then zip.exe — never PowerShell
 #      Compress-Archive, which uses backslashes and breaks WordPress theme updates)
-#   5. Syncs the clean tree into this git repo, commits, pushes main + tag (no force-push to main — branch protection)
+#   5. Syncs the clean tree into this git repo, commits, pushes branch + tag (see RELEASE_GIT_BRANCH; default main)
 #   6. gh release create / upload on github.com
 #
 # Excludes from the work tree copy: .git, node_modules, .env*, release artifact zip, release.sh.
@@ -30,8 +33,22 @@ GITHUB_REMOTE="git@github.com-nera:${GITHUB_REPO}.git"
 # github.com-nera = SSH Host alias only (same as plugin release.sh). gh uses GH_HOST=github.com (HTTPS).
 
 PID="$$"
-WORK_DIR="/tmp/${THEME_SLUG}-release-${PID}"
-STAGE_ZIP_PARENT="/tmp/${THEME_SLUG}-zipparent-${PID}"
+_RELEASE_TMP="${TMPDIR:-/tmp}"
+_RELEASE_TMP="${_RELEASE_TMP%/}"
+WORK_DIR="${_RELEASE_TMP}/${THEME_SLUG}-release-${PID}"
+STAGE_ZIP_PARENT="${_RELEASE_TMP}/${THEME_SLUG}-zipparent-${PID}"
+
+msys_win_path() {
+  local dir="$1"
+  local w=""
+  if command -v cygpath >/dev/null 2>&1; then
+    w="$(MSYS_NO_PATHCONV=1 cygpath -aw "$dir" 2>/dev/null)" || w=""
+  fi
+  if [ -z "$w" ]; then
+    w="$(cd "$dir" && pwd -W 2>/dev/null)" || w=""
+  fi
+  printf '%s' "$w"
+}
 
 cleanup() {
   rm -rf "$WORK_DIR" "$STAGE_ZIP_PARENT" 2>/dev/null || true
@@ -189,15 +206,48 @@ echo "▶ Zip OK ($(wc -c < "$ZIP_PATH" | tr -d ' ') bytes)"
 echo "▶ Syncing release tree into git working tree..."
 cd "$THEME_DIR"
 
-# Release commit identity (parity with wp-content/plugins/nera-spin-to-win/release.sh).
-git config user.name "Minh Le"
-git config user.email "minh@nera.marketing"
+# Release commit author: prefer repo .git/config (--local), then global, then defaults.
+RELEASE_AUTHOR_NAME="$(git config --local user.name 2>/dev/null || true)"
+RELEASE_AUTHOR_EMAIL="$(git config --local user.email 2>/dev/null || true)"
+if [ -z "$RELEASE_AUTHOR_NAME" ]; then
+  RELEASE_AUTHOR_NAME="$(git config --global user.name 2>/dev/null || true)"
+fi
+if [ -z "$RELEASE_AUTHOR_EMAIL" ]; then
+  RELEASE_AUTHOR_EMAIL="$(git config --global user.email 2>/dev/null || true)"
+fi
+if [ -z "$RELEASE_AUTHOR_NAME" ]; then
+  RELEASE_AUTHOR_NAME="Minh Le"
+fi
+if [ -z "$RELEASE_AUTHOR_EMAIL" ]; then
+  RELEASE_AUTHOR_EMAIL="minh@nera.marketing"
+fi
+git config user.name "$RELEASE_AUTHOR_NAME"
+git config user.email "$RELEASE_AUTHOR_EMAIL"
 
 if command -v rsync >/dev/null 2>&1; then
   rsync -a "$WORK_DIR/" "$THEME_DIR/"
 else
-  echo "▶ rsync not found — using cp -a (Git Bash / Windows)..."
-  ( cd "$WORK_DIR" && cp -a . "$THEME_DIR/" )
+  if [ -f "/c/Windows/System32/robocopy.exe" ]; then
+    WIN_SRC="$(msys_win_path "$WORK_DIR")"
+    WIN_DST="$(msys_win_path "$THEME_DIR")"
+    if [ -n "$WIN_SRC" ] && [ -n "$WIN_DST" ]; then
+      echo "▶ rsync not found — using robocopy (Windows)..."
+      set +e
+      MSYS_NO_PATHCONV=1 /c/Windows/System32/robocopy.exe "$WIN_SRC" "$WIN_DST" /E /R:2 /W:1 /NFL /NDL /NJH /NJS
+      rc=$?
+      set -e
+      if [ "$rc" -ge 8 ]; then
+        echo "ERROR: robocopy failed (exit $rc)"
+        exit 1
+      fi
+    else
+      echo "▶ rsync not found — pwd -W unavailable — using cp -a (Git Bash / Windows)..."
+      ( cd "$WORK_DIR" && cp -a . "$THEME_DIR/" )
+    fi
+  else
+    echo "▶ rsync not found — using cp -a (Git Bash / Windows)..."
+    ( cd "$WORK_DIR" && cp -a . "$THEME_DIR/" )
+  fi
 fi
 
 git add -A
@@ -207,8 +257,9 @@ else
   git commit -m "Release $TAG" -q
 fi
 
-echo "▶ Pushing main to origin..."
-git push origin main
+PUSH_BRANCH="${RELEASE_GIT_BRANCH:-main}"
+echo "▶ Pushing ${PUSH_BRANCH} to origin..."
+git push origin "$PUSH_BRANCH"
 
 if git rev-parse "$TAG" >/dev/null 2>&1; then
   git tag -d "$TAG" 2>/dev/null || true
@@ -222,6 +273,10 @@ git push origin "refs/tags/${TAG}" --force
 GH_CMD=""
 if command -v gh >/dev/null 2>&1; then
   GH_CMD="gh"
+elif [ -x "/opt/homebrew/bin/gh" ]; then
+  GH_CMD="/opt/homebrew/bin/gh"
+elif [ -x "/usr/local/bin/gh" ]; then
+  GH_CMD="/usr/local/bin/gh"
 elif [ -f "/c/Program Files/GitHub CLI/gh.exe" ]; then
   GH_CMD="/c/Program Files/GitHub CLI/gh.exe"
 elif [ -f "/c/Program Files (x86)/GitHub CLI/gh.exe" ]; then
