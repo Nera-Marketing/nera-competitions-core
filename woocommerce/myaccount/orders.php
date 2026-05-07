@@ -140,6 +140,32 @@ do_action('woocommerce_before_account_orders', $has_orders);
                       • <?php echo wp_kses_post($total); ?>
                     <?php endif; ?>
                   </p>
+                  <?php
+                  $lty_tickets = $item->get_meta('_lty_lottery_tickets');
+                  if (!is_array($lty_tickets)) {
+                    $lty_tickets = [];
+                  }
+                  if (!empty($lty_tickets)):
+                    $visible   = array_slice($lty_tickets, 0, 10);
+                    $remaining = count($lty_tickets) - count($visible);
+                  ?>
+                  <div class="mt-1.5 flex flex-wrap items-center gap-1">
+                    <span class="text-xs font-semibold uppercase tracking-wide text-gray-500">
+                      <?php esc_html_e('Tickets', 'nera-competitions-standard'); ?>:
+                    </span>
+                    <?php foreach ($visible as $tn): ?>
+                      <span class="notranslate inline-flex items-center px-2 py-0.5 rounded-md bg-primary/10 text-primary text-xs font-mono font-semibold border border-primary/20">
+                        #<?php echo esc_html($tn); ?>
+                      </span>
+                    <?php endforeach; ?>
+                    <?php if ($remaining > 0): ?>
+                      <a href="<?php echo esc_url($order->get_view_order_url()); ?>"
+                         class="inline-flex items-center px-2 py-0.5 rounded-md bg-gray-100 text-gray-700 text-xs font-semibold border border-gray-200 hover:bg-gray-200 transition-colors">
+                        <?php printf(esc_html__('+%d more', 'nera-competitions-standard'), (int) $remaining); ?>
+                      </a>
+                    <?php endif; ?>
+                  </div>
+                  <?php endif; ?>
                 </div>
                 <?php if ($quantity === 1): ?>
                 <div class="text-right flex-shrink-0">

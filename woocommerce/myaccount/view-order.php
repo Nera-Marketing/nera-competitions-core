@@ -131,6 +131,24 @@ $notes = $order->get_customer_order_notes();
    $quantity,
  ); ?>
                 </p>
+                <?php
+                $lty_tickets = $item->get_meta('_lty_lottery_tickets');
+                if (!is_array($lty_tickets)) {
+                  $lty_tickets = [];
+                }
+                if (!empty($lty_tickets)):
+                ?>
+                <div class="mt-2 flex flex-wrap items-center gap-1">
+                  <span class="text-xs font-semibold uppercase tracking-wide text-gray-500">
+                    <?php esc_html_e('Tickets', 'nera-competitions-standard'); ?>:
+                  </span>
+                  <?php foreach ($lty_tickets as $tn): ?>
+                    <span class="notranslate inline-flex items-center px-2 py-0.5 rounded-md bg-primary/10 text-primary text-xs font-mono font-semibold border border-primary/20">
+                      #<?php echo esc_html($tn); ?>
+                    </span>
+                  <?php endforeach; ?>
+                </div>
+                <?php endif; ?>
               </div>
               <div class="text-right flex-shrink-0">
                 <p class="font-bold text-gray-900 text-lg"><?php echo wp_kses_post($total); ?></p>
