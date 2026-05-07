@@ -110,7 +110,7 @@ $visible_thumbs = 4;
 $extra_images = max(0, count($gallery_images) - $visible_thumbs);
 ?>
 
-<main id="primary" class="site-main bg-gray-50 min-h-screen">
+<main id="primary" class="site-mai min-h-screen">
 
 
   <?php do_action('woocommerce_before_single_product'); ?>
@@ -122,11 +122,11 @@ $extra_images = max(0, count($gallery_images) - $visible_thumbs);
 
     <!-- Main Content Section -->
     <section class="py-8 lg:py-10">
-      <div class="max-w-7xl mx-auto flex w-full min-w-0 flex-col px-4 lg:px-8">
+      <div class="max-w-7xl mx-auto flex w-full min-w-0 flex-col px-4 lg:px-0">
         <div class="grid w-full min-w-0 grid-cols-1 gap-8 lg:grid-cols-12 lg:gap-10">
 
           <!-- Left Column: Gallery + Tabs (desktop) / Unwrapped for mobile ordering -->
-          <div class="max-lg:contents lg:flex lg:flex-col lg:gap-8 lg:col-span-7">
+          <div class="max-lg:contents lg:flex lg:flex-col lg:gap-8 lg:col-span-7 bg-surface p-6 rounded-2xl">
             <!-- 1. Product Gallery (mobile: top) -->
             <div class="order-1">
               <?php get_template_part('template-parts/single-product/product-gallery', null, [
@@ -182,8 +182,8 @@ $extra_images = max(0, count($gallery_images) - $visible_thumbs);
     <?php
     $related_ids = nera_get_related_lottery_products($product_id, 4);
     if (!empty($related_ids)): ?>
-      <section class="py-12 lg:py-16 bg-surface border-t border-gray-100">
-        <div class="max-w-7xl mx-auto px-4 lg:px-8">
+      <section class="py-12 lg:py-16 bg-surface border-t border-gray-100 rounded-2xl">
+        <div class="max-w-7xl mx-auto px-4 lg:px-0">
           <?php get_template_part('template-parts/single-product/related-competitions', null, [
             'product' => $product,
             'related_ids' => $related_ids,

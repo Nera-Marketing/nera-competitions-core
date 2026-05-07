@@ -27,21 +27,9 @@ if (empty($page_tagline)) {
     'nera-competitions',
   );
 }
-?>
 
-<section class="py-16 md:py-20 bg-background-light">
-  <div class="max-w-[1200px] mx-auto px-4 lg:px-8">
-    <div class="text-center max-w-2xl mx-auto">
-      <!-- Page Title -->
-      <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold text-text-primary tracking-tight mb-4"
-        data-aos="fade-up">
-        <?php echo esc_html($page_title); ?>
-      </h1>
-
-      <!-- Tagline -->
-      <p class="text-lg md:text-xl text-text-secondary font-medium" data-aos="fade-up" data-aos-delay="100">
-        <?php echo esc_html($page_tagline); ?>
-      </p>
-    </div>
-  </div>
-</section>
+get_template_part('template-parts/components/shared/page-hero', null, [
+  'title' => $page_title,
+  'description' => $page_tagline,
+  'variant' => 'default',
+]);

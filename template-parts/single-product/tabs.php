@@ -36,7 +36,7 @@ if (
 ?>
 
 <!-- Tabs Section -->
-<div class="mt-8" data-product-tabs>
+<div data-product-tabs>
   <!-- Tab Navigation -->
   <div class="flex border-b border-gray-200">
     <button class="tab-btn px-6 py-3 text-sm font-semibold text-primary border-b-2 border-primary -mb-px"

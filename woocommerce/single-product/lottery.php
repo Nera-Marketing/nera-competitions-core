@@ -49,7 +49,7 @@ $video_url = get_field('gallery_video_url', $product_id);
 
     <!-- Hero Section: Gallery + Product Info -->
     <section class="py-8 lg:py-12">
-      <div class="max-w-7xl mx-auto px-4 lg:px-8">
+      <div class="max-w-7xl mx-auto px-4 lg:px-0">
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
 
           <!-- Left Column: Image Gallery -->
@@ -78,7 +78,7 @@ $video_url = get_field('gallery_video_url', $product_id);
 
     <!-- Product Tabs Section -->
     <section class="py-12 bg-surface">
-      <div class="max-w-7xl mx-auto px-4 lg:px-8">
+      <div class="max-w-7xl mx-auto px-4 lg:px-0">
         <?php get_template_part('template-parts/single-product/product-tabs', null, [
           'product' => $product,
         ]); ?>
@@ -92,7 +92,7 @@ $video_url = get_field('gallery_video_url', $product_id);
     $related_ids = nera_get_related_lottery_products($product_id, 4);
     if (!empty($related_ids)): ?>
       <section class="py-12 lg:py-16 bg-gray-50">
-        <div class="max-w-7xl mx-auto px-4 lg:px-8">
+        <div class="max-w-7xl mx-auto px-4 lg:px-0">
           <?php get_template_part('template-parts/single-product/related-competitions', null, [
             'product' => $product,
             'related_ids' => $related_ids,

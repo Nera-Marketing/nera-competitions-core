@@ -307,7 +307,7 @@ $nera_adv_posts_per_page = function_exists('nera_advanced_filter_get_posts_per_p
   });
 </script>
 
-<section class="py-12 bg-gray-50" id="advanced-filter-competitions" x-data="advancedFilterSection">
+<section class="py-12 bg-surface" id="advanced-filter-competitions" x-data="advancedFilterSection">
 
   <div class="max-w-[1400px] mx-auto px-4 lg:px-10">
 
