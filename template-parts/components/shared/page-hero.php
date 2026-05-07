@@ -40,8 +40,8 @@ $has_eyebrow = $eyebrow_label !== '';
 
 $section_class =
   $variant === 'compact'
-    ? 'py-10 sm:py-16 md:py-20 bg-background-light'
-    : 'py-16 md:py-20 bg-background-light';
+    ? 'py-10 sm:py-16 md:py-20 bg-gradient-to-br from-primary via-primary to-primary-dark'
+    : 'py-16 md:py-20 bg-gradient-to-br from-primary via-primary to-primary-dark';
 
 $container_class =
   $variant === 'compact'
@@ -50,12 +50,12 @@ $container_class =
 
 $h1_class =
   $variant === 'compact'
-    ? 'text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-text-primary tracking-tight mb-4'
-    : 'text-4xl md:text-5xl lg:text-6xl font-extrabold text-text-primary tracking-tight mb-4';
+    ? 'text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-on-primary tracking-tight mb-4'
+    : 'text-4xl md:text-5xl lg:text-6xl font-extrabold text-on-primary tracking-tight mb-4';
 
 $p_classes = trim(
   'text-lg md:text-xl font-medium ' .
-    ($description_extra_class !== '' ? $description_extra_class : 'text-text-secondary'),
+    ($description_extra_class !== '' ? $description_extra_class : 'text-on-primary/80'),
 );
 ?>
 
@@ -65,7 +65,7 @@ $p_classes = trim(
       <?php if ($has_eyebrow) : ?>
         <div class="flex justify-center mb-6" data-aos="fade-up">
           <span
-            class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gray-100 text-text-secondary text-sm font-semibold">
+            class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-on-primary/15 text-on-primary border border-on-primary/25 text-sm font-semibold">
             <?php if ($eyebrow_icon !== '') : ?>
               <span class="material-symbols-outlined text-base"
                 style="font-variation-settings:'FILL' 1"><?php echo esc_html($eyebrow_icon); ?></span>
