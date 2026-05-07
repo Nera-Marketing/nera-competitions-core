@@ -65,7 +65,7 @@ $total_prizes = $available_count + $won_count;
   <button
     id="instant-wins-toggle-btn"
     onclick="window.toggleInstantWins()"
-    class="instant-wins-toggle-shine w-full flex items-center justify-between gap-4 px-6 py-5 rounded-2xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-warning focus:ring-offset-2 bg-gradient-to-br from-warning-bg via-warning-bg to-warning-bg/90 ring-1 ring-warning-border/60 shadow-[0_4px_14px_0_rgba(251,191,36,0.15)] active:scale-[0.98] animate-[instant-wins-button-glow_5s_ease-in-out_infinite]"
+    class="instant-wins-toggle-shine w-full flex items-center justify-between gap-4 px-6 py-5 rounded-xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-warning focus:ring-offset-2 bg-gradient-to-br from-warning-bg via-warning-bg to-warning-bg/90 ring-1 ring-warning-border/60 shadow-[0_4px_14px_0_rgba(251,191,36,0.15)] active:scale-[0.98] animate-[instant-wins-button-glow_5s_ease-in-out_infinite]"
     aria-expanded="false"
     aria-controls="instant-wins-container"
   >

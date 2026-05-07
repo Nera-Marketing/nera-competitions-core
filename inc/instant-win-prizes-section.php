@@ -33,17 +33,27 @@ function nera_competitions_render_instant_win_prizes_section($product)
    */
   $html = apply_filters('nera_competitions_instant_win_prizes_section_html', null, $product);
   if (null !== $html) {
+    if ('' === trim((string) $html)) {
+      return;
+    }
     echo $html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- filter returns trusted markup.
     return;
   }
 
+  ob_start();
+  get_template_part('template-parts/single-product/instant-wins-section', null, [
+    'product' => $product,
+  ]);
+  $inner = ob_get_clean();
+
+  if ('' === trim((string) $inner)) {
+    return;
+  }
   ?>
     <!-- Instant Win prizes: own section below hero grid (avoids WC flex/float fighting inner flex-col) -->
     <section class="pb-8 lg:pb-10" aria-label="<?php esc_attr_e('Instant win prizes', 'nera-competitions'); ?>">
       <div class="max-w-7xl mx-auto w-full min-w-0 px-4 lg:px-0">
-        <?php get_template_part('template-parts/single-product/instant-wins-section', null, [
-          'product' => $product,
-        ]); ?>
+        <?php echo $inner; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- trusted internal template output. ?>
       </div>
     </section>
   <?php

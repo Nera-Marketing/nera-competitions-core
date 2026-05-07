@@ -182,8 +182,8 @@ $extra_images = max(0, count($gallery_images) - $visible_thumbs);
     <?php
     $related_ids = nera_get_related_lottery_products($product_id, 4);
     if (!empty($related_ids)): ?>
-      <section class="py-12 lg:py-16 bg-surface border-t border-gray-100">
-        <div class="max-w-7xl mx-auto px-4 lg:px-8">
+      <section class="py-12 lg:py-16 bg-surface border-t border-gray-100 rounded-2xl">
+        <div class="max-w-7xl mx-auto px-4 lg:px-0">
           <?php get_template_part('template-parts/single-product/related-competitions', null, [
             'product' => $product,
             'related_ids' => $related_ids,

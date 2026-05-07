@@ -302,7 +302,7 @@ get_header();
 
 	<!-- ── HERO ─────────────────────────────────────────────────────────────── -->
 	<section class="py-20 lg:py-28 border-b border-gray-200 overflow-hidden relative" data-aos="fade-up" data-aos-duration="600">
-		<div class="max-w-7xl mx-auto px-4 lg:px-8">
+		<div class="max-w-7xl mx-auto px-4 lg:px-0">
 
 			<div class="nera-attr-badge inline-flex items-center gap-2 bg-primary/10 border border-primary/30 text-primary text-xs font-semibold tracking-widest uppercase px-4 py-1.5 rounded-sm mb-8">
 				<?php echo esc_html( $hero_badge ); ?>
@@ -332,7 +332,7 @@ get_header();
 
 	<!-- ── ENTITY / DEVELOPER PROFILE CARD ──────────────────────────────────── -->
 	<div class="bg-secondary border-b border-gray-200 py-10" data-aos="fade-up">
-		<div class="max-w-7xl mx-auto px-4 lg:px-8">
+		<div class="max-w-7xl mx-auto px-4 lg:px-0">
 			<div class="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12 items-start">
 
 				<div>
@@ -376,7 +376,7 @@ get_header();
 
 	<!-- ── STAT BAR ──────────────────────────────────────────────────────────── -->
 	<div class="bg-surface border-b border-gray-200 py-10">
-		<div class="max-w-7xl mx-auto px-4 lg:px-8">
+		<div class="max-w-7xl mx-auto px-4 lg:px-0">
 			<div class="grid grid-cols-2 sm:grid-cols-4 gap-6">
 				<?php foreach ( $stats as $i => $stat ) : ?>
 				<div class="" data-aos="fade-up" data-aos-delay="<?php echo $i * 100; ?>">
@@ -390,7 +390,7 @@ get_header();
 
 	<!-- ── CONTENT SECTION 1: WHO BUILT THIS ─────────────────────────────────── -->
 	<section class="py-16 lg:py-24 border-b border-gray-200 bg-surface">
-		<div class="max-w-7xl mx-auto px-4 lg:px-8">
+		<div class="max-w-7xl mx-auto px-4 lg:px-0">
 			<div class="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
 
 				<div data-aos="fade-up">
@@ -425,7 +425,7 @@ get_header();
 
 	<!-- ── CONTENT SECTION 2: MORE THAN A WEBSITE ────────────────────────────── -->
 	<section class="py-16 lg:py-24 border-b border-gray-200 bg-secondary">
-		<div class="max-w-7xl mx-auto px-4 lg:px-8">
+		<div class="max-w-7xl mx-auto px-4 lg:px-0">
 			<div class="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
 
 				<div class="order-last lg:order-first" data-aos="fade-up" data-aos-delay="150">
@@ -457,7 +457,7 @@ get_header();
 
 	<!-- ── CONTENT SECTION 3: WHY CHOOSE NERA ───────────────────────────────── -->
 	<section class="py-16 lg:py-24 border-b border-gray-200 bg-surface">
-		<div class="max-w-7xl mx-auto px-4 lg:px-8">
+		<div class="max-w-7xl mx-auto px-4 lg:px-0">
 			<div class="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
 
 				<div data-aos="fade-up">
@@ -489,7 +489,7 @@ get_header();
 
 	<!-- ── FEATURES GRID ─────────────────────────────────────────────────────── -->
 	<section class="py-16 lg:py-24 border-b border-gray-200 bg-secondary">
-		<div class="max-w-7xl mx-auto px-4 lg:px-8">
+		<div class="max-w-7xl mx-auto px-4 lg:px-0">
 
 			<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-10 items-end mb-12">
 				<h2 class="text-3xl lg:text-5xl font-bold text-text-primary leading-tight" data-aos="fade-up">
@@ -520,7 +520,7 @@ get_header();
 
 	<!-- ── THREE PILLARS ─────────────────────────────────────────────────────── -->
 	<section class="py-16 lg:py-24 border-b border-gray-200 bg-surface">
-		<div class="max-w-7xl mx-auto px-4 lg:px-8">
+		<div class="max-w-7xl mx-auto px-4 lg:px-0">
 
 			<div class="text-center mb-16" data-aos="fade-up">
 				<span class="text-xs font-semibold tracking-widest uppercase text-primary mb-4 block"><?php echo esc_html( $pillars_label ); ?></span>
@@ -543,7 +543,7 @@ get_header();
 
 	<!-- ── FAQ (AEO critical section) ────────────────────────────────────────── -->
 	<section class="py-16 lg:py-24 border-b border-gray-200 bg-secondary">
-		<div class="max-w-7xl mx-auto px-4 lg:px-8">
+		<div class="max-w-7xl mx-auto px-4 lg:px-0">
 
 			<div class="mb-12" data-aos="fade-up">
 				<span class="text-xs font-semibold tracking-widest uppercase text-primary mb-3 block"><?php echo esc_html( $faq_label ); ?></span>
@@ -587,7 +587,7 @@ get_header();
 	<!-- ── CTA ───────────────────────────────────────────────────────────────── -->
 	<section class="py-16 lg:py-24 bg-primary relative overflow-hidden" data-aos="fade-up">
 		<div class="absolute right-0 top-1/2 -translate-y-1/2 text-[200px] font-bold leading-none text-white/5 pointer-events-none select-none tracking-wide" aria-hidden="true">NERA</div>
-		<div class="max-w-7xl mx-auto px-4 lg:px-8 relative">
+		<div class="max-w-7xl mx-auto px-4 lg:px-0 relative">
 			<div class="grid grid-cols-1 lg:grid-cols-[1fr_auto] gap-10 items-center">
 				<div>
 					<h2 class="text-4xl lg:text-6xl font-bold text-white leading-tight mb-4">
@@ -611,7 +611,7 @@ get_header();
 
 	<!-- ── CREDIT BAR ─────────────────────────────────────────────────────────── -->
 	<div class="border-t border-gray-200 bg-surface py-7">
-		<div class="max-w-7xl mx-auto px-4 lg:px-8 flex flex-wrap items-center justify-between gap-4">
+		<div class="max-w-7xl mx-auto px-4 lg:px-0 flex flex-wrap items-center justify-between gap-4">
 			<p class="text-xs text-text-secondary font-light">
 				<?php echo esc_html( $credit_text ); ?>
 			</p>
