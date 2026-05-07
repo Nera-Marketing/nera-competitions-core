@@ -12,13 +12,13 @@ if (!defined('ABSPATH')) {
 
 $per_page = (int) (get_field('winners_per_page') ?: 12);
 $show_filters = (bool) get_field('winners_show_filters');
-$show_quotes = (bool) get_field('winners_show_quotes');
+$show_quotes = (bool) get_field('winners_show_quotes')  ;
 $dataset = nera_winners_get_page_dataset(get_the_ID());
 $winners = $dataset['winners'];
 $filter_items = $dataset['filter_items'];
 
 if (empty($winners)) { ?>
-  <section class="py-16 px-5 sm:px-6">
+  <section class="py-16 px-5 sm:px-6 bg-surface">
       <div class="container mx-auto max-w-7xl">
           <div class="text-center py-16">
               <div class="max-w-md mx-auto">
@@ -51,7 +51,7 @@ $alpine_config = [
 ];
 ?>
 
-<section class="py-16 px-5 sm:px-6">
+<section class="py-16 px-5 sm:px-6 bg-surface">
     <div
       class="container mx-auto max-w-7xl"
       x-data="winnersPage(<?php echo esc_attr(wp_json_encode($alpine_config)); ?>)"

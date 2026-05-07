@@ -59,7 +59,7 @@ $total_prizes = $available_count + $won_count;
 ?>
 
 <!-- Instant Wins Section (Full Width Below Columns; width/padding from parent container) -->
-<div class="instant-wins-section mt-10 w-full">
+<div class="instant-wins-section w-full">
 
   <!-- Toggle Button — Premium Light Card (frontend-design: playful/premium) -->
   <button
@@ -131,7 +131,6 @@ $total_prizes = $available_count + $won_count;
     <div
       id="instant-wins-root"
       data-product-id="<?php echo esc_attr($product_id); ?>"
-      class="mt-6"
     >
       <!-- Loading Skeleton (visible until React mounts) -->
       <div class="instant-wins-loading space-y-4">
