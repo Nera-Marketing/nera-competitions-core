@@ -340,6 +340,19 @@ if (function_exists('acf_add_local_field_group')) {
         'media_upload' => 0,
       ],
       [
+        'key'               => 'field_sp_stw_how_it_works_copy',
+        'label'             => 'Spin to Win — How It Works Copy',
+        'name'              => 'stw_how_it_works_copy',
+        'type'              => 'textarea',
+        'instructions'      => 'Text shown in the "How it works" tab. Only applies to products in the "spin-to-win" category.',
+        'required'          => 0,
+        'conditional_logic' => 0,
+        'default_value'     => "Purchase your tickets and you'll see a Spin the Wheel button on your order confirmation. Click it, then use the Spin and Turbo Spin buttons to play. Your result is revealed instantly.",
+        'placeholder'       => '',
+        'rows'              => 4,
+        'new_lines'         => 'wpautop',
+      ],
+      [
         'key' => 'field_sp_product_faqs',
         'label' => 'Product FAQs',
         'name' => 'product_faqs',
@@ -428,4 +441,12 @@ if (function_exists('acf_add_local_field_group')) {
     'active' => true,
     'description' => 'Competition-specific settings for single product pages.',
   ]);
+
+  add_filter( 'acf/prepare_field/key=field_sp_stw_how_it_works_copy', function( $field ) {
+    $post_id = get_the_ID();
+    if ( $post_id && ! has_term( 'spin-to-win', 'product_cat', $post_id ) ) {
+      return false;
+    }
+    return $field;
+  } );
 }

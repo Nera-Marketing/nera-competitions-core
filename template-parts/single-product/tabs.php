@@ -19,6 +19,7 @@ if (!$product) {
 
 $product_id = $product->get_id();
 $has_instant_wins = false;
+$is_stw_product = has_term( 'spin-to-win', 'product_cat', $product_id );
 
 $show_entry_list_tab = get_field('show_entry_list_tab', $product_id);
 if ($show_entry_list_tab === null) {
@@ -51,7 +52,7 @@ if (
     <?php endif; ?>
     <button class="tab-btn px-6 py-3 text-sm font-medium text-text-secondary hover:text-primary transition-colors"
       data-tab="draw-info">
-      <?php _e('Draw Information', 'nera-competitions'); ?>
+      <?php echo $is_stw_product ? __('How it works', 'nera-competitions') : __('Draw Information', 'nera-competitions'); ?>
     </button>
   </div>
 
@@ -91,25 +92,40 @@ if (
   <?php endif; ?>
 
   <div class="tab-panel mt-6 hidden" data-tab-panel="draw-info">
-    <?php
-    $draw_date = nera_format_draw_date($end_date_gmt);
-    if ($draw_date): ?>
-      <p class="text-text-secondary">
-        <?php printf(
-          __('The draw will take place on %s.', 'nera-competitions'),
-          '<strong>' . esc_html($draw_date) . '</strong>',
-        ); ?>
-      </p>
-    <?php endif;
-    ?>
+    <?php if ( $is_stw_product ) : ?>
 
-    <?php if (function_exists('get_field')): ?>
-      <?php $competition_rules = get_field('competition_rules', $product_id); ?>
-      <?php if ($competition_rules): ?>
-        <div class="mt-4 prose prose-sm max-w-none text-text-secondary">
-          <?php echo wp_kses_post($competition_rules); ?>
-        </div>
+      <?php
+      $how_it_works = ( function_exists( 'get_field' ) && get_field( 'stw_how_it_works_copy', $product_id ) )
+        ? get_field( 'stw_how_it_works_copy', $product_id )
+        : __( 'Purchase your tickets and you\'ll see a Spin the Wheel button on your order confirmation. Click it, then use the Spin and Turbo Spin buttons to play. Your result is revealed instantly.', 'nera-competitions' );
+      ?>
+      <div class="prose prose-sm max-w-none text-text-secondary leading-relaxed">
+        <?php echo wp_kses_post( wpautop( $how_it_works ) ); ?>
+      </div>
+
+    <?php else : ?>
+
+      <?php
+      $draw_date = nera_format_draw_date($end_date_gmt);
+      if ($draw_date): ?>
+        <p class="text-text-secondary">
+          <?php printf(
+            __('The draw will take place on %s.', 'nera-competitions'),
+            '<strong>' . esc_html($draw_date) . '</strong>',
+          ); ?>
+        </p>
+      <?php endif;
+      ?>
+
+      <?php if (function_exists('get_field')): ?>
+        <?php $competition_rules = get_field('competition_rules', $product_id); ?>
+        <?php if ($competition_rules): ?>
+          <div class="mt-4 prose prose-sm max-w-none text-text-secondary">
+            <?php echo wp_kses_post($competition_rules); ?>
+          </div>
+        <?php endif; ?>
       <?php endif; ?>
+
     <?php endif; ?>
   </div>
 </div>
