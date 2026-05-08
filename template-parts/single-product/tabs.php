@@ -97,10 +97,10 @@ if (
       <?php
       $how_it_works = ( function_exists( 'get_field' ) && get_field( 'stw_how_it_works_copy', $product_id ) )
         ? get_field( 'stw_how_it_works_copy', $product_id )
-        : __( 'Purchase your tickets and you\'ll see a Spin the Wheel button on your order confirmation. Click it, then use the Spin and Turbo Spin buttons to play. Your result is revealed instantly.', 'nera-competitions' );
+        : "<p>Purchase your tickets and you'll see a Spin the Wheel button on your order confirmation.</p>\n<p>Click it, then use the Spin and Turbo Spin buttons to play.</p>\n<p>Your result is revealed instantly.</p>";
       ?>
       <div class="prose prose-sm max-w-none text-text-secondary leading-relaxed">
-        <?php echo wp_kses_post( wpautop( $how_it_works ) ); ?>
+        <?php echo wp_kses_post( $how_it_works ); ?>
       </div>
 
     <?php else : ?>
