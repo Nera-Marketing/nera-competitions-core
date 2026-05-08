@@ -28,30 +28,39 @@ if (function_exists('acf_add_options_page')) {
 }
 
 if (function_exists('acf_add_local_field_group')) {
+  $woocommerce_fields = [
+    [
+      'key' => 'field_add_to_cart_success_message',
+      'label' => 'Add to Cart Success Message',
+      'name' => 'add_to_cart_success_message',
+      'type' => 'text',
+      'instructions' => 'Message shown to customers after successfully adding tickets to the cart.',
+      'required' => 0,
+      'conditional_logic' => 0,
+      'wrapper' => [
+        'width' => '50',
+        'class' => '',
+        'id' => '',
+      ],
+      'default_value' => 'Tickets added to cart!',
+      'placeholder' => 'Tickets added to cart!',
+      'prepend' => '',
+      'append' => '',
+      'maxlength' => '',
+    ],
+  ];
+
+  if (class_exists('Nera_STW_ACF_Copy_Settings')) {
+    $woocommerce_fields = array_merge(
+      $woocommerce_fields,
+      Nera_STW_ACF_Copy_Settings::get_woocommerce_accordion_fields(),
+    );
+  }
+
   acf_add_local_field_group([
     'key' => 'group_neracompetitions_woocommerce',
     'title' => 'WooCommerce Settings',
-    'fields' => [
-      [
-        'key' => 'field_add_to_cart_success_message',
-        'label' => 'Add to Cart Success Message',
-        'name' => 'add_to_cart_success_message',
-        'type' => 'text',
-        'instructions' => 'Message shown to customers after successfully adding tickets to the cart.',
-        'required' => 0,
-        'conditional_logic' => 0,
-        'wrapper' => [
-          'width' => '50',
-          'class' => '',
-          'id' => '',
-        ],
-        'default_value' => 'Tickets added to cart!',
-        'placeholder' => 'Tickets added to cart!',
-        'prepend' => '',
-        'append' => '',
-        'maxlength' => '',
-      ],
-    ],
+    'fields' => $woocommerce_fields,
     'location' => [
       [
         [
