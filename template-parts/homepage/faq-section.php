@@ -63,7 +63,7 @@ if (empty($faqs)) {
     </div>
 
     <!-- FAQ Accordion -->
-    <div class="max-w-4xl mx-auto" x-data="{ activeAccordion: null }">
+    <div x-data="{ activeAccordion: null }">
       <?php foreach ($faqs as $index => $faq): ?>
         <div class="faq-item border-b border-gray-200">
           <button

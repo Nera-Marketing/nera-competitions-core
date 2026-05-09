@@ -892,6 +892,42 @@ button {
   @apply !h-auto min-h-[46px];
 }
 
+/* ==========================================================================
+   My Account — Edit Address: Country / Region dropdown
+   Match the Select2/selectWoo control to the checkout page styling
+   ========================================================================== */
+
+/* Native <select> fallback (before selectWoo enhances it) */
+.nera-edit-address .form-row select {
+  @apply w-full h-12 px-4 rounded-xl border border-gray-200 text-sm font-medium
+         bg-surface text-text-primary
+         focus:border-primary focus:ring-1 focus:ring-primary outline-none
+         transition-all duration-300;
+}
+
+/* selectWoo closed control */
+.nera-edit-address .select2-container .select2-selection--single {
+  height: 3rem !important;
+  @apply rounded-xl border-gray-200 bg-surface flex items-center;
+}
+
+.nera-edit-address .select2-container .select2-selection--single .select2-selection__rendered {
+  @apply px-4 text-sm font-medium text-text-primary flex items-center h-full;
+  line-height: 1.4;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.nera-edit-address .select2-container .select2-selection--single .select2-selection__arrow {
+  @apply h-12 right-3 flex items-center;
+}
+
+/* Focus and open states */
+.nera-edit-address .select2-container--focus .select2-selection--single,
+.nera-edit-address .select2-container--open .select2-selection--single {
+  @apply border-primary ring-1 ring-primary outline-none;
+}
+
 /* --- Payment Method Styling (white surfaces only, no purple tint) --- */
 .woocommerce-checkout-payment .wc_payment_methods,
 .woocommerce-checkout-payment .wc_payment_methods li {
@@ -1950,13 +1986,13 @@ button:focus-visible {
    ========================================================================== */
 
 /* Container width fixes for homepage */
-body.nera-homepage-template #primary,
+/* body.nera-homepage-template #primary,
 body.nera-homepage-template .site-content,
 body.nera-homepage-template .ast-container,
 body.nera-homepage-template .site-main,
 body.nera-homepage-template #content {
   @apply !max-w-full !w-full !px-0 !m-0;
-}
+} */
 
 body.nera-homepage-template .entry-content {
   @apply !max-w-full !m-0 !p-0;
@@ -2370,6 +2406,13 @@ body.woocommerce-account.logged-out #content,
 body.woocommerce-account.logged-out .site-main,
 body.woocommerce-account.logged-out #primary {
   background-color: #f9fafb !important; /* gray-50 - ensure gray, not white */
+}
+
+/* Override global max-w-7xl so the full-bleed hero can reach the viewport edges */
+body.woocommerce-account.logged-out #primary,
+body.woocommerce-account.logged-out .site-main {
+  max-width: none !important;
+  width: 100% !important;
 }
 
 /* Override lg breakpoint padding - base rule uses lg:pt-12 lg:pb-12 */

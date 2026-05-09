@@ -74,17 +74,15 @@ do_action('woocommerce_before_edit_address_form_' . $load_address);
 
     <!-- Action Buttons -->
     <div class="flex flex-col sm:flex-row gap-3">
-      <p>
-        <button type="submit" 
-                class="woocommerce-Button button inline-flex items-center justify-center gap-2 px-8 py-4 bg-gradient-to-r from-primary to-primary text-white font-semibold rounded-xl hover:opacity-90 transition-all shadow-sm hover:shadow-md w-full sm:w-auto" 
-                name="save_address" 
-                value="<?php esc_attr_e('Save address', 'woocommerce'); ?>">
-          <span class="material-symbols-outlined text-xl">save</span>
-          <?php esc_html_e('Save address', 'woocommerce'); ?>
-        </button>
-        <?php wp_nonce_field('woocommerce-edit_address', 'woocommerce-edit-address-nonce'); ?>
-        <input type="hidden" name="action" value="edit_address" />
-      </p>
+      <button type="submit" 
+              class="woocommerce-Button button inline-flex items-center justify-center gap-2 px-8 py-4 bg-gradient-to-r from-primary to-primary text-white font-semibold rounded-xl hover:opacity-90 transition-all shadow-sm hover:shadow-md w-full sm:w-auto" 
+              name="save_address" 
+              value="<?php esc_attr_e('Save address', 'woocommerce'); ?>">
+        <span class="material-symbols-outlined text-xl">save</span>
+        <?php esc_html_e('Save address', 'woocommerce'); ?>
+      </button>
+      <?php wp_nonce_field('woocommerce-edit_address', 'woocommerce-edit-address-nonce'); ?>
+      <input type="hidden" name="action" value="edit_address" />
 
       <a href="<?php echo esc_url(wc_get_endpoint_url('edit-address')); ?>" 
          class="inline-flex items-center justify-center gap-2 px-8 py-4 bg-surface border-2 border-gray-200 text-gray-700 font-semibold rounded-xl hover:border-primary hover:text-primary transition-all w-full sm:w-auto">
