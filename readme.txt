@@ -4,7 +4,7 @@ Tags: competition, giveaway, lottery, woocommerce
 Requires at least: 6.0
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 1.0.8
+Stable tag: 1.0.9
 License: GPLv2 or later
 
 Premium competition and giveaway theme for WooCommerce, with Tailwind-powered front-end assets.
@@ -20,6 +20,11 @@ Nera Competitions Standard is built for competition and lottery sites: product t
 3. Run `yarn build` or `npm run build` in `frontend/` and `lty-result-screens/` after pulling updates that change assets.
 
 == Changelog ==
+
+= 1.0.9 =
+* WooCommerce My Account: restyle login form and edit-address form for consistent spacing and token-based colors.
+* page.php: add dynamic page-template body class and FAQ section layout improvements.
+* Frontend: Tailwind/main.css refinements (card padding, form field focus states, responsive tweaks).
 
 = 1.0.5 =
 * WordPress 6.3+ updates: pre-create `upgrade-temp-backup` plugin/theme directories; optional skip of Core’s temp-backup move via `inc/upgrade-temp-backup-helper.php` when `NERA_SKIP_UPGRADE_TEMP_BACKUP`, `WP_ENVIRONMENT_TYPE=local`, or the `nera_skip_upgrade_temp_backup` filter is used (helps Windows/Laragon when updates show “Could not move the old version to the upgrade-temp-backup directory”).
