@@ -16,6 +16,34 @@ if (!defined('ABSPATH')) {
 }
 
 get_header();
+
+if (
+  function_exists('is_account_page') &&
+  is_account_page() &&
+  !is_user_logged_in()
+) {
+  $active_tab =
+    isset($_GET['action']) && $_GET['action'] === 'register'
+      ? 'register'
+      : 'login';
+
+  get_template_part('template-parts/components/shared/page-hero', null, [
+    'title' =>
+      $active_tab === 'register'
+        ? __('Create Account', 'woocommerce')
+        : __('Welcome Back', 'woocommerce'),
+    'description' =>
+      $active_tab === 'register'
+        ? __(
+          'Join us and start entering competitions today',
+          'woocommerce',
+        )
+        : __('Log in to your account to continue', 'woocommerce'),
+    'variant' => 'compact',
+    'eyebrow_label' => __('Your Account', 'woocommerce'),
+    'eyebrow_icon' => 'lock',
+  ]);
+}
 ?>
 
 <main id="primary" class="site-main bg-background-secondary min-h-screen<?php echo (function_exists(

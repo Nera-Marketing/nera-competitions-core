@@ -18,36 +18,8 @@ $active_tab = isset($_GET['action']) && $_GET['action'] === 'register' ? 'regist
 
 ?>
 
-<!-- Page Background with Modern Layout -->
-<div class="min-h-screen bg-gray-50">
-
-	<!-- Hero Section -->
-	<div class="max-w-4xl mx-auto px-4 lg:px-8 text-center pt-8 lg:pt-10 pb-6">
-		<!-- Badge Pill -->
-		<div class="flex justify-center mb-6">
-			<span class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-semibold">
-				<span class="material-symbols-outlined text-base">lock</span>
-				<?php esc_html_e('Your Account', 'woocommerce'); ?>
-			</span>
-		</div>
-
-		<!-- Main Heading -->
-		<h1 class="font-heading text-4xl lg:text-5xl font-bold text-text-primary mb-4">
-			<?php echo $active_tab === 'register'
-     ? esc_html__('Create Account', 'woocommerce')
-     : esc_html__('Welcome Back', 'woocommerce'); ?>
-		</h1>
-
-		<!-- Description -->
-		<p class="text-lg text-text-secondary leading-relaxed max-w-2xl mx-auto">
-			<?php echo $active_tab === 'register'
-     ? esc_html__('Join us and start entering competitions today', 'woocommerce')
-     : esc_html__('Log in to your account to continue', 'woocommerce'); ?>
-		</p>
-	</div>
-
-	<!-- Form Container -->
-	<div class="max-w-2xl mx-auto px-4 pb-8 lg:pb-10">
+<!-- Form Container -->
+<div class="max-w-2xl mx-auto px-4 pt-8 pb-8 lg:pt-10 lg:pb-10">
 
 		<?php do_action('woocommerce_before_customer_login_form'); ?>
 
@@ -369,8 +341,6 @@ $active_tab = isset($_GET['action']) && $_GET['action'] === 'register' ? 'regist
 		</div><!-- /card -->
 
 	</div><!-- /container -->
-
-</div><!-- /page -->
 
 <?php do_action('woocommerce_after_customer_login_form'); ?>
 

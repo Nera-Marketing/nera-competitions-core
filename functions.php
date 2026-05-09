@@ -2064,3 +2064,7 @@ add_action('admin_notices', 'nera_sample_winners_admin_notice');
 
 // ACE Footer Fields
 require_once get_template_directory() . '/inc/acf/footer/acf-footer.php';
+
+// This line disables all default WooCommerce stylesheets from loading on the frontend,
+// allowing the theme to control all styling. To re-enable default WooCommerce CSS, remove this filter.
+add_filter('woocommerce_enqueue_styles', '__return_empty_array');
