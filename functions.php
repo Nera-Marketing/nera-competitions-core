@@ -1816,6 +1816,26 @@ function nera_ajax_add_to_cart()
     wp_send_json(['error' => true, 'message' => __('Product not found.', 'nera-competitions')]);
   }
 
+  // The Lottery for WooCommerce plugin's add-to-cart validation reads
+  // WC()->session->get_customer_id() to evaluate Q&A attempts, reserved-ticket,
+  // and IP restrictions. For a fresh guest with no session cookie yet that
+  // returns empty and the plugin's Q&A correctness check is skipped entirely,
+  // letting wrong answers through. Initialise the session before add_to_cart.
+  if (WC()->session && !WC()->session->has_session()) {
+    WC()->session->set_customer_session_cookie(true);
+  }
+
+  // WC_Cart::add_to_cart() does NOT run the validation filter chain itself.
+  // WC's own AJAX handler (WC_AJAX::add_to_cart) invokes it explicitly before
+  // adding to cart, and so must we — otherwise filters registered on
+  // woocommerce_add_to_cart_validation (Lottery for WooCommerce Q&A checks,
+  // theme sold-out check, Woo Wallet restrictions) silently never run.
+  $passed_validation = apply_filters('woocommerce_add_to_cart_validation', true, $product_id, $quantity);
+  if (!$passed_validation) {
+    $message = nera_pop_first_wc_error_notice() ?: __('Could not add to cart.', 'nera-competitions');
+    wp_send_json(['error' => true, 'message' => $message]);
+  }
+
   // Add to cart
   $cart_item_key = WC()->cart->add_to_cart($product_id, $quantity);
 
@@ -1832,13 +1852,6 @@ function nera_ajax_add_to_cart()
       }
       $message = nera_pop_first_wc_error_notice() ?: __('Could not add to cart.', 'nera-competitions');
       wp_send_json(['error' => true, 'message' => $message]);
-    }
-
-    // Ensure session cookie is initialized for guest users.
-    // Without this, server-level caches (e.g. SiteGround Dynamic Cache) won't see
-    // the woocommerce_session cookie and may serve a stale empty cart page.
-    if (!is_user_logged_in() && WC()->session && !WC()->session->has_session()) {
-      WC()->session->set_customer_session_cookie(true);
     }
 
     // Fire the cart cookies action so woocommerce_items_in_cart cookie is set.
