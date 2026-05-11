@@ -4,6 +4,7 @@
     <div v-if="loading" class="space-y-5">
       <!-- Stats skeleton -->
       <div
+        v-if="showStats"
         class="rounded-2xl bg-gradient-to-br from-amber-50 to-yellow-50 border-2 border-amber-200 p-6"
       >
         <div class="flex items-center justify-around gap-4">
@@ -31,6 +32,13 @@
             ></div>
           </div>
         </div>
+      </div>
+
+      <!-- Aggregate remaining badge skeleton -->
+      <div v-if="showRemainingBadge" class="flex justify-end mb-4">
+        <div
+          class="h-8 w-48 rounded-full bg-[linear-gradient(90deg,#f3f4f6_25%,#e5e7eb_50%,#f3f4f6_75%)] [background-size:200%_100%] animate-[instant-wins-skeleton-shimmer_1.5s_ease-in-out_infinite]"
+        ></div>
       </div>
 
       <!-- Card skeletons -->
@@ -83,18 +91,32 @@
       class="no-prizes-message bg-gray-50 border border-gray-200 rounded-2xl p-8 text-center"
     >
       <span class="material-symbols-outlined text-gray-400 text-5xl mb-3 block">inbox</span>
-      <p class="text-text-secondary mb-0">No instant win prizes configured yet.</p>
+      <p class="text-text-secondary mb-0">{{ emptyMessage }}</p>
     </div>
 
     <!-- Success state with data -->
     <template v-else>
       <!-- Stats Bar -->
       <StatsBar
+        v-if="showStats"
         :available-count="data.stats?.availableCount || 0"
         :won-count="data.stats?.wonCount || 0"
         :available-label="data.stats?.availableLabel"
         :won-label="data.stats?.wonLabel"
       />
+
+      <!-- Aggregate remaining badge -->
+      <div
+        v-if="showRemainingBadge && data.stats?.totalAvailable > 0"
+        class="flex justify-end mb-4"
+      >
+        <span
+          class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-surface border border-gray-200 text-xs font-bold uppercase tracking-wider text-text-primary"
+        >
+          <span class="material-symbols-outlined text-sm">inventory_2</span>
+          {{ data.stats.totalAvailable - data.stats.totalWon }} / {{ data.stats.totalAvailable }} prizes remaining
+        </span>
+      </div>
 
       <!-- Prizes Grid - gap-5 per plan -->
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-5 items-start">
@@ -104,6 +126,7 @@
           :prize="prize"
           :index="index"
           :on-show-all-winners="handleShowAllWinners"
+          :show-winners="showWinners"
         />
       </div>
 
@@ -138,6 +161,14 @@ const props = defineProps({
     type: Number,
     required: true,
   },
+  endpoint: {
+    type: String,
+    default: '',
+  },
+  emptyMessage: { type: String, default: 'No instant win prizes configured yet.' },
+  showStats: { type: Boolean, default: true },
+  showRemainingBadge: { type: Boolean, default: false },
+  showWinners: { type: Boolean, default: true },
 });
 
 const loading = ref(true);
@@ -154,7 +185,8 @@ const fetchInstantWins = async () => {
   error.value = null;
 
   try {
-    const response = await fetch(`/wp-json/nera/v1/instant-wins/${props.productId}`);
+    const url = props.endpoint || `/wp-json/nera/v1/instant-wins/${props.productId}`;
+    const response = await fetch(url);
 
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
@@ -176,9 +208,9 @@ const fetchInstantWins = async () => {
         prizeImage: prize.image
           ? `<img src="${prize.image}" alt="${prize.title}" class="w-full h-full object-cover" />`
           : null,
-        totalCount: prize.total_available,
-        wonCount: prize.won_count,
-        isWon: prize.won_count > 0,
+        totalCount: prize.total_available ?? null,
+        wonCount: prize.won_count ?? 0,
+        isWon: prize.total_available != null && prize.won_count >= prize.total_available,
         winners: prize.winners || [],
       })),
       stats: {
@@ -186,6 +218,8 @@ const fetchInstantWins = async () => {
         wonCount: result.data.stats.total_won,
         availableLabel: `${result.data.stats.total_available - result.data.stats.total_won} Available`,
         wonLabel: `${result.data.stats.total_won} Won`,
+        totalAvailable: result.data.stats.total_available,
+        totalWon: result.data.stats.total_won,
       },
     };
 

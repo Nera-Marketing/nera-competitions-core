@@ -176,6 +176,8 @@ $extra_images = max(0, count($gallery_images) - $visible_thumbs);
 
     <?php nera_competitions_render_instant_win_prizes_section($product); ?>
 
+    <?php nera_competitions_render_spin_to_win_prizes_section($product); ?>
+
     <?php do_action('nera_before_related_competitions', $product); ?>
 
     <!-- Related Competitions Section -->
