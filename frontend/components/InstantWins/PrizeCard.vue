@@ -5,9 +5,13 @@
   >
     <!-- Won Prize - Accordion Header (Clickable) - Horizontal Layout -->
     <template v-if="prize.isWon">
-      <button
-        @click="handleToggle"
-        class="w-full text-left p-5 hover:bg-gray-50 transition-colors duration-200"
+      <component
+        :is="showWinners ? 'button' : 'div'"
+        @click="showWinners ? handleToggle() : null"
+        :class="[
+          'w-full text-left p-5 transition-colors duration-200',
+          showWinners ? 'hover:bg-gray-50' : '',
+        ]"
       >
         <div class="flex items-center gap-4">
           <!-- Prize Image -->
@@ -20,41 +24,37 @@
               <span v-html="prize.prizeMessage" />
             </h3>
 
-            <!-- Won Badge with Count -->
+            <!-- Won Badge -->
             <div class="flex items-center gap-2 flex-wrap mb-3">
               <span
-                class="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-50 border border-amber-200 text-amber-700 rounded-full text-xs font-semibold"
+                class="inline-flex items-center gap-1.5 px-3 py-1 bg-danger-bg border border-danger-border text-danger-text rounded-full text-xs font-semibold"
               >
                 <span class="material-symbols-outlined text-sm">emoji_events</span>
-                {{ prize.wonCount }} Winner{{ prize.wonCount !== 1 ? 's' : '' }}
-              </span>
-              <span
-                v-if="prize.totalCount > prize.wonCount"
-                class="text-xs text-emerald-600 font-medium"
-              >
-                {{ prize.totalCount - prize.wonCount }} remaining
+                All Won
               </span>
             </div>
 
-            <!-- Per-Prize Progress Bar -->
-            <div class="space-y-1.5">
-              <div class="flex items-center justify-between text-xs">
-                <span class="text-gray-500">Won</span>
-                <span class="font-semibold text-gray-700"
-                  >{{ Math.round(progressPercentage) }}%</span
-                >
+            <!-- Per-Prize Progress Bar — only when there's something to chart -->
+            <template v-if="prize.totalCount != null && prize.totalCount > 0">
+              <div class="space-y-1.5">
+                <div class="flex items-center justify-between text-xs">
+                  <span class="text-gray-500">Won</span>
+                  <span class="font-semibold text-gray-700"
+                    >{{ Math.round(progressPercentage) }}%</span
+                  >
+                </div>
+                <div class="h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                  <div
+                    class="h-full bg-gradient-to-r from-amber-400 to-amber-500 rounded-full transition-all duration-500"
+                    :style="{ width: `${progressPercentage}%` }"
+                  ></div>
+                </div>
               </div>
-              <div class="h-1.5 bg-gray-100 rounded-full overflow-hidden">
-                <div
-                  class="h-full bg-gradient-to-r from-amber-400 to-amber-500 rounded-full transition-all duration-500"
-                  :style="{ width: `${progressPercentage}%` }"
-                ></div>
-              </div>
-            </div>
+            </template>
           </div>
 
           <!-- Accordion Toggle Icon -->
-          <div class="shrink-0">
+          <div v-if="showWinners" class="shrink-0">
             <span
               :class="[
                 'material-symbols-outlined text-text-secondary transition-transform duration-200',
@@ -65,10 +65,10 @@
             </span>
           </div>
         </div>
-      </button>
+      </component>
 
       <!-- Accordion Content (Expandable Winner Details) - Light cards with amber accent -->
-      <div v-if="isOpen" class="border-t border-gray-200 bg-gray-50 p-5 animate-fade-in-up">
+      <div v-if="showWinners && isOpen" class="border-t border-gray-200 bg-gray-50 p-5 animate-fade-in-up">
         <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
           <div
             v-for="(winner, winnerIndex) in displayedWinners"
@@ -128,7 +128,7 @@
             <span v-html="prize.prizeMessage" />
           </h3>
 
-          <!-- Available Badge with Count -->
+          <!-- Available Badge + Stock -->
           <div class="flex items-center gap-2 flex-wrap mb-3">
             <span
               class="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-50 border border-emerald-200 text-emerald-700 rounded-full text-xs font-semibold"
@@ -136,23 +136,18 @@
               <span class="material-symbols-outlined text-sm">card_giftcard</span>
               Available
             </span>
-            <span class="text-xs text-emerald-600 font-medium">
-              {{ prize.totalCount }} remaining
-            </span>
-          </div>
-
-          <!-- Per-Prize Progress Bar (showing 0% for available) -->
-          <div class="space-y-1.5">
-            <div class="flex items-center justify-between text-xs">
-              <span class="text-gray-500">Won</span>
-              <span class="font-semibold text-gray-700">0%</span>
-            </div>
-            <div class="h-1.5 bg-gray-100 rounded-full overflow-hidden">
-              <div
-                class="h-full bg-gradient-to-r from-amber-400 to-amber-500 rounded-full transition-all duration-500"
-                style="width: 0%"
-              ></div>
-            </div>
+            <template v-if="prize.totalCount != null">
+              <span
+                class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-gray-100 text-text-primary border border-gray-200"
+              >
+                {{ prize.totalCount - prize.wonCount }} / {{ prize.totalCount }} To Be Won
+              </span>
+            </template>
+            <template v-else>
+              <span class="text-xs font-medium text-text-secondary">
+                {{ prize.wonCount }} {{ prize.wonCount === 1 ? 'winner' : 'winners' }} so far
+              </span>
+            </template>
           </div>
         </div>
       </div>
@@ -227,6 +222,10 @@ const props = defineProps({
   index: {
     type: Number,
     default: 0,
+  },
+  showWinners: {
+    type: Boolean,
+    default: true,
   },
 });
 

@@ -700,6 +700,7 @@ function nera_add_module_type_to_scripts($tag, $handle, $src)
   if (
     strpos($handle, 'nera-vite-') === 0 ||
     strpos($handle, 'nera-instant-wins-vue') === 0 ||
+    strpos($handle, 'nera-spin-to-win-prizes-vue') === 0 ||
     strpos($handle, 'nera-vue-vendor') === 0
   ) {
     // Make sure we don't add type="module" twice
@@ -806,13 +807,86 @@ function nera_enqueue_instant_wins_vue()
 add_action('wp_enqueue_scripts', 'nera_enqueue_instant_wins_vue');
 
 /**
+ * Enqueue Spin-to-Win Prizes Scripts (Vue.js)
+ * Only loads on lottery product pages in the spin-to-win category.
+ */
+function nera_enqueue_spin_to_win_prizes_vue()
+{
+  if (!is_product()) {
+    return;
+  }
+
+  $product_id = get_the_ID();
+
+  if (!has_term('spin-to-win', 'product_cat', $product_id)) {
+    return;
+  }
+
+  if (nera_is_vite_dev_server_running()) {
+    add_action('wp_footer', function () {
+      $url = NERA_VITE_DEV_SERVER_URL;
+      echo '<script type="module" src="' . esc_url($url . '/spin-to-win-prizes-vue-init.js') . '"></script>';
+    }, 5);
+    return;
+  }
+
+  $manifest_path = NERA_FRONTEND_DIST_DIR . '/.vite/manifest.json';
+
+  if (file_exists($manifest_path)) {
+    $manifest = json_decode(file_get_contents($manifest_path), true);
+
+    $entry_key = 'spin-to-win-prizes-vue-init.js';
+
+    if (isset($manifest[$entry_key])) {
+      $entry_file = $manifest[$entry_key]['file'];
+      $deps = [];
+
+      if (isset($manifest[$entry_key]['imports'])) {
+        foreach ($manifest[$entry_key]['imports'] as $import_key) {
+          if (
+            isset($manifest[$import_key]) &&
+            strpos($import_key, '_vue-vendor') !== false
+          ) {
+            $vendor_file_path = NERA_FRONTEND_DIST_DIR . '/' . $manifest[$import_key]['file'];
+            $vendor_handle = 'nera-vue-vendor';
+
+            if (!wp_script_is($vendor_handle, 'registered')) {
+              wp_enqueue_script(
+                $vendor_handle,
+                NERA_FRONTEND_DIST_URI . '/' . $manifest[$import_key]['file'],
+                [],
+                file_exists($vendor_file_path) ? filemtime($vendor_file_path) : NERA_VERSION,
+                true,
+              );
+            }
+
+            $deps[] = $vendor_handle;
+          }
+        }
+      }
+
+      $entry_file_path = NERA_FRONTEND_DIST_DIR . '/' . $entry_file;
+
+      wp_enqueue_script(
+        'nera-spin-to-win-prizes-vue',
+        NERA_FRONTEND_DIST_URI . '/' . $entry_file,
+        $deps,
+        file_exists($entry_file_path) ? filemtime($entry_file_path) : NERA_VERSION,
+        true,
+      );
+    }
+  }
+}
+add_action('wp_enqueue_scripts', 'nera_enqueue_spin_to_win_prizes_vue');
+
+/**
  * Add type="module" to Vue vendor/app scripts
  */
 add_filter(
   'script_loader_tag',
   function ($tag, $handle, $src) {
     // List of handles that need type="module"
-    $module_handles = ['nera-vue-vendor', 'nera-instant-wins-vue'];
+    $module_handles = ['nera-vue-vendor', 'nera-instant-wins-vue', 'nera-spin-to-win-prizes-vue'];
 
     if (in_array($handle, $module_handles)) {
       // Replace the script tag to add type="module"
@@ -879,6 +953,7 @@ require_once get_template_directory() . '/inc/helpers/winners-dataset.php';
 if (class_exists('WooCommerce')) {
   require_once NERA_DIR . '/inc/woocommerce.php';
   require_once NERA_DIR . '/inc/instant-win-prizes-section.php';
+  require_once NERA_DIR . '/inc/spin-to-win-prizes-section.php';
 }
 
 // REST API for instant wins lazy loading

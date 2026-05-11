@@ -27,6 +27,7 @@ export default defineConfig({
       input: {
         main: resolve(__dirname, 'src/main.js'),
         'instant-wins-vue': resolve(__dirname, 'instant-wins-vue-init.js'),
+        'spin-to-win-prizes-vue': resolve(__dirname, 'spin-to-win-prizes-vue-init.js'),
         'winners-modal-vue': resolve(__dirname, 'components/shared/WinnersModal-vue.js'),
       },
       output: {
