@@ -4,7 +4,7 @@ Tags: competition, giveaway, lottery, woocommerce
 Requires at least: 6.0
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 1.0.9
+Stable tag: 1.0.10
 License: GPLv2 or later
 
 Premium competition and giveaway theme for WooCommerce, with Tailwind-powered front-end assets.
@@ -20,6 +20,25 @@ Nera Competitions Standard is built for competition and lottery sites: product t
 3. Run `yarn build` or `npm run build` in `frontend/` and `lty-result-screens/` after pulling updates that change assets.
 
 == Changelog ==
+
+= 1.0.10 =
+* New: Spin-to-Win Prizes section on single product pages — a Vue.js-powered collapsible
+  prize list rendered only for products in the `spin-to-win` product category.
+* New: `inc/spin-to-win-prizes-section.php` — `nera_competitions_render_spin_to_win_prizes_section()`
+  helper; renders the section via a template part, suppressed when empty.
+* New: `template-parts/single-product/spin-to-win-prizes-section.php` — collapsible panel with
+  toggle button (hidden by default); Vue app is lazy-mounted on first expand.
+* New: `frontend/spin-to-win-prizes-vue-init.js` — dedicated Vue entry point for the widget
+  (`showStats: false`, `showRemainingBadge: true`, `showWinners: false`).
+* `functions.php`: enqueue `nera-spin-to-win-prizes-vue` (with Vue vendor chunk) on
+  spin-to-win category product pages; extend `type="module"` filter for the new handle.
+* `frontend/vite.config.js`: register `spin-to-win-prizes-vue` as a Vite build entry.
+* `InstantWinsContainer.vue`: add `endpoint`, `emptyMessage`, `showStats`, `showRemainingBadge`,
+  and `showWinners` props; aggregate "X / Y prizes remaining" badge with skeleton shimmer.
+* `PrizeCard.vue`: add `showWinners` prop; per-prize amber progress bar; "All Won" badge;
+  "X / Y To Be Won" stock label; card header becomes interactive only when winners are shown.
+* `woocommerce/single-product.php` + `competitions.php`: call the spin-to-win render function
+  below the instant-win prizes section.
 
 = 1.0.9 =
 * WooCommerce My Account: restyle login form and edit-address form for consistent spacing and token-based colors.
