@@ -976,6 +976,11 @@ if (function_exists('LTY') && class_exists('WooCommerce')) {
   require_once NERA_DIR . '/inc/lty-result-screens-loader.php';
 }
 
+// Lottery for WooCommerce — async ticket generation (Action Scheduler offload). See inc/lty-async-tickets/README.md
+if (function_exists('LTY') && class_exists('WooCommerce') && function_exists('as_enqueue_async_action')) {
+  require_once NERA_DIR . '/inc/lty-async-tickets/loader.php';
+}
+
 // One-time: manually set one instant win prize as "won" for demo (admin only: ?nera_set_demo_instant_winner=1)
 if (class_exists('WooCommerce')) {
   require_once NERA_DIR . '/inc/demo-instant-winner.php';
