@@ -53,8 +53,7 @@ competitions-standard/
 │   ├── legal-placeholders.php  # ACF options page + content filter for legal pages
 │   ├── woocommerce.php         # WooCommerce hooks and customisations
 │   ├── giveaway-custom.php     # Lottery plugin customisations (placeholder)
-│   ├── lty-result-screens-loader.php  # Instantiates LTY_Result_Screens singleton
-│   └── demo-instant-winner.php        # Admin utility: set demo instant winner
+│   └── lty-result-screens-loader.php  # Instantiates LTY_Result_Screens singleton
 ├── page-templates/
 │   └── homepage-template.php   # Main homepage template
 ├── reference/

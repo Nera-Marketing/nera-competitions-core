@@ -78,9 +78,7 @@ if (
                 </header>
             <?php endif; ?>
 
-            <div class="prose prose-lg max-w-none">
-                <?php the_content(); ?>
-            </div>
+            <?php the_content(); ?>
 
             <?php wp_link_pages([
               'before' =>

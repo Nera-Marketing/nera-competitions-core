@@ -2373,20 +2373,6 @@ body h6 {
 }
 
 /* =================================================================
-   Demo Winner Notices (fixed toast-style notifications)
-   ================================================================= */
-
-.nera-demo-winner-notice,
-.nera-demo-winners-notice {
-  @apply fixed top-4 left-1/2 -translate-x-1/2 z-[999999] bg-success text-white py-3 px-6 rounded-lg text-sm max-w-[90%];
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
-
-.nera-demo-winners-notice {
-  @apply text-center;
-}
-
-/* =================================================================
    Login Page Styles
    ================================================================= */
 
