@@ -976,11 +976,6 @@ if (function_exists('LTY') && class_exists('WooCommerce')) {
   require_once NERA_DIR . '/inc/lty-result-screens-loader.php';
 }
 
-// One-time: manually set one instant win prize as "won" for demo (admin only: ?nera_set_demo_instant_winner=1)
-if (class_exists('WooCommerce')) {
-  require_once NERA_DIR . '/inc/demo-instant-winner.php';
-}
-
 /**
  * Add theme support
  */
