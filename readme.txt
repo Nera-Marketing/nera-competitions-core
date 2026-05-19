@@ -4,7 +4,7 @@ Tags: competition, giveaway, lottery, woocommerce
 Requires at least: 6.0
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 1.0.11
+Stable tag: 1.0.12
 License: GPLv2 or later
 
 Premium competition and giveaway theme for WooCommerce, with Tailwind-powered front-end assets.
@@ -20,6 +20,16 @@ Nera Competitions Standard is built for competition and lottery sites: product t
 3. Run `yarn build` or `npm run build` in `frontend/` and `lty-result-screens/` after pulling updates that change assets.
 
 == Changelog ==
+
+= 1.0.12 =
+* New: **Winners Entry List** page template (`page-templates/winners-entry-list-template.php`) — dynamic winners from Lottery logs with stacked cards and **View Participants** opening the entry-list modal (REST `nera/v1`) without leaving the page.
+* New: Shared entry-list UI partials — `template-parts/entry-list/entry-list-grid-alpine.php` and `participants-modal.php`; `listing-grid.php` refactored to use them.
+* Enhanced: `winners-dynamic/winner-card.php` and `winners-grid.php` — opt-in `show_participants_cta`, `stack_layout`, and entry-list modal; AJAX load-more preserves layout/CTA flags.
+* Removed: Demo instant-winner admin helper (`inc/demo-instant-winner.php`) and related notice styles.
+* `page.php`: drop default `prose` wrapper on page content.
+
+= 1.0.11 =
+* `functions.php`: stricter Q&A / competition question validation on add-to-cart.
 
 = 1.0.10 =
 * New: Spin-to-Win Prizes section on single product pages — a Vue.js-powered collapsible
