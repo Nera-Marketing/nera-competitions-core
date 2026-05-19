@@ -1465,10 +1465,17 @@ function nera_ajax_winners_dynamic_load_more()
   $dataset = nera_winners_dynamic_get_page_dataset($paged, $filter);
   $rows    = isset($dataset['rows']) && is_array($dataset['rows']) ? $dataset['rows'] : [];
 
+  $show_participants_cta = isset($_POST['show_participants_cta'])
+    && filter_var(wp_unslash($_POST['show_participants_cta']), FILTER_VALIDATE_BOOLEAN);
+  $stack_layout = isset($_POST['stack_layout'])
+    && filter_var(wp_unslash($_POST['stack_layout']), FILTER_VALIDATE_BOOLEAN);
+
   ob_start();
   foreach ($rows as $row) {
     get_template_part('template-parts/winners-dynamic/winner-card', null, [
-      'row' => $row,
+      'row'                   => $row,
+      'show_participants_cta' => $show_participants_cta,
+      'stack_layout'          => $stack_layout,
     ]);
   }
   $html = ob_get_clean();
