@@ -14,6 +14,10 @@ if (!defined('ABSPATH')) {
   exit();
 }
 
+$show_participants_cta    = !empty($args['show_participants_cta']);
+$include_entry_list_modal = !empty($args['include_entry_list_modal']);
+$stack_layout             = !empty($args['stack_layout']);
+
 $counts = function_exists('nera_winners_dynamic_get_filter_counts')
   ? nera_winners_dynamic_get_filter_counts()
   : ['all' => 0, 'main' => 0, 'instant' => 0];
@@ -34,15 +38,17 @@ $ajax_url = admin_url('admin-ajax.php');
 $nonce    = wp_create_nonce('nera_nonce');
 
 $alpine_config = [
-  'hasMore'        => $has_more,
-  'counts'         => $counts,
-  'showingCount'   => (int) $showing_start,
-  'totalForActive' => (int) $total_active,
-  'perPage'        => (int) $per_page_ds,
-  'globalEmpty'    => $global_empty,
-  'ajaxUrl'        => $ajax_url,
-  'ajaxNonce'      => $nonce,
-  'strings'        => [
+  'hasMore'              => $has_more,
+  'counts'               => $counts,
+  'showingCount'         => (int) $showing_start,
+  'totalForActive'       => (int) $total_active,
+  'perPage'              => (int) $per_page_ds,
+  'globalEmpty'          => $global_empty,
+  'ajaxUrl'              => $ajax_url,
+  'ajaxNonce'            => $nonce,
+  'showParticipantsCta'  => $show_participants_cta,
+  'stackLayout'          => $stack_layout,
+  'strings'              => [
     'loading'       => __('Loading…', 'nera-competitions'),
     'loadMore'      => __('Load More', 'nera-competitions'),
     'showing'       => __('Showing', 'nera-competitions'),
@@ -57,6 +63,23 @@ $alpine_config = [
 $json_flags = JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_UNESCAPED_SLASHES;
 $config_json = wp_json_encode($alpine_config, $json_flags);
 $x_data_expr = 'neraWinnersDynamicGrid(' . $config_json . ')';
+
+$entry_list_x_data_expr = '';
+if ($include_entry_list_modal) {
+  $rest_base = esc_url_raw(trailingslashit(rest_url('nera/v1')));
+  $entry_list_alpine_config = [
+    'restBase'  => $rest_base,
+    'hasMore'   => false,
+    'ajaxUrl'   => '',
+    'ajaxNonce' => '',
+    'strings'   => [
+      'loadParticipantsError' => __('Could not load participants.', 'nera-competitions'),
+      'loadTicketsError'      => __('Could not load ticket list.', 'nera-competitions'),
+    ],
+  ];
+  $entry_list_config_json = wp_json_encode($entry_list_alpine_config, $json_flags);
+  $entry_list_x_data_expr = 'neraEntryListGrid(' . $entry_list_config_json . ')';
+}
 ?>
 
 <script>
@@ -77,6 +100,8 @@ $x_data_expr = 'neraWinnersDynamicGrid(' . $config_json . ')';
       globalEmpty: !!config.globalEmpty,
       ajaxUrl: config.ajaxUrl || '',
       ajaxNonce: config.ajaxNonce || '',
+      showParticipantsCta: !!config.showParticipantsCta,
+      stackLayout: !!config.stackLayout,
       strings,
 
       tabClass(f) {
@@ -99,6 +124,12 @@ $x_data_expr = 'neraWinnersDynamicGrid(' . $config_json . ')';
         body.append('nonce', this.ajaxNonce);
         body.append('paged', String(paged));
         body.append('filter', filter);
+        if (this.showParticipantsCta) {
+          body.append('show_participants_cta', '1');
+        }
+        if (this.stackLayout) {
+          body.append('stack_layout', '1');
+        }
 
         const res = await fetch(this.ajaxUrl, {
           method: 'POST',
@@ -174,11 +205,20 @@ $x_data_expr = 'neraWinnersDynamicGrid(' . $config_json . ')';
 })();
 </script>
 
+<?php if ($include_entry_list_modal) : ?>
+  <?php get_template_part('template-parts/entry-list/entry-list-grid-alpine'); ?>
+<?php endif; ?>
+
 <section class="py-12 px-4 sm:px-6 bg-surface">
   <div
     class="max-w-[1200px] mx-auto"
-    x-data="<?php echo esc_attr($x_data_expr); ?>"
+    <?php if ($include_entry_list_modal) : ?>
+      x-data="<?php echo esc_attr($entry_list_x_data_expr); ?>"
+      @nera-open-entry-list="openParticipants($event.detail)"
+      @keydown.escape.window="handleEscape()"
+    <?php endif; ?>
   >
+  <div x-data="<?php echo esc_attr($x_data_expr); ?>">
 
     <?php if ($global_empty) : ?>
 
@@ -247,12 +287,14 @@ $x_data_expr = 'neraWinnersDynamicGrid(' . $config_json . ')';
       <div
         x-ref="grid"
         x-show="showingCount > 0 || loading"
-        class="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6"
+        class="grid grid-cols-2 lg:grid-cols-3 <?php echo $stack_layout ? 'gap-2.5 sm:gap-4 lg:gap-6' : 'gap-3 sm:gap-6'; ?>"
       >
         <?php
         foreach ($rows as $row) {
           get_template_part('template-parts/winners-dynamic/winner-card', null, [
-            'row' => $row,
+            'row'                   => $row,
+            'show_participants_cta' => $show_participants_cta,
+            'stack_layout'          => $stack_layout,
           ]);
         }
         ?>
@@ -291,5 +333,10 @@ $x_data_expr = 'neraWinnersDynamicGrid(' . $config_json . ')';
 
     <?php endif; ?>
 
+  </div>
+
+    <?php if ($include_entry_list_modal) : ?>
+      <?php get_template_part('template-parts/entry-list/participants-modal'); ?>
+    <?php endif; ?>
   </div>
 </section>
