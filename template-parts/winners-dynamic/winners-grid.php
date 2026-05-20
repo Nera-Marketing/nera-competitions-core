@@ -287,7 +287,7 @@ if ($include_entry_list_modal) {
       <div
         x-ref="grid"
         x-show="showingCount > 0 || loading"
-        class="grid grid-cols-2 lg:grid-cols-3 <?php echo $stack_layout ? 'gap-2.5 sm:gap-4 lg:gap-6' : 'gap-3 sm:gap-6'; ?>"
+        class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 <?php echo $stack_layout ? 'gap-2.5 sm:gap-4 lg:gap-6' : 'gap-3 sm:gap-6'; ?>"
       >
         <?php
         foreach ($rows as $row) {
