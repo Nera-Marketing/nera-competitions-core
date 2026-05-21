@@ -110,19 +110,17 @@ $visible_thumbs = 4;
 $extra_images = max(0, count($gallery_images) - $visible_thumbs);
 ?>
 
-<main id="primary" class="site-mai min-h-screen">
-
-
+<main id="primary" class="site-main min-h-screen">
   <?php do_action('woocommerce_before_single_product'); ?>
 
-  <div id="product-<?php echo esc_attr($product_id); ?>" <?php wc_product_class('', $product); ?>>
+  <div id="product-<?php echo esc_attr($product_id); ?>" <?php wc_product_class('space-y-8', $product); ?>>
 
     <!-- Breadcrumb Navigation -->
     <?php get_template_part('template-parts/single-product/breadcrumb'); ?>
 
     <!-- Main Content Section -->
-    <section class="py-8 lg:py-10">
-      <div class="max-w-7xl mx-auto flex w-full min-w-0 flex-col px-4 lg:px-0">
+    <section>
+      <div class="flex w-full min-w-0 flex-col">
         <div class="grid w-full min-w-0 grid-cols-1 gap-8 lg:grid-cols-12 lg:gap-10">
 
           <!-- Left Column: Gallery + Tabs (desktop) / Unwrapped for mobile ordering -->
@@ -184,8 +182,8 @@ $extra_images = max(0, count($gallery_images) - $visible_thumbs);
     <?php
     $related_ids = nera_get_related_lottery_products($product_id, 4);
     if (!empty($related_ids)): ?>
-      <section class="py-12 lg:py-16 px-4 lg:px-8 bg-surface border-t border-gray-100 rounded-2xl">
-        <div class="max-w-7xl mx-auto">
+      <section class="p-6 lg:p-8 bg-surface border-t border-gray-100 rounded-2xl">
+        <div>
           <?php get_template_part('template-parts/single-product/related-competitions', null, [
             'product' => $product,
             'related_ids' => $related_ids,

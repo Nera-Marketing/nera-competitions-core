@@ -40,17 +40,17 @@ if (
 <div data-product-tabs>
   <!-- Tab Navigation -->
   <div class="flex border-b border-gray-200">
-    <button class="tab-btn px-6 py-3 text-sm font-semibold text-primary border-b-2 border-primary -mb-px"
+    <button class="tab-btn px-3 sm:px-6 py-3 text-sm font-semibold text-primary border-b-2 border-primary -mb-px"
       data-tab="prize-details">
       <?php _e('Prize Details', 'nera-competitions'); ?>
     </button>
     <?php if ($show_entry_list_tab): ?>
-    <button class="tab-btn px-6 py-3 text-sm font-medium text-text-secondary hover:text-primary transition-colors"
+    <button class="tab-btn px-3 sm:px-6 py-3 text-sm font-medium text-text-secondary hover:text-primary transition-colors"
       data-tab="entry-list">
       <?php _e('Entry List', 'nera-competitions'); ?>
     </button>
     <?php endif; ?>
-    <button class="tab-btn px-6 py-3 text-sm font-medium text-text-secondary hover:text-primary transition-colors"
+    <button class="tab-btn px-3 sm:px-6 py-3 text-sm font-medium text-text-secondary hover:text-primary transition-colors"
       data-tab="draw-info">
       <?php echo $is_stw_product ? __('How it works', 'nera-competitions') : __('Draw Information', 'nera-competitions'); ?>
     </button>

@@ -31,8 +31,8 @@ function nera_competitions_render_spin_to_win_prizes_section($product)
   }
   ?>
     <!-- Spin-to-Win prizes: own section below hero grid -->
-    <section class="pb-8 lg:pb-10" aria-label="<?php esc_attr_e('Spin To Win prizes', 'nera-competitions'); ?>">
-      <div class="max-w-7xl mx-auto w-full min-w-0 px-4 lg:px-0">
+    <section aria-label="<?php esc_attr_e('Spin To Win prizes', 'nera-competitions'); ?>">
+      <div class="w-full min-w-0 px-4 lg:px-0">
         <?php echo $inner; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- trusted internal template output. ?>
       </div>
     </section>

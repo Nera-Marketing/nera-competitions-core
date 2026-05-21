@@ -51,8 +51,8 @@ function nera_competitions_render_instant_win_prizes_section($product)
   }
   ?>
     <!-- Instant Win prizes: own section below hero grid (avoids WC flex/float fighting inner flex-col) -->
-    <section class="pb-8 lg:pb-10" aria-label="<?php esc_attr_e('Instant win prizes', 'nera-competitions'); ?>">
-      <div class="max-w-7xl mx-auto w-full min-w-0 px-4 lg:px-0">
+    <section aria-label="<?php esc_attr_e('Instant win prizes', 'nera-competitions'); ?>">
+      <div class="w-full min-w-0 px-4 lg:px-0">
         <?php echo $inner; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- trusted internal template output. ?>
       </div>
     </section>
