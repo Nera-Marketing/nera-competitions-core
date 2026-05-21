@@ -4,7 +4,7 @@ Tags: competition, giveaway, lottery, woocommerce
 Requires at least: 6.0
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 1.0.13
+Stable tag: 1.0.14
 License: GPLv2 or later
 
 Premium competition and giveaway theme for WooCommerce, with Tailwind-powered front-end assets.
@@ -20,6 +20,10 @@ Nera Competitions Standard is built for competition and lottery sites: product t
 3. Run `yarn build` or `npm run build` in `frontend/` and `lty-result-screens/` after pulling updates that change assets.
 
 == Changelog ==
+
+= 1.0.14 =
+* Updated: Sticky site header gains `py-2` vertical padding for better spacing.
+* Updated: Single-product breadcrumb nav uses `rounded-lg` (was `rounded-full`) and is wrapped in a responsive `px-4 lg:px-0` container for consistent edge padding.
 
 = 1.0.13 =
 * Fixed: Competition/product listing grids use a single column on mobile (`grid-cols-1`), two columns from `md`, three from `lg` — replaces cramped two-column mobile layout.
