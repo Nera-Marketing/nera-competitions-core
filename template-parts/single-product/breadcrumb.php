@@ -17,7 +17,8 @@ if (!$product) {
 ?>
 
 <!-- Breadcrumb Navigation -->
-<nav class="bg-surface border-b border-gray-100 rounded-full">
+<div class="px-4 lg:px-0">
+<nav class="bg-surface border-b border-gray-100 rounded-lg">
   <div class="max-w-7xl mx-auto px-4 lg:px-8 py-4">
     <ol class="flex items-center gap-2 text-sm">
       <li>
@@ -40,3 +41,4 @@ if (!$product) {
     </ol>
   </div>
 </nav>
+</div>
