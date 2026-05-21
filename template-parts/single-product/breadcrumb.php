@@ -31,7 +31,7 @@ if (!$product) {
       <li>
         <a href="<?php echo esc_url(get_permalink(wc_get_page_id('shop'))); ?>"
           class="text-primary hover:text-primary-dark transition-colors">
-          <?php _e('Live Competitions', 'nera-competitions'); ?>
+          <?php echo esc_html(get_the_title(wc_get_page_id('shop'))); ?>
         </a>
       </li>
       <li class="text-gray-300">/</li>
