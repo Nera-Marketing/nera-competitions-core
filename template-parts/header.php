@@ -37,7 +37,7 @@ if (empty($cta_primary_url)) {
 $cta_secondary_logged_in_url = function_exists('wc_get_account_endpoint_url') ? wc_get_account_endpoint_url('dashboard') : home_url('/my-account/');
 ?>
 
-<header class="sticky top-0 z-50 overflow-visible bg-surface/95 backdrop-blur-sm border-b border-gray-100 shadow-sm" id="site-header">
+<header class="sticky top-0 z-50 overflow-visible bg-surface/95 backdrop-blur-sm border-b border-gray-100 shadow-sm py-2" id="site-header">
   <div class="max-w-7xl mx-auto px-4 lg:px-0">
     <nav class="flex items-center justify-between h-16 lg:h-20">
 
