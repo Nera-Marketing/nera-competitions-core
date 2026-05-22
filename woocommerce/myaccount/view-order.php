@@ -118,7 +118,7 @@ $notes = $order->get_customer_order_notes();
             $total = $order->get_formatted_line_subtotal($item);
             $thumbnail = $product->get_image('thumbnail');
             ?>
-            <div class="flex items-center gap-4 p-4 bg-gray-50 rounded-xl">
+            <div class="flex items-start gap-4 p-4 bg-gray-50 rounded-xl">
               <div class="w-16 h-16 flex-shrink-0 bg-surface rounded-lg overflow-hidden border border-gray-200">
                 <?php echo wp_kses_post($thumbnail); ?>
               </div>
@@ -134,20 +134,37 @@ $notes = $order->get_customer_order_notes();
                 <?php
                 $lty_tickets = $item->get_meta('_lty_lottery_tickets');
                 if (!is_array($lty_tickets)) {
-                  $lty_tickets = [];
+                    $lty_tickets = [];
                 }
                 if (!empty($lty_tickets)):
+                    $visible_tickets   = array_slice($lty_tickets, 0, 10);
+                    $remaining_tickets = array_slice($lty_tickets, 10);
                 ?>
                 <div class="mt-2 flex flex-wrap items-center gap-1">
-                  <span class="text-xs font-semibold uppercase tracking-wide text-gray-500">
-                    <?php esc_html_e('Tickets', 'nera-competitions-standard'); ?>:
-                  </span>
-                  <?php foreach ($lty_tickets as $tn): ?>
-                    <span class="notranslate inline-flex items-center px-2 py-0.5 rounded-md bg-primary/10 text-primary text-xs font-mono font-semibold border border-primary/20">
-                      #<?php echo esc_html($tn); ?>
+                    <span class="text-xs font-semibold uppercase tracking-wide text-gray-500">
+                        <?php esc_html_e('Tickets', 'nera-competitions-standard'); ?>:
                     </span>
-                  <?php endforeach; ?>
+                    <?php foreach ($visible_tickets as $tn): ?>
+                        <span class="notranslate inline-flex items-center px-2 py-0.5 rounded-md bg-primary/10 text-primary text-xs font-mono font-semibold border border-primary/20">
+                            #<?php echo esc_html($tn); ?>
+                        </span>
+                    <?php endforeach; ?>
                 </div>
+                <?php if (!empty($remaining_tickets)): ?>
+                <details class="ncs-ticket-expand mt-1">
+                    <summary class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-gray-100 text-gray-600 text-xs font-semibold border border-gray-200 cursor-pointer hover:bg-gray-200 transition-colors select-none list-none w-fit">
+                        <span class="ncs-ticket-expand__label"><?php printf(esc_html__('+%d more tickets', 'nera-competitions-standard'), count($remaining_tickets)); ?></span>
+                        <span class="ncs-ticket-expand__chevron">&#x25BE;</span>
+                    </summary>
+                    <div class="flex flex-wrap gap-1 mt-1">
+                        <?php foreach ($remaining_tickets as $tn): ?>
+                            <span class="notranslate inline-flex items-center px-2 py-0.5 rounded-md bg-primary/10 text-primary text-xs font-mono font-semibold border border-primary/20">
+                                #<?php echo esc_html($tn); ?>
+                            </span>
+                        <?php endforeach; ?>
+                    </div>
+                </details>
+                <?php endif; ?>
                 <?php endif; ?>
               </div>
               <div class="text-right flex-shrink-0">
@@ -246,7 +263,7 @@ $notes = $order->get_customer_order_notes();
               'Email:',
               'woocommerce',
             ); ?></span>
-            <span class="text-sm text-gray-900 ml-2"><?php echo esc_html(
+            <span class="text-sm text-gray-900 ml-2 break-all"><?php echo esc_html(
               $order->get_billing_email(),
             ); ?></span>
           </p>

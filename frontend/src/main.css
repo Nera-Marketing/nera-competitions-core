@@ -2500,6 +2500,12 @@ body.woocommerce-account .woocommerce form.woocommerce-form-login {
   @apply inline-flex h-8 w-8 items-center justify-center text-sm text-text-secondary;
 }
 
+/* Ticket list expand/collapse */
+.ncs-ticket-expand > summary::-webkit-details-marker,
+.ncs-ticket-expand > summary::marker { display: none; content: ''; }
+.ncs-ticket-expand__chevron { display: inline-block; transition: transform 0.2s ease; }
+.ncs-ticket-expand[open] .ncs-ticket-expand__chevron { transform: rotate(180deg); }
+
 /* Dashed separator under PDF row — flex layout, no plugin floats (overrides frontend.css load order) */
 .lty-entry-list-summary-content-wrapper .lty-entry-list-header-wrapper {
   float: none !important;
