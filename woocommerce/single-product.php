@@ -110,47 +110,33 @@ $visible_thumbs = 4;
 $extra_images = max(0, count($gallery_images) - $visible_thumbs);
 ?>
 
-<main id="primary" class="site-mai min-h-screen">
-
-
+<main id="primary" class="site-main min-h-screen">
   <?php do_action('woocommerce_before_single_product'); ?>
 
-  <div id="product-<?php echo esc_attr($product_id); ?>" <?php wc_product_class('', $product); ?>>
+  <div id="product-<?php echo esc_attr($product_id); ?>" <?php wc_product_class('space-y-8', $product); ?>>
 
     <!-- Breadcrumb Navigation -->
     <?php get_template_part('template-parts/single-product/breadcrumb'); ?>
 
     <!-- Main Content Section -->
-    <section class="py-8 lg:py-10">
-      <div class="max-w-7xl mx-auto flex w-full min-w-0 flex-col px-4 lg:px-0">
-        <div class="grid w-full min-w-0 grid-cols-1 gap-8 lg:grid-cols-12 lg:gap-10">
+    <section>
+      <div class="flex w-full min-w-0 flex-col">
+        <div class="grid w-full min-w-0 grid-cols-1 gap-8 lg:grid-cols-12 lg:gap-x-10 lg:gap-y-0">
 
-          <!-- Left Column: Gallery + Tabs (desktop) / Unwrapped for mobile ordering -->
-          <div class="max-lg:contents lg:flex lg:flex-col lg:gap-8 lg:col-span-7 bg-surface p-6 rounded-2xl">
-            <!-- 1. Product Gallery (mobile: top) -->
-            <div class="order-1">
-              <?php get_template_part('template-parts/single-product/product-gallery', null, [
-                'images' => $gallery_images,
-                'product' => $product,
-                'badge_text' => nera_product_has_featured_tag($product)
-                  ? __('Featured Prize', 'nera-competitions')
-                  : '',
-                'badge_color' => 'red',
-              ]); ?>
-            </div>
-
-            <!-- 3. Tabs Section (mobile: bottom) -->
-            <div class="order-3 lg:order-2">
-              <?php get_template_part('template-parts/single-product/tabs', null, [
-                'product' => $product,
-                'specifications' => $specifications,
-                'end_date_gmt' => $end_date_gmt,
-              ]); ?>
-            </div>
+          <!-- 1. Product Gallery (mobile: row 1 | desktop: col 1-7 row 1) -->
+          <div class="bg-surface p-6 rounded-2xl lg:rounded-b-none lg:pb-4 lg:col-span-7 lg:row-start-1">
+            <?php get_template_part('template-parts/single-product/product-gallery', null, [
+              'images' => $gallery_images,
+              'product' => $product,
+              'badge_text' => nera_product_has_featured_tag($product)
+                ? __('Featured Prize', 'nera-competitions')
+                : '',
+              'badge_color' => 'red',
+            ]); ?>
           </div>
 
-          <!-- 2. Product Details / Purchase Card (mobile: middle) -->
-          <div class="order-2 lg:col-span-5">
+          <!-- 2. Product Details / Purchase Card (mobile: row 2 | desktop: col 8-12 rows 1-2) -->
+          <div class="lg:col-start-8 lg:col-span-5 lg:row-start-1 lg:row-span-2 lg:self-start">
             <?php get_template_part('template-parts/single-product/purchase-card', null, [
               'product' => $product,
               'countdown' => $countdown,
@@ -169,6 +155,15 @@ $extra_images = max(0, count($gallery_images) - $visible_thumbs);
             ]); ?>
           </div>
 
+          <!-- 3. Tabs Section (mobile: row 3 | desktop: col 1-7 row 2) -->
+          <div class="bg-surface p-6 rounded-2xl lg:rounded-t-none lg:pt-4 lg:col-span-7 lg:row-start-2">
+            <?php get_template_part('template-parts/single-product/tabs', null, [
+              'product' => $product,
+              'specifications' => $specifications,
+              'end_date_gmt' => $end_date_gmt,
+            ]); ?>
+          </div>
+
         </div>
 
       </div>
@@ -184,8 +179,8 @@ $extra_images = max(0, count($gallery_images) - $visible_thumbs);
     <?php
     $related_ids = nera_get_related_lottery_products($product_id, 4);
     if (!empty($related_ids)): ?>
-      <section class="py-12 lg:py-16 px-4 lg:px-8 bg-surface border-t border-gray-100 rounded-2xl">
-        <div class="max-w-7xl mx-auto">
+      <section class="p-6 lg:p-8 bg-surface border-t border-gray-100 rounded-2xl">
+        <div>
           <?php get_template_part('template-parts/single-product/related-competitions', null, [
             'product' => $product,
             'related_ids' => $related_ids,

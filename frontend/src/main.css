@@ -187,7 +187,7 @@ ol {
 
 #primary,
 .site-main {
-  @apply max-w-7xl w-full mx-auto px-0 pt-8 pb-8 lg:pt-12 lg:pb-12 m-0;
+  @apply max-w-7xl w-full mx-auto px-4 lg:px-0 pt-8 pb-8 lg:pt-12 lg:pb-12 m-0;
 }
 
 /* Single blog post: full-bleed hero under header; inner prose/prev/comments stay max-w-* in template. */
@@ -2499,6 +2499,12 @@ body.woocommerce-account .woocommerce form.woocommerce-form-login {
 .lty-page-dot {
   @apply inline-flex h-8 w-8 items-center justify-center text-sm text-text-secondary;
 }
+
+/* Ticket list expand/collapse */
+.ncs-ticket-expand > summary::-webkit-details-marker,
+.ncs-ticket-expand > summary::marker { display: none; content: ''; }
+.ncs-ticket-expand__chevron { display: inline-block; transition: transform 0.2s ease; }
+.ncs-ticket-expand[open] .ncs-ticket-expand__chevron { transform: rotate(180deg); }
 
 /* Dashed separator under PDF row — flex layout, no plugin floats (overrides frontend.css load order) */
 .lty-entry-list-summary-content-wrapper .lty-entry-list-header-wrapper {

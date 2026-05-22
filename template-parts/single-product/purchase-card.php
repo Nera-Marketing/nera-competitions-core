@@ -562,6 +562,7 @@ $is_manual_ticket = method_exists($product, 'is_manual_ticket') ? $product->is_m
                 <?php endforeach; ?>
               </ul>
             </div>
+          </div>
           <?php elseif ($has_qa && !$qa_can_display): ?>
             <!-- Q&A configured but competition not yet started -->
             <div class="border border-gray-200 rounded-xl p-5 mb-6 skill-challenge-wrapper">

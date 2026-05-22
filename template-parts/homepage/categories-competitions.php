@@ -112,13 +112,13 @@ $category_icons = [
 
     <!-- Category Filter Tabs -->
     <div class="mb-12 relative">
-      <div class="flex items-center justify-center">
-        <nav class="relative p-2" role="tablist" aria-label="Competition categories">
-          <div class="flex flex-wrap items-center justify-center gap-3">
+      <div class="flex items-center justify-center overflow-hidden">
+        <nav class="relative p-2 w-full overflow-x-auto hide-scrollbar" role="tablist" aria-label="Competition categories">
+          <div class="flex flex-nowrap sm:flex-wrap items-center sm:justify-center gap-3 px-1 pb-2 sm:pb-0">
 
             <!-- "All" Tab -->
             <button @click.prevent="activeCategory = 'all'"
-              class="inline-flex items-center gap-2 px-6 py-3 text-sm font-semibold rounded-full shadow-sm transition-all duration-300 cursor-pointer hover:shadow-lg hover:scale-105"
+              class="inline-flex items-center gap-2 px-6 py-3 text-sm font-semibold rounded-full shadow-sm transition-all duration-300 cursor-pointer hover:shadow-lg hover:scale-105 whitespace-nowrap shrink-0"
               :class="activeCategory === 'all' 
                 ? 'bg-gradient-to-r from-primary to-primary text-white shadow-lg border-primary' 
                 : 'bg-surface border-2 border-gray-200 text-text-secondary hover:border-gray-300'" role="tab"
@@ -157,7 +157,7 @@ $category_icons = [
                 // Using a fallback for color in JS, but could also pass as CSS var if needed
                 ?>
                 <button @click.prevent="activeCategory = '<?php echo esc_js($category_slug); ?>'"
-                  class="inline-flex items-center gap-2 px-6 py-3 text-sm font-semibold rounded-full shadow-sm transition-all duration-300 cursor-pointer hover:shadow-lg hover:scale-105"
+                  class="inline-flex items-center gap-2 px-6 py-3 text-sm font-semibold rounded-full shadow-sm transition-all duration-300 cursor-pointer hover:shadow-lg hover:scale-105 whitespace-nowrap shrink-0"
                   :class="activeCategory === '<?php echo esc_js($category_slug); ?>'
                     ? 'bg-gradient-to-r from-primary to-primary text-white shadow-lg border-primary'
                     : 'bg-surface border-2 border-gray-200 text-text-secondary hover:border-gray-300'" role="tab"
