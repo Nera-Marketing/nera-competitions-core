@@ -50,7 +50,7 @@ export function templateColorLintPlugin({ mode = 'warn' } = {}) {
     },
 
     buildStart() {
-      const phpFiles = globSync('**/*.php', {
+      const templateFiles = globSync('**/*.{php,twig}', {
         cwd: rootDir,
         ignore: ['**/node_modules/**', '**/dist/**', '**/vendor/**'],
         absolute: true,
@@ -58,7 +58,7 @@ export function templateColorLintPlugin({ mode = 'warn' } = {}) {
 
       const violations = [];
 
-      for (const file of phpFiles) {
+      for (const file of templateFiles) {
         const source = readFileSync(file, 'utf8');
         const lines = source.split('\n');
 

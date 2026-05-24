@@ -28,6 +28,16 @@ define('NERA_ASSETS_URI', NERA_URI . '/frontend/assets');
 define('NERA_ATTRIBUTION_ROUTE_SLUG', 'competition-website-by-nera-marketing');
 define('NERA_ATTRIBUTION_TEMPLATE_PATH', NERA_DIR . '/page-templates/nera-marketing-attribution.php');
 
+// Composer autoload + Timber
+$nera_autoload = __DIR__ . '/vendor/autoload.php';
+if (file_exists($nera_autoload)) {
+    require_once $nera_autoload;
+    Timber\Timber::init();
+    Timber::$dirname = ['Components', 'views', 'template-parts'];
+}
+
+require_once __DIR__ . '/lib/components.php';
+
 /**
  * GitHub theme updates (Plugin Update Checker v5.5). On by default when `lib/plugin-update-checker/load-v5p5.php` exists.
  *
@@ -651,6 +661,15 @@ function nera_enqueue_scripts()
     '3.14.1',
     true,
   );
+
+  // Flynt JS Islands data bridge — must run before main.js evaluates.
+  add_action('wp_head', function () {
+    $script_map = nera_get_components_with_script();
+    printf(
+      "<script>window.FlyntData = %s;</script>\n",
+      wp_json_encode(['componentsWithScript' => $script_map])
+    );
+  }, 1);
 
   // Vite/TailwindCSS assets
   if (nera_is_vite_dev_server_running()) {

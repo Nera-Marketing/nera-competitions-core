@@ -10,6 +10,7 @@
 @source "../assets/**/*.js";
 @source "./**/*.{js,jsx}";
 @source "../**/*.{js,jsx,vue}";
+@source "../../Components/**/*.twig";
 
 /* ==========================================================================
    Theme Configuration (TailwindCSS v4 CSS-first config)

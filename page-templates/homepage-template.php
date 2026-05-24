@@ -21,7 +21,6 @@ get_header();
 
   <?php
   $homepage_section_map = [
-    'hero' => 'template-parts/homepage/hero-section',
     'credibility' => 'template-parts/homepage/credibility-section',
     'stats' => 'template-parts/homepage/stats-section',
     'featured_competitions' => 'template-parts/homepage/featured-competitions',
@@ -42,13 +41,19 @@ get_header();
         continue;
       }
       $slug = isset($row['section']) ? $row['section'] : '';
+
+      if ($slug === 'hero') {
+        nera_render_component('HomepageHero');
+        continue;
+      }
+
       $part = isset($homepage_section_map[$slug]) ? $homepage_section_map[$slug] : null;
       if ($part) {
         get_template_part($part);
       }
     }
   } else {
-    get_template_part('template-parts/homepage/hero-section');
+    nera_render_component('HomepageHero');
     get_template_part('template-parts/homepage/credibility-section');
     get_template_part('template-parts/homepage/featured-competitions');
     get_template_part('template-parts/homepage/promo-banner');

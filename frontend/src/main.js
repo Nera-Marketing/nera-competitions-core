@@ -35,4 +35,8 @@ import '@assets/js/single-product.js';
 // Checkout page - loaded separately in functions.php before Alpine.js
 // import '../assets/js/checkout.js';
 
+// Flynt JS islands infrastructure
+import FlyntComponent from '@assets/js/flynt-component.js';
+window.customElements.define('flynt-component', FlyntComponent);
+
 console.log('Nera Competitions theme loaded');

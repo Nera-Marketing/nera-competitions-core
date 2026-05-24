@@ -223,6 +223,17 @@ The theme dequeues Astra styles and uses TailwindCSS exclusively. Astra override
 
    **Use semantic tokens instead** (e.g. `bg-primary`, `text-success-text`, `border-info-border`, `bg-surface`). `gray-*` is permitted as a neutral scale. The build-time lint in `frontend/scripts/lint-templates.js` reports all violations. See `EXTENDING.md` for the full token list and mapping guide.
 
+## Components/ directory conventions
+
+Two `Components/` directories exist for historical reasons. They are **not** interchangeable:
+
+| Path | Purpose | File types |
+|---|---|---|
+| `Components/` (theme root) | Timber/Twig components, Phase 1+ (Flynt-inspired) | `<Name>/index.php` (data), `<Name>/template.twig` (view), optional `<Name>/script.js` (JS island) |
+| `frontend/Components/` | Vue SFCs imported by `instant-wins-vue-init.js`, `spin-to-win-prizes-vue-init.js`, `winners-modal-vue.js` | `.vue` files |
+
+Twig component lookups (`nera_render_component('HomepageHero')`) resolve against the **theme-root** `Components/` only. The Vite alias `@` points at theme root, so `import.meta.glob('@/Components/**/script.js')` in `frontend/assets/js/flynt-component.js` correctly targets Twig component scripts, not Vue SFCs.
+
 ## PHP Conventions
 
 ### inc/ directory structure
