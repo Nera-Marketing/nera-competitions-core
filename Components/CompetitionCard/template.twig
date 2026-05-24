@@ -106,22 +106,20 @@
 
       <!-- Progress Section -->
       <div class="space-y-2 sm:space-y-3 mb-auto">
-        {% if max_tickets %}
-          <div class="flex justify-between items-center gap-2">
-            <span class="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-text-secondary shrink-0">
-              Tickets Sold
-            </span>
-            <span class="text-xs sm:text-sm font-black tabular-nums shrink-0" style="color: {{ accent_color }};">
-              {{ progress }}%
-            </span>
-          </div>
+        <div class="flex justify-between items-center gap-2">
+          <span class="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-text-secondary shrink-0">
+            Tickets Sold
+          </span>
+          <span class="text-xs sm:text-sm font-black tabular-nums shrink-0" style="color: {{ accent_color }};">
+            {{ progress|default(0) }}%
+          </span>
+        </div>
 
-          <div class="relative h-1.5 sm:h-2 w-full bg-gray-100 rounded-full overflow-hidden shadow-inner">
-            <div class="h-full rounded-full transition-all duration-500"
-              style="width: {{ progress }}%; background: linear-gradient(90deg, {{ accent_color }}, {{ accent_color }}CC);">
-            </div>
+        <div class="relative h-1.5 sm:h-2 w-full bg-gray-100 rounded-full overflow-hidden shadow-inner">
+          <div class="h-full rounded-full transition-all duration-500"
+            style="width: {{ progress|default(0) }}%; background: linear-gradient(90deg, {{ accent_color }}, {{ accent_color }}CC);">
           </div>
-        {% endif %}
+        </div>
       </div>
 
       <!-- Footer: Countdown & CTA -->
@@ -146,11 +144,11 @@
 
         <!-- CTA Button -->
         <a href="{{ permalink }}"
-          class="inline-flex w-full min-h-[44px] items-center justify-center gap-1.5 rounded-lg px-3 py-2 text-[11px] font-extrabold uppercase tracking-wide text-white shadow-md transition-all duration-300 hover:shadow-xl hover:scale-105 sm:w-auto sm:min-h-0 sm:px-5 sm:py-2.5 sm:text-xs sm:ml-auto"
+          class="ncs-card-cta group/cta inline-flex w-full min-h-[44px] items-center justify-center gap-1.5 rounded-lg px-3 py-2 text-[11px] font-extrabold uppercase tracking-wide text-white shadow-md transition-all duration-300 hover:shadow-xl hover:scale-105 sm:w-auto sm:min-h-0 sm:px-5 sm:py-2.5 sm:text-xs sm:ml-auto"
           style="background: linear-gradient(135deg, {{ accent_color }} 0%, {{ accent_color }} 100%);">
           <span>ENTER NOW</span>
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-            class="h-3.5 w-3.5 shrink-0 transition-transform group-hover:translate-x-0.5 sm:h-3.5 sm:w-3.5" aria-hidden="true">
+            class="h-3.5 w-3.5 shrink-0 transition-transform group-hover/cta:translate-x-0.5 sm:h-3.5 sm:w-3.5" aria-hidden="true">
             <path d="M5 12h14M12 5l7 7-7 7" />
           </svg>
         </a>

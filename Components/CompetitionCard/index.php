@@ -42,16 +42,21 @@ function get_data(array $args = []): array
         ]
     );
 
-    // Lottery meta
-    $max_tickets  = $product->get_meta('_lty_maximum_tickets');
+    // Lottery meta — prefer Lottery plugin's WC_Product_Lottery subclass API.
+    // Falls back to raw postmeta for non-lottery products or if subclass not loaded.
+    $max_tickets = method_exists($product, 'get_lty_maximum_tickets')
+        ? (int) $product->get_lty_maximum_tickets()
+        : (int) get_post_meta($product_id, '_lty_maximum_tickets', true);
     $sold_tickets = method_exists($product, 'get_purchased_ticket_count')
-        ? $product->get_purchased_ticket_count()
+        ? (int) $product->get_purchased_ticket_count()
         : 0;
-    $progress     = $max_tickets ? min(100, round(($sold_tickets / $max_tickets) * 100)) : 0;
-    $remaining    = $max_tickets ? $max_tickets - $sold_tickets : 0;
+    $progress  = $max_tickets ? min(100, round(($sold_tickets / $max_tickets) * 100)) : 0;
+    $remaining = $max_tickets ? $max_tickets - $sold_tickets : 0;
 
-    // Countdown
-    $end_date_gmt      = $product->get_meta('_lty_end_date_gmt');
+    // Countdown — prefer Lottery plugin's WC_Product_Lottery subclass API.
+    $end_date_gmt = method_exists($product, 'get_lty_end_date_gmt')
+        ? $product->get_lty_end_date_gmt()
+        : get_post_meta($product_id, '_lty_end_date_gmt', true);
     $end_timestamp_ms  = $end_date_gmt ? strtotime($end_date_gmt) * 1000 : 0;
     $countdown_expired = $end_timestamp_ms && ($end_timestamp_ms < (time() * 1000));
     $countdown_parts   = $end_date_gmt ? nera_get_countdown_parts($end_date_gmt) : ['expired' => true];
