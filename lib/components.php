@@ -41,7 +41,7 @@ function nera_render_component(string $name, array $args = []): void
     if (file_exists($index)) {
         $fn = 'Nera\\Components\\' . $name . '\\get_data';
         if (function_exists($fn)) {
-            $data = $fn();
+            $data = $fn($args);
         }
     }
 

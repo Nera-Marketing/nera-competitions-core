@@ -1,0 +1,65 @@
+<section class="promo-banner-section py-8 lg:py-12" id="social-follow" data-aos="fade-up">
+  <div class="max-w-6xl mx-auto px-4 lg:px-8">
+
+    <!-- Banner Container -->
+    <div class="promo-banner relative overflow-hidden rounded-2xl lg:rounded-3xl bg-[#1a1a4e]">
+
+      <!-- Background with Gradient Overlay -->
+      <div class="absolute inset-0">
+        <img src="{{ bg_image|escape('html_attr') }}" alt=""
+          class="w-full h-full object-cover object-center" aria-hidden="true">
+        <!-- Dark Blue Gradient Overlay -->
+        <div class="absolute inset-0 bg-gradient-to-r from-[#1a1a4e]/95 via-[#1a1a4e]/90 to-[#1a1a4e]/80"></div>
+      </div>
+
+      <!-- Content -->
+      <div class="relative z-10 px-8 py-12 lg:px-12 lg:py-16 flex flex-col items-center text-center">
+
+        <!-- Badge -->
+        <span
+          class="inline-block px-4 py-1.5 mb-6 text-xs font-bold text-white uppercase tracking-wider bg-primary rounded-full">
+          {{ badge }}
+        </span>
+
+        <!-- Title -->
+        <h2 class="font-heading text-3xl lg:text-4xl xl:text-5xl font-bold mb-4 leading-tight !text-white">
+          {{ title }}
+        </h2>
+
+        <!-- Description -->
+        <p class="text-base lg:text-lg text-white/80 mb-10 leading-relaxed max-w-lg">
+          {{ description }}
+        </p>
+
+        <!-- Social Links -->
+        {% if links %}
+          <div class="flex flex-wrap justify-center gap-5 sm:gap-8">
+            {% for link in links %}
+              <a href="{{ link.url }}"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="group flex flex-col items-center gap-3 transition-all duration-300 hover:-translate-y-1"
+                aria-label="Follow us on {{ link.label }}">
+
+                <!-- Icon Container -->
+                <span
+                  class="flex items-center justify-center w-14 h-14 rounded-full bg-surface/10 backdrop-blur-sm text-white group-hover:bg-surface/20 group-hover:scale-110 transition-all duration-300">
+                  {{ link.icon|raw }}
+                </span>
+
+                <!-- Label -->
+                <span class="text-sm font-medium text-white/80 group-hover:text-white transition-colors duration-300">
+                  {{ link.label }}
+                </span>
+
+              </a>
+            {% endfor %}
+          </div>
+        {% endif %}
+
+      </div>
+
+    </div>
+
+  </div>
+</section>

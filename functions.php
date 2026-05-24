@@ -966,6 +966,9 @@ require_once get_template_directory() . '/inc/acf/attribution/acf-attribution.ph
 // Winners dataset helpers for server rendering
 require_once get_template_directory() . '/inc/helpers/winners-dataset.php';
 
+// Social icon helpers (shared by promo-banner and Twig components)
+require_once NERA_DIR . '/inc/helpers/social-icons.php';
+
 /**
  * Enqueue scripts and styles.
  */
