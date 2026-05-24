@@ -21,6 +21,7 @@ import './product-gallery.css';
 // Import theme JavaScript modules
 import '@assets/js/animations.js';
 import '@assets/js/homepage.js';
+import '@assets/js/stats-counter.js';
 // import '@assets/js/categories-filter.js'; // Replaced by AlpineJS implementation
 import '@assets/js/ticket-selector.js';
 import '@assets/js/scroll-to-top.js';

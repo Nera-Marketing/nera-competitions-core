@@ -21,9 +21,7 @@ get_header();
 
   <?php
   $homepage_section_map = [
-    'stats'   => 'template-parts/homepage/stats-section',
     'winners' => 'template-parts/homepage/winners-section',
-    'about'   => 'template-parts/homepage/about-section',
   ];
 
   $component_map = [
@@ -35,6 +33,8 @@ get_header();
     'promo_banner'          => 'PromoBanner',
     'featured_competitions' => 'FeaturedCompetitions',
     'categories'            => 'CategoriesCompetitions',
+    'stats'                 => 'Stats',
+    'about'                 => 'About',
   ];
 
   $sections = get_field('homepage_sections');
@@ -64,7 +64,7 @@ get_header();
     nera_render_component('Testimonials');
     get_template_part('template-parts/homepage/winners-section');
     nera_render_component('QuickGuide');
-    get_template_part('template-parts/homepage/about-section');
+    nera_render_component('About');
     nera_render_component('CategoriesCompetitions');
     nera_render_component('Faq');
   }
