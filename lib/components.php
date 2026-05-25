@@ -12,10 +12,10 @@ add_action('after_setup_theme', function () {
     $components_dir = get_template_directory() . '/Components';
     if (!is_dir($components_dir)) return;
 
-    foreach (glob($components_dir . '/*/index.php') ?: [] as $component_index) {
+    foreach (glob($components_dir . '/*/*/index.php') ?: [] as $component_index) {
         require_once $component_index;
     }
-    foreach (glob($components_dir . '/*/fields.php') ?: [] as $component_fields) {
+    foreach (glob($components_dir . '/*/*/fields.php') ?: [] as $component_fields) {
         require_once $component_fields;
     }
 });
@@ -28,7 +28,7 @@ add_filter('timber/twig', function (\Twig\Environment $twig) {
 function nera_get_components_with_script(): array {
     $components_dir = get_template_directory() . '/Components';
     $map = [];
-    foreach (glob($components_dir . '/*/script.js') ?: [] as $script_path) {
+    foreach (glob($components_dir . '/*/*/script.js') ?: [] as $script_path) {
         $name = basename(dirname($script_path));
         $map[$name] = $name;
     }
@@ -37,8 +37,18 @@ function nera_get_components_with_script(): array {
 
 function nera_render_component(string $name, array $args = []): void
 {
-    $index = get_template_directory() . '/Components/' . $name . '/index.php';
-    $template = 'Components/' . $name . '/template.twig'; // Timber resolves from Timber::$dirname
+    static $path_index = null;
+    if ($path_index === null) {
+        $path_index = [];
+        foreach (glob(get_template_directory() . '/Components/*/*', GLOB_ONLYDIR) ?: [] as $dir) {
+            $path_index[basename($dir)] = $dir;
+        }
+    }
+
+    if (!isset($path_index[$name])) return;
+
+    $index    = $path_index[$name] . '/index.php';
+    $template = 'Components/' . basename(dirname($path_index[$name])) . '/' . $name . '/template.twig';
 
     $data = [];
     if (file_exists($index)) {
@@ -94,7 +104,7 @@ add_action('acf/init', function () {
     $components_dir = get_template_directory() . '/Components';
     $layouts = [];
 
-    foreach (glob($components_dir . '/*', GLOB_ONLYDIR) ?: [] as $dir) {
+    foreach (glob($components_dir . '/*/*', GLOB_ONLYDIR) ?: [] as $dir) {
         $name = basename($dir);
 
         if (file_exists($dir . '/.not-top-level')) continue;

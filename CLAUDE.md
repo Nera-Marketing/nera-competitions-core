@@ -232,7 +232,31 @@ Two `Components/` directories exist for historical reasons. They are **not** int
 | `Components/` (theme root) | Timber/Twig components, Phase 1+ (Flynt-inspired) | `<Name>/index.php` (data), `<Name>/template.twig` (view), optional `<Name>/script.js` (JS island) |
 | `frontend/Components/` | Vue SFCs imported by `instant-wins-vue-init.js`, `spin-to-win-prizes-vue-init.js`, `winners-modal-vue.js` | `.vue` files |
 
-Twig component lookups (`nera_render_component('HomepageHero')`) resolve against the **theme-root** `Components/` only. The Vite alias `@` points at theme root, so `import.meta.glob('@/Components/**/script.js')` in `frontend/assets/js/flynt-component.js` correctly targets Twig component scripts, not Vue SFCs.
+Twig component lookups (`nera_render_component('HomepageHero')`) resolve against the **theme-root** `Components/<type>/<Name>/` only, via the name→path index built by `lib/components.php`. Callers never specify the type subdir — only the component name. The Vite alias `@` points at theme root, so `import.meta.glob('@/Components/**/script.js')` in `frontend/assets/js/flynt-component.js` correctly targets Twig component scripts, not Vue SFCs.
+
+## Components/ taxonomy (type-based subdirectories)
+
+Theme-root `Components/` is organised into type subdirectories. Place new components according to their role:
+
+| Subdir | What goes here | Examples |
+|---|---|---|
+| `Components/sections/` | Full-width page sections — one per row in a composed page (ACF Flexible Content layout). | HomepageHero, About, Faq, FeaturedCompetitions |
+| `Components/cards/` | Items iterated inside a parent (grid / list). Multiple per parent section. | CompetitionCard, future WinnerCard / TestimonialCard |
+| `Components/blocks/` | Small reusable UI atoms used across sections. | future CTA, Badge, Avatar |
+| `Components/features/` | Interactive / stateful islands with significant JS lifecycle. | future InstantWin, SpinToWin |
+| `Components/layout/` | Structural pieces (header, footer, nav). | future |
+
+Rules:
+- Component name (directory basename) is the global identifier. `nera_render_component('HomepageHero')` resolves via the autoloader — caller never spells out the path.
+- ACF Flexible Content layout names are also the directory basename. Moving a component between subdirs does **not** break existing ACF data.
+- Component is standalone — folder location is filesystem organisation only.
+- Each component still ships `index.php` (data provider) + `template.twig` (view) + optional `fields.php` (ACF layout def) + optional `script.js` (JS island).
+- The `.not-top-level` sentinel file marks a component as child-only (e.g. cards used by sections, not pickable from the editor's "Add Component" dropdown).
+
+When adding a new component:
+1. Pick the right subdir from the table above.
+2. Match the existing pattern (look at a sibling component for shape).
+3. Run `yarn build` to confirm Tailwind picks up new classes and lint passes.
 
 ## PHP Conventions
 
