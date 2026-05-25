@@ -2180,3 +2180,21 @@ require_once get_template_directory() . '/inc/acf/footer/acf-footer.php';
 // This line disables all default WooCommerce stylesheets from loading on the frontend,
 // allowing the theme to control all styling. To re-enable default WooCommerce CSS, remove this filter.
 add_filter('woocommerce_enqueue_styles', '__return_empty_array');
+
+// ACF Flexible Content — 'Add Component' live search filter (admin only)
+add_action('admin_enqueue_scripts', function ($hook) {
+    if (!in_array($hook, ['post.php', 'post-new.php'], true)) {
+        return;
+    }
+    $file = get_template_directory() . '/assets/js/admin-page-components-search.js';
+    if (!file_exists($file)) {
+        return;
+    }
+    wp_enqueue_script(
+        'nera-admin-fc-search',
+        get_template_directory_uri() . '/assets/js/admin-page-components-search.js',
+        [],
+        filemtime($file),
+        true
+    );
+});
