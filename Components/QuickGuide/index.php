@@ -26,11 +26,12 @@ function get_data(array $args = []): array
         ],
     ];
 
-    $steps = get_field('guide_steps') ?: $default_steps;
+    $steps_raw = nera_component_field($args, 'steps', 'guide_steps', null);
+    $steps = (is_array($steps_raw) && !empty($steps_raw)) ? $steps_raw : $default_steps;
 
     return [
-        'title'    => get_field('guide_title')    ?: __('How to Play', 'nera-competitions'),
-        'subtitle' => get_field('guide_subtitle') ?: __('Win your dream prizes in just three simple steps', 'nera-competitions'),
+        'title'    => nera_component_field($args, 'title',    'guide_title',    __('How to Play', 'nera-competitions')),
+        'subtitle' => nera_component_field($args, 'subtitle', 'guide_subtitle', __('Win your dream prizes in just three simple steps', 'nera-competitions')),
         'steps'    => $steps,
         'cta_url'  => home_url('/all-competitions'),
     ];

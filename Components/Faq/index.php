@@ -12,11 +12,12 @@ function get_data(array $args = []): array
         ['question' => __('How do I receive my prize?', 'nera-competitions'),      'answer' => __('For physical prizes, we arrange delivery to your door completely free of charge. Cash prizes are transferred directly to your bank account within 48 hours. For larger prizes like cars, we can either deliver to your address or arrange collection from a convenient location.', 'nera-competitions')],
     ];
 
-    $faqs = get_field('faq_list') ?: $default_faqs;
+    $list_raw = nera_component_field($args, 'list', 'faq_list', null);
+    $faqs = (is_array($list_raw) && !empty($list_raw)) ? $list_raw : $default_faqs;
 
     return [
-        'title'        => get_field('faq_title') ?: __('Frequently Asked Questions', 'nera-competitions'),
-        'faqs'         => $faqs,
-        'contact_url'  => get_permalink(get_page_by_path('contact')) ?: '#',
+        'title'       => nera_component_field($args, 'title', 'faq_title', __('Frequently Asked Questions', 'nera-competitions')),
+        'faqs'        => $faqs,
+        'contact_url' => get_permalink(get_page_by_path('contact')) ?: '#',
     ];
 }

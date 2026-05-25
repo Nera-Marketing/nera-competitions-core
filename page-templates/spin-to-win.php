@@ -53,6 +53,9 @@ if ( class_exists( 'Nera_STW_ACF_Copy_Settings' ) ) {
 get_header();
 ?>
 
+<?php if (nera_render_page_components()): ?>
+  <?php // page-components rendered via ACF Flexible Content ?>
+<?php else: ?>
 <div
   class="relative overflow-hidden bg-gradient-to-b from-secondary via-white to-background-light/80"
 >
@@ -129,6 +132,7 @@ get_header();
     <?php endif; ?>
   </div>
 </div>
+<?php endif; ?>
 
 <?php
 get_footer();

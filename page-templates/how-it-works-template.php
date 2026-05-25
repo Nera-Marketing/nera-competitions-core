@@ -203,6 +203,10 @@ if (!empty($acf_trans_features) && is_array($acf_trans_features)) {
 
 <main id="main" class="how-it-works-page bg-background-light font-body" role="main">
 
+  <?php if (nera_render_page_components()): ?>
+    <?php // page-components rendered via ACF Flexible Content ?>
+  <?php else: ?>
+
   <?php
   get_template_part('template-parts/how-it-works', null, [
     'title' => $hero_title,
@@ -402,6 +406,8 @@ if (!empty($acf_trans_features) && is_array($acf_trans_features)) {
       </div>
     </div>
   </section>
+
+  <?php endif; ?>
 
 </main>
 

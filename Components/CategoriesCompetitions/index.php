@@ -5,8 +5,8 @@ if (!defined('ABSPATH')) exit;
 
 function get_data(array $args = []): array
 {
-    $title    = get_field('categories_section_title') ?: __('Find Your Dream Prize', 'nera-competitions');
-    $subtitle = get_field('categories_section_subtitle') ?: __("Browse competitions by category and discover your next big win.", 'nera-competitions');
+    $title    = nera_component_field($args, 'title',    'categories_section_title',    __('Find Your Dream Prize', 'nera-competitions'));
+    $subtitle = nera_component_field($args, 'subtitle', 'categories_section_subtitle', __("Browse competitions by category and discover your next big win.", 'nera-competitions'));
 
     $terms = get_terms([
         'taxonomy'   => 'product_cat',

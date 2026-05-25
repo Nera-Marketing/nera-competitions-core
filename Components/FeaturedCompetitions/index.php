@@ -5,8 +5,8 @@ if (!defined('ABSPATH')) exit;
 
 function get_data(array $args = []): array
 {
-    $title    = get_field('featured_title') ?: __('Ending Soon', 'nera-competitions');
-    $subtitle = get_field('featured_subtitle') ?: __("Grab your tickets before time runs out — these competitions are about to close.", 'nera-competitions');
+    $title    = nera_component_field($args, 'title',    'featured_title',    __('Ending Soon', 'nera-competitions'));
+    $subtitle = nera_component_field($args, 'subtitle', 'featured_subtitle', __("Grab your tickets before time runs out — these competitions are about to close.", 'nera-competitions'));
 
     $query_args = [
         'post_type'      => 'product',

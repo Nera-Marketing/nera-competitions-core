@@ -84,6 +84,7 @@ function get_data(array $args = []): array
 
     // Categories
     $product_categories = wp_get_post_terms($product_id, 'product_cat');
+    $product_categories = is_wp_error($product_categories) ? [] : $product_categories;
     $category_slugs     = array_map(fn($cat) => $cat->slug, $product_categories);
     $primary_category   = !empty($product_categories) ? $product_categories[0]->slug : '';
     $base_accent_color  = $category_colors[$primary_category]

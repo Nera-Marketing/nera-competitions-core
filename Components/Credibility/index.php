@@ -13,16 +13,18 @@ function get_data(array $args = []): array
         ['icon' => 'headset_mic', 'label' => __('Fast Support',       'nera-competitions')],
     ];
 
-    $items = [];
-    if (function_exists('have_rows') && have_rows('credibility_items')) {
-        while (have_rows('credibility_items')) {
-            the_row();
+    $items_raw = nera_component_field($args, 'items', 'credibility_items', null);
+
+    if (is_array($items_raw) && !empty($items_raw)) {
+        $items = [];
+        foreach ($items_raw as $item) {
             $items[] = [
-                'icon'  => get_sub_field('icon') ?: 'check_circle',
-                'label' => get_sub_field('label') ?: '',
+                'icon'  => $item['icon']  ?? 'check_circle',
+                'label' => $item['label'] ?? '',
             ];
         }
+        return ['items' => $items];
     }
 
-    return ['items' => !empty($items) ? $items : $default_items];
+    return ['items' => $default_items];
 }

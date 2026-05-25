@@ -19,6 +19,9 @@ get_header();
 
 <main id="main" class="nera-homepage" role="main">
 
+  <?php if (nera_render_page_components()): ?>
+    <?php // page-components rendered via ACF Flexible Content — takes precedence over homepage_sections ?>
+  <?php else: ?>
   <?php
   $homepage_section_map = [
     'winners' => 'template-parts/homepage/winners-section',
@@ -69,6 +72,7 @@ get_header();
     nera_render_component('Faq');
   }
   ?>
+  <?php endif; ?>
 
 </main>
 

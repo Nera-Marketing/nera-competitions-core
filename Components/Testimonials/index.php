@@ -20,17 +20,17 @@ function get_data(array $args = []): array
         ],
     ];
 
-    $list = get_field('testimonials_list') ?: $default_list;
+    $list_raw = nera_component_field($args, 'list', 'testimonials_list', null);
+    $list = (is_array($list_raw) && !empty($list_raw)) ? $list_raw : $default_list;
 
-    // Ensure each item has an `initial` for the fallback avatar
     foreach ($list as &$item) {
         $item['initial'] = mb_substr($item['name'] ?? '', 0, 1);
     }
     unset($item);
 
     return [
-        'title'    => get_field('testimonials_title')    ?: __('Stories of the Circle', 'nera-competitions'),
-        'subtitle' => get_field('testimonials_subtitle') ?: __('Step inside the lives of those who dared to dream. Real people, life-changing moments.', 'nera-competitions'),
+        'title'    => nera_component_field($args, 'title',    'testimonials_title',    __('Stories of the Circle', 'nera-competitions')),
+        'subtitle' => nera_component_field($args, 'subtitle', 'testimonials_subtitle', __('Step inside the lives of those who dared to dream. Real people, life-changing moments.', 'nera-competitions')),
         'list'     => $list,
     ];
 }

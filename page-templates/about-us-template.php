@@ -42,6 +42,10 @@ $cta_secondary_url = get_field('about_cta_secondary_btn_url') ?: home_url('/cont
 
 <main id="main" class="nera-about-us-page bg-gray-50 text-text-primary" role="main">
 
+  <?php if (nera_render_page_components()): ?>
+    <?php // page-components rendered via ACF Flexible Content ?>
+  <?php else: ?>
+
   <section
     class="relative min-h-[70vh] flex items-center justify-center overflow-hidden py-16 lg:py-24 bg-gradient-to-br from-primary via-primary to-primary-dark"
     aria-labelledby="about-us-hero-heading">
@@ -188,6 +192,8 @@ $cta_secondary_url = get_field('about_cta_secondary_btn_url') ?: home_url('/cont
       </div>
     </div>
   </section>
+
+  <?php endif; ?>
 
 </main>
 
