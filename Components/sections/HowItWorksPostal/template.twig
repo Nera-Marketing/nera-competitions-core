@@ -1,0 +1,59 @@
+<section class="py-20 lg:py-32 relative bg-background-dark" aria-labelledby="hiw-postal-heading">
+  <div class="max-w-7xl mx-auto px-4 lg:px-0 relative z-10">
+    <div class="text-center mb-16" data-aos="fade-up">
+      <h2 id="hiw-postal-heading" class="font-heading text-4xl lg:text-5xl text-white mb-6">
+        {{ title }}
+      </h2>
+      <p class="text-white/80 text-lg">
+        {{ intro }}
+      </p>
+    </div>
+
+    <div class="grid md:grid-cols-3 gap-6 lg:gap-8">
+      {% for step in steps %}
+        <div
+          class="group relative bg-surface/95 backdrop-blur-sm border border-white/10 rounded-3xl p-8 overflow-hidden shadow-lg transition-all duration-300 ease-out hover:-translate-y-2 hover:border-primary/30 hover:shadow-xl hover:shadow-primary/10"
+          data-aos="fade-up"
+          data-aos-delay="{{ step.delay }}">
+          <div
+            class="absolute inset-0 opacity-0 group-hover:opacity-100 overflow-hidden rounded-3xl pointer-events-none transition-opacity duration-300">
+            <div
+              class="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-out"></div>
+          </div>
+          <div class="relative z-10">
+            <div class="flex items-start justify-between mb-6">
+              <div class="relative">
+                <div
+                  class="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center shrink-0 transition-transform duration-300 group-hover:scale-110 group-hover:bg-primary/15">
+                  <span class="material-symbols-outlined text-primary text-4xl" aria-hidden="true">{{ step.icon }}</span>
+                </div>
+              </div>
+              <div
+                class="w-10 h-10 rounded-full flex items-center justify-center font-heading font-bold text-sm shrink-0 bg-gradient-to-br from-primary to-primary-dark text-white rotate-12 group-hover:rotate-0 transition-transform duration-300">
+                {{ step.number }}
+              </div>
+            </div>
+            {% if step.title %}
+              <h3 class="text-lg font-bold text-text-primary mb-3">
+                {{ step.title }}
+              </h3>
+            {% endif %}
+            <p class="text-text-secondary leading-relaxed text-sm">
+              {{ step.text }}
+            </p>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+
+    <div
+      class="mt-12 p-6 bg-surface/90 backdrop-blur-sm border border-primary/20 rounded-2xl flex items-center gap-4"
+      data-aos="fade-up"
+      data-aos-delay="{{ note_delay }}">
+      <span class="material-symbols-outlined text-primary shrink-0 text-2xl" aria-hidden="true">info</span>
+      <span class="text-sm text-text-secondary italic">
+        {{ note }}
+      </span>
+    </div>
+  </div>
+</section>
