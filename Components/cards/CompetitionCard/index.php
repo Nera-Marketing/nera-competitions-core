@@ -126,5 +126,8 @@ function get_data(array $args = []): array
         'data_attrs'       => $data_attrs,
         'x_show'           => $args['x_show'] ?? null,
         'extra_attributes' => $args['extra_attributes'] ?? null,
+        'sold_tickets'     => $sold_tickets,
+        'button_variant'   => $args['button_variant'] ?? 'full',
+        'button_mode'      => $args['button_mode']    ?? 'link',
     ];
 }

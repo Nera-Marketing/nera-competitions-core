@@ -24,8 +24,8 @@
         </div>
       {% endif %}
 
-      <!-- Category Badges (Top Right) -->
-      {% if primary_category %}
+      <!-- Category Badges (Top Right) — hidden for buy_tickets variant -->
+      {% if primary_category and button_variant != 'buy_tickets' %}
         <div class="absolute top-2 right-2 z-10 flex max-w-[calc(100%-4.5rem)] items-center gap-1 sm:top-4 sm:right-4 sm:max-w-none sm:gap-1.5">
 
           <!-- Primary Category Badge -->
@@ -80,18 +80,20 @@
         {% endif %}
       </a>
 
-      <!-- Price Badge (Bottom Right, Glassmorphism) -->
-      <div
-        class="absolute bottom-2 right-2 z-10 max-w-[min(100%,11rem)] px-2.5 py-1.5 bg-surface/95 backdrop-blur-md rounded-lg border-[1.5px] border-white/80 shadow-lg sm:bottom-4 sm:right-4 sm:max-w-none sm:rounded-xl sm:px-4 sm:py-2.5"
-        style="border-color: {{ accent_color }}30;">
-        <div class="text-xs font-extrabold leading-none mb-0.5 sm:text-sm"
-          style="color: {{ accent_color }};">
-          {{ price_html|raw }}
+      <!-- Price Badge (Bottom Right, Glassmorphism) — hidden for buy_tickets variant -->
+      {% if button_variant != 'buy_tickets' %}
+        <div
+          class="absolute bottom-2 right-2 z-10 max-w-[min(100%,11rem)] px-2.5 py-1.5 bg-surface/95 backdrop-blur-md rounded-lg border-[1.5px] border-white/80 shadow-lg sm:bottom-4 sm:right-4 sm:max-w-none sm:rounded-xl sm:px-4 sm:py-2.5"
+          style="border-color: {{ accent_color }}30;">
+          <div class="text-xs font-extrabold leading-none mb-0.5 sm:text-sm"
+            style="color: {{ accent_color }};">
+            {{ price_html|raw }}
+          </div>
+          <div class="text-[9px] font-semibold text-text-secondary uppercase tracking-wide sm:text-[10px]">
+            per entry
+          </div>
         </div>
-        <div class="text-[9px] font-semibold text-text-secondary uppercase tracking-wide sm:text-[10px]">
-          per entry
-        </div>
-      </div>
+      {% endif %}
     </div>
 
     <!-- Card Content -->
@@ -107,9 +109,20 @@
       <!-- Progress Section -->
       <div class="space-y-2 sm:space-y-3 mb-auto">
         <div class="flex justify-between items-center gap-2">
-          <span class="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-text-secondary shrink-0">
-            Tickets Sold
-          </span>
+          {% if button_variant == 'buy_tickets' %}
+            <!-- buy_tickets: "X/Y sold" label, only when max_tickets is set -->
+            {% if max_tickets %}
+              <span class="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-text-secondary shrink-0">
+                {{ sold_tickets }}/{{ max_tickets }} sold
+              </span>
+            {% else %}
+              <span></span>
+            {% endif %}
+          {% else %}
+            <span class="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-text-secondary shrink-0">
+              Tickets Sold
+            </span>
+          {% endif %}
           <span class="text-xs sm:text-sm font-black tabular-nums shrink-0" style="color: {{ accent_color }};">
             {{ progress|default(0) }}%
           </span>
@@ -126,32 +139,67 @@
       <div
         class="flex flex-col items-stretch gap-2 pt-3 mt-3 border-t border-gray-100 sm:flex-row sm:items-center sm:justify-between sm:gap-3 sm:pt-5 sm:mt-4">
 
-        <!-- Countdown Timer -->
-        {% if show_countdown %}
-          <div
-            class="flex w-full items-center justify-center gap-1 text-text-secondary sm:w-auto sm:justify-start sm:gap-1.5"
-            x-data="countdown('{{ end_timestamp_ms }}')">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-              class="hidden h-3.5 w-3.5 shrink-0 opacity-60 sm:block sm:h-3.5 sm:w-3.5" aria-hidden="true">
-              <circle cx="12" cy="12" r="10"></circle>
-              <polyline points="12 6 12 12 16 14"></polyline>
-            </svg>
-            <span class="text-center text-[10px] font-bold uppercase leading-snug tabular-nums sm:text-left sm:text-xs">
-              <span x-text="days">00</span>d : <span x-text="hours">00</span>h : <span x-text="minutes">00</span>m : <span x-text="seconds">00</span>s
-            </span>
+        {% if button_variant == 'buy_tickets' %}
+
+          <!-- buy_tickets footer: Entry price left, Buy Tickets button right -->
+          <div class="text-sm">
+            <span class="text-text-secondary">Entry:</span>
+            <span class="font-bold text-primary">{{ price_html|raw }}</span>
           </div>
+
+          {% if button_mode == 'ajax' %}
+            <button
+              class="ncs-card-cta add-to-cart-btn inline-flex w-full min-h-[44px] items-center justify-center rounded-xl px-5 py-2.5 text-sm font-bold uppercase tracking-wide bg-primary hover:bg-primary-dark text-white shadow-sm hover:shadow-md transition-all duration-300 sm:w-auto sm:min-h-0 sm:ml-auto"
+              data-product-id="{{ product_id }}"
+              data-quantity="1">
+              Buy Tickets
+            </button>
+          {% else %}
+            <a href="{{ permalink }}"
+              class="ncs-card-cta inline-flex w-full min-h-[44px] items-center justify-center rounded-xl px-5 py-2.5 text-sm font-bold uppercase tracking-wide bg-primary hover:bg-primary-dark text-white shadow-sm hover:shadow-md transition-all duration-300 sm:w-auto sm:min-h-0 sm:ml-auto">
+              Buy Tickets
+            </a>
+          {% endif %}
+
+        {% else %}
+
+          <!-- Countdown Timer (full and compact variants) -->
+          {% if show_countdown %}
+            <div
+              class="flex w-full items-center justify-center gap-1 text-text-secondary sm:w-auto sm:justify-start sm:gap-1.5"
+              x-data="countdown('{{ end_timestamp_ms }}')">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                class="hidden h-3.5 w-3.5 shrink-0 opacity-60 sm:block sm:h-3.5 sm:w-3.5" aria-hidden="true">
+                <circle cx="12" cy="12" r="10"></circle>
+                <polyline points="12 6 12 12 16 14"></polyline>
+              </svg>
+              <span class="text-center text-[10px] font-bold uppercase leading-snug tabular-nums sm:text-left sm:text-xs">
+                <span x-text="days">00</span>d : <span x-text="hours">00</span>h : <span x-text="minutes">00</span>m : <span x-text="seconds">00</span>s
+              </span>
+            </div>
+          {% endif %}
+
+          {% if button_variant == 'compact' %}
+            <!-- compact CTA -->
+            <a href="{{ permalink }}"
+              class="ncs-card-cta inline-flex w-full min-h-[44px] items-center justify-center rounded-lg px-4 py-2 text-xs font-extrabold uppercase tracking-wide transition-all duration-300 bg-primary/5 hover:bg-primary text-primary hover:text-white sm:w-auto sm:min-h-0 sm:ml-auto">
+              ENTER
+            </a>
+          {% else %}
+            <!-- full CTA (default) -->
+            <a href="{{ permalink }}"
+              class="ncs-card-cta group/cta inline-flex w-full min-h-[44px] items-center justify-center gap-1.5 rounded-lg px-3 py-2 text-[11px] font-extrabold uppercase tracking-wide text-white shadow-md transition-all duration-300 hover:shadow-xl hover:scale-105 sm:w-auto sm:min-h-0 sm:px-5 sm:py-2.5 sm:text-xs sm:ml-auto"
+              style="background: linear-gradient(135deg, {{ accent_color }} 0%, {{ accent_color }} 100%);">
+              <span>ENTER NOW</span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                class="h-3.5 w-3.5 shrink-0 transition-transform group-hover/cta:translate-x-0.5 sm:h-3.5 sm:w-3.5" aria-hidden="true">
+                <path d="M5 12h14M12 5l7 7-7 7" />
+              </svg>
+            </a>
+          {% endif %}
+
         {% endif %}
 
-        <!-- CTA Button -->
-        <a href="{{ permalink }}"
-          class="ncs-card-cta group/cta inline-flex w-full min-h-[44px] items-center justify-center gap-1.5 rounded-lg px-3 py-2 text-[11px] font-extrabold uppercase tracking-wide text-white shadow-md transition-all duration-300 hover:shadow-xl hover:scale-105 sm:w-auto sm:min-h-0 sm:px-5 sm:py-2.5 sm:text-xs sm:ml-auto"
-          style="background: linear-gradient(135deg, {{ accent_color }} 0%, {{ accent_color }} 100%);">
-          <span>ENTER NOW</span>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-            class="h-3.5 w-3.5 shrink-0 transition-transform group-hover/cta:translate-x-0.5 sm:h-3.5 sm:w-3.5" aria-hidden="true">
-            <path d="M5 12h14M12 5l7 7-7 7" />
-          </svg>
-        </a>
       </div>
 
     </div>

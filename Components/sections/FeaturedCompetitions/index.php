@@ -28,7 +28,7 @@ function get_data(array $args = []): array
     if ($query->have_posts()) {
         while ($query->have_posts()) {
             $query->the_post();
-            $cards[] = ['product_id' => get_the_ID()];
+            $cards[] = ['product_id' => get_the_ID(), 'button_variant' => 'compact'];
         }
         wp_reset_postdata();
     } else {
@@ -42,7 +42,7 @@ function get_data(array $args = []): array
         if ($fallback->have_posts()) {
             while ($fallback->have_posts()) {
                 $fallback->the_post();
-                $cards[] = ['product_id' => get_the_ID()];
+                $cards[] = ['product_id' => get_the_ID(), 'button_variant' => 'compact'];
             }
             wp_reset_postdata();
         }
