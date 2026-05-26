@@ -1,0 +1,11 @@
+{# TrustBadges atom #}
+{# Variables: badges (array of {icon, label}) #}
+
+<div class="flex items-center justify-center gap-6">
+  {% for badge in badges %}
+    <div class="flex items-center gap-1.5 text-sm text-text-secondary">
+      <span class="material-symbols-outlined text-success text-lg">{{ badge.icon }}</span>
+      {{ badge.label }}
+    </div>
+  {% endfor %}
+</div>

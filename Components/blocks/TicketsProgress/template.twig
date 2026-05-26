@@ -1,0 +1,25 @@
+{# TicketsProgress atom #}
+{# Variables: sold_formatted, max_formatted, progress, is_low_stock (bool), remaining_formatted #}
+
+<div class="flex items-center justify-between mb-2">
+  <span class="text-sm font-semibold text-text-primary">
+    Tickets Sold
+  </span>
+  <span class="text-sm font-semibold text-text-primary">
+    {{ sold_formatted }} / {{ max_formatted }}
+  </span>
+</div>
+
+<div class="h-2 w-full bg-gray-100 rounded-full overflow-hidden">
+  <div class="h-full rounded-full transition-all duration-1000 ease-out bg-primary" style="width: 0%;"
+    data-progress="{{ progress }}"></div>
+</div>
+
+{% if is_low_stock %}
+  <div class="mt-2 flex items-center gap-1 text-warning text-sm">
+    <span class="material-symbols-outlined text-base">local_fire_department</span>
+    <span>
+      Selling fast! Only <strong>{{ remaining_formatted }}</strong> tickets remaining.
+    </span>
+  </div>
+{% endif %}

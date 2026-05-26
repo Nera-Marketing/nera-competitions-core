@@ -1,0 +1,67 @@
+{# SkillQuestionAnswer atom #}
+{# Variables: qa_can_display (bool), question_text, answers (array of {key, label}) #}
+{# Note: the wrapping <form> element stays in the orchestrator — this atom is the inner content only #}
+
+{% if qa_can_display %}
+  {# Active variant: Q&A can display, render radio list #}
+  <div class="bg-background-light rounded-xl p-6 skill-challenge-wrapper border border-gray-100">
+    <div class="flex items-center gap-3 mb-4">
+      <div class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+        <span class="material-symbols-outlined text-xl">psychology</span>
+      </div>
+      <h4 class="font-bold text-gray-800 uppercase text-sm tracking-wide">
+        Question Answers
+      </h4>
+    </div>
+
+    <div class="nera-contest-qa-container mb-5">
+      <div class="nera-contest-question font-medium text-gray-900 text-lg mb-4">
+        {{ question_text }}
+      </div>
+
+      <ul class="nera-contest-answers flex flex-col gap-3">
+        {% for answer in answers %}
+          <li class="relative group cursor-pointer" @click="selectAnswer('{{ answer.key }}')">
+
+            <div class="flex items-center p-4 bg-surface border-2 rounded-xl transition-all duration-200"
+              :class="selectedAnswer === '{{ answer.key }}' ? 'border-primary ring-1 ring-primary/20 shadow-sm' : 'border-gray-200 hover:border-primary/50'">
+              {# Radio Circle #}
+              <div
+                class="w-6 h-6 rounded-full border-2 mr-4 flex items-center justify-center flex-shrink-0 transition-colors"
+                :class="selectedAnswer === '{{ answer.key }}' ? 'border-primary bg-primary' : 'border-gray-300 group-hover:border-primary/50 bg-surface'">
+                <div class="w-2.5 h-2.5 rounded-full bg-surface transition-opacity duration-200"
+                  :class="selectedAnswer === '{{ answer.key }}' ? 'opacity-100' : 'opacity-0'">
+                </div>
+              </div>
+
+              {# Label #}
+              <span class="text-base font-medium"
+                :class="selectedAnswer === '{{ answer.key }}' ? 'text-gray-900' : 'text-gray-600 group-hover:text-gray-800'">
+                {{ answer.label }}
+              </span>
+            </div>
+
+            {# Keep submitted key aligned with lottery plugin request parsing #}
+            <input type="radio" name="lty_question_answer_id" value="{{ answer.key }}"
+              :checked="selectedAnswer === '{{ answer.key }}'" class="sr-only"
+              style="display:none !important;" />
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+
+{% else %}
+  {# Not-yet-started variant: Q&A configured but competition not started #}
+  <div class="border border-gray-200 rounded-xl p-5 mb-6 skill-challenge-wrapper">
+    <div class="flex items-center gap-2 mb-4">
+      <span class="material-symbols-outlined text-primary text-lg">psychology</span>
+      <h4 class="font-bold text-text-primary uppercase text-sm tracking-wide">
+        Question Answers
+      </h4>
+    </div>
+    <p class="text-sm text-text-secondary">
+      The question answers will be available once the competition starts.
+    </p>
+  </div>
+{% endif %}

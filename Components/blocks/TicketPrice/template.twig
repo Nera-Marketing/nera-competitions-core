@@ -1,0 +1,14 @@
+{# TicketPrice atom #}
+{# Variables: price_html (pre-escaped WC price HTML, rendered with |raw) #}
+
+<div class="flex items-center justify-between mb-4">
+  <span class="text-sm font-semibold text-text-primary">
+    Ticket Price
+  </span>
+  <span class="inline-flex items-center gap-1 bg-primary/10 text-primary font-bold text-sm px-3 py-1 rounded-full">
+    {{ price_html|raw }}
+    <span class="font-normal text-primary/70">
+      each
+    </span>
+  </span>
+</div>

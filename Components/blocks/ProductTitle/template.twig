@@ -1,0 +1,10 @@
+<div class="flex flex-wrap items-center gap-2 mb-1">
+  <h1 class="text-2xl lg:text-3xl font-bold text-text-primary leading-tight">
+    Win a {{ name }}
+  </h1>
+  {% if is_sold_out %}
+    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[0.65rem] font-extrabold uppercase tracking-widest bg-gray-200 text-text-secondary">
+      Sold Out
+    </span>
+  {% endif %}
+</div>
