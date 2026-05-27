@@ -1,0 +1,204 @@
+/* ==========================================================================
+   Extracted Component Styles (from template <style> blocks)
+   ========================================================================== */
+
+/* --- Stats Section --- */
+.stats-section .stat-value {
+  @apply tabular-nums transition-transform duration-300;
+}
+
+.stats-section .stat-item:hover .stat-value {
+  @apply scale-105;
+}
+
+.stats-section .trustpilot-badge {
+  @apply transition-transform duration-300;
+}
+
+.stats-section .trustpilot-badge:hover {
+  @apply -translate-y-0.5;
+}
+
+.stats-section .stats-grid .stat-item:first-child {
+  @apply pl-0;
+}
+
+.stats-section .stats-grid .stat-item:last-child {
+  @apply pr-0;
+}
+
+@media (max-width: 768px) {
+  .stats-section .stats-grid {
+    @apply w-full justify-center;
+  }
+
+  .stats-section .stat-item {
+    @apply px-4;
+  }
+}
+
+/* --- Credibility Section --- */
+.credibility-item {
+  @apply transition-transform duration-300;
+}
+
+.credibility-item:hover {
+  @apply -translate-y-0.5;
+}
+
+/* --- Story Card Animations --- */
+.story-card {
+  @apply opacity-0 translate-y-5;
+  animation: storyCardFadeIn 0.6s ease forwards;
+}
+
+.story-card:nth-child(1) {
+  animation-delay: 0.1s;
+}
+
+.story-card:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+/* --- Quick Guide Card Animations --- */
+.quick-guide-card {
+  @apply opacity-0 translate-y-5;
+  animation: quickGuideCardFadeIn 0.5s ease forwards;
+}
+
+.quick-guide-card:nth-child(1) {
+  animation-delay: 0.1s;
+}
+
+.quick-guide-card:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.quick-guide-card:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+/* --- How It Works Section --- */
+.how-it-works-section {
+  --particle-color: rgba(99, 102, 241, 0.15);
+}
+
+.how-it-works-particles .particle {
+  @apply absolute rounded-full bg-[var(--particle-color)] animate-[float-particle_15s_ease-in-out_infinite];
+}
+
+.particle-1 {
+  @apply w-[300px] h-[300px] top-[10%] -left-[5%];
+  animation-delay: 0s;
+}
+
+.particle-2 {
+  @apply w-[200px] h-[200px] top-[60%] -right-[3%];
+  animation-delay: -3s;
+}
+
+.particle-3 {
+  @apply w-[150px] h-[150px] top-[20%] right-[10%];
+  animation-delay: -6s;
+}
+
+.particle-4 {
+  @apply w-[100px] h-[100px] bottom-[15%] left-[10%];
+  animation-delay: -9s;
+}
+
+.particle-5 {
+  @apply w-[80px] h-[80px] top-[40%] left-[15%];
+  animation-delay: -12s;
+}
+
+.particle-6 {
+  @apply w-[120px] h-[120px] bottom-[30%] right-[20%];
+  animation-delay: -4s;
+}
+
+/* Animated SVG Path — stroke properties have no Tailwind equivalent */
+.how-it-works-path-animated {
+  @apply [stroke-dasharray:1000] [stroke-dashoffset:1000] animate-[draw-path_2s_ease-out_forwards] [animation-play-state:paused];
+}
+
+.how-it-works-section.is-visible .how-it-works-path-animated {
+  @apply [animation-play-state:running];
+}
+
+/* Flowing Dots */
+.flow-dot {
+  @apply opacity-0 drop-shadow-[0_0_6px_currentColor];
+}
+
+.how-it-works-section.is-visible .flow-dot {
+  @apply opacity-100 transition-opacity duration-500;
+}
+
+.flow-dot-1 {
+  @apply delay-[500ms];
+}
+
+.flow-dot-2 {
+  @apply delay-[1000ms];
+}
+
+.flow-dot-3 {
+  @apply delay-[1500ms];
+}
+
+/* Ping Animation (slower) */
+.animate-ping-slow {
+  animation: ping-slow 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+/* Step Card Entrance Animations */
+.how-it-works-step {
+  @apply opacity-0 translate-y-10;
+  transition: all 600ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.how-it-works-step.is-visible {
+  @apply opacity-100 translate-y-0;
+}
+
+/* Header Animation */
+.how-it-works-header {
+  @apply opacity-0 translate-y-[30px] transition-all duration-[800ms] ease-linear;
+}
+
+.how-it-works-header.is-visible {
+  @apply opacity-100 translate-y-0;
+}
+
+/* Card surface — keep compositing simple (3D tilt JS removed for hover perf) */
+.how-it-works-card {
+  @apply will-change-[transform] max-lg:will-change-auto;
+}
+
+.how-it-works-card::before {
+  content: '';
+  @apply absolute inset-0 opacity-0 transition-opacity duration-300 rounded-[1.5rem];
+  background: linear-gradient(
+    135deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.1) 50%,
+    transparent 100%
+  );
+}
+
+.group:hover .how-it-works-card::before {
+  @apply opacity-100;
+}
+
+@media (max-width: 1024px) {
+  .how-it-works-particles .particle {
+    @apply hidden;
+  }
+}
+
+@media (max-width: 768px) {
+  .how-it-works-section {
+    @apply py-16;
+  }
+}

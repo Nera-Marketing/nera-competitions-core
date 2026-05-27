@@ -351,17 +351,6 @@ button {
   }
 }
 
-@keyframes blink {
-  0%,
-  100% {
-    opacity: 1;
-  }
-
-  50% {
-    opacity: 0.3;
-  }
-}
-
 @keyframes countdown-pulse {
   0%,
   100% {
@@ -562,43 +551,12 @@ button {
   }
 }
 
-@keyframes instant-wins-card-enter {
-  from {
-    opacity: 0;
-    transform: translateY(16px) scale(0.97);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-
 @keyframes instant-wins-skeleton-shimmer {
   0% {
     background-position: -200% 0;
   }
   100% {
     background-position: 200% 0;
-  }
-}
-
-@keyframes instant-wins-celebrate-pulse {
-  0%,
-  100% {
-    box-shadow: 0 0 0 0 rgba(234, 179, 8, 0);
-  }
-  50% {
-    box-shadow: 0 0 20px 4px rgba(234, 179, 8, 0.15);
-  }
-}
-
-@keyframes instant-wins-glow-pulse {
-  0%,
-  100% {
-    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4);
-  }
-  50% {
-    box-shadow: 0 0 8px 3px rgba(16, 185, 129, 0.25);
   }
 }
 
@@ -610,36 +568,6 @@ button {
   50% {
     box-shadow: 0 4px 20px 4px rgba(251, 191, 36, 0.22);
   }
-}
-
-/* Spin-to-win wheel rim bulbs (SVG circles in WheelChrome.jsx) */
-@keyframes nera-bulb-pulse {
-  0%,
-  100% {
-    opacity: 1;
-  }
-  45% {
-    opacity: 0.55;
-  }
-  50% {
-    opacity: 0.65;
-  }
-}
-
-/* ==========================================================================
-   Instant Wins — Utility Classes
-   ========================================================================== */
-
-@utility animate-card-enter {
-  animation: instant-wins-card-enter 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
-}
-
-@utility animate-celebrate {
-  animation: instant-wins-celebrate-pulse 2s ease-in-out infinite;
-}
-
-@utility animate-glow {
-  animation: instant-wins-glow-pulse 2s ease-in-out infinite;
 }
 
 /* ==========================================================================
@@ -683,10 +611,6 @@ button {
   animation: fadeInUp 0.5s forwards;
 }
 
-@utility animate-blink {
-  animation: blink 1s infinite;
-}
-
 @utility text-gradient-primary {
   background: linear-gradient(135deg, var(--color-primary) 0%, #6366f1 100%);
   -webkit-background-clip: text;
@@ -698,26 +622,8 @@ button {
   background: linear-gradient(135deg, var(--color-primary), #4f46e5);
 }
 
-@utility bg-gradient-dark {
-  background: linear-gradient(135deg, var(--color-background-dark), var(--color-primary));
-}
-
 @utility shadow-primary {
   box-shadow: 0 10px 20px -10px rgba(19, 19, 236, 0.3);
-}
-
-/* ==========================================================================
-   Component Base Classes
-   ========================================================================== */
-
-/* Button Base */
-@utility btn-base {
-  @apply inline-flex items-center justify-center gap-2 px-8 py-4 rounded-2xl text-base font-semibold text-center no-underline transition-all duration-300 ease-in-out border-2 border-transparent cursor-pointer relative overflow-hidden;
-}
-
-/* Progress Bar */
-@utility progress-bar-base {
-  @apply w-full h-[6px] bg-[#F1F5F9] rounded-full overflow-hidden;
 }
 
 /* ==========================================================================
@@ -731,14 +637,6 @@ button {
 /* ==========================================================================
    Cart Page Utilities
    ========================================================================== */
-
-@utility nera-cart-item {
-  @apply relative bg-surface border border-gray-100 rounded-2xl p-4 transition-all duration-300;
-
-  &:hover {
-    @apply border-primary/20 shadow-lg shadow-primary/5 transform -translate-y-0.5;
-  }
-}
 
 @utility nera-cart-quantity {
   @apply flex items-center border border-gray-200 rounded-lg overflow-hidden bg-surface;
@@ -772,694 +670,12 @@ button {
   appearance: textfield;
 }
 
-/* ==========================================================================
-   Checkout Page Styles
-   ========================================================================== */
+@import './sections/checkout.css';
 
-/* --- Form Field Styling --- */
 
-/* Checkout form grid improvements - increased gap for better breathing room */
-.woocommerce-checkout .woocommerce-billing-fields__field-wrapper,
-.woocommerce-checkout .woocommerce-shipping-fields__field-wrapper {
-  @apply gap-y-4;
-}
-
-/* Neutralize WooCommerce legacy float-based layout classes inside grid */
-.woocommerce-billing-fields__field-wrapper.grid .form-row-first,
-.woocommerce-billing-fields__field-wrapper.grid .form-row-last,
-.woocommerce-billing-fields__field-wrapper.grid .form-row-wide,
-.woocommerce-shipping-fields__field-wrapper.grid .form-row-first,
-.woocommerce-shipping-fields__field-wrapper.grid .form-row-last,
-.woocommerce-shipping-fields__field-wrapper.grid .form-row-wide {
-  @apply w-full float-none;
-}
-
-/* Form row margin reset (grid gap handles spacing) */
-.woocommerce-checkout .form-row {
-  @apply mb-0;
-}
-
-.woocommerce-checkout .form-row label {
-  @apply block text-sm font-semibold text-text-primary mb-2;
-}
-
-.woocommerce-checkout .form-row label .required {
-  @apply text-danger ml-0.5;
-}
-
-/* Ensure all inputs have consistent height (48px/3rem) */
-.woocommerce-checkout .form-row input[type='text'],
-.woocommerce-checkout .form-row input[type='email'],
-.woocommerce-checkout .form-row input[type='tel'],
-.woocommerce-checkout .form-row input[type='number'],
-.woocommerce-checkout .form-row input[type='password'],
-.woocommerce-checkout .form-row select,
-.woocommerce-checkout .form-row textarea {
-  @apply w-full h-12 px-4 rounded-xl border border-gray-200 text-sm font-medium
-         bg-surface text-text-primary placeholder:text-gray-400
-         focus:border-primary focus:ring-1 focus:ring-primary outline-none
-         transition-all duration-300;
-}
-
-.woocommerce-checkout .form-row textarea {
-  @apply h-24 py-3;
-}
-
-/* Validation states */
-.woocommerce-checkout .form-row.woocommerce-invalid label {
-  @apply text-danger;
-}
-
-.woocommerce-checkout .form-row.woocommerce-invalid input,
-.woocommerce-checkout .form-row.woocommerce-invalid select {
-  @apply border-danger focus:ring-danger/30;
-}
-
-.woocommerce-checkout .form-row.woocommerce-validated input,
-.woocommerce-checkout .form-row.woocommerce-validated select {
-  @apply border-success;
-}
-
-/* Checkbox styling */
-.woocommerce-checkout input[type='checkbox'] {
-  @apply w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary cursor-pointer;
-}
-
-/* Select2 dropdown - Enhanced vertical alignment with flexbox */
-.woocommerce-checkout .select2-container .select2-selection--single {
-  height: 3rem !important;
-  @apply rounded-xl border-gray-200 bg-surface flex items-center;
-}
-
-.woocommerce-checkout .select2-container .select2-selection--single .select2-selection__rendered {
-  @apply px-4 text-sm font-medium text-text-primary flex items-center h-full;
-  line-height: 1.4;
-  padding-top: 0;
-  padding-bottom: 0;
-}
-
-.woocommerce-checkout .select2-container .select2-selection--single .select2-selection__arrow {
-  @apply h-12 right-3 flex items-center;
-}
-
-.woocommerce-checkout .select2-container--focus .select2-selection--single,
-.woocommerce-checkout .select2-container--open .select2-selection--single {
-  @apply border-primary ring-1 ring-primary outline-none;
-}
-
-/* Dropdown list styling - Enhanced shadows and spacing */
-.select2-dropdown {
-  @apply border-gray-200 rounded-xl mt-1 overflow-hidden;
-  box-shadow: 0 10px 40px -10px rgba(13, 13, 27, 0.15);
-}
-
-.select2-results__option {
-  @apply px-4 text-sm transition-colors duration-200;
-  padding-top: 0.625rem;
-  padding-bottom: 0.625rem;
-  line-height: 1.4;
-}
-
-.select2-results__option--highlighted {
-  @apply bg-primary/5 text-primary;
-}
-
-.select2-results__option--selected {
-  @apply bg-primary text-white;
-}
-
-.select2-search--dropdown .select2-search__field {
-  @apply h-10 px-4 border-gray-200 rounded-lg text-sm outline-none focus:border-primary;
-}
-
-/* Wallet transfer Select2 - recipient dropdown padding */
-#select2-woo_wallet_transfer_user_id-container,
-#woo_wallet_transfer_form .select2-selection__rendered {
-  @apply !pt-[22px] !pb-[22px];
-}
-#woo_wallet_transfer_form .select2-container .select2-selection--single {
-  @apply !h-auto min-h-[46px];
-}
-
-/* ==========================================================================
-   My Account — Edit Address: Country / Region dropdown
-   Match the Select2/selectWoo control to the checkout page styling
-   ========================================================================== */
-
-/* Native <select> fallback (before selectWoo enhances it) */
-.nera-edit-address .form-row select {
-  @apply w-full h-12 px-4 rounded-xl border border-gray-200 text-sm font-medium
-         bg-surface text-text-primary
-         focus:border-primary focus:ring-1 focus:ring-primary outline-none
-         transition-all duration-300;
-}
-
-/* selectWoo closed control */
-.nera-edit-address .select2-container .select2-selection--single {
-  height: 3rem !important;
-  @apply rounded-xl border-gray-200 bg-surface flex items-center;
-}
-
-.nera-edit-address .select2-container .select2-selection--single .select2-selection__rendered {
-  @apply px-4 text-sm font-medium text-text-primary flex items-center h-full;
-  line-height: 1.4;
-  padding-top: 0;
-  padding-bottom: 0;
-}
-
-.nera-edit-address .select2-container .select2-selection--single .select2-selection__arrow {
-  @apply h-12 right-3 flex items-center;
-}
-
-/* Focus and open states */
-.nera-edit-address .select2-container--focus .select2-selection--single,
-.nera-edit-address .select2-container--open .select2-selection--single {
-  @apply border-primary ring-1 ring-primary outline-none;
-}
-
-/* --- Payment Method Styling (white surfaces only, no purple tint) --- */
-.woocommerce-checkout-payment .wc_payment_methods,
-.woocommerce-checkout-payment .wc_payment_methods li {
-  background: #ffffff !important;
-  background-color: #ffffff !important;
-}
-
-.woocommerce-checkout-payment .wc_payment_methods {
-  @apply list-none p-0 m-0 flex flex-col gap-5;
-}
-
-.woocommerce-checkout-payment .wc_payment_method {
-  @apply border border-gray-200 rounded-xl p-4 transition-all duration-300 cursor-pointer;
-  background: #ffffff !important;
-  background-color: #ffffff !important;
-}
-
-.woocommerce-checkout-payment .wc_payment_method:hover {
-  @apply border-gray-300 shadow-sm;
-  background: #ffffff !important;
-}
-
-.woocommerce-checkout-payment .wc_payment_method.active {
-  @apply border-gray-400 ring-2 ring-gray-300 shadow-sm;
-  background: #ffffff !important;
-}
-
-.woocommerce-checkout-payment .wc_payment_method > div > label {
-  @apply mb-0 flex min-h-11 items-center gap-3 rounded-lg text-base font-semibold text-text-primary cursor-pointer;
-}
-
-.woocommerce-checkout-payment .wc_payment_method input[type='radio'] {
-  @apply mt-0.5 h-5 w-5 shrink-0 cursor-pointer border-gray-300 accent-gray-600 focus:ring-0 focus:outline-none;
-}
-
-.woocommerce-checkout-payment .wc_payment_method.active > div > label .material-symbols-outlined {
-  @apply text-text-primary;
-}
-
-.woocommerce-checkout-payment .wc_payment_method .gateway-title {
-  @apply flex-1 leading-tight;
-}
-
-.woocommerce-checkout-payment .wc_payment_method .gateway-brand-icons img {
-  @apply max-h-6 w-auto;
-}
-
-.woocommerce-checkout-payment .payment_box,
-.woocommerce-checkout-payment .payment_box .nera-wallet-gateway-description {
-  background-color: #ffffff !important;
-}
-
-.woocommerce-checkout-payment .payment_box {
-  @apply mt-4 p-4 rounded-lg border border-gray-200 text-sm text-text-secondary leading-relaxed;
-}
-
-.woocommerce-checkout-payment .payment_box .nera-wallet-gateway-description {
-  @apply rounded-xl border border-gray-200 p-3;
-}
-
-.woocommerce-checkout-payment .payment_box::before {
-  content: none;
-}
-
-.woocommerce-checkout-payment .payment_box p:last-child {
-  @apply mb-0;
-}
-
-.woocommerce-checkout-payment .payment_method_wallet label .inline-flex {
-  @apply animate-pulse;
-}
-
-.woocommerce-checkout-payment .payment_method_wallet.active .nera-wallet-gateway-description {
-  @apply border-gray-300;
-}
-
-/* --- Place Order Button States --- */
-#place_order:disabled,
-.nera-place-order-btn:disabled {
-  @apply opacity-70 cursor-not-allowed transform-none;
-}
-
-/* Spinner animation for processing state */
-.nera-place-order-btn .animate-spin {
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-/* --- WooCommerce Notices on Checkout --- */
-.woocommerce-checkout .woocommerce-NoticeGroup {
-  @apply mb-6;
-}
-
-.woocommerce-checkout .woocommerce-error {
-  @apply list-none p-4 rounded-xl border border-danger/20 bg-danger/5 text-danger text-sm font-medium;
-}
-
-.woocommerce-checkout .woocommerce-error li {
-  @apply mb-1 last:mb-0;
-}
-
-.woocommerce-checkout .woocommerce-message {
-  @apply p-4 rounded-xl border border-success/20 bg-success/5 text-success text-sm font-medium mb-6;
-}
-
-.woocommerce-checkout .woocommerce-message::before,
-.woocommerce-checkout .woocommerce-error::before {
-  content: none;
-  display: none;
-}
-
-/* --- Login / Create Account Forms on Checkout --- */
-.woocommerce-checkout .woocommerce-form-login-toggle .woocommerce-info::before,
-.woocommerce-checkout .woocommerce-form-coupon-toggle .woocommerce-info::before {
-  content: none;
-  display: none;
-}
-
-.woocommerce-checkout .woocommerce-form-login-toggle .woocommerce-info,
-.woocommerce-checkout .woocommerce-form-coupon-toggle .woocommerce-info {
-  @apply pl-6 pr-4 py-4 rounded-xl border border-primary/10 bg-primary/5 text-sm text-text-primary mb-6;
-}
-
-.woocommerce-checkout .woocommerce-form-login-toggle .woocommerce-info a,
-.woocommerce-checkout .woocommerce-form-coupon-toggle .woocommerce-info a {
-  @apply text-primary font-semibold;
-}
-
-.woocommerce-checkout .woocommerce-form-login {
-  @apply bg-surface rounded-2xl border border-gray-100 shadow-sm p-6 mb-6;
-}
-
-/* --- Accessibility: Keyboard Focus States --- */
-.woocommerce-checkout input:focus-visible,
-.woocommerce-checkout select:focus-visible,
-.woocommerce-checkout textarea:focus-visible {
-  @apply ring-2 ring-primary ring-offset-2 outline-none;
-}
-
-button:focus-visible {
-  @apply ring-2 ring-primary ring-offset-2 outline-none;
-}
-
-/* ==========================================================================
-   Extracted Component Styles (from template <style> blocks)
-   ========================================================================== */
-
-/* --- Stats Section --- */
-.stats-section .stat-value {
-  @apply tabular-nums transition-transform duration-300;
-}
-
-.stats-section .stat-item:hover .stat-value {
-  @apply scale-105;
-}
-
-.stats-section .trustpilot-badge {
-  @apply transition-transform duration-300;
-}
-
-.stats-section .trustpilot-badge:hover {
-  @apply -translate-y-0.5;
-}
-
-.stats-section .stats-grid .stat-item:first-child {
-  @apply pl-0;
-}
-
-.stats-section .stats-grid .stat-item:last-child {
-  @apply pr-0;
-}
-
-@media (max-width: 768px) {
-  .stats-section .stats-grid {
-    @apply w-full justify-center;
-  }
-
-  .stats-section .stat-item {
-    @apply px-4;
-  }
-}
-
-/* --- Credibility Section --- */
-.credibility-item {
-  @apply transition-transform duration-300;
-}
-
-.credibility-item:hover {
-  @apply -translate-y-0.5;
-}
-
-/* --- Story Card Animations --- */
-.story-card {
-  @apply opacity-0 translate-y-5;
-  animation: storyCardFadeIn 0.6s ease forwards;
-}
-
-.story-card:nth-child(1) {
-  animation-delay: 0.1s;
-}
-
-.story-card:nth-child(2) {
-  animation-delay: 0.2s;
-}
-
-/* --- Quick Guide Card Animations --- */
-.quick-guide-card {
-  @apply opacity-0 translate-y-5;
-  animation: quickGuideCardFadeIn 0.5s ease forwards;
-}
-
-.quick-guide-card:nth-child(1) {
-  animation-delay: 0.1s;
-}
-
-.quick-guide-card:nth-child(2) {
-  animation-delay: 0.2s;
-}
-
-.quick-guide-card:nth-child(3) {
-  animation-delay: 0.3s;
-}
-
-/* --- How It Works Section --- */
-.how-it-works-section {
-  --particle-color: rgba(99, 102, 241, 0.15);
-}
-
-.how-it-works-particles .particle {
-  @apply absolute rounded-full bg-[var(--particle-color)] animate-[float-particle_15s_ease-in-out_infinite];
-}
-
-.particle-1 {
-  @apply w-[300px] h-[300px] top-[10%] -left-[5%];
-  animation-delay: 0s;
-}
-
-.particle-2 {
-  @apply w-[200px] h-[200px] top-[60%] -right-[3%];
-  animation-delay: -3s;
-}
-
-.particle-3 {
-  @apply w-[150px] h-[150px] top-[20%] right-[10%];
-  animation-delay: -6s;
-}
-
-.particle-4 {
-  @apply w-[100px] h-[100px] bottom-[15%] left-[10%];
-  animation-delay: -9s;
-}
-
-.particle-5 {
-  @apply w-[80px] h-[80px] top-[40%] left-[15%];
-  animation-delay: -12s;
-}
-
-.particle-6 {
-  @apply w-[120px] h-[120px] bottom-[30%] right-[20%];
-  animation-delay: -4s;
-}
-
-/* Animated SVG Path — stroke properties have no Tailwind equivalent */
-.how-it-works-path-animated {
-  @apply [stroke-dasharray:1000] [stroke-dashoffset:1000] animate-[draw-path_2s_ease-out_forwards] [animation-play-state:paused];
-}
-
-.how-it-works-section.is-visible .how-it-works-path-animated {
-  @apply [animation-play-state:running];
-}
-
-/* Flowing Dots */
-.flow-dot {
-  @apply opacity-0 drop-shadow-[0_0_6px_currentColor];
-}
-
-.how-it-works-section.is-visible .flow-dot {
-  @apply opacity-100 transition-opacity duration-500;
-}
-
-.flow-dot-1 {
-  @apply delay-[500ms];
-}
-
-.flow-dot-2 {
-  @apply delay-[1000ms];
-}
-
-.flow-dot-3 {
-  @apply delay-[1500ms];
-}
-
-/* Ping Animation (slower) */
-.animate-ping-slow {
-  animation: ping-slow 2s cubic-bezier(0, 0, 0.2, 1) infinite;
-}
-
-/* Step Card Entrance Animations */
-.how-it-works-step {
-  @apply opacity-0 translate-y-10;
-  transition: all 600ms cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.how-it-works-step.is-visible {
-  @apply opacity-100 translate-y-0;
-}
-
-/* Header Animation */
-.how-it-works-header {
-  @apply opacity-0 translate-y-[30px] transition-all duration-[800ms] ease-linear;
-}
-
-.how-it-works-header.is-visible {
-  @apply opacity-100 translate-y-0;
-}
-
-/* Card surface — keep compositing simple (3D tilt JS removed for hover perf) */
-.how-it-works-card {
-  @apply will-change-[transform] max-lg:will-change-auto;
-}
-
-.how-it-works-card::before {
-  content: '';
-  @apply absolute inset-0 opacity-0 transition-opacity duration-300 rounded-[1.5rem];
-  background: linear-gradient(
-    135deg,
-    transparent 0%,
-    rgba(255, 255, 255, 0.1) 50%,
-    transparent 100%
-  );
-}
-
-.group:hover .how-it-works-card::before {
-  @apply opacity-100;
-}
-
-@media (max-width: 1024px) {
-  .how-it-works-particles .particle {
-    @apply hidden;
-  }
-}
-
-@media (max-width: 768px) {
-  .how-it-works-section {
-    @apply py-16;
-  }
-}
-
-/* --- About Section (Premium Blue) --- */
-/* Prose styling for WYSIWYG content */
-.about-section-premium .prose p {
-  @apply mb-4 text-text-secondary;
-}
-
-.about-section-premium .prose p:last-child {
-  @apply mb-0;
-}
-
-.about-section-premium .prose strong {
-  @apply text-text-primary font-semibold;
-}
-
-.about-section-premium .prose em {
-  @apply italic text-primary;
-}
-
-@media (max-width: 1023px) {
-  .about-floating-badge {
-    @apply hidden;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .about-section-premium,
-  .about-badge,
-  .about-title,
-  .about-subtitle,
-  .about-divider,
-  .about-description,
-  .about-features,
-  .about-cta,
-  .about-feature-item,
-  .about-image-container,
-  .about-frame,
-  .about-floating-badge,
-  .about-corner-accent {
-    @apply opacity-100;
-    transform: none;
-    transition: none;
-  }
-
-  .about-image:hover,
-  a:hover {
-    transform: none;
-  }
-}
-
-@media print {
-  .about-section-premium {
-    @apply !bg-surface;
-  }
-
-  .about-floating-badge,
-  .about-frame,
-  .about-corner-accent {
-    @apply hidden;
-  }
-}
-
-/* --- Mobile Menu Animations --- */
-#mobile-menu {
-  @apply overflow-hidden transition-all duration-300 ease-in-out;
-}
-
-#mobile-menu.menu-opening {
-  @apply animate-[slideDown_300ms_ease-in-out_forwards];
-}
-
-#mobile-menu.menu-closing {
-  @apply animate-[slideUp_300ms_ease-in-out_forwards];
-}
-
-#mobile-menu a,
-#mobile-menu hr {
-  @apply opacity-0 animate-[menuItemFadeIn_300ms_ease-in-out_forwards];
-}
-
-#mobile-menu.menu-opening a:nth-child(1),
-#mobile-menu.menu-opening hr {
-  @apply delay-[50ms];
-}
-
-#mobile-menu.menu-opening a:nth-child(2) {
-  @apply delay-[100ms];
-}
-
-#mobile-menu.menu-opening a:nth-child(3) {
-  @apply delay-[150ms];
-}
-
-#mobile-menu.menu-opening a:nth-child(4) {
-  @apply delay-[200ms];
-}
-
-#mobile-menu.menu-opening a:nth-child(5) {
-  @apply delay-[250ms];
-}
-
-#mobile-menu.menu-opening a:nth-child(6) {
-  @apply delay-[300ms];
-}
-
-/* Hamburger icon animation */
-#mobile-menu-toggle {
-  @apply transition-transform duration-200;
-}
-
-#mobile-menu-toggle:active {
-  @apply scale-95;
-}
-
-#menu-icon-open,
-#menu-icon-close {
-  @apply transition-all duration-300;
-}
-
-#menu-icon-open.rotating {
-  @apply rotate-90 opacity-0;
-}
-
-#menu-icon-close.rotating {
-  @apply -rotate-90;
-}
-
-/* --- Header: 2-level primary menu (desktop dropdown + mobile accordion) --- */
-/* Invisible hover bridge so moving pointer from top link to panel does not close dropdown */
-#site-header nav .menu-item-has-children.group::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 100%;
-  height: 0.5rem;
-}
-
-#site-header nav .sub-menu .menu-item {
-  list-style: none;
-}
-
-/* Submenu links: explicit default + hover (beats global `a` / `a:hover` in this scope) */
-#site-header nav .sub-menu a {
-  @apply text-text-secondary no-underline transition-colors;
-}
-
-#site-header nav .sub-menu .current-menu-item > a {
-  @apply font-semibold text-primary;
-}
-
-#site-header nav .sub-menu a:hover {
-  @apply text-primary;
-}
-
-#site-header nav .sub-menu a:focus-visible {
-  @apply outline outline-2 outline-offset-2 outline-primary;
-}
-
-#mobile-menu .nera-mobile-submenu-toggle[aria-expanded='true'] .nera-mobile-submenu-chevron {
-  transform: rotate(180deg);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  #mobile-menu .nera-mobile-submenu-chevron {
-    transition: none;
-  }
-}
+@import './sections/how-it-works.css';
+@import './sections/about.css';
+@import './sections/header-menu.css';
 
 /* --- Single Product Tab States --- */
 
@@ -1469,524 +685,6 @@ button:focus-visible {
 
 .tab-btn:not(.active) {
   @apply border-b-2 border-transparent;
-}
-
-/* --- Lottery Plugin Q&A Override Styles --- */
-.skill-challenge-wrapper .lty-lottery-question-answer-container {
-  @apply m-0;
-}
-
-.skill-challenge-wrapper .lty-lottery-question-answer-container h3 {
-  @apply hidden;
-}
-
-.skill-challenge-wrapper .lty-lottery-question {
-  @apply text-[15px] text-text-primary mb-4 font-medium;
-}
-
-.skill-challenge-wrapper .lty-lottery-answers {
-  @apply list-none p-0 m-0 flex flex-col gap-2;
-}
-
-.skill-challenge-wrapper .lty-lottery-answers li {
-  @apply flex items-center px-4 py-3 border border-gray-200 rounded-md cursor-pointer transition-all duration-200 text-[15px];
-}
-
-.skill-challenge-wrapper .lty-lottery-answers li:hover {
-  @apply border-primary;
-}
-
-.skill-challenge-wrapper .lty-lottery-answers li.lty-selected {
-  @apply border-primary bg-primary/5;
-}
-
-/* Radio-style indicator — content: '' requires raw CSS */
-.skill-challenge-wrapper .lty-lottery-answers li::before {
-  @apply content-[''] w-[18px] h-[18px] border-2 border-gray-300 rounded-full mr-3 shrink-0 transition-all duration-200;
-}
-
-.skill-challenge-wrapper .lty-lottery-answers li.lty-selected::before {
-  @apply border-primary bg-primary shadow-[inset_0_0_0_3px_white];
-}
-
-/* Dropdown style Q&A */
-.skill-challenge-wrapper .lty-lottery-options-field-wrapper {
-  @apply m-0;
-}
-
-.skill-challenge-wrapper .lty-lottery-options-field-wrapper select {
-  @apply w-full px-4 py-3 border border-gray-200 rounded-md text-[15px] bg-surface cursor-pointer;
-}
-
-.skill-challenge-wrapper .lty-lottery-options-field-wrapper select:focus {
-  @apply outline-none border-primary ring-2 ring-primary/10;
-}
-
-/* --- Answer Card Selection States (lottery Q&A override) --- */
-.answer-input:checked + .answer-card {
-  @apply border-primary bg-primary/5;
-}
-
-.answer-input:checked + .answer-card .answer-letter {
-  @apply bg-primary text-white;
-}
-
-.answer-input:checked + .answer-card .answer-check {
-  @apply block;
-}
-
-.answer-input:focus + .answer-card {
-  @apply outline-none ring-2 ring-primary/20;
-}
-
-.answer-option:hover .answer-card {
-  @apply -translate-y-0.5 shadow-md;
-}
-
-.answer-card {
-  @apply transition-all duration-200;
-}
-
-/* ==========================================================================
-   Nera Ticket Picker — Dialog variant
-   Explicit CSS (not @apply-only) ensures grid layout works regardless of build.
-   ========================================================================== */
-
-/* ── Shared: count badge ────────────────────────────────────────── */
-.nera-ticket-picker__count-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 0.7rem;
-  font-weight: 700;
-  color: var(--color-primary);
-  background: color-mix(in srgb, var(--color-primary) 10%, transparent);
-  padding: 3px 10px 3px 7px;
-  border-radius: 999px;
-  transition: background 0.2s, color 0.2s;
-  white-space: nowrap;
-}
-
-.nera-ticket-picker__count-badge[data-has-selection="true"] {
-  background: var(--color-primary);
-  color: #fff;
-}
-
-/* ── Trigger button ─────────────────────────────────────────────── */
-.nera-ticket-trigger {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-  padding: 12px 14px;
-  border-radius: 12px;
-  border: 2px dashed color-mix(in srgb, var(--color-primary) 35%, transparent);
-  background: color-mix(in srgb, var(--color-primary) 3%, white);
-  cursor: pointer;
-  transition: border-color 0.18s, background 0.18s, transform 0.12s;
-  text-align: left;
-}
-
-.nera-ticket-trigger:hover {
-  border-color: var(--color-primary);
-  background: color-mix(in srgb, var(--color-primary) 6%, white);
-  transform: translateY(-1px);
-}
-
-.nera-ticket-trigger:active {
-  transform: translateY(0);
-}
-
-.nera-ticket-trigger__icon {
-  color: var(--color-primary);
-  font-size: 20px !important;
-}
-
-.nera-ticket-trigger__arrow {
-  color: var(--color-primary);
-  font-size: 18px !important;
-  transition: transform 0.15s;
-}
-
-.nera-ticket-trigger:hover .nera-ticket-trigger__arrow {
-  transform: translateX(3px);
-}
-
-/* ── Dialog shell ───────────────────────────────────────────────── */
-.nera-ticket-dialog {
-  background: #fff;
-  border-radius: 24px 24px 0 0;
-  box-shadow: 0 -4px 60px rgba(0, 0, 0, 0.18);
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  max-height: 90svh;
-}
-
-@media (min-width: 640px) {
-  .nera-ticket-dialog {
-    border-radius: 20px;
-    box-shadow: 0 20px 80px rgba(0, 0, 0, 0.2);
-    max-height: 85svh;
-  }
-}
-
-/* Drag handle on mobile */
-.nera-ticket-dialog::before {
-  content: '';
-  display: block;
-  width: 40px;
-  height: 4px;
-  background: #e2e8f0;
-  border-radius: 2px;
-  margin: 10px auto 0;
-  flex-shrink: 0;
-}
-
-@media (min-width: 640px) {
-  .nera-ticket-dialog::before {
-    display: none;
-  }
-}
-
-/* ── Dialog header ──────────────────────────────────────────────── */
-.nera-ticket-dialog__header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 14px 18px 14px;
-  border-bottom: 1px solid #f1f5f9;
-  flex-shrink: 0;
-}
-
-.nera-ticket-dialog__header-icon {
-  width: 36px;
-  height: 36px;
-  border-radius: 10px;
-  background: color-mix(in srgb, var(--color-primary) 10%, transparent);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-.nera-ticket-dialog__header-icon .material-symbols-outlined {
-  color: var(--color-primary);
-  font-size: 18px !important;
-}
-
-.nera-ticket-dialog__close {
-  width: 32px;
-  height: 32px;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: transparent;
-  border: none;
-  color: var(--color-text-secondary);
-  cursor: pointer;
-  transition: background 0.15s, color 0.15s;
-  flex-shrink: 0;
-}
-
-.nera-ticket-dialog__close:hover {
-  background: #f1f5f9;
-  color: var(--color-text-primary);
-}
-
-.nera-ticket-dialog__close .material-symbols-outlined {
-  font-size: 20px !important;
-}
-
-/* ── Dialog body ────────────────────────────────────────────────── */
-.nera-ticket-dialog__body {
-  flex: 1;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  padding: 16px 18px 12px;
-  min-height: 0;
-}
-
-.nera-ticket-dialog__inner {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  flex: 1;
-  min-height: 0;
-}
-
-/* ── Range select dropdown navigator ───────────────────────────── */
-.nera-range-select-wrap {
-  position: relative;
-  display: flex;
-  align-items: center;
-  flex-shrink: 0;
-  background: #f8fafc;
-  border: 1.5px solid #e2e8f0;
-  border-radius: 12px;
-  padding: 0 12px 0 10px;
-  gap: 8px;
-  transition: border-color 0.14s, box-shadow 0.14s;
-}
-
-.nera-range-select-wrap:focus-within {
-  border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) 12%, transparent);
-}
-
-.nera-range-select__icon {
-  font-size: 17px !important;
-  color: var(--color-primary);
-  flex-shrink: 0;
-  pointer-events: none;
-}
-
-.nera-range-select {
-  appearance: none;
-  -webkit-appearance: none;
-  background: transparent;
-  border: none;
-  outline: none;
-  font-size: 0.8rem;
-  font-weight: 700;
-  color: var(--color-text-primary);
-  cursor: pointer;
-  flex: 1;
-  padding: 10px 0;
-  min-width: 0;
-}
-
-.nera-range-select__chevron {
-  font-size: 18px !important;
-  color: var(--color-text-secondary);
-  flex-shrink: 0;
-  pointer-events: none;
-  transition: color 0.14s;
-}
-
-.nera-range-select-wrap:focus-within .nera-range-select__chevron {
-  color: var(--color-primary);
-}
-
-/* ── Tab pill (hidden from view, kept for plugin DOM needs) ─────── */
-.lty-lottery-ticket-tab {
-  display: none !important;
-}
-
-/* ── Ticket grid scroll area (dialog) ───────────────────────────── */
-.nera-ticket-picker__dialog-grid {
-  flex: 1;
-  overflow-y: auto;
-  overflow-x: hidden;
-  min-height: 0;
-  border: 1.5px solid #f1f5f9;
-  border-radius: 12px;
-  padding: 10px;
-  background: #fafafa;
-  scrollbar-width: thin;
-  scrollbar-color: color-mix(in srgb, var(--color-primary) 40%, transparent) transparent;
-}
-
-.nera-ticket-picker__dialog-grid::-webkit-scrollbar {
-  width: 4px;
-  height: 0;
-}
-
-.nera-ticket-picker__dialog-grid::-webkit-scrollbar-thumb {
-  background: color-mix(in srgb, var(--color-primary) 40%, transparent);
-  border-radius: 2px;
-}
-
-/* ── Ticket number grid ─────────────────────────────────────────── */
-.nera-ticket-grid__list {
-  display: grid !important;
-  grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)) !important;
-  gap: 7px !important;
-  list-style: none !important;
-  margin: 0 !important;
-  padding: 0 !important;
-}
-
-/* ── Ticket cell base ───────────────────────────────────────────── */
-.lty-ticket,
-.nera-ticket-grid__cell {
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  height: 38px !important;
-  font-size: 0.68rem;
-  font-weight: 600;
-  font-variant-numeric: tabular-nums;
-  border-radius: 8px;
-  border: 1.5px solid #e2e8f0 !important;
-  background: #fff;
-  color: var(--color-text-primary);
-  cursor: pointer;
-  user-select: none;
-  margin: 0 !important;
-  transition: border-color 0.12s, background 0.12s, color 0.12s, box-shadow 0.12s;
-}
-
-.lty-ticket:hover:not(.lty-booked-ticket):not(.lty-processing-ticket):not(.lty-reserved-ticket) {
-  border-color: var(--color-primary);
-  color: var(--color-primary);
-  background: color-mix(in srgb, var(--color-primary) 6%, white);
-  box-shadow: 0 2px 8px color-mix(in srgb, var(--color-primary) 18%, transparent);
-}
-
-/* ── Ticket state variants ──────────────────────────────────────── */
-
-.lty-selected-ticket {
-  border-color: var(--color-primary) !important;
-  background: var(--color-primary) !important;
-  color: #fff !important;
-  box-shadow: 0 3px 10px color-mix(in srgb, var(--color-primary) 40%, transparent) !important;
-}
-
-.lty-booked-ticket {
-  background: #f8fafc !important;
-  border-color: #e2e8f0 !important;
-  color: #cbd5e1 !important;
-  cursor: not-allowed !important;
-  pointer-events: none;
-  text-decoration: line-through;
-}
-
-.lty-processing-ticket {
-  background: #eff6ff !important;
-  border-color: #bfdbfe !important;
-  color: #93c5fd !important;
-  cursor: not-allowed !important;
-  pointer-events: none;
-}
-
-.lty-reserved-ticket {
-  background: #fffbeb !important;
-  border-color: #fde68a !important;
-  color: #f59e0b !important;
-  cursor: not-allowed !important;
-  pointer-events: none;
-}
-
-.lty-hidden-ticket {
-  display: none !important;
-}
-
-/* ── View more button ───────────────────────────────────────────── */
-.lty-toggle-view-button {
-  @apply mt-3;
-}
-
-.lty-toggle-lottery-tickets {
-  @apply block w-full py-2 text-center text-xs font-semibold text-primary
-         border border-primary/20 rounded-lg bg-surface
-         hover:bg-primary/5 transition-colors no-underline;
-}
-
-/* ── Legend ─────────────────────────────────────────────────────── */
-.nera-ticket-picker__legend {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  flex-wrap: wrap;
-  flex-shrink: 0;
-  padding-top: 2px;
-}
-
-.nera-ticket-picker__legend-item {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  font-size: 0.7rem;
-  color: var(--color-text-secondary);
-}
-
-.nera-ticket-picker__legend-dot {
-  width: 12px;
-  height: 12px;
-  border-radius: 3px;
-  border: 1.5px solid #e2e8f0;
-  display: inline-block;
-  flex-shrink: 0;
-}
-
-.nera-ticket-picker__legend-item--available .nera-ticket-picker__legend-dot {
-  background: #fff;
-  border-color: #cbd5e1;
-}
-
-.nera-ticket-picker__legend-item--selected .nera-ticket-picker__legend-dot {
-  background: var(--color-primary);
-  border-color: var(--color-primary);
-}
-
-.nera-ticket-picker__legend-item--sold .nera-ticket-picker__legend-dot {
-  background: #f8fafc;
-  border-color: #e2e8f0;
-}
-
-.nera-ticket-picker__legend-item--cart .nera-ticket-picker__legend-dot {
-  background: #eff6ff;
-  border-color: #bfdbfe;
-}
-
-/* ── Dialog footer ──────────────────────────────────────────────── */
-.nera-ticket-dialog__footer {
-  padding: 12px 18px 18px;
-  border-top: 1px solid #f1f5f9;
-  flex-shrink: 0;
-  background: #fff;
-}
-
-.nera-ticket-dialog__confirm-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  width: 100%;
-  padding: 14px 20px;
-  background: var(--color-primary);
-  color: #fff;
-  font-weight: 700;
-  font-size: 0.95rem;
-  border-radius: 12px;
-  border: none;
-  cursor: pointer;
-  transition: background 0.15s, transform 0.12s, box-shadow 0.15s;
-  box-shadow: 0 4px 16px color-mix(in srgb, var(--color-primary) 30%, transparent);
-}
-
-.nera-ticket-dialog__confirm-btn:hover {
-  background: color-mix(in srgb, var(--color-primary) 85%, black);
-  transform: translateY(-1px);
-  box-shadow: 0 6px 20px color-mix(in srgb, var(--color-primary) 40%, transparent);
-}
-
-.nera-ticket-dialog__confirm-count {
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 999px;
-  padding: 2px 10px;
-  font-size: 0.75rem;
-  font-weight: 700;
-}
-
-/* ── Strip plugin-injected margins ─────────────────────────────── */
-.lty-lottery-ticket-container {
-  margin: 0 !important;
-}
-
-.lty-lottery-ticket-panel,
-.lty-lottery-ticket-wrapper {
-  @apply m-0;
-}
-
-/* ── Lucky-dip / search wrappers ────────────────────────────────── */
-.lty-lucky-dip-wrapper,
-.lty-manual-ticket-search-wrapper {
-  @apply mb-2 flex-shrink-0;
 }
 
 /* ==========================================================================
@@ -2129,175 +827,6 @@ body h6 {
   @apply !min-w-5 !h-5 !w-auto !px-1.5 !flex !items-center !justify-center !leading-none;
 }
 
-/* ============================================
-   Toast Notification System
-   ============================================ */
-
-/* Container */
-.nera-toast-container {
-  @apply fixed top-20 right-6 z-[9999] flex flex-col gap-3 max-w-[420px] pointer-events-none;
-}
-
-.nera-toast-container > * {
-  @apply pointer-events-auto;
-}
-
-/* Toast card base */
-.nera-toast {
-  @apply bg-surface rounded-lg border border-gray-200 p-4 flex gap-3 items-start min-h-[64px] max-w-[420px] relative overflow-hidden opacity-0 translate-x-full;
-  box-shadow: 0 10px 40px -10px rgba(13, 13, 27, 0.15);
-}
-
-/* Type-specific borders */
-.nera-toast--success {
-  @apply border-l-4 border-l-success;
-}
-
-.nera-toast--error {
-  @apply border-l-4 border-l-danger;
-}
-
-.nera-toast--warning {
-  @apply border-l-4 border-l-warning;
-}
-
-.nera-toast--info {
-  @apply border-l-4 border-l-info;
-}
-
-/* Icon */
-.nera-toast__icon {
-  @apply shrink-0 w-6 h-6 flex items-center justify-center;
-}
-
-.nera-toast__icon .material-symbols-outlined {
-  @apply text-2xl;
-}
-
-.nera-toast--success .nera-toast__icon {
-  @apply text-success;
-}
-
-.nera-toast--error .nera-toast__icon {
-  @apply text-danger;
-}
-
-.nera-toast--warning .nera-toast__icon {
-  @apply text-warning;
-}
-
-.nera-toast--info .nera-toast__icon {
-  @apply text-info;
-}
-
-/* Content */
-.nera-toast__content {
-  @apply flex-1 min-w-0;
-}
-
-.nera-toast__message {
-  @apply text-text-primary text-sm leading-normal font-medium break-words;
-}
-
-/* Action button */
-.nera-toast__action {
-  @apply mt-2;
-}
-
-.nera-toast__action button {
-  @apply text-[13px] font-semibold text-primary px-3 py-1 rounded-md transition-colors duration-200;
-}
-
-.nera-toast__action button:hover {
-  @apply bg-secondary;
-}
-
-/* Close button */
-.nera-toast__close {
-  @apply shrink-0 w-6 h-6 flex items-center justify-center text-text-secondary cursor-pointer rounded-sm transition-all duration-200;
-}
-
-.nera-toast__close:hover {
-  @apply text-text-primary bg-gray-100;
-}
-
-.nera-toast__close:focus {
-  @apply outline-2 outline-primary outline-offset-2;
-}
-
-.nera-toast__close .material-symbols-outlined {
-  @apply text-[20px];
-}
-
-/* Progress bar — background: currentColor and animation have no TW equivalent */
-.nera-toast__progress {
-  @apply absolute bottom-0 left-0 h-[3px] opacity-30 bg-current animate-[progress-countdown_linear_forwards];
-}
-
-.nera-toast:hover .nera-toast__progress {
-  @apply [animation-play-state:paused];
-}
-
-/* Toast animation keyframes */
-@keyframes slide-in-right {
-  from {
-    opacity: 0;
-    transform: translateX(100%);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-@keyframes slide-out-right {
-  from {
-    opacity: 1;
-    transform: translateX(0);
-  }
-
-  to {
-    opacity: 0;
-    transform: translateX(calc(100% + 24px));
-  }
-}
-
-@keyframes progress-countdown {
-  from {
-    width: 100%;
-  }
-
-  to {
-    width: 0%;
-  }
-}
-
-/* Animation states */
-.nera-toast--entering {
-  animation: slide-in-right 300ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-.nera-toast--exiting {
-  animation: slide-out-right 200ms cubic-bezier(0.7, 0, 0.84, 0) forwards;
-}
-
-/* Swipe gesture feedback */
-.nera-toast--swiping {
-  @apply transition-transform duration-100 ease-out cursor-grab;
-}
-
-/* Toast Responsive */
-@media (max-width: 640px) {
-  .nera-toast-container {
-    @apply left-4 right-4 max-w-none top-[70px];
-  }
-
-  .nera-toast {
-    @apply w-full max-w-none;
-  }
-}
-
 /* Alpine.js x-collapse Animation Enhancement */
 [x-cloak] {
   @apply hidden;
@@ -2311,273 +840,254 @@ body h6 {
   overflow: hidden;
 }
 
-/* =================================================================
-   Winners Modal Styles
-   ================================================================= */
-
-/* Modal Backdrop with Blur */
-.winners-modal-backdrop {
-  backdrop-filter: blur(4px);
-}
-
-/* Smooth scrollbar for winners list */
-.winners-modal-list {
-  scrollbar-width: thin;
-  scrollbar-color: #cbd5e1 #f1f5f9;
-}
-
-.winners-modal-list::-webkit-scrollbar {
-  width: 8px;
-}
-
-.winners-modal-list::-webkit-scrollbar-track {
-  background: #f1f5f9;
-  border-radius: 4px;
-}
-
-.winners-modal-list::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
-  border-radius: 4px;
-}
-
-.winners-modal-list::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
-}
-
-/* Spin To Win side lists custom scrollbar */
-.stw-side-scrollbar {
-  scrollbar-width: thin;
-  scrollbar-color: #cbd5e1 #f8fafc;
-}
-
-.stw-side-scrollbar::-webkit-scrollbar {
-  width: 8px;
-}
-
-.stw-side-scrollbar::-webkit-scrollbar-track {
-  background: #f8fafc;
-  border-radius: 9999px;
-}
-
-.stw-side-scrollbar::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
-  border-radius: 9999px;
-  border: 2px solid #f8fafc;
-}
-
-.stw-side-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
-}
-
-/* Winner item hover effect */
-.winners-modal-list > div > div {
-  @apply transition-all duration-200;
-}
-
-/* Mobile responsive adjustments for modal */
-@media (max-width: 640px) {
-  .winners-modal-list {
-    @apply max-h-[calc(80vh-100px)];
-  }
-}
-
-/* =================================================================
-   Login Page Styles
-   ================================================================= */
-
-/* Remove all padding/margin and ensure gray background on login page */
-body.woocommerce-account.logged-out #content,
-body.woocommerce-account.logged-out .site-content,
-body.woocommerce-account.logged-out .site-main,
-body.woocommerce-account.logged-out #primary,
-body.woocommerce-account.logged-out .content-area,
-body.woocommerce-account.logged-out article,
-body.woocommerce-account.logged-out .prose {
-  padding: 0 !important;
-  margin: 0 !important;
-}
-
-body.woocommerce-account.logged-out #content,
-body.woocommerce-account.logged-out .site-main,
-body.woocommerce-account.logged-out #primary {
-  background-color: #f9fafb !important; /* gray-50 - ensure gray, not white */
-}
-
-/* Override global max-w-7xl so the full-bleed hero can reach the viewport edges */
-body.woocommerce-account.logged-out #primary,
-body.woocommerce-account.logged-out .site-main {
-  max-width: none !important;
-  width: 100% !important;
-}
-
-/* Override lg breakpoint padding - base rule uses lg:pt-12 lg:pb-12 */
-@media (min-width: 64rem) {
-  body.woocommerce-account.logged-out #primary,
-  body.woocommerce-account.logged-out .site-main {
-    padding-top: 0 !important;
-    padding-bottom: 0 !important;
-  }
-}
-
-/* Ensure login page takes full width and removes grid layout */
-body.woocommerce-account.logged-out .woocommerce {
-  @apply max-w-none;
-  display: block !important;
-  grid-template-columns: unset !important;
-  gap: unset !important;
-}
-
-/* Hide page title on My Account page (both logged-in and logged-out) */
-body.woocommerce-account article > header.mb-8,
-body.woocommerce-account .entry-header,
-body.woocommerce-account .page-header {
-  @apply hidden;
-}
-
-/* Override WooCommerce form border on My Account login page */
-body.woocommerce-account .woocommerce form.login,
-body.woocommerce-account .woocommerce form.woocommerce-form-login {
-  border: none !important;
-  padding: 0;
-  margin: 0;
-}
-
-/* Style for screen reader only class */
-.sr-only {
-  @apply absolute w-px h-px p-0 -m-px overflow-hidden whitespace-nowrap border-0;
-  clip: rect(0, 0, 0, 0);
-}
-
-/* ============================================
-   Entry List — Lottery for WooCommerce
-   ============================================ */
-
-.lty-data-table-wrapper,
-.lty-ticket-logs-wrapper {
-  border: none !important;
-  border-radius: 0 !important;
-  padding: 0 !important;
-  box-shadow: none !important;
-}
-
-.lty-ticket-logs-table.shop_table {
-  border: none !important;
-  border-radius: 0 !important;
-  margin: 0 !important;
-}
-
-.lty-ticket-logs-table td,
-.lty-winner-logs-table td {
-  @apply px-4 py-3 text-sm text-text-primary;
-}
-
-.lty-ticket-logs-table tr:hover td,
-.lty-winner-logs-table tr:hover td {
-  @apply bg-secondary;
-  transition: background-color 0.15s ease;
-}
-
-.lty-ticket-logs-table td[data-title='Ticket Number'],
-.lty-winner-logs-table td[data-title='Ticket Number'] {
-  @apply font-mono font-bold text-primary;
-}
-
-/* Plugin status badge — theme colours */
-.lty-entry-list-status .lty-lottery-status,
-.lty-status-badge .lty-lottery-status {
-  @apply inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold;
-  background-color: var(--color-secondary);
-  color: var(--color-primary);
-  border: 1px solid var(--color-gray-200);
-}
-
-/* Pagination inside entry list */
-.lty-page-btn {
-  @apply inline-flex h-8 w-8 items-center justify-center rounded-lg border border-gray-200 bg-surface text-sm font-medium text-text-primary no-underline transition-colors;
-}
-
-.lty-page-btn:hover {
-  @apply border-gray-200 bg-secondary text-text-primary;
-}
-
-.lty-page-btn--active,
-.lty-page-btn.current {
-  @apply border-primary bg-primary font-bold text-white;
-}
-
-.lty-page-dot {
-  @apply inline-flex h-8 w-8 items-center justify-center text-sm text-text-secondary;
-}
-
-/* Ticket list expand/collapse */
-.ncs-ticket-expand > summary::-webkit-details-marker,
-.ncs-ticket-expand > summary::marker { display: none; content: ''; }
-.ncs-ticket-expand__chevron { display: inline-block; transition: transform 0.2s ease; }
-.ncs-ticket-expand[open] .ncs-ticket-expand__chevron { transform: rotate(180deg); }
-
-/* Dashed separator under PDF row — flex layout, no plugin floats (overrides frontend.css load order) */
-.lty-entry-list-summary-content-wrapper .lty-entry-list-header-wrapper {
-  float: none !important;
-  display: flex !important;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: flex-end;
-  width: 100%;
-  padding-bottom: 0.75rem;
-  margin-bottom: 1rem;
-  border-bottom: 1px dashed var(--color-gray-300);
-}
-
 /* ==========================================================================
-   Nera Attribution Page (page-templates/nera-marketing-attribution.php)
-   Pseudo-element and state-based styles that have no Tailwind equivalent.
-   All colours reference CSS variables so they flex with brand preset changes.
+   Component Knob API — .ncs-* BEM hooks (Phase 1 — Groups 1A–1F)
+   Each rule declares --ncs-<component>-<property> custom properties with
+   defaults that reproduce the current token-based paint.
+   Child themes override these in :root or body.* scope — no !important needed.
+   See EXTENDING.md § Component Knob Reference for the full token contract.
    ========================================================================== */
 
-/* Hero badge — pulsing dot via ::before pseudo-element */
-.nera-attr-badge::before {
-  content: '';
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--color-primary);
-  flex-shrink: 0;
-  animation: nera-attr-pulse-dot 2s ease-in-out infinite;
+/* ─────────────────────────────────────────────────────────────────────────
+   Group 1A — Hero
+   Template: template-parts/homepage/hero-section.php
+   ──────────────────────────────────────────────────────────────────────── */
+
+.ncs-hero {
+  --ncs-hero-bg: linear-gradient(to bottom right, #ffffff, var(--color-gray-50), var(--color-secondary));
+  --ncs-hero-text: var(--color-text-primary);
+  --ncs-hero-text-secondary: var(--color-text-secondary);
+  --ncs-hero-eyebrow: var(--color-accent);
+  --ncs-hero-cta-bg: var(--color-primary);
+  --ncs-hero-cta-text: var(--color-on-primary);
+  --ncs-hero-cta-bg-hover: var(--color-primary-dark);
+
+  background: var(--ncs-hero-bg);
+  color: var(--ncs-hero-text);
 }
 
-@keyframes nera-attr-pulse-dot {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50%       { opacity: 0.4; transform: scale(0.75); }
+.ncs-hero__title {
+  color: var(--ncs-hero-text);
 }
 
-/* Pillar card — accent top-border that sweeps in on hover */
-.nera-attr-pillar::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 3px;
-  background: var(--color-primary);
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform 0.3s ease;
+.ncs-hero__eyebrow {
+  color: var(--ncs-hero-eyebrow);
 }
 
-.nera-attr-pillar:hover::before {
-  transform: scaleX(1);
+/* ─────────────────────────────────────────────────────────────────────────
+   Group 1B — Product Card
+   Template: template-parts/product-listing/product-card.php
+   ──────────────────────────────────────────────────────────────────────── */
+
+.ncs-product-card {
+  --ncs-product-card-bg: var(--color-surface);
+  --ncs-product-card-border: var(--color-gray-100);
+  --ncs-product-card-border-hover: var(--color-primary);
+  --ncs-product-card-title: var(--color-text-primary);
+  --ncs-product-card-price: var(--color-primary);
+  --ncs-product-card-media-bg: var(--color-gray-50);
+
+  background-color: var(--ncs-product-card-bg);
+  border-color: var(--ncs-product-card-border);
 }
 
-/* FAQ accordion — icon and open/close state handled by AlpineJS :class bindings.
-   Only the SVG transition lives here (animation property, no @apply equivalent). */
-.nera-attr-faq-icon svg {
-  transition: transform 0.2s ease;
+.ncs-product-card:hover {
+  border-color: var(--ncs-product-card-border-hover);
 }
 
-/* ==========================================================================
-   End Nera Attribution Page styles
-   ========================================================================== */
+.ncs-product-card__title {
+  color: var(--ncs-product-card-title);
+}
 
-.lty-entry-list-summary-content-wrapper .lty-lottery-entry-list-pdf-download-button {
-  float: none !important;
+.ncs-product-card__price {
+  color: var(--ncs-product-card-price);
+}
+
+.ncs-product-card__media {
+  background-color: var(--ncs-product-card-media-bg);
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   Group 1C — Progress Bar, Countdown, Ticket Expand
+   Templates: template-parts/single-product/progress-bar.php, countdown-timer.php
+   (ticket-expand rules already exist above in this file)
+   ──────────────────────────────────────────────────────────────────────── */
+
+.ncs-progress {
+  --ncs-progress-track: var(--color-gray-200);
+  --ncs-progress-fill: var(--color-primary);
+  --ncs-progress-fill-urgent: var(--color-danger);
+  --ncs-progress-text: var(--color-text-secondary);
+}
+
+.ncs-progress__fill {
+  background-color: var(--ncs-progress-fill);
+}
+
+.ncs-countdown {
+  --ncs-countdown-cell-bg: var(--color-gray-100);
+  --ncs-countdown-cell-bg-urgent: color-mix(in srgb, var(--color-danger) 8%, var(--color-gray-100));
+  --ncs-countdown-value: var(--color-text-primary);
+  --ncs-countdown-value-urgent: var(--color-danger);
+  --ncs-countdown-label: var(--color-text-secondary);
+}
+
+.ncs-countdown .countdown-value-wrapper {
+  background-color: var(--ncs-countdown-cell-bg);
+}
+
+.ncs-countdown .countdown-value {
+  color: var(--ncs-countdown-value);
+}
+
+.ncs-countdown .countdown-label {
+  color: var(--ncs-countdown-label);
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   Group 1D — Cart Item, Payment Method, Wallet Balance
+   Templates: template-parts/cart/cart-item.php,
+              woocommerce/checkout/payment-method.php,
+              template-parts/checkout/wallet-balance.php
+   ──────────────────────────────────────────────────────────────────────── */
+
+.ncs-cart-item {
+  --ncs-cart-item-bg: var(--color-surface);
+  --ncs-cart-item-border: var(--color-gray-100);
+  --ncs-cart-item-border-hover: color-mix(in srgb, var(--color-primary) 20%, var(--color-gray-200));
+  --ncs-cart-item-title: var(--color-text-primary);
+  --ncs-cart-item-text-secondary: var(--color-text-secondary);
+  --ncs-cart-item-price: var(--color-primary);
+
+  background-color: var(--ncs-cart-item-bg);
+  border: 1px solid var(--ncs-cart-item-border);
+}
+
+.ncs-cart-item:hover {
+  border-color: var(--ncs-cart-item-border-hover);
+}
+
+.ncs-cart-item h3,
+.ncs-cart-item h3 a {
+  color: var(--ncs-cart-item-title);
+}
+
+.ncs-cart-item .text-text-secondary {
+  color: var(--ncs-cart-item-text-secondary);
+}
+
+/* .ncs-payment-method knobs — consumed by the .wc_payment_method rules above */
+.ncs-payment-method {
+  --ncs-payment-method-bg: var(--color-surface);
+  --ncs-payment-method-bg-hover: var(--color-surface);
+  --ncs-payment-method-bg-active: var(--color-surface);
+  --ncs-payment-method-bg-box: var(--color-surface);
+  --ncs-payment-method-border: var(--color-gray-200);
+  --ncs-payment-method-border-hover: var(--color-gray-300);
+  --ncs-payment-method-border-active: var(--color-gray-400);
+}
+
+.ncs-wallet-balance {
+  --ncs-wallet-balance-bg: color-mix(in srgb, var(--color-primary) 5%, transparent);
+  --ncs-wallet-balance-bg-end: var(--color-secondary);
+  --ncs-wallet-balance-border: color-mix(in srgb, var(--color-primary) 20%, transparent);
+  --ncs-wallet-balance-text: var(--color-text-primary);
+  --ncs-wallet-balance-text-secondary: var(--color-text-secondary);
+
+  background: linear-gradient(to bottom right, var(--ncs-wallet-balance-bg), var(--ncs-wallet-balance-bg-end));
+  border-color: var(--ncs-wallet-balance-border);
+  color: var(--ncs-wallet-balance-text);
+}
+
+.ncs-wallet-balance .text-text-primary {
+  color: var(--ncs-wallet-balance-text);
+}
+
+.ncs-wallet-balance .text-text-secondary {
+  color: var(--ncs-wallet-balance-text-secondary);
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   Group 1E — Dashboard Welcome, Stat Card, Order Status
+   Templates: woocommerce/myaccount/dashboard.php, orders.php, view-order.php
+   ──────────────────────────────────────────────────────────────────────── */
+
+.ncs-dashboard-welcome {
+  --ncs-dashboard-welcome-bg: linear-gradient(to bottom right, var(--color-primary), var(--color-primary), var(--color-primary-dark));
+  --ncs-dashboard-welcome-text: #ffffff;
+  --ncs-dashboard-welcome-shadow: 0 20px 25px -5px rgba(99, 102, 241, 0.3);
+
+  background: var(--ncs-dashboard-welcome-bg);
+  color: var(--ncs-dashboard-welcome-text);
+  box-shadow: var(--ncs-dashboard-welcome-shadow);
+}
+
+.ncs-stat-card {
+  --ncs-stat-card-bg: var(--color-surface);
+  --ncs-stat-card-border: var(--color-gray-100);
+  --ncs-stat-card-value: var(--color-gray-900);
+  --ncs-stat-card-label: var(--color-gray-600);
+  --ncs-stat-card-icon-bg: linear-gradient(to bottom right, var(--color-primary), var(--color-primary));
+
+  background-color: var(--ncs-stat-card-bg);
+  border-color: var(--ncs-stat-card-border);
+}
+
+.ncs-stat-card__icon {
+  background: var(--ncs-stat-card-icon-bg);
+}
+
+/* Base (fallback) + per-state modifier knobs */
+.ncs-order-status {
+  --ncs-order-status-bg: var(--color-gray-100);
+  --ncs-order-status-text: var(--color-gray-600);
+  --ncs-order-status-border: var(--color-gray-200);
+
+  background-color: var(--ncs-order-status-bg);
+  color: var(--ncs-order-status-text);
+  border-color: var(--ncs-order-status-border);
+}
+
+.ncs-order-status--processing {
+  --ncs-order-status-bg: var(--color-info-bg);
+  --ncs-order-status-text: var(--color-info-text);
+  --ncs-order-status-border: var(--color-info-border);
+}
+
+.ncs-order-status--completed {
+  --ncs-order-status-bg: var(--color-success-bg);
+  --ncs-order-status-text: var(--color-success-text);
+  --ncs-order-status-border: var(--color-success-border);
+}
+
+.ncs-order-status--pending,
+.ncs-order-status--on-hold {
+  --ncs-order-status-bg: var(--color-warning-bg);
+  --ncs-order-status-text: var(--color-warning-text);
+  --ncs-order-status-border: var(--color-warning-border);
+}
+
+.ncs-order-status--cancelled,
+.ncs-order-status--failed {
+  --ncs-order-status-bg: var(--color-danger-bg);
+  --ncs-order-status-text: var(--color-danger-text);
+  --ncs-order-status-border: var(--color-danger-border);
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   Group 1F — Site Footer
+   Template: template-parts/footer.php
+   ──────────────────────────────────────────────────────────────────────── */
+
+.ncs-site-footer {
+  --ncs-footer-bg: var(--color-surface);
+  --ncs-footer-border-top: var(--color-gray-200);
+  --ncs-footer-text: var(--color-text-secondary);
+  --ncs-footer-heading: var(--color-text-primary);
+  --ncs-footer-link: var(--color-text-secondary);
+  --ncs-footer-link-hover: var(--color-text-primary);
+
+  background-color: var(--ncs-footer-bg);
+  border-top-color: var(--ncs-footer-border-top);
+  color: var(--ncs-footer-text);
 }

@@ -542,6 +542,55 @@ function nera_enqueue_styles()
 add_action('wp_enqueue_scripts', 'nera_enqueue_styles', 15);
 
 /**
+ * Conditionally enqueue page-scoped CSS extracted from main.css.
+ * Each file loads only on the routes that need it.
+ */
+add_action('wp_enqueue_scripts', function () {
+  $css_dir = get_template_directory() . '/frontend/assets/css/';
+  $css_uri = get_template_directory_uri() . '/frontend/assets/css/';
+
+  if (is_singular('product') || nera_is_entry_list_archive()) {
+    $file = $css_dir . 'lottery-plugin.css';
+    wp_enqueue_style(
+      'nera-lottery-plugin',
+      $css_uri . 'lottery-plugin.css',
+      ['nera-style'],
+      file_exists($file) ? filemtime($file) : null
+    );
+  }
+
+  if (true) {
+    $file = $css_dir . 'winners-modal.css';
+    wp_enqueue_style(
+      'nera-winners-modal',
+      $css_uri . 'winners-modal.css',
+      ['nera-style'],
+      file_exists($file) ? filemtime($file) : null
+    );
+  }
+
+  if (get_query_var('nera_attribution')) {
+    $file = $css_dir . 'attribution.css';
+    wp_enqueue_style(
+      'nera-attribution',
+      $css_uri . 'attribution.css',
+      ['nera-style'],
+      file_exists($file) ? filemtime($file) : null
+    );
+  }
+
+  if (is_account_page() && !is_user_logged_in()) {
+    $file = $css_dir . 'account-login.css';
+    wp_enqueue_style(
+      'nera-account-login',
+      $css_uri . 'account-login.css',
+      ['nera-style'],
+      file_exists($file) ? filemtime($file) : null
+    );
+  }
+}, 20);
+
+/**
  * Disable WordPress global styles inline CSS
  * Prevents WordPress from injecting inline CSS that overrides Tailwind classes
  */

@@ -1,4 +1,4 @@
-<article class="group min-w-0 transition-all duration-400 ease-out"
+<article class="ncs-product-card group min-w-0 transition-all duration-400 ease-out"
   data-price="{{ data_attrs.price }}"
   data-end-date="{{ data_attrs.end_date }}"
   data-posted-date="{{ data_attrs.posted_date }}"
@@ -149,14 +149,14 @@
 
           {% if button_mode == 'ajax' %}
             <button
-              class="ncs-card-cta add-to-cart-btn inline-flex w-full min-h-[44px] items-center justify-center rounded-xl px-5 py-2.5 text-sm font-bold uppercase tracking-wide bg-primary hover:bg-primary-dark text-white shadow-sm hover:shadow-md transition-all duration-300 sm:w-auto sm:min-h-0 sm:ml-auto"
+              class="ncs-product-card__cta add-to-cart-btn inline-flex w-full min-h-[44px] items-center justify-center rounded-xl px-5 py-2.5 text-sm font-bold uppercase tracking-wide bg-primary hover:bg-primary-dark text-white shadow-sm hover:shadow-md transition-all duration-300 sm:w-auto sm:min-h-0 sm:ml-auto"
               data-product-id="{{ product_id }}"
               data-quantity="1">
               Buy Tickets
             </button>
           {% else %}
             <a href="{{ permalink }}"
-              class="ncs-card-cta inline-flex w-full min-h-[44px] items-center justify-center rounded-xl px-5 py-2.5 text-sm font-bold uppercase tracking-wide bg-primary hover:bg-primary-dark text-white shadow-sm hover:shadow-md transition-all duration-300 sm:w-auto sm:min-h-0 sm:ml-auto">
+              class="ncs-product-card__cta inline-flex w-full min-h-[44px] items-center justify-center rounded-xl px-5 py-2.5 text-sm font-bold uppercase tracking-wide bg-primary hover:bg-primary-dark text-white shadow-sm hover:shadow-md transition-all duration-300 sm:w-auto sm:min-h-0 sm:ml-auto">
               Buy Tickets
             </a>
           {% endif %}
@@ -182,13 +182,13 @@
           {% if button_variant == 'compact' %}
             <!-- compact CTA -->
             <a href="{{ permalink }}"
-              class="ncs-card-cta inline-flex w-full min-h-[44px] items-center justify-center rounded-lg px-4 py-2 text-xs font-extrabold uppercase tracking-wide transition-all duration-300 bg-primary/5 hover:bg-primary text-primary hover:text-white sm:w-auto sm:min-h-0 sm:ml-auto">
+              class="ncs-product-card__cta inline-flex w-full min-h-[44px] items-center justify-center rounded-lg px-4 py-2 text-xs font-extrabold uppercase tracking-wide transition-all duration-300 bg-primary/5 hover:bg-primary text-primary hover:text-white sm:w-auto sm:min-h-0 sm:ml-auto">
               ENTER
             </a>
           {% else %}
             <!-- full CTA (default) -->
             <a href="{{ permalink }}"
-              class="ncs-card-cta group/cta inline-flex w-full min-h-[44px] items-center justify-center gap-1.5 rounded-lg px-3 py-2 text-[11px] font-extrabold uppercase tracking-wide text-white shadow-md transition-all duration-300 hover:shadow-xl hover:scale-105 sm:w-auto sm:min-h-0 sm:px-5 sm:py-2.5 sm:text-xs sm:ml-auto"
+              class="ncs-product-card__cta group/cta inline-flex w-full min-h-[44px] items-center justify-center gap-1.5 rounded-lg px-3 py-2 text-[11px] font-extrabold uppercase tracking-wide text-white shadow-md transition-all duration-300 hover:shadow-xl hover:scale-105 sm:w-auto sm:min-h-0 sm:px-5 sm:py-2.5 sm:text-xs sm:ml-auto"
               style="background: linear-gradient(135deg, {{ accent_color }} 0%, {{ accent_color }} 100%);">
               <span>ENTER NOW</span>
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
