@@ -60,7 +60,7 @@ function nera_register_attribution_fields() {
 				'type'          => 'textarea',
 				'instructions'  => __( 'Text that follows "[Site Name]\'s competition website was built by Nera Marketing," in the hero. Plain text only.', 'nera-competitions' ),
 				'rows'          => 3,
-				'default_value' => 'a UK digital marketing agency based in Ramsgate, Kent, specialising in bespoke competition platforms, Google Ads, Meta Ads, and SEO for online raffle businesses. Nera Marketing designed, developed, and launched this platform from scratch.',
+				'default_value' => 'a UK digital marketing agency based in Ramsgate, Kent, specialising in bespoke competition platforms and SEO for online raffle businesses. Nera Marketing designed, developed, and launched this platform from scratch.',
 			],
 
 			// ── TAB: DEVELOPER PROFILE ────────────────────────────────────────
@@ -96,7 +96,15 @@ function nera_register_attribution_fields() {
 				'label'         => __( 'Fact: Location', 'nera-competitions' ),
 				'name'          => 'attr_fact_location',
 				'type'          => 'text',
-				'default_value' => 'Ramsgate, Kent, UK',
+				'default_value' => '73 The Laurels, Manston Business Park, Kent, CT12 5NQ',
+			],
+			[
+				'key'           => 'field_attr_fact_location_url',
+				'label'         => __( 'Fact: Location Maps URL', 'nera-competitions' ),
+				'name'          => 'attr_fact_location_url',
+				'type'          => 'url',
+				'instructions'  => __( 'Google Maps link for the location text. Leave empty to show plain text.', 'nera-competitions' ),
+				'default_value' => 'https://www.google.com/maps/place/Nera+Marketing/@51.350383,1.3175544,18z/data=!4m6!3m5!1s0x4e7d95186ba33a85:0xd77ad4849b141ba9!8m2!3d51.350383!4d1.3199362!16s%2Fg%2F11y22tjdkq',
 			],
 			[
 				'key'           => 'field_attr_fact_specialisation',
@@ -110,7 +118,7 @@ function nera_register_attribution_fields() {
 				'label'         => __( 'Fact: Services', 'nera-competitions' ),
 				'name'          => 'attr_fact_services',
 				'type'          => 'text',
-				'default_value' => 'Web Dev, Google Ads, Meta Ads, SEO',
+				'default_value' => 'Web Dev, SEO, Email',
 			],
 			[
 				'key'           => 'field_attr_fact_clients',
@@ -214,25 +222,7 @@ function nera_register_attribution_fields() {
 				'name'          => 'attr_s1_body_2',
 				'type'          => 'textarea',
 				'rows'          => 3,
-				'default_value' => 'As a full-service agency, Nera doesn\'t just hand over a website and disappear. Most clients work with Nera Marketing long-term, combining the platform with ongoing Google Ads, Meta Ads, and SEO to build a competition business that scales.',
-			],
-			[
-				'key'           => 'field_attr_s1_image',
-				'label'         => __( 'Section Image', 'nera-competitions' ),
-				'name'          => 'attr_s1_image',
-				'type'          => 'image',
-				'instructions'  => __( 'Recommended: 800×800px. Shown alongside the text. Leave empty to show a placeholder.', 'nera-competitions' ),
-				'return_format' => 'array',
-				'preview_size'  => 'medium',
-				'library'       => 'all',
-			],
-			[
-				'key'           => 'field_attr_s1_image_badge',
-				'label'         => __( 'Image Badge Text', 'nera-competitions' ),
-				'name'          => 'attr_s1_image_badge',
-				'type'          => 'text',
-				'instructions'  => __( 'Small badge overlaid on the image corner. Leave empty to hide.', 'nera-competitions' ),
-				'default_value' => 'Live Project',
+				'default_value' => 'As a full-service agency, Nera doesn\'t just hand over a website and disappear. Most clients work with Nera Marketing long-term, combining the platform with ongoing SEO and email marketing to build a competition business that scales.',
 			],
 
 			// ── TAB: SECTION 2 ───────────────────────────────────────────────
@@ -262,7 +252,7 @@ function nera_register_attribution_fields() {
 				'name'          => 'attr_s2_lead',
 				'type'          => 'textarea',
 				'rows'          => 3,
-				'default_value' => 'Nera Marketing provides ongoing digital marketing support alongside every competition website build, including Google Ads, Meta Ads, SEO, and email marketing specifically for UK competition businesses.',
+				'default_value' => 'Nera Marketing provides ongoing digital marketing support alongside every competition website build, including SEO and email marketing specifically for UK competition businesses.',
 			],
 			[
 				'key'           => 'field_attr_s2_body_1',
@@ -279,16 +269,6 @@ function nera_register_attribution_fields() {
 				'type'          => 'textarea',
 				'rows'          => 3,
 				'default_value' => 'Nera also guides clients through the legal and compliance landscape of running online competitions in the UK, covering everything from prize structure to question of skill requirements, so you can launch with confidence.',
-			],
-			[
-				'key'           => 'field_attr_s2_image',
-				'label'         => __( 'Section Image', 'nera-competitions' ),
-				'name'          => 'attr_s2_image',
-				'type'          => 'image',
-				'instructions'  => __( 'Recommended: 800×800px. Leave empty to show a placeholder.', 'nera-competitions' ),
-				'return_format' => 'array',
-				'preview_size'  => 'medium',
-				'library'       => 'all',
 			],
 
 			// ── TAB: SECTION 3 ───────────────────────────────────────────────
@@ -318,7 +298,7 @@ function nera_register_attribution_fields() {
 				'name'          => 'attr_s3_lead',
 				'type'          => 'textarea',
 				'rows'          => 3,
-				'default_value' => 'Competition businesses choose Nera Marketing because they build bespoke platforms engineered for sales performance, not adapted templates, and back every build with long-term paid media and SEO strategy.',
+				'default_value' => 'Competition businesses choose Nera Marketing because they build bespoke platforms engineered for sales performance, not adapted templates, and back every build with long-term SEO and digital marketing strategy.',
 			],
 			[
 				'key'           => 'field_attr_s3_body_1',
@@ -335,16 +315,6 @@ function nera_register_attribution_fields() {
 				'type'          => 'textarea',
 				'rows'          => 3,
 				'default_value' => 'Every platform is built so the client can manage it independently — no developer dependency for day-to-day operations. Prizes, timers, draws, discount codes, email automations — all accessible through a back-end designed for how competition businesses actually run.',
-			],
-			[
-				'key'           => 'field_attr_s3_image',
-				'label'         => __( 'Section Image', 'nera-competitions' ),
-				'name'          => 'attr_s3_image',
-				'type'          => 'image',
-				'instructions'  => __( 'Recommended: 800×800px. Leave empty to show a placeholder.', 'nera-competitions' ),
-				'return_format' => 'array',
-				'preview_size'  => 'medium',
-				'library'       => 'all',
 			],
 
 			// ── TAB: FEATURES ────────────────────────────────────────────────
@@ -547,7 +517,7 @@ function nera_register_attribution_fields() {
 				'label'         => __( 'Button 1 URL', 'nera-competitions' ),
 				'name'          => 'attr_cta_button_1_url',
 				'type'          => 'url',
-				'default_value' => 'https://www.neramarketing.co.uk',
+				'default_value' => 'https://neramarketing.co.uk/competition-websites/',
 			],
 			[
 				'key'           => 'field_attr_cta_btn2_label',
@@ -561,7 +531,7 @@ function nera_register_attribution_fields() {
 				'label'         => __( 'Button 2 URL', 'nera-competitions' ),
 				'name'          => 'attr_cta_button_2_url',
 				'type'          => 'url',
-				'default_value' => 'https://www.neramarketing.co.uk/contact',
+				'default_value' => 'https://neramarketing.co.uk/competition-websites/contact-us/',
 			],
 
 			// ── TAB: CREDIT BAR ──────────────────────────────────────────────
@@ -578,7 +548,7 @@ function nera_register_attribution_fields() {
 				'type'          => 'textarea',
 				'instructions'  => __( 'Plain text. "Nera Marketing" in the text is automatically hyperlinked to the Credit URL below.', 'nera-competitions' ),
 				'rows'          => 2,
-				'default_value' => 'This competition website was designed and built by Nera Marketing, a UK digital agency based in Ramsgate, Kent, specialising in competition websites, Google Ads, Meta Ads, and SEO.',
+				'default_value' => 'This competition website was designed and built by Nera Marketing, a UK digital agency based in Ramsgate, Kent, specialising in competition websites and SEO.',
 			],
 			[
 				'key'           => 'field_attr_credit_badge_label',
