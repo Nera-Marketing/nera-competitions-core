@@ -125,20 +125,34 @@ $extra_images = max(0, count($gallery_images) - $visible_thumbs);
       <div class="max-w-7xl mx-auto flex w-full min-w-0 flex-col px-4 lg:px-8">
         <div class="grid w-full min-w-0 grid-cols-1 gap-8 lg:grid-cols-12 lg:gap-x-10 lg:gap-y-0">
 
-          <!-- 1. Product Gallery (mobile: row 1 | desktop: col 1-7 row 1) -->
-          <div class="bg-surface p-6 rounded-2xl lg:rounded-b-none lg:pb-4 lg:col-span-7 lg:row-start-1">
-            <?php get_template_part('template-parts/single-product/product-gallery', null, [
-              'images' => $gallery_images,
-              'product' => $product,
-              'badge_text' => nera_product_has_featured_tag($product)
-                ? __('Featured Prize', 'nera-competitions')
-                : '',
-              'badge_color' => 'red',
-            ]); ?>
+          <!-- Left column: gallery + tabs (contents on mobile, flex-col on desktop) -->
+          <div class="contents lg:flex lg:flex-col lg:col-span-7 lg:row-start-1 lg:self-start">
+
+            <!-- Product Gallery (mobile order 1) -->
+            <div class="order-1 bg-surface p-6 rounded-2xl lg:rounded-b-none lg:pb-4">
+              <?php get_template_part('template-parts/single-product/product-gallery', null, [
+                'images' => $gallery_images,
+                'product' => $product,
+                'badge_text' => nera_product_has_featured_tag($product)
+                  ? __('Featured Prize', 'nera-competitions')
+                  : '',
+                'badge_color' => 'red',
+              ]); ?>
+            </div>
+
+            <!-- Tabs Section (mobile order 3) -->
+            <div class="order-3 bg-surface p-6 rounded-2xl lg:rounded-t-none lg:pt-4">
+              <?php get_template_part('template-parts/single-product/tabs', null, [
+                'product' => $product,
+                'specifications' => $specifications,
+                'end_date_gmt' => $end_date_gmt,
+              ]); ?>
+            </div>
+
           </div>
 
-          <!-- 2. Product Details / Purchase Card (mobile: row 2 | desktop: col 8-12 rows 1-2) -->
-          <div class="lg:col-start-8 lg:col-span-5 lg:row-start-1 lg:row-span-2 lg:self-start">
+          <!-- Product Details / Purchase Card (mobile order 2 | desktop col 8-12) -->
+          <div class="order-2 lg:order-none lg:col-start-8 lg:col-span-5 lg:row-start-1 lg:self-start">
             <?php get_template_part('template-parts/single-product/purchase-card', null, [
               'product' => $product,
               'countdown' => $countdown,
@@ -154,15 +168,6 @@ $extra_images = max(0, count($gallery_images) - $visible_thumbs);
               'qa_can_display' => $qa_can_display,
               'cart_answer_id' => $cart_answer_id,
               'is_expired' => $is_expired,
-            ]); ?>
-          </div>
-
-          <!-- 3. Tabs Section (mobile: row 3 | desktop: col 1-7 row 2) -->
-          <div class="bg-surface p-6 rounded-2xl lg:rounded-t-none lg:pt-4 lg:col-span-7 lg:row-start-2">
-            <?php get_template_part('template-parts/single-product/tabs', null, [
-              'product' => $product,
-              'specifications' => $specifications,
-              'end_date_gmt' => $end_date_gmt,
             ]); ?>
           </div>
 
