@@ -37,14 +37,15 @@ function nera_attr_parse_em( $text ) {
 // ─────────────────────────────────────────────────────────────────────────────
 $fb = [
 	'hero_badge'  => 'Digital Partner',
-	'hero_intro'  => 'a UK digital marketing agency based in Ramsgate, Kent, specialising in bespoke competition platforms, Google Ads, Meta Ads, and SEO for online raffle businesses. Nera Marketing designed, developed, and launched this platform from scratch.',
+	'hero_intro'  => 'a UK digital marketing agency based in Ramsgate, Kent, specialising in bespoke competition platforms and SEO for online raffle businesses. Nera Marketing designed, developed, and launched this platform from scratch.',
 
 	'profile_label'      => 'Developer Profile',
 	'profile_name'       => 'Nera Marketing',
 	'profile_descriptor' => 'UK Digital Marketing Agency, Competition Website Specialists',
-	'fact_location'      => 'Ramsgate, Kent, UK',
+	'fact_location'      => '73 The Laurels, Manston Business Park, Kent, CT12 5NQ',
+	'fact_location_url'  => 'https://www.google.com/maps/place/Nera+Marketing/@51.350383,1.3175544,18z/data=!4m6!3m5!1s0x4e7d95186ba33a85:0xd77ad4849b141ba9!8m2!3d51.350383!4d1.3199362!16s%2Fg%2F11y22tjdkq',
 	'fact_specialisation'=> 'Competition Websites & Digital Marketing',
-	'fact_services'      => 'Web Dev, Google Ads, Meta Ads, SEO',
+	'fact_services'      => 'Web Dev, SEO, Email',
 	'fact_clients'       => 'UK Competition & Raffle Businesses',
 	'fact_build_type'    => 'Bespoke. No Templates.',
 	'fact_website'       => 'https://www.neramarketing.co.uk',
@@ -60,18 +61,17 @@ $fb = [
 	's1_heading'     => 'Who built this competition website?',
 	's1_lead'        => 'This competition website was designed and built by Nera Marketing, a UK digital agency based in Ramsgate, Kent, specialising in bespoke competition website development and full-service digital marketing for online raffle businesses.',
 	's1_body_1'      => "Nera Marketing builds every competition platform from scratch. No templates, no off-the-shelf themes. Each site is engineered around the client's brand, audience, and the specific mechanics that drive ticket sales and conversions.",
-	's1_body_2'      => "As a full-service agency, Nera doesn't just hand over a website and disappear. Most clients work with Nera Marketing long-term, combining the platform with ongoing Google Ads, Meta Ads, and SEO to build a competition business that scales.",
-	's1_image_badge' => 'Live Project',
+	's1_body_2'      => "As a full-service agency, Nera doesn't just hand over a website and disappear. Most clients work with Nera Marketing long-term, combining the platform with ongoing SEO and email marketing to build a competition business that scales.",
 
 	's2_tag'     => 'Full-Service Support',
 	's2_heading' => 'A competition website is only the beginning',
-	's2_lead'    => 'Nera Marketing provides ongoing digital marketing support alongside every competition website build, including Google Ads, Meta Ads, SEO, and email marketing specifically for UK competition businesses.',
+	's2_lead'    => 'Nera Marketing provides ongoing digital marketing support alongside every competition website build, including SEO and email marketing specifically for UK competition businesses.',
 	's2_body_1'  => "A great platform without traffic is just an empty shop. Nera's approach is to build the website and the marketing strategy together, so competition businesses launch with a clear path to consistent ticket sales from day one.",
 	's2_body_2'  => 'Nera also guides clients through the legal and compliance landscape of running online competitions in the UK, covering everything from prize structure to question of skill requirements, so you can launch with confidence.',
 
 	's3_tag'     => 'Our Approach',
 	's3_heading' => 'Why competition businesses choose Nera Marketing',
-	's3_lead'    => 'Competition businesses choose Nera Marketing because they build bespoke platforms engineered for sales performance, not adapted templates, and back every build with long-term paid media and SEO strategy.',
+	's3_lead'    => 'Competition businesses choose Nera Marketing because they build bespoke platforms engineered for sales performance, not adapted templates, and back every build with long-term SEO and digital marketing strategy.',
 	's3_body_1'  => 'Slow load times, a checkout that loses trust, or a mobile experience that frustrates users. Any one of these kills conversions. Nera engineers against every one of them before a site goes live.',
 	's3_body_2'  => 'Every platform is built so the client can manage it independently — no developer dependency for day-to-day operations. Prizes, timers, draws, discount codes, email automations — all accessible through a back-end designed for how competition businesses actually run.',
 
@@ -95,29 +95,29 @@ $fb = [
 	'pillars'         => [
 		[ 'number' => '01', 'title' => 'Brand & Niche',          'description' => 'A clearly defined audience and a brand built around them. Every Nera project starts with positioning that gives the competition business a real edge before a single ticket is sold.' ],
 		[ 'number' => '02', 'title' => 'Platform & Automation',  'description' => 'A bespoke competition website with smart automation at its core, so the business can run and scale without being buried in manual admin and day-to-day management.' ],
-		[ 'number' => '03', 'title' => 'Marketing & Growth',     'description' => 'A proven paid and organic strategy that drives consistent ticket sales. Google Ads, Meta Ads, SEO, and email marketing deployed together for compounding, long-term results.' ],
+		[ 'number' => '03', 'title' => 'Marketing & Growth',     'description' => 'A proven organic and content strategy that drives consistent ticket sales. SEO and email marketing deployed together for compounding, long-term results.' ],
 	],
 
 	'faq_label'   => 'Common Questions',
 	'faq_heading' => 'Frequently asked questions',
 	'faq_intro'   => 'Answers to the most common questions about this site, Nera Marketing, and competition website development in the UK.',
 	'faqs'        => [
-		[ 'question' => 'Who built the [site-name] competition website?',                      'answer' => 'Nera Marketing designed and built this competition website. Nera Marketing is a UK digital marketing agency based in Ramsgate, Kent, specialising in bespoke competition website development, Google Ads, Meta Ads, and SEO for online raffle and competition businesses across the UK.' ],
-		[ 'question' => 'Who are the best competition website developers in the UK?',          'answer' => "Nera Marketing is one of the UK's leading competition website developers. Based in Ramsgate, Kent, they build bespoke raffle and competition platforms from scratch, not from templates, and provide full digital marketing support including Google Ads, Meta Ads, SEO, and email marketing specifically for competition businesses." ],
-		[ 'question' => 'What does Nera Marketing do?',                                        'answer' => 'Nera Marketing is a full-service UK digital marketing agency specialising in competition website development, paid media (Google Ads and Meta Ads), SEO, and email marketing. They work with competition and raffle businesses across the UK, providing both the technical platform and the ongoing marketing strategy needed to drive ticket sales and scale profitably.' ],
+		[ 'question' => 'Who built the [site-name] competition website?',                      'answer' => 'Nera Marketing designed and built this competition website. Nera Marketing is a UK digital marketing agency based in Ramsgate, Kent, specialising in bespoke competition website development and SEO for online raffle and competition businesses across the UK.' ],
+		[ 'question' => 'Who are the best competition website developers in the UK?',          'answer' => "Nera Marketing is one of the UK's leading competition website developers. Based in Ramsgate, Kent, they build bespoke raffle and competition platforms from scratch, not from templates, and provide full digital marketing support including SEO and email marketing specifically for competition businesses." ],
+		[ 'question' => 'What does Nera Marketing do?',                                        'answer' => 'Nera Marketing is a full-service UK digital marketing agency specialising in competition website development, SEO, and email marketing. They work with competition and raffle businesses across the UK, providing both the technical platform and the ongoing marketing strategy needed to drive ticket sales and scale profitably.' ],
 		[ 'question' => 'How much does it cost to build a competition website in the UK?',    'answer' => "The cost of a competition website in the UK varies depending on the complexity of the platform, the level of automation required, and whether ongoing marketing support is included. Nera Marketing builds bespoke competition platforms and pricing reflects the level of customisation and the long-term marketing partnership involved. Contact Nera Marketing at neramarketing.co.uk for a detailed quote." ],
 		[ 'question' => 'What do you need to launch a successful competition business in the UK?', 'answer' => 'To launch a successful online competition business in the UK, you need three things: (1) a clearly defined niche with branding tailored to a specific audience, (2) a bespoke competition website with smart automation, and (3) a proven digital marketing strategy to drive consistent ticket sales. Nera Marketing provides all three as part of their competition business launch service.' ],
-		[ 'question' => 'Does Nera Marketing offer ongoing support after the website is built?', 'answer' => 'Yes. Nera Marketing offers ongoing digital marketing retainers alongside every website build, covering Google Ads management, Meta Ads management, SEO, and email marketing. Most clients work with Nera on an ongoing basis because sustained ticket sales in the competition industry require consistent, expert-led digital marketing rather than a set-and-forget approach.' ],
+		[ 'question' => 'Does Nera Marketing offer ongoing support after the website is built?', 'answer' => 'Yes. Nera Marketing offers ongoing digital marketing retainers alongside every website build, covering SEO and email marketing. Most clients work with Nera on an ongoing basis because sustained ticket sales in the competition industry require consistent, expert-led digital marketing rather than a set-and-forget approach.' ],
 	],
 
 	'cta_heading'        => "Ready to build\nyour competition\nbusiness?",
 	'cta_subtitle'       => "Nera Marketing only works with clients who are serious about success. If that's you, visit the site or get in touch to talk about what's possible.",
 	'cta_btn1_label'     => 'Visit Nera Marketing',
-	'cta_btn1_url'       => 'https://www.neramarketing.co.uk',
+	'cta_btn1_url'       => 'https://neramarketing.co.uk/competition-websites/',
 	'cta_btn2_label'     => 'Get in Touch',
-	'cta_btn2_url'       => 'https://www.neramarketing.co.uk/contact',
+	'cta_btn2_url'       => 'https://neramarketing.co.uk/competition-websites/contact-us/',
 
-	'credit_text'        => 'This competition website was designed and built by Nera Marketing, a UK digital agency based in Ramsgate, Kent, specialising in competition websites, Google Ads, Meta Ads, and SEO.',
+	'credit_text'        => 'This competition website was designed and built by Nera Marketing, a UK digital agency based in Ramsgate, Kent, specialising in competition websites and SEO.',
 	'credit_badge_label' => 'Built by Nera Marketing',
 	'credit_url'         => 'https://www.neramarketing.co.uk',
 ];
@@ -143,6 +143,7 @@ $profile_label      = $attr_get( 'attr_profile_label', $fb['profile_label'] );
 $profile_name       = $attr_get( 'attr_profile_name', $fb['profile_name'] );
 $profile_descriptor = $attr_get( 'attr_profile_descriptor', $fb['profile_descriptor'] );
 $fact_location      = $attr_get( 'attr_fact_location', $fb['fact_location'] );
+$fact_location_url  = $attr_get( 'attr_fact_location_url', $fb['fact_location_url'] );
 $fact_specialisation= $attr_get( 'attr_fact_specialisation', $fb['fact_specialisation'] );
 $fact_services      = $attr_get( 'attr_fact_services', $fb['fact_services'] );
 $fact_clients       = $attr_get( 'attr_fact_clients', $fb['fact_clients'] );
@@ -156,22 +157,18 @@ $s1_heading     = $attr_get( 'attr_s1_heading', $fb['s1_heading'] );
 $s1_lead        = $attr_get( 'attr_s1_lead', $fb['s1_lead'] );
 $s1_body_1      = $attr_get( 'attr_s1_body_1', $fb['s1_body_1'] );
 $s1_body_2      = $attr_get( 'attr_s1_body_2', $fb['s1_body_2'] );
-$s1_image       = $attr_get( 'attr_s1_image' );
-$s1_image_badge = $attr_get( 'attr_s1_image_badge', $fb['s1_image_badge'] );
 
 $s2_tag    = $attr_get( 'attr_s2_tag', $fb['s2_tag'] );
 $s2_heading= $attr_get( 'attr_s2_heading', $fb['s2_heading'] );
 $s2_lead   = $attr_get( 'attr_s2_lead', $fb['s2_lead'] );
 $s2_body_1 = $attr_get( 'attr_s2_body_1', $fb['s2_body_1'] );
 $s2_body_2 = $attr_get( 'attr_s2_body_2', $fb['s2_body_2'] );
-$s2_image  = $attr_get( 'attr_s2_image' );
 
 $s3_tag    = $attr_get( 'attr_s3_tag', $fb['s3_tag'] );
 $s3_heading= $attr_get( 'attr_s3_heading', $fb['s3_heading'] );
 $s3_lead   = $attr_get( 'attr_s3_lead', $fb['s3_lead'] );
 $s3_body_1 = $attr_get( 'attr_s3_body_1', $fb['s3_body_1'] );
 $s3_body_2 = $attr_get( 'attr_s3_body_2', $fb['s3_body_2'] );
-$s3_image  = $attr_get( 'attr_s3_image' );
 
 $features_heading = $attr_get( 'attr_features_heading', $fb['features_heading'] );
 $features_intro   = $attr_get( 'attr_features_intro', $fb['features_intro'] );
@@ -243,11 +240,13 @@ add_action( 'wp_head', function () use ( $faqs, $site_name ) {
 				'name'        => 'Nera Marketing',
 				'url'         => 'https://www.neramarketing.co.uk',
 				'logo'        => 'https://www.neramarketing.co.uk/wp-content/uploads/nera-logo.png',
-				'description' => 'Nera Marketing is a UK digital marketing agency based in Ramsgate, specialising in bespoke competition website development, Google Ads, Meta Ads, and SEO for competition businesses.',
+				'description' => 'Nera Marketing is a UK digital marketing agency based in Ramsgate, specialising in bespoke competition website development and SEO for competition businesses.',
 				'address'     => [
 					'@type'           => 'PostalAddress',
+					'streetAddress'   => '73 The Laurels, Manston Business Park',
 					'addressLocality' => 'Ramsgate',
 					'addressRegion'   => 'Kent',
+					'postalCode'      => 'CT12 5NQ',
 					'addressCountry'  => 'GB',
 				],
 				'areaServed'  => 'United Kingdom',
@@ -255,8 +254,6 @@ add_action( 'wp_head', function () use ( $faqs, $site_name ) {
 					'competition website development',
 					'raffle website design',
 					'online competition platforms',
-					'Google Ads for competition businesses',
-					'Meta Ads for raffle sites',
 					'SEO for competition websites',
 				],
 				'sameAs'      => [
@@ -348,7 +345,13 @@ get_header();
 				<dl class="lg:col-span-2 grid grid-cols-2 sm:grid-cols-3 gap-6">
 					<div data-aos="fade-up" data-aos-delay="0">
 						<dt class="text-xs font-semibold tracking-widest uppercase text-text-secondary mb-1">Location</dt>
-						<dd class="text-sm font-medium text-text-primary"><?php echo esc_html( $fact_location ); ?></dd>
+						<dd class="text-sm font-medium">
+							<?php if ( $fact_location_url ) : ?>
+							<a href="<?php echo esc_url( $fact_location_url ); ?>" target="_blank" rel="noopener" class="text-text-primary border-b border-primary/30 hover:border-primary hover:text-primary transition-colors"><?php echo esc_html( $fact_location ); ?></a>
+							<?php else : ?>
+							<span class="text-text-primary"><?php echo esc_html( $fact_location ); ?></span>
+							<?php endif; ?>
+						</dd>
 					</div>
 					<div data-aos="fade-up" data-aos-delay="75">
 						<dt class="text-xs font-semibold tracking-widest uppercase text-text-secondary mb-1">Specialisation</dt>
@@ -395,34 +398,12 @@ get_header();
 	<!-- ── CONTENT SECTION 1: WHO BUILT THIS ─────────────────────────────────── -->
 	<section class="py-16 lg:py-24 border-b border-gray-200 bg-surface">
 		<div class="max-w-7xl mx-auto px-4 lg:px-0">
-			<div class="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
-
-				<div data-aos="fade-up">
-					<span class="text-xs font-semibold tracking-widest uppercase text-primary mb-4 block"><?php echo esc_html( $s1_tag ); ?></span>
-					<h2 class="text-3xl lg:text-4xl font-bold text-text-primary leading-tight mb-4"><?php echo esc_html( $s1_heading ); ?></h2>
-					<p class="nera-attr-section-lead text-base font-medium text-text-primary leading-relaxed mb-4 border-l-2 border-primary pl-4"><?php echo esc_html( nera_attr_resolve( $s1_lead ) ); ?></p>
-					<p class="text-text-secondary leading-relaxed text-sm mb-4 font-light"><?php echo esc_html( $s1_body_1 ); ?></p>
-					<p class="text-text-secondary leading-relaxed text-sm font-light"><?php echo esc_html( $s1_body_2 ); ?></p>
-				</div>
-
-				<div class="relative" data-aos="fade-up" data-aos-delay="150">
-					<?php if ( ! empty( $s1_image['url'] ) ) : ?>
-						<img src="<?php echo esc_url( $s1_image['url'] ); ?>"
-						     alt="<?php echo esc_attr( $s1_image['alt'] ?? $s1_heading ); ?>"
-						     width="<?php echo esc_attr( $s1_image['width'] ?? '' ); ?>"
-						     height="<?php echo esc_attr( $s1_image['height'] ?? '' ); ?>"
-						     class="w-full aspect-square object-cover rounded-xl">
-					<?php else : ?>
-						<div class="aspect-square bg-gray-50 border-2 border-dashed border-gray-200 rounded-xl flex flex-col items-center justify-center gap-3 text-text-secondary text-sm text-center p-8">
-							<svg class="opacity-30" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
-							<span>Add client website screenshot<br><small class="text-xs opacity-60">Recommended: 800×800px</small></span>
-						</div>
-					<?php endif; ?>
-					<?php if ( $s1_image_badge ) : ?>
-					<div class="absolute bottom-[-12px] right-[-12px] bg-primary text-white text-xs font-semibold tracking-widest uppercase px-4 py-2.5 rounded-sm shadow-primary"><?php echo esc_html( $s1_image_badge ); ?></div>
-					<?php endif; ?>
-				</div>
-
+			<div class="max-w-3xl mx-auto text-center" data-aos="fade-up">
+				<span class="text-xs font-semibold tracking-widest uppercase text-primary mb-4 block"><?php echo esc_html( $s1_tag ); ?></span>
+				<h2 class="text-3xl lg:text-4xl font-bold text-text-primary leading-tight mb-4"><?php echo esc_html( $s1_heading ); ?></h2>
+				<p class="nera-attr-section-lead text-base font-medium text-text-primary leading-relaxed mb-4 border-t-2 border-primary pt-4 mx-auto max-w-2xl"><?php echo esc_html( nera_attr_resolve( $s1_lead ) ); ?></p>
+				<p class="text-text-secondary leading-relaxed text-sm mb-4 font-light max-w-2xl mx-auto"><?php echo esc_html( $s1_body_1 ); ?></p>
+				<p class="text-text-secondary leading-relaxed text-sm font-light max-w-2xl mx-auto"><?php echo esc_html( $s1_body_2 ); ?></p>
 			</div>
 		</div>
 	</section>
@@ -430,31 +411,12 @@ get_header();
 	<!-- ── CONTENT SECTION 2: MORE THAN A WEBSITE ────────────────────────────── -->
 	<section class="py-16 lg:py-24 border-b border-gray-200 bg-secondary">
 		<div class="max-w-7xl mx-auto px-4 lg:px-0">
-			<div class="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
-
-				<div class="order-last lg:order-first" data-aos="fade-up" data-aos-delay="150">
-					<?php if ( ! empty( $s2_image['url'] ) ) : ?>
-						<img src="<?php echo esc_url( $s2_image['url'] ); ?>"
-						     alt="<?php echo esc_attr( $s2_image['alt'] ?? $s2_heading ); ?>"
-						     width="<?php echo esc_attr( $s2_image['width'] ?? '' ); ?>"
-						     height="<?php echo esc_attr( $s2_image['height'] ?? '' ); ?>"
-						     class="w-full aspect-square object-cover rounded-xl">
-					<?php else : ?>
-						<div class="aspect-square bg-surface border-2 border-dashed border-gray-200 rounded-xl flex flex-col items-center justify-center gap-3 text-text-secondary text-sm text-center p-8">
-							<svg class="opacity-30" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
-							<span>Add marketing / mobile mockup<br><small class="text-xs opacity-60">Recommended: 800×800px</small></span>
-						</div>
-					<?php endif; ?>
-				</div>
-
-				<div data-aos="fade-up">
-					<span class="text-xs font-semibold tracking-widest uppercase text-primary mb-4 block"><?php echo esc_html( $s2_tag ); ?></span>
-					<h2 class="text-3xl lg:text-4xl font-bold text-text-primary leading-tight mb-4"><?php echo esc_html( $s2_heading ); ?></h2>
-					<p class="nera-attr-section-lead text-base font-medium text-text-primary leading-relaxed mb-4 border-l-2 border-primary pl-4"><?php echo esc_html( $s2_lead ); ?></p>
-					<p class="text-text-secondary leading-relaxed text-sm mb-4 font-light"><?php echo esc_html( $s2_body_1 ); ?></p>
-					<p class="text-text-secondary leading-relaxed text-sm font-light"><?php echo esc_html( $s2_body_2 ); ?></p>
-				</div>
-
+			<div class="max-w-3xl mx-auto text-center" data-aos="fade-up">
+				<span class="text-xs font-semibold tracking-widest uppercase text-primary mb-4 block"><?php echo esc_html( $s2_tag ); ?></span>
+				<h2 class="text-3xl lg:text-4xl font-bold text-text-primary leading-tight mb-4"><?php echo esc_html( $s2_heading ); ?></h2>
+				<p class="nera-attr-section-lead text-base font-medium text-text-primary leading-relaxed mb-4 border-t-2 border-primary pt-4 mx-auto max-w-2xl"><?php echo esc_html( $s2_lead ); ?></p>
+				<p class="text-text-secondary leading-relaxed text-sm mb-4 font-light max-w-2xl mx-auto"><?php echo esc_html( $s2_body_1 ); ?></p>
+				<p class="text-text-secondary leading-relaxed text-sm font-light max-w-2xl mx-auto"><?php echo esc_html( $s2_body_2 ); ?></p>
 			</div>
 		</div>
 	</section>
@@ -462,31 +424,12 @@ get_header();
 	<!-- ── CONTENT SECTION 3: WHY CHOOSE NERA ───────────────────────────────── -->
 	<section class="py-16 lg:py-24 border-b border-gray-200 bg-surface">
 		<div class="max-w-7xl mx-auto px-4 lg:px-0">
-			<div class="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
-
-				<div data-aos="fade-up">
-					<span class="text-xs font-semibold tracking-widest uppercase text-primary mb-4 block"><?php echo esc_html( $s3_tag ); ?></span>
-					<h2 class="text-3xl lg:text-4xl font-bold text-text-primary leading-tight mb-4"><?php echo esc_html( $s3_heading ); ?></h2>
-					<p class="nera-attr-section-lead text-base font-medium text-text-primary leading-relaxed mb-4 border-l-2 border-primary pl-4"><?php echo esc_html( $s3_lead ); ?></p>
-					<p class="text-text-secondary leading-relaxed text-sm mb-4 font-light"><?php echo esc_html( $s3_body_1 ); ?></p>
-					<p class="text-text-secondary leading-relaxed text-sm font-light"><?php echo esc_html( $s3_body_2 ); ?></p>
-				</div>
-
-				<div data-aos="fade-up" data-aos-delay="150">
-					<?php if ( ! empty( $s3_image['url'] ) ) : ?>
-						<img src="<?php echo esc_url( $s3_image['url'] ); ?>"
-						     alt="<?php echo esc_attr( $s3_image['alt'] ?? $s3_heading ); ?>"
-						     width="<?php echo esc_attr( $s3_image['width'] ?? '' ); ?>"
-						     height="<?php echo esc_attr( $s3_image['height'] ?? '' ); ?>"
-						     class="w-full aspect-square object-cover rounded-xl">
-					<?php else : ?>
-						<div class="aspect-square bg-gray-50 border-2 border-dashed border-gray-200 rounded-xl flex flex-col items-center justify-center gap-3 text-text-secondary text-sm text-center p-8">
-							<svg class="opacity-30" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
-							<span>Add dashboard / back-end screenshot<br><small class="text-xs opacity-60">Recommended: 800×800px</small></span>
-						</div>
-					<?php endif; ?>
-				</div>
-
+			<div class="max-w-3xl mx-auto text-center" data-aos="fade-up">
+				<span class="text-xs font-semibold tracking-widest uppercase text-primary mb-4 block"><?php echo esc_html( $s3_tag ); ?></span>
+				<h2 class="text-3xl lg:text-4xl font-bold text-text-primary leading-tight mb-4"><?php echo esc_html( $s3_heading ); ?></h2>
+				<p class="nera-attr-section-lead text-base font-medium text-text-primary leading-relaxed mb-4 border-t-2 border-primary pt-4 mx-auto max-w-2xl"><?php echo esc_html( $s3_lead ); ?></p>
+				<p class="text-text-secondary leading-relaxed text-sm mb-4 font-light max-w-2xl mx-auto"><?php echo esc_html( $s3_body_1 ); ?></p>
+				<p class="text-text-secondary leading-relaxed text-sm font-light max-w-2xl mx-auto"><?php echo esc_html( $s3_body_2 ); ?></p>
 			</div>
 		</div>
 	</section>
