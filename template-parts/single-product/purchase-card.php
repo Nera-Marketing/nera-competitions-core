@@ -41,24 +41,24 @@ $is_manual_ticket = method_exists($product, 'is_manual_ticket') ? $product->is_m
 
     <!-- Sold out: title + Tickets Sold progress only -->
     <div class="p-6 pb-4">
-      <?php nera_render_component('ProductTitle', ['name' => $product->get_name(), 'is_sold_out' => true]); ?>
+      <?php if (function_exists('nera_render_component')) { nera_render_component('ProductTitle', ['name' => $product->get_name(), 'is_sold_out' => true]); } ?>
     </div>
 
     <div class="px-6 pb-6">
-      <?php nera_render_component('TicketsProgress', [
+      <?php if (function_exists('nera_render_component')) { nera_render_component('TicketsProgress', [
         'sold'         => $sold_tickets,
         'max'          => $max_tickets,
         'progress'     => $progress,
         'remaining'    => $remaining,
         'is_low_stock' => $is_low_stock,
-      ]); ?>
+      ]); } ?>
     </div>
 
   <?php else: ?>
 
     <!-- Product Title -->
     <div class="p-6 pb-4">
-      <?php nera_render_component('ProductTitle', ['name' => $product->get_name(), 'is_sold_out' => false]); ?>
+      <?php if (function_exists('nera_render_component')) { nera_render_component('ProductTitle', ['name' => $product->get_name(), 'is_sold_out' => false]); } ?>
     </div>
 
     <!-- Countdown Section -->
@@ -70,34 +70,34 @@ $is_manual_ticket = method_exists($product, 'is_manual_ticket') ? $product->is_m
         $countdown_date_for_js = $product->get_countdown_timer_enddate();
       }
       ?>
-      <?php nera_render_component('CountdownTimer', [
+      <?php if (function_exists('nera_render_component')) { nera_render_component('CountdownTimer', [
         'countdown_date' => $countdown_date_for_js,
         'countdown'      => $countdown,
         'is_expired'     => $is_expired,
-      ]); ?>
+      ]); } ?>
     </div>
 
     <!-- Ticket Progress Section -->
     <div class="px-6 pb-6">
-      <?php nera_render_component('TicketsProgress', [
+      <?php if (function_exists('nera_render_component')) { nera_render_component('TicketsProgress', [
         'sold'         => $sold_tickets,
         'max'          => $max_tickets,
         'progress'     => $progress,
         'remaining'    => $remaining,
         'is_low_stock' => $is_low_stock,
-      ]); ?>
+      ]); } ?>
     </div>
 
     <!-- Ticket Price & Quantity -->
     <div class="px-6 pb-6">
-      <?php nera_render_component('TicketPrice', ['price' => $price]); ?>
+      <?php if (function_exists('nera_render_component')) { nera_render_component('TicketPrice', ['price' => $price]); } ?>
       <?php if ($is_manual_ticket): ?>
         <?php do_action('woocommerce_before_add_to_cart_button'); ?>
       <?php else: ?>
-        <?php nera_render_component('QuantitySelector', [
+        <?php if (function_exists('nera_render_component')) { nera_render_component('QuantitySelector', [
           'min' => $lottery_data['minPerOrder'] ?? 1,
           'max' => $lottery_data['maxPerOrder'] ?: $remaining,
-        ]); ?>
+        ]); } ?>
       <?php endif; ?>
     </div>
 
@@ -285,23 +285,23 @@ $is_manual_ticket = method_exists($product, 'is_manual_ticket') ? $product->is_m
           method="post" enctype='multipart/form-data'>
 
           <?php if ($has_qa): ?>
-            <?php nera_render_component('SkillQuestionAnswer', [
+            <?php if (function_exists('nera_render_component')) { nera_render_component('SkillQuestionAnswer', [
               'question_text'  => $questions[0]['question'] ?? '',
               'answers'        => $questions[0]['answers'] ?? [],
               'cart_answer_id' => $cart_answer_id,
               'qa_can_display' => $qa_can_display,
-            ]); ?>
+            ]); } ?>
           <?php endif; ?>
 
           <?php if (!$is_manual_ticket): ?>
             <input type="hidden" name="quantity" value="1" data-quantity-hidden />
           <?php endif; ?>
 
-          <?php nera_render_component('AddToCartButton', [
+          <?php if (function_exists('nera_render_component')) { nera_render_component('AddToCartButton', [
             'product_id'       => $product_id,
             'is_expired'       => $is_expired,
             'is_manual_ticket' => $is_manual_ticket,
-          ]); ?>
+          ]); } ?>
 
         </form>
       </div>
@@ -321,7 +321,7 @@ $is_manual_ticket = method_exists($product, 'is_manual_ticket') ? $product->is_m
 
     <!-- Trust Badges -->
     <div class="px-6 pb-6">
-      <?php nera_render_component('TrustBadges', []); ?>
+      <?php if (function_exists('nera_render_component')) { nera_render_component('TrustBadges', []); } ?>
     </div>
 
   <?php endif; ?>

@@ -100,6 +100,10 @@ function nera_render_component(string $name, array $args = []): void
     $data = apply_filters("nera_component_data_{$name}", $data, $args);
     $data = apply_filters('nera_component_data', $data, $name, $args);
 
+    if (!class_exists('\\Timber\\Timber')) {
+        return;
+    }
+
     \Timber\Timber::render($template, $data);
 }
 
