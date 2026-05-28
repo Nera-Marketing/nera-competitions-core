@@ -2,7 +2,6 @@
 
 namespace Timber;
 
-use Throwable;
 use Timber\Image\Operation;
 
 /**
@@ -142,7 +141,7 @@ class ImageHelper
             return false;
         }
         // Its a gif so test
-        if (!\file_exists($file) || !($fh = \fopen($file, 'rb'))) {
+        if (!($fh = @\fopen($file, 'rb'))) {
             return false;
         }
         $count = 0;
@@ -302,7 +301,8 @@ class ImageHelper
     public static function _delete_generated_if_image($post_id)
     {
         if (\wp_attachment_is_image($post_id)) {
-            $attachment = Timber::get_attachment($post_id);
+            $attachment = Timber::get_post($post_id);
+            /** @var Attachment $attachment */
             if ($file_loc = $attachment->file_loc()) {
                 ImageHelper::delete_generated_files($file_loc);
             }
@@ -453,6 +453,7 @@ class ImageHelper
         }
         // Download file to temp location
         if (!\function_exists('download_url')) {
+            // @phpstan-ignore requireOnce.fileNotFound
             require_once ABSPATH . '/wp-admin/includes/file.php';
         }
         $tmp = \download_url($file);
@@ -874,13 +875,8 @@ class ImageHelper
          */
         $destination_path = \apply_filters('timber/image/new_path', $destination_path);
 
-        if (!\file_exists($source_path)) {
-            Helper::error_log('Image operation: source file does not exist: ' . $source_path);
-            return $src;
-        }
-
         // if already exists...
-        if (\file_exists($destination_path)) {
+        if (\file_exists($source_path) && \file_exists($destination_path)) {
             if ($force || \filemtime($source_path) > \filemtime($destination_path)) {
                 // Force operation - warning: will regenerate the image on every pageload, use for testing purposes only!
                 \unlink($destination_path);
@@ -890,26 +886,15 @@ class ImageHelper
             }
         }
         // otherwise generate result file
-        try {
-            if ($op->run($source_path, $destination_path)) {
-                if ($op::class === Operation\Resize::class && $external) {
-                    $new_url = \strtolower((string) $new_url);
-                }
-                return $new_url;
+        if ($op->run($source_path, $destination_path)) {
+            if ($op::class === Operation\Resize::class && $external) {
+                $new_url = \strtolower((string) $new_url);
             }
-        } catch (Throwable $e) {
-            if (\defined('WP_DEBUG') && WP_DEBUG) {
-                throw $e;
-            }
-            Helper::error_log(\sprintf(
-                'Image operation %s failed for %s: %s',
-                $op::class,
-                $source_path,
-                $e->getMessage()
-            ));
+            return $new_url;
+        } else {
+            // in case of error, we return source file itself
+            return $src;
         }
-        // in case of error, we return source file itself
-        return $src;
     }
 
     //-- the below methods are just used for

@@ -79,7 +79,7 @@ class Retina extends ImageOperation
             Helper::error_log('Error loading ' . $image->error_data['error_loading_image']);
             return false;
         }
-        Helper::error_log('Error creating retina image: ' . $load_filename);
+        Helper::error_log($image);
         return false;
     }
 }

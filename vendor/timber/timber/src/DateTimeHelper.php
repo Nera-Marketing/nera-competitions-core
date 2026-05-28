@@ -40,10 +40,10 @@ class DateTimeHelper
             $timestamp = \time();
         } elseif ($date instanceof DateTimeInterface) {
             $timestamp = $date->getTimestamp();
-        } elseif (\is_numeric($date) && (\strtotime((string) $date) === false || \strlen((string) $date) !== 8)) {
+        } elseif (\is_numeric($date) && (\strtotime($date) === false || \strlen($date) !== 8)) {
             $timestamp = \intval($date);
         } else {
-            $timestamp = \strtotime((string) $date);
+            $timestamp = \strtotime($date);
         }
 
         if (\is_string($timezone)) {

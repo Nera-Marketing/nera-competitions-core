@@ -3,8 +3,8 @@ Contributors: nera
 Tags: competition, giveaway, lottery, woocommerce
 Requires at least: 6.0
 Tested up to: 6.8
-Requires PHP: 7.4
-Stable tag: 1.0.17
+Requires PHP: 8.1
+Stable tag: 1.0.18
 License: GPLv2 or later
 
 Premium competition and giveaway theme for WooCommerce, with Tailwind-powered front-end assets.
@@ -20,6 +20,10 @@ Nera Competitions Standard is built for competition and lottery sites: product t
 3. Run `yarn build` or `npm run build` in `frontend/` and `lty-result-screens/` after pulling updates that change assets.
 
 == Changelog ==
+
+= 1.0.18 =
+* Fix — Pin `timber/timber` to `^2.3.3 <2.4` for PHP 8.1 hosts (Timber 2.4+ requires PHP 8.2); Composer platform set to 8.1.10 so `vendor/` loads without platform_check fatal on Laragon and similar stacks.
+* Updated: `readme.txt` Requires PHP aligned with `style.css` (8.1).
 
 = 1.0.17 =
 * Updated: Nera Marketing attribution page — template and ACF field refactor (`page-templates/nera-marketing-attribution.php`, `inc/acf/attribution/acf-attribution.php`).

@@ -12,7 +12,6 @@ use WP_Post;
  *
  * @see get_pages()
  *
- * @phpstan-consistent-constructor
  * @api
  * @since 2.0.0
  */
@@ -123,7 +122,7 @@ class PagesMenu extends Menu
 
         if (!empty($menu_items)) {
             $menu_items = \array_map([$pages_menu, 'pre_setup_nav_menu_item'], $menu_items);
-            $menu_items = \array_map(wp_setup_nav_menu_item(...), $menu_items);
+            $menu_items = \array_map('wp_setup_nav_menu_item', $menu_items);
 
             /**
              * Can’t really apply the "wp_get_nav_menu_items" filter here, because we don’t have a
@@ -206,14 +205,10 @@ class PagesMenu extends Menu
      */
     protected function pre_setup_nav_menu_item($post)
     {
-        // @phpstan-ignore property.notFound
         $post->object_id = $post->ID;
-        // @phpstan-ignore property.notFound
         $post->menu_item_parent = $post->post_parent;
-        // @phpstan-ignore property.notFound
         $post->object = $post->post_type;
         $post->post_type = 'nav_menu_item';
-        // @phpstan-ignore property.notFound
         $post->type = 'post_type';
 
         return $post;

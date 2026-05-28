@@ -13,69 +13,39 @@ use WP_Term_Query;
  */
 class TermFactory
 {
-    public function from($params, array $options = [])
+    public function from($params)
     {
-        $options = \wp_parse_args($options, [
-            'merge' => true,
-        ]);
-
-        // Single term by ID.
-        if (\is_int($params) || (\is_string($params) && \is_numeric($params))) {
+        if (\is_int($params) || \is_string($params) && \is_numeric($params)) {
             return $this->from_id((int) $params);
         }
 
-        // Non-query object (WP_Term, CoreInterface).
-        if (\is_object($params) && !($params instanceof WP_Term_Query)) {
-            return $this->from_term_object($params);
-        }
-
-        // Flat list of individual term IDs or objects.
-        if ($this->is_numeric_array($params) && !$this->is_array_of_strings($params)) {
-            return \array_map([$this, 'from'], $params);
-        }
-
-        // All remaining cases (taxonomy name/s, WP_Term_Query, query args array) resolve
-        // to a list of terms that may be grouped by taxonomy.
-        [$result, $queryParams] = $this->resolve_to_term_list($params);
-
-        return $this->maybe_group_by_taxonomy($result, $queryParams, $options);
-    }
-
-    /**
-     * Resolves any list-producing input into a [terms, queryParams] pair.
-     *
-     * @param mixed $params The input to resolve.
-     * @return array The [terms, queryParams] pair.
-     */
-    private function resolve_to_term_list($params): array
-    {
-        // Single taxonomy name string.
         if (\is_string($params)) {
-            return [
-                $this->from_taxonomy_names([$params]),
-                [
-                    'taxonomy' => [$params],
-                ],
-            ];
+            return $this->from_taxonomy_names([$params]);
         }
 
         if ($params instanceof WP_Term_Query) {
-            return [$this->from_wp_term_query($params), $params];
+            return $this->from_wp_term_query($params);
         }
 
-        // Numeric array of taxonomy name strings, e.g. ['category', 'post_tag'].
-        if ($this->is_array_of_strings($params)) {
-            return [
-                $this->from_taxonomy_names($params),
-                [
-                    'taxonomy' => $params,
-                ],
-            ];
+        if (\is_object($params)) {
+            return $this->from_term_object($params);
         }
 
-        // Associative array of WP_Term_Query args.
-        $query = new WP_Term_Query($this->filter_query_params($params));
-        return [$this->from_wp_term_query($query), $params];
+        if ($this->is_numeric_array($params)) {
+            if ($this->is_array_of_strings($params)) {
+                return $this->from_taxonomy_names($params);
+            }
+
+            return \array_map([$this, 'from'], $params);
+        }
+
+        if (\is_array($params)) {
+            return $this->from_wp_term_query(new WP_Term_Query(
+                $this->filter_query_params($params)
+            ));
+        }
+
+        return null;
     }
 
     protected function from_id(int $id): ?Term
@@ -266,53 +236,5 @@ class TermFactory
             }
         }
         return true;
-    }
-
-    /**
-     * Groups results by taxonomy if merge is false and multiple taxonomies are present.
-     *
-     * @internal
-     * @param array $results The query results (term objects).
-     * @param mixed $params The original query parameters.
-     * @param array $options The options array containing the merge setting.
-     * @return array The results, either as-is or grouped by taxonomy.
-     */
-    protected function maybe_group_by_taxonomy($results, $params, array $options): mixed
-    {
-        if ($options['merge'] || !\is_array($results)) {
-            return $results;
-        }
-
-        // Group results by taxonomy
-        $grouped = [];
-        foreach ($results as $term) {
-            if ($term instanceof Term) {
-                $grouped[$term->taxonomy][] = $term;
-            }
-        }
-
-        // For WP_Term_Query objects, group by taxonomy without ordering
-        if ($params instanceof WP_Term_Query) {
-            return $grouped;
-        }
-
-        // Only group if we have multiple taxonomies
-        if (\count($grouped) <= 1) {
-            return $results;
-        }
-
-        // Sort by taxonomy order if explicitly specified in params
-        if (\is_array($params) && isset($params['taxonomy']) && \is_array($params['taxonomy'])) {
-            $ordered = [];
-            foreach ($params['taxonomy'] as $taxonomy) {
-                if (isset($grouped[$taxonomy])) {
-                    $ordered[$taxonomy] = $grouped[$taxonomy];
-                }
-            }
-            return $ordered;
-        }
-
-        // For simple arrays (term IDs, WP_Term objects, etc.), return flat
-        return $results;
     }
 }

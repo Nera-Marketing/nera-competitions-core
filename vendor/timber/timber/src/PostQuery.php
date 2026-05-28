@@ -22,7 +22,6 @@ use WP_Query;
 class PostQuery extends ArrayObject implements PostCollectionInterface, JsonSerializable
 {
     use AccessesPostsLazily;
-    use CollectsTerms;
 
     /**
      * Found posts.
@@ -92,7 +91,7 @@ class PostQuery extends ArrayObject implements PostCollectionInterface, JsonSeri
     /**
      * Get pagination for a post collection.
      *
-     * Refer to the [Pagination Guide](../../guides/pagination/) for a detailed usage example.
+     * Refer to the [Pagination Guide]({{< relref "../guides/pagination.md" >}}) for a detailed usage example.
      *
      * Optionally could be used to get pagination with custom preferences.
      *
@@ -127,21 +126,6 @@ class PostQuery extends ArrayObject implements PostCollectionInterface, JsonSeri
         }
 
         return $this->pagination;
-    }
-
-    /**
-     * Get the post types to use when determining which taxonomies to query.
-     *
-     * @internal
-     * @return array Array of post type slugs.
-     */
-    protected function get_post_types_for_term_query()
-    {
-        $post_types = $this->wp_query->query_vars['post_type'] ?? 'post';
-        if (\is_string($post_types)) {
-            $post_types = [$post_types];
-        }
-        return $post_types;
     }
 
     /**

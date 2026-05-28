@@ -4,7 +4,7 @@ parameters:
     paths:
         - src/
     scanFiles:
-        - phpstan/bootstrap.php
+        - tests/phpstan/bootstrap.php
         - vendor/php-stubs/wp-cli-stubs/wp-cli-stubs.php
     scanDirectories:
         - wp-content/plugins/advanced-custom-fields
