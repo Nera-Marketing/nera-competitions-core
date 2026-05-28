@@ -28,7 +28,7 @@
   NOTE: get_data() returns [] (empty) if the product can't be resolved — view renders nothing in that case (guarded by {% if product_id %}).
 #}
 {% if product_id %}
-<article class="ncs-product-card group min-w-0 rounded-xl sm:rounded-2xl overflow-hidden shadow-lg hover:-translate-y-1 hover:shadow-2xl transition-all duration-400 ease-out"
+<article class="ncs-product-card group min-w-0 transition-all duration-400 ease-out"
   data-price="{{ data_attrs.price }}"
   data-end-date="{{ data_attrs.end_date }}"
   data-posted-date="{{ data_attrs.posted_date }}"
@@ -41,7 +41,7 @@
 
   <!-- Card Inner Wrapper -->
   <div
-    class="bg-surface rounded-xl sm:rounded-2xl border border-gray-100 h-full flex flex-col transition-all duration-300 hover:border-gray-200">
+    class="bg-surface rounded-xl sm:rounded-2xl overflow-hidden shadow-lg border border-gray-100 h-full flex flex-col transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl hover:border-gray-200">
 
     <!-- Image Container -->
     <div class="relative aspect-5/3 sm:aspect-4/3 overflow-hidden bg-gray-100">
