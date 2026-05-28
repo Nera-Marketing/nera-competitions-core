@@ -21,9 +21,6 @@ $_w_description = function_exists('get_field') ? (string) get_field('winners_des
 ?>
 
 <main id="main" class="nera-winners-page bg-gray-50" role="main">
-    <?php if (nera_render_page_components()): ?>
-    <?php // page-components rendered via ACF Flexible Content ?>
-    <?php else: ?>
     <?php
     get_template_part('template-parts/components/shared/page-hero', null, [
         'title'         => $_w_title,
@@ -35,7 +32,6 @@ $_w_description = function_exists('get_field') ? (string) get_field('winners_des
     // Winners grid with filtering and pagination
     get_template_part('template-parts/winners/winners-grid');
     ?>
-    <?php endif; ?>
 </main>
 
 <?php get_footer();

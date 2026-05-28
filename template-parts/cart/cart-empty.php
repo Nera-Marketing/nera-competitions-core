@@ -25,7 +25,7 @@ if (!defined('ABSPATH')) {
         class="absolute inset-0 bg-gradient-to-tr from-primary to-primary rounded-full blur-xl opacity-20 group-hover:opacity-30 transition-opacity duration-500 animate-pulse-slow">
       </div>
       <div
-        class="relative w-20 h-20 bg-gradient-to-br from-surface to-gray-50 rounded-full flex items-center justify-center border border-gray-100 shadow-xl shadow-primary/10 animate-float">
+        class="relative w-20 h-20 bg-gradient-to-br from-white to-gray-50 rounded-full flex items-center justify-center border border-gray-100 shadow-xl shadow-primary/10 animate-float">
         <span
           class="material-symbols-outlined !text-2xl text-transparent bg-clip-text bg-gradient-to-br from-primary to-primary">shopping_cart_off</span>
       </div>

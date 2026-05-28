@@ -63,7 +63,7 @@ $alpine_config = [
         <?php if ($show_filters): ?>
             <div class="flex justify-center mb-12">
                 <div class="relative w-full md:hidden">
-                    <div class="absolute right-0 top-0 bottom-0 w-10 z-10 bg-gradient-to-l from-surface to-transparent pointer-events-none"></div>
+                    <div class="absolute right-0 top-0 bottom-0 w-10 z-10 bg-gradient-to-l from-white to-transparent pointer-events-none"></div>
                     <div x-ref="mobileScroll" class="flex gap-2 overflow-x-auto hide-scrollbar px-4 py-2">
                         <?php foreach ($filter_items as $item): ?>
                           <button

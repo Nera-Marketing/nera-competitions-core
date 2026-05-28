@@ -80,10 +80,10 @@ $total_prizes = $available_count + $won_count;
       </div>
 
       <div class="text-left">
-        <h3 class="text-lg font-bold text-text-primary mb-1 tracking-tight">
+        <h3 class="text-lg font-bold text-gray-900 mb-1 tracking-tight">
           <?php _e('Instant Win Prizes', 'nera-competitions'); ?>
         </h3>
-        <p class="text-sm text-text-secondary mb-0">
+        <p class="text-sm text-gray-600 mb-0">
           <?php printf(
             _n('%s prize available', '%s prizes available', $total_prizes, 'nera-competitions'),
             '<span class="font-semibold text-warning">' . $total_prizes . '</span>',
@@ -115,7 +115,7 @@ $total_prizes = $available_count + $won_count;
       </div>
 
       <!-- Expand/Collapse Arrow -->
-      <span class="toggle-arrow material-symbols-outlined text-text-secondary">
+      <span class="toggle-arrow material-symbols-outlined text-gray-600">
         expand_more
       </span>
     </div>

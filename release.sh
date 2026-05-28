@@ -81,20 +81,6 @@ for cmd in git grep sed; do
 done
 
 # ── 2. Build assets ───────────────────────────────────────────────────────────
-# Composer (Timber + PHP deps) — must run before zipping; Convesio host has no composer.
-if [ -f "$THEME_DIR/composer.json" ]; then
-  if ! command -v composer >/dev/null 2>&1; then
-    echo "ERROR: composer not found (required for Timber dependency)."
-    exit 1
-  fi
-  echo "▶ Installing PHP dependencies (composer, prod only)..."
-  ( cd "$THEME_DIR" && composer install --no-dev --optimize-autoloader --no-interaction )
-  if [ ! -f "$THEME_DIR/vendor/autoload.php" ]; then
-    echo "ERROR: vendor/autoload.php missing after composer install"
-    exit 1
-  fi
-fi
-
 if ! command -v npm >/dev/null 2>&1; then
   echo "ERROR: npm is not in PATH (required for frontend + lty-result-screens build)."
   exit 1
@@ -144,14 +130,14 @@ if sed --version >/dev/null 2>&1; then
   sed -i "s/^Version:.*/Version: ${VERSION}/" "$STYLE_CSS"
   sed -i "s/^Requires at least:.*/Requires at least: 6.0/" "$STYLE_CSS"
   sed -i "s/^Tested up to:.*/Tested up to: 6.8/" "$STYLE_CSS"
-  sed -i "s/^Requires PHP:.*/Requires PHP: 8.1/" "$STYLE_CSS"
+  sed -i "s/^Requires PHP:.*/Requires PHP: 7.4/" "$STYLE_CSS"
   sed -i "s/define('NERA_VERSION', '[^']*');/define('NERA_VERSION', '${VERSION}');/" "$FUNC_PHP"
   sed -i "s/^ \\* @version .*/ * @version ${VERSION}/" "$FUNC_PHP"
 else
   sed -i '' "s/^Version:.*/Version: ${VERSION}/" "$STYLE_CSS"
   sed -i '' "s/^Requires at least:.*/Requires at least: 6.0/" "$STYLE_CSS"
   sed -i '' "s/^Tested up to:.*/Tested up to: 6.8/" "$STYLE_CSS"
-  sed -i '' "s/^Requires PHP:.*/Requires PHP: 8.1/" "$STYLE_CSS"
+  sed -i '' "s/^Requires PHP:.*/Requires PHP: 7.4/" "$STYLE_CSS"
   sed -i '' "s/define('NERA_VERSION', '[^']*');/define('NERA_VERSION', '${VERSION}');/" "$FUNC_PHP"
   sed -i '' "s/^ \\* @version .*/ * @version ${VERSION}/" "$FUNC_PHP"
 fi

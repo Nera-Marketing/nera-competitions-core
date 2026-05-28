@@ -105,7 +105,7 @@
    */
   function initHoverEffects() {
     // Competition card hover effects
-    const cards = document.querySelectorAll('.ncs-product-card');
+    const cards = document.querySelectorAll('.competition-card');
 
     cards.forEach(function (card) {
       card.addEventListener('mouseenter', handleCardMouseEnter);

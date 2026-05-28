@@ -17,9 +17,6 @@ get_header();
 
 <main id="main" class="nera-winners-entry-list-page" role="main">
 
-  <?php if (nera_render_page_components()): ?>
-    <?php // page-components rendered via ACF Flexible Content ?>
-  <?php else: ?>
   <?php
   get_template_part('template-parts/winners-dynamic/hero-section');
   get_template_part('template-parts/winners-dynamic/winners-grid', null, [
@@ -28,7 +25,6 @@ get_header();
     'stack_layout'             => true,
   ]);
   ?>
-  <?php endif; ?>
 
 </main>
 

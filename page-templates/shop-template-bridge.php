@@ -21,9 +21,6 @@ $shop_page_id = wc_get_page_id('shop');
 
 <main id="main" class="nera-product-listing nera-shop-page" role="main">
 
-  <?php if (nera_render_page_components()): ?>
-    <?php // page-components rendered via ACF Flexible Content ?>
-  <?php else: ?>
   <?php
   // 1. Hero Section - Pass Shop Page ID to get title/tagline from the Shop page settings
   get_template_part('template-parts/product-listing/hero-section', null, [
@@ -39,7 +36,6 @@ $shop_page_id = wc_get_page_id('shop');
     'post_id' => $shop_page_id,
   ]);
   ?>
-  <?php endif; ?>
 
 </main>
 

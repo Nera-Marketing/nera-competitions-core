@@ -28,16 +28,6 @@ define('NERA_ASSETS_URI', NERA_URI . '/frontend/assets');
 define('NERA_ATTRIBUTION_ROUTE_SLUG', 'competition-website-by-nera-marketing');
 define('NERA_ATTRIBUTION_TEMPLATE_PATH', NERA_DIR . '/page-templates/nera-marketing-attribution.php');
 
-// Composer autoload + Timber
-$nera_autoload = __DIR__ . '/vendor/autoload.php';
-if (file_exists($nera_autoload)) {
-    require_once $nera_autoload;
-    Timber\Timber::init();
-    Timber::$dirname = ['Components', 'views', 'template-parts'];
-}
-
-require_once __DIR__ . '/lib/components.php';
-
 /**
  * GitHub theme updates (Plugin Update Checker v5.5). On by default when `lib/plugin-update-checker/load-v5p5.php` exists.
  *
@@ -542,55 +532,6 @@ function nera_enqueue_styles()
 add_action('wp_enqueue_scripts', 'nera_enqueue_styles', 15);
 
 /**
- * Conditionally enqueue page-scoped CSS extracted from main.css.
- * Each file loads only on the routes that need it.
- */
-add_action('wp_enqueue_scripts', function () {
-  $css_dir = get_template_directory() . '/frontend/assets/css/';
-  $css_uri = get_template_directory_uri() . '/frontend/assets/css/';
-
-  if (is_singular('product') || nera_is_entry_list_archive()) {
-    $file = $css_dir . 'lottery-plugin.css';
-    wp_enqueue_style(
-      'nera-lottery-plugin',
-      $css_uri . 'lottery-plugin.css',
-      ['nera-style'],
-      file_exists($file) ? filemtime($file) : null
-    );
-  }
-
-  if (true) {
-    $file = $css_dir . 'winners-modal.css';
-    wp_enqueue_style(
-      'nera-winners-modal',
-      $css_uri . 'winners-modal.css',
-      ['nera-style'],
-      file_exists($file) ? filemtime($file) : null
-    );
-  }
-
-  if (get_query_var('nera_attribution')) {
-    $file = $css_dir . 'attribution.css';
-    wp_enqueue_style(
-      'nera-attribution',
-      $css_uri . 'attribution.css',
-      ['nera-style'],
-      file_exists($file) ? filemtime($file) : null
-    );
-  }
-
-  if (is_account_page() && !is_user_logged_in()) {
-    $file = $css_dir . 'account-login.css';
-    wp_enqueue_style(
-      'nera-account-login',
-      $css_uri . 'account-login.css',
-      ['nera-style'],
-      file_exists($file) ? filemtime($file) : null
-    );
-  }
-}, 20);
-
-/**
  * Disable WordPress global styles inline CSS
  * Prevents WordPress from injecting inline CSS that overrides Tailwind classes
  */
@@ -710,15 +651,6 @@ function nera_enqueue_scripts()
     '3.14.1',
     true,
   );
-
-  // Flynt JS Islands data bridge — must run before main.js evaluates.
-  add_action('wp_head', function () {
-    $script_map = nera_get_components_with_script();
-    printf(
-      "<script>window.FlyntData = %s;</script>\n",
-      wp_json_encode(['componentsWithScript' => $script_map])
-    );
-  }, 1);
 
   // Vite/TailwindCSS assets
   if (nera_is_vite_dev_server_running()) {
@@ -1014,9 +946,6 @@ require_once get_template_directory() . '/inc/acf/attribution/acf-attribution.ph
 
 // Winners dataset helpers for server rendering
 require_once get_template_directory() . '/inc/helpers/winners-dataset.php';
-
-// Social icon helpers (shared by promo-banner and Twig components)
-require_once NERA_DIR . '/inc/helpers/social-icons.php';
 
 /**
  * Enqueue scripts and styles.
@@ -2229,21 +2158,3 @@ require_once get_template_directory() . '/inc/acf/footer/acf-footer.php';
 // This line disables all default WooCommerce stylesheets from loading on the frontend,
 // allowing the theme to control all styling. To re-enable default WooCommerce CSS, remove this filter.
 add_filter('woocommerce_enqueue_styles', '__return_empty_array');
-
-// ACF Flexible Content — 'Add Component' live search filter (admin only)
-add_action('admin_enqueue_scripts', function ($hook) {
-    if (!in_array($hook, ['post.php', 'post-new.php'], true)) {
-        return;
-    }
-    $file = get_template_directory() . '/assets/js/admin-page-components-search.js';
-    if (!file_exists($file)) {
-        return;
-    }
-    wp_enqueue_script(
-        'nera-admin-fc-search',
-        get_template_directory_uri() . '/assets/js/admin-page-components-search.js',
-        [],
-        filemtime($file),
-        true
-    );
-});

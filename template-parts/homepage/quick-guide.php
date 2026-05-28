@@ -52,7 +52,7 @@ if (empty($steps)) {
 }
 ?>
 
-<section class="quick-guide-section py-16 lg:py-24 bg-gradient-to-b from-surface to-gray-50" id="quick-guide"
+<section class="quick-guide-section py-16 lg:py-24 bg-gradient-to-b from-white to-gray-50" id="quick-guide"
   data-aos="fade-up">
   <div class="max-w-6xl mx-auto px-4 lg:px-8">
 

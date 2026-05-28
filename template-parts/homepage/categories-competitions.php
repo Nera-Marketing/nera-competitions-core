@@ -206,8 +206,8 @@ $category_icons = [
 
           // Pass arguments to the reusable component
           $card_args = [
-            'product_id'      => get_the_ID(),
-            'x_show'          => "activeCategory === 'all' || " . $cats_js_array . '.includes(activeCategory)',
+            'x_show' =>
+              "activeCategory === 'all' || " . $cats_js_array . '.includes(activeCategory)',
             'category_colors' => $category_colors,
           ];
           get_template_part('template-parts/components/competition-card', null, $card_args);

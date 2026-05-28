@@ -19,9 +19,6 @@ get_header();
 
 <main id="main" class="nera-product-listing" role="main">
 
-  <?php if (nera_render_page_components()): ?>
-    <?php // page-components rendered via ACF Flexible Content ?>
-  <?php else: ?>
   <?php
   // 1. Hero Section - Page title and tagline
   get_template_part('template-parts/product-listing/hero-section');
@@ -36,7 +33,6 @@ get_header();
   // 4. Trust Features - 3 trust badges
   get_template_part('template-parts/product-listing/trust-features');
   ?>
-  <?php endif; ?>
 
 </main>
 

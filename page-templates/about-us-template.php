@@ -42,10 +42,6 @@ $cta_secondary_url = get_field('about_cta_secondary_btn_url') ?: home_url('/cont
 
 <main id="main" class="nera-about-us-page bg-gray-50 text-text-primary" role="main">
 
-  <?php if (nera_render_page_components()): ?>
-    <?php // page-components rendered via ACF Flexible Content ?>
-  <?php else: ?>
-
   <section
     class="relative min-h-[70vh] flex items-center justify-center overflow-hidden py-16 lg:py-24 bg-gradient-to-br from-primary via-primary to-primary-dark"
     aria-labelledby="about-us-hero-heading">
@@ -103,7 +99,7 @@ $cta_secondary_url = get_field('about_cta_secondary_btn_url') ?: home_url('/cont
     </div>
   </section>
 
-  <section class="py-16 lg:py-24 border-y border-gray-200 bg-surface" aria-labelledby="about-us-narrative">
+  <section class="py-16 lg:py-24 border-y border-gray-200 bg-white" aria-labelledby="about-us-narrative">
     <div class="max-w-7xl mx-auto px-4 lg:px-0">
       <div id="about-us-narrative" class="sr-only"><?php esc_html_e('Our narrative', 'nera-competitions'); ?></div>
       <div data-aos="fade-up">
@@ -125,7 +121,7 @@ $cta_secondary_url = get_field('about_cta_secondary_btn_url') ?: home_url('/cont
     <div class="max-w-7xl mx-auto px-4 lg:px-0">
       <div class="grid md:grid-cols-2 gap-10 lg:gap-12">
         <div
-          class="bg-surface p-8 lg:p-12 rounded-3xl border border-gray-200 shadow-lg transition-all duration-300 hover:border-primary/25 hover:shadow-xl hover:-translate-y-0.5 group"
+          class="bg-white p-8 lg:p-12 rounded-3xl border border-gray-200 shadow-lg transition-all duration-300 hover:border-primary/25 hover:shadow-xl hover:-translate-y-0.5 group"
           data-aos="fade-right">
           <div class="flex items-center gap-4 mb-6">
             <div
@@ -146,7 +142,7 @@ $cta_secondary_url = get_field('about_cta_secondary_btn_url') ?: home_url('/cont
         </div>
 
         <div
-          class="bg-surface p-8 lg:p-12 rounded-3xl border border-gray-200 shadow-lg transition-all duration-300 hover:border-primary/25 hover:shadow-xl hover:-translate-y-0.5 group"
+          class="bg-white p-8 lg:p-12 rounded-3xl border border-gray-200 shadow-lg transition-all duration-300 hover:border-primary/25 hover:shadow-xl hover:-translate-y-0.5 group"
           data-aos="fade-left">
           <div class="flex items-center gap-4 mb-6">
             <div
@@ -169,7 +165,7 @@ $cta_secondary_url = get_field('about_cta_secondary_btn_url') ?: home_url('/cont
     </div>
   </section>
 
-  <section class="py-16 lg:py-24 text-center relative overflow-hidden bg-surface" aria-labelledby="about-us-cta-heading">
+  <section class="py-16 lg:py-24 text-center relative overflow-hidden bg-white" aria-labelledby="about-us-cta-heading">
     <div class="absolute inset-0 bg-gradient-to-b from-transparent via-primary/[0.04] to-transparent pointer-events-none"></div>
     <div class="max-w-3xl mx-auto px-4 lg:px-8 relative z-10" data-aos="zoom-in">
       <h2 id="about-us-cta-heading" class="font-heading text-3xl lg:text-4xl mb-6 text-text-primary">
@@ -192,8 +188,6 @@ $cta_secondary_url = get_field('about_cta_secondary_btn_url') ?: home_url('/cont
       </div>
     </div>
   </section>
-
-  <?php endif; ?>
 
 </main>
 

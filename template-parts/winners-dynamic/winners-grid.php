@@ -93,7 +93,6 @@ if ($include_entry_list_modal) {
       page: 1,
       hasMore: !!config.hasMore,
       loading: false,
-      isFiltering: false,
       counts: config.counts || { all: 0, main: 0, instant: 0 },
       showingCount: typeof config.showingCount === 'number' ? config.showingCount : 0,
       totalForActive: typeof config.totalForActive === 'number' ? config.totalForActive : 0,
@@ -171,7 +170,6 @@ if ($include_entry_list_modal) {
 
         const prev = this.activeFilter;
         this.loading = true;
-        this.isFiltering = true;
         this.activeFilter = filter;
 
         try {
@@ -183,7 +181,6 @@ if ($include_entry_list_modal) {
           this.activeFilter = prev;
         } finally {
           this.loading = false;
-          this.isFiltering = false;
         }
       },
 
@@ -288,44 +285,8 @@ if ($include_entry_list_modal) {
       </p>
 
       <div
-        x-show="isFiltering"
-        x-cloak
-        class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 <?php echo $stack_layout ? 'gap-2.5 sm:gap-4 lg:gap-6' : 'gap-3 sm:gap-6'; ?>"
-        aria-hidden="true"
-        aria-label="<?php esc_attr_e('Loading winners…', 'nera-competitions'); ?>"
-      >
-        <?php for ($i = 0; $i < 6; $i++) : ?>
-        <?php if ($stack_layout) : ?>
-        <div class="bg-surface rounded-[1.2rem] overflow-hidden border border-gray-100 flex flex-col">
-          <div class="aspect-5/3 bg-gray-200 animate-pulse"></div>
-          <div class="p-4 sm:p-6 flex flex-col gap-3">
-            <div class="h-5 bg-gray-200 animate-pulse rounded-lg w-3/4"></div>
-            <div class="h-3 bg-gray-200 animate-pulse rounded w-1/2"></div>
-            <div class="flex gap-2">
-              <div class="h-3 bg-gray-200 animate-pulse rounded w-1/4"></div>
-              <div class="h-3 bg-gray-200 animate-pulse rounded w-1/3"></div>
-            </div>
-            <div class="h-3 bg-gray-200 animate-pulse rounded w-2/3 pt-2 border-t border-gray-100"></div>
-            <div class="mt-auto h-10 bg-gray-200 animate-pulse rounded-xl w-full"></div>
-          </div>
-        </div>
-        <?php else : ?>
-        <div class="bg-surface rounded-2xl sm:rounded-3xl overflow-hidden border border-gray-100 flex flex-col sm:flex-row sm:items-stretch">
-          <div class="w-full min-h-[140px] sm:w-40 sm:min-h-[160px] bg-gray-200 animate-pulse shrink-0"></div>
-          <div class="p-4 sm:p-5 flex flex-col flex-1 gap-3 justify-center">
-            <div class="h-5 bg-gray-200 animate-pulse rounded-lg w-3/4"></div>
-            <div class="h-3 bg-gray-200 animate-pulse rounded w-1/2"></div>
-            <div class="h-3 bg-gray-200 animate-pulse rounded w-2/3"></div>
-            <div class="h-10 bg-gray-200 animate-pulse rounded-xl w-full mt-2"></div>
-          </div>
-        </div>
-        <?php endif; ?>
-        <?php endfor; ?>
-      </div>
-
-      <div
         x-ref="grid"
-        x-show="(showingCount > 0 || loading) && !isFiltering"
+        x-show="showingCount > 0 || loading"
         class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 <?php echo $stack_layout ? 'gap-2.5 sm:gap-4 lg:gap-6' : 'gap-3 sm:gap-6'; ?>"
       >
         <?php
