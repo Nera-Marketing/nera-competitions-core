@@ -104,56 +104,12 @@
    * Initialize hover effects
    */
   function initHoverEffects() {
-    // Competition card hover effects
-    const cards = document.querySelectorAll('.ncs-product-card');
-
-    cards.forEach(function (card) {
-      card.addEventListener('mouseenter', handleCardMouseEnter);
-      card.addEventListener('mouseleave', handleCardMouseLeave);
-      card.addEventListener('mousemove', handleCardMouseMove);
-    });
-
     // Button ripple effect
     const buttons = document.querySelectorAll('.btn');
 
     buttons.forEach(function (button) {
       button.addEventListener('click', createRipple);
     });
-  }
-
-  /**
-   * Card mouse enter handler
-   */
-  function handleCardMouseEnter(e) {
-    const card = e.currentTarget;
-    card.style.transition = 'transform 0.3s ease, box-shadow 0.3s ease';
-  }
-
-  /**
-   * Card mouse leave handler
-   */
-  function handleCardMouseLeave(e) {
-    const card = e.currentTarget;
-    card.style.transform = '';
-  }
-
-  /**
-   * Card mouse move handler for 3D tilt effect
-   */
-  function handleCardMouseMove(e) {
-    const card = e.currentTarget;
-    const rect = card.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-
-    const centerX = rect.width / 2;
-    const centerY = rect.height / 2;
-
-    const rotateX = (y - centerY) / 20;
-    const rotateY = (centerX - x) / 20;
-
-    // Subtle 3D effect
-    card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-8px)`;
   }
 
   /**
