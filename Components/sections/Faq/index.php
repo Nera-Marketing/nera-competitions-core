@@ -3,6 +3,17 @@ namespace Nera\Components\Faq;
 
 if (!defined('ABSPATH')) exit;
 
+/**
+ * @param array $args
+ * @return array{
+ *   title: string,          // required, default 'Frequently Asked Questions' — section heading
+ *   faqs: list<array{       // required, default 4-item list — accordion items
+ *     question: string,
+ *     answer: string,
+ *   }>,
+ *   contact_url: string,    // required, default '#' — link to contact page at bottom of section
+ * }
+ */
 function get_data(array $args = []): array
 {
     $default_faqs = [

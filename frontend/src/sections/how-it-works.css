@@ -80,7 +80,7 @@
 
 /* --- How It Works Section --- */
 .how-it-works-section {
-  --particle-color: rgba(99, 102, 241, 0.15);
+  --particle-color: color-mix(in srgb, var(--color-primary) 15%, transparent);
 }
 
 .how-it-works-particles .particle {

@@ -3,6 +3,20 @@ namespace Nera\Components\Testimonials;
 
 if (!defined('ABSPATH')) exit;
 
+/**
+ * @param array $args
+ * @return array{
+ *   title: string,       // required, default 'Stories of the Circle' — section heading
+ *   subtitle: string,    // required, default 'Step inside the lives…' — section subheading
+ *   list: list<array{    // required, default 2-item list — testimonial cards
+ *     name: string,
+ *     avatar: string,    // image URL or '' (fallback: initial shown)
+ *     quote: string,
+ *     prize: string,
+ *     initial: string,   // derived — first character of name, always present
+ *   }>,
+ * }
+ */
 function get_data(array $args = []): array
 {
     $default_list = [

@@ -3,6 +3,26 @@ namespace Nera\Components\HowItWorksHero;
 
 if (!defined('ABSPATH')) exit;
 
+/**
+ * @param array $args
+ * @return array{
+ *   title: string,           // required, default get_the_title() — esc_html page/section heading
+ *   subtitle: string,        // required, default 'Win your dream prizes in just 4 simple steps' — esc_html subheading
+ *   badge: string,           // required, default 'Simple & Fair' — esc_html badge text
+ *   steps: list<array{       // required, default 4-item list from nera_get_hiw_merged_hero_steps()
+ *     icon: string,          // trusted HTML — inline SVG or wp_get_attachment_image output
+ *     color: string,         // Tailwind gradient classes e.g. 'from-accent to-accent'
+ *     bg_color: string,      // Tailwind bg class e.g. 'bg-accent/10'
+ *     title: string,
+ *     description: string,
+ *     delay: int,            // animation delay in ms (index × 150)
+ *   }>,
+ *   cta_url: string,         // required, default WC shop permalink — esc_url CTA href
+ *   cta_button_text: string, // required, default 'Start Winning Today' — esc_html CTA label
+ *   cta_target: string,      // required, default '' — '_blank' or '' for rel/target attribute
+ *   cta_footer_text: string, // required, default 'Join thousands of winners…' — esc_html note below CTA
+ * }
+ */
 function get_data(array $args = []): array
 {
     $title    = nera_component_field($args, 'hero_title',    'hiw_hero_title',    get_the_title());

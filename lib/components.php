@@ -9,14 +9,32 @@
 if (!defined('ABSPATH')) exit;
 
 add_action('after_setup_theme', function () {
-    $components_dir = get_template_directory() . '/Components';
-    if (!is_dir($components_dir)) return;
+    $parent_dir = get_template_directory() . '/Components';
+    if (!is_dir($parent_dir)) return;
 
-    foreach (glob($components_dir . '/*/*/index.php') ?: [] as $component_index) {
+    // Build the set of component names already loaded from the parent so we
+    // can skip child index.php files that share a name (preventing a fatal
+    // "Cannot redeclare" error on the shared namespace + get_data() function).
+    $parent_names = [];
+    foreach (glob($parent_dir . '/*/*/index.php') ?: [] as $component_index) {
+        $parent_names[basename(dirname($component_index))] = true;
         require_once $component_index;
     }
-    foreach (glob($components_dir . '/*/*/fields.php') ?: [] as $component_fields) {
+    foreach (glob($parent_dir . '/*/*/fields.php') ?: [] as $component_fields) {
         require_once $component_fields;
+    }
+
+    // When a child theme is active, also load its component index.php files —
+    // but only for names that do NOT already exist in the parent.
+    $child_dir = get_stylesheet_directory() . '/Components';
+    if (get_stylesheet_directory() !== get_template_directory() && is_dir($child_dir)) {
+        foreach (glob($child_dir . '/*/*/index.php') ?: [] as $component_index) {
+            $name = basename(dirname($component_index));
+            if (!isset($parent_names[$name])) {
+                require_once $component_index;
+            }
+            // Collision: parent already loaded this name — skip silently.
+        }
     }
 });
 
@@ -40,8 +58,24 @@ function nera_render_component(string $name, array $args = []): void
     static $path_index = null;
     if ($path_index === null) {
         $path_index = [];
+
+        // Parent components are the authoritative source.
         foreach (glob(get_template_directory() . '/Components/*/*', GLOB_ONLYDIR) ?: [] as $dir) {
             $path_index[basename($dir)] = $dir;
+        }
+
+        // When a child theme is active, register child-only component dirs.
+        // For names already in the parent index the parent entry is kept (no
+        // overwrite) — this avoids a fatal "Cannot redeclare" and lets Timber's
+        // default child-first twig resolution handle view overrides naturally.
+        if (get_stylesheet_directory() !== get_template_directory()) {
+            foreach (glob(get_stylesheet_directory() . '/Components/*/*', GLOB_ONLYDIR) ?: [] as $dir) {
+                $component_name = basename($dir);
+                if (!isset($path_index[$component_name])) {
+                    $path_index[$component_name] = $dir;
+                }
+                // Collision: parent already registered — skip silently.
+            }
         }
     }
 
@@ -59,6 +93,12 @@ function nera_render_component(string $name, array $args = []): void
     }
 
     $data = array_merge($data, $args);
+
+    // Allow child themes / plugins to filter a component's context without
+    // overriding the twig template or get_data(). Per-component filter fires
+    // first, then the global one. Both are pure pass-through when unhooked.
+    $data = apply_filters("nera_component_data_{$name}", $data, $args);
+    $data = apply_filters('nera_component_data', $data, $name, $args);
 
     \Timber\Timber::render($template, $data);
 }

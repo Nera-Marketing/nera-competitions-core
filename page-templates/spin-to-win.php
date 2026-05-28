@@ -57,7 +57,7 @@ get_header();
   <?php // page-components rendered via ACF Flexible Content ?>
 <?php else: ?>
 <div
-  class="relative overflow-hidden bg-gradient-to-b from-secondary via-white to-background-light/80"
+  class="relative overflow-hidden bg-gradient-to-b from-secondary via-surface to-background-light/80"
 >
   <div
     class="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,rgba(192,23,46,0.12),transparent)]"
@@ -113,7 +113,7 @@ get_header();
     <?php else: ?>
       <div
         id="nera-spin-root"
-        class="nera-spin-to-win relative rounded-[1.75rem] border border-warning/20 bg-gradient-to-br from-white via-secondary/80 to-warning-bg/30 p-5 shadow-[0_32px_90px_-28px_rgba(192,23,46,0.18)] ring-1 ring-black/[0.05] sm:p-7 lg:p-8"
+        class="nera-spin-to-win relative rounded-[1.75rem] border border-warning/20 bg-gradient-to-br from-surface via-secondary/80 to-warning-bg/30 p-5 shadow-[0_32px_90px_-28px_rgba(192,23,46,0.18)] ring-1 ring-black/[0.05] sm:p-7 lg:p-8"
       >
         <div
           class="pointer-events-none absolute -right-16 top-0 h-56 w-56 rounded-full bg-[#c0172e]/[0.06] blur-3xl"

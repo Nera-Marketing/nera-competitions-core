@@ -3,6 +3,18 @@ namespace Nera\Components\FeaturedCompetitions;
 
 if (!defined('ABSPATH')) exit;
 
+/**
+ * @param array $args
+ * @return array{
+ *   title: string,       // required, default 'Ending Soon' — section heading
+ *   subtitle: string,    // required, default 'Grab your tickets before time runs out…' — section subheading
+ *   cards: list<array{   // required, default [] — one entry per queried product
+ *     product_id: int,
+ *     button_variant: string, // always 'compact'
+ *   }>,
+ *   has_cards: bool,     // required — true when cards is non-empty
+ * }
+ */
 function get_data(array $args = []): array
 {
     $title    = nera_component_field($args, 'title',    'featured_title',    __('Ending Soon', 'nera-competitions'));

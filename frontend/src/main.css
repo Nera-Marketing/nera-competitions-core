@@ -112,6 +112,11 @@
   --animate-pulse-slow: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
   --animate-float: float 3s ease-in-out infinite;
   --animate-shimmer: shimmer 2s infinite;
+
+  /* Gradient endpoint tokens — used by text-gradient-primary, bg-gradient-primary, btn-checkout.
+     Child themes override to shift gradient tails independently of --color-primary. */
+  --color-primary-gradient-end: #4f46e5;
+  --color-primary-gradient-end-light: #6366f1;
 }
 
 /* ==========================================================================
@@ -612,18 +617,18 @@ button {
 }
 
 @utility text-gradient-primary {
-  background: linear-gradient(135deg, var(--color-primary) 0%, #6366f1 100%);
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-gradient-end-light) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
 @utility bg-gradient-primary {
-  background: linear-gradient(135deg, var(--color-primary), #4f46e5);
+  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-gradient-end));
 }
 
 @utility shadow-primary {
-  box-shadow: 0 10px 20px -10px rgba(19, 19, 236, 0.3);
+  box-shadow: 0 10px 20px -10px color-mix(in srgb, var(--color-primary) 30%, transparent);
 }
 
 /* ==========================================================================
@@ -651,7 +656,7 @@ button {
 }
 
 @utility btn-checkout {
-  @apply flex items-center justify-center gap-2 w-full py-4 rounded-xl bg-gradient-to-r from-primary to-indigo-600 text-white font-bold text-lg shadow-lg shadow-primary/30 transition-all duration-300;
+  @apply flex items-center justify-center gap-2 w-full py-4 rounded-xl bg-gradient-to-r from-primary to-[var(--color-primary-gradient-end)] text-white font-bold text-lg shadow-lg shadow-primary/30 transition-all duration-300;
 
   &:hover {
     @apply shadow-xl shadow-primary/40 -translate-y-0.5 brightness-110;
@@ -854,7 +859,7 @@ body h6 {
    ──────────────────────────────────────────────────────────────────────── */
 
 .ncs-hero {
-  --ncs-hero-bg: linear-gradient(to bottom right, #ffffff, var(--color-gray-50), var(--color-secondary));
+  --ncs-hero-bg: linear-gradient(to bottom right, var(--color-surface), var(--color-gray-50), var(--color-secondary));
   --ncs-hero-text: var(--color-text-primary);
   --ncs-hero-text-secondary: var(--color-text-secondary);
   --ncs-hero-eyebrow: var(--color-accent);
@@ -1014,8 +1019,8 @@ body h6 {
 
 .ncs-dashboard-welcome {
   --ncs-dashboard-welcome-bg: linear-gradient(to bottom right, var(--color-primary), var(--color-primary), var(--color-primary-dark));
-  --ncs-dashboard-welcome-text: #ffffff;
-  --ncs-dashboard-welcome-shadow: 0 20px 25px -5px rgba(99, 102, 241, 0.3);
+  --ncs-dashboard-welcome-text: var(--color-on-primary);
+  --ncs-dashboard-welcome-shadow: 0 20px 25px -5px color-mix(in srgb, var(--color-primary-gradient-end-light) 30%, transparent);
 
   background: var(--ncs-dashboard-welcome-bg);
   color: var(--ncs-dashboard-welcome-text);
@@ -1090,4 +1095,127 @@ body h6 {
   background-color: var(--ncs-footer-bg);
   border-top-color: var(--ncs-footer-border-top);
   color: var(--ncs-footer-text);
+}
+
+/* ==========================================================================
+   Woo Wallet Plugin Overrides — wire plugin hardcoded colours to tokens
+   Plugin ships --wallet-primary-color:#483de0 and several hardcoded greys.
+   We override the plugin's own custom property + the grey fallbacks that
+   ignore it. !important only on the specific overrides that need to beat the
+   plugin's own stylesheet load order.
+   ========================================================================== */
+
+/* Override plugin's own primary variable so all var(--wallet-primary-color)
+   usages inherit the theme's brand colour automatically. */
+.woo-wallet-my-wallet-container {
+  --wallet-primary-color: var(--color-primary) !important;
+}
+
+/* Balance card background — plugin uses var(--wallet-primary-color) already,
+   so overriding the var above covers it.  But also guard the box-shadow
+   hardcoded to #483de033 in the dataTables_paginate active button. */
+.woo-wallet-my-wallet-container .dataTables_wrapper .dataTables_paginate .paginate_button.current,
+.woo-wallet-my-wallet-container .dataTables_wrapper .dataTables_paginate .paginate_button.current:hover {
+  box-shadow: 0 2px 5px color-mix(in srgb, var(--color-primary) 20%, transparent) !important;
+}
+
+/* Nav tabs: inactive bg #f0f0f0 → surface; active bg #e5e5e5 → surface with
+   a primary-tinted top border; active text colour was hardcoded to
+   var(--wallet-primary-color) — the var override already handles it. */
+.woo-wallet-my-wallet-container .woo-wallet-nav-tabs {
+  background-color: var(--color-surface) !important;
+  border-top: 1px solid var(--color-gray-200) !important;
+}
+
+.woo-wallet-my-wallet-container .woo-wallet-nav-tab {
+  background-color: var(--color-surface) !important;
+  color: var(--color-text-secondary) !important;
+  border-color: var(--color-gray-200) !important;
+}
+
+.woo-wallet-my-wallet-container .woo-wallet-nav-tab:hover,
+.woo-wallet-my-wallet-container .woo-wallet-nav-tab:focus,
+.woo-wallet-my-wallet-container .woo-wallet-nav-tab:active {
+  background-color: var(--color-gray-50) !important;
+  color: var(--color-text-primary) !important;
+}
+
+.woo-wallet-my-wallet-container .woo-wallet-nav-tab.active {
+  background-color: color-mix(in srgb, var(--color-primary) 8%, var(--color-surface)) !important;
+  color: var(--color-primary) !important;
+  border-top: 2px solid var(--color-primary) !important;
+}
+
+/* Transaction / referral table headers: bg #f9f9f9 → gray-50; text #7f8c8d → text-secondary */
+.woo-wallet-my-wallet-container .woo-wallet-transactions-table th,
+.woo-wallet-my-wallet-container table.dataTable thead td,
+.woo-wallet-my-wallet-container table.dataTable thead th,
+.woo-wallet-my-wallet-container .woo-wallet-referral-stats th {
+  background-color: var(--color-gray-50) !important;
+  color: var(--color-text-secondary) !important;
+  border-bottom-color: var(--color-gray-200) !important;
+}
+
+/* Date range picker — hardcoded #483de0 */
+.daterangepicker td.active,
+.daterangepicker td.active:hover,
+.daterangepicker .drp-buttons .btn-primary,
+.daterangepicker .ranges li.active {
+  background-color: var(--color-primary) !important;
+  border-color: var(--color-primary) !important;
+}
+
+/* ==========================================================================
+   Fluent Form Plugin Overrides — wire submit button + inputs to tokens
+   ========================================================================== */
+
+/* Submit button: plugin default blue #1a7efb → primary */
+.ff-btn-submit,
+.ff_btn_style {
+  background-color: var(--color-primary) !important;
+  border-color: var(--color-primary) !important;
+  color: var(--color-on-primary) !important;
+}
+
+.ff-btn-submit:hover,
+.ff_btn_style:hover {
+  background-color: var(--color-primary-dark) !important;
+  border-color: var(--color-primary-dark) !important;
+  color: var(--color-on-primary) !important;
+}
+
+/* Form inputs: plugin default text #606266 / border #dadbdd → tokens */
+.ff-el-form-control,
+.ff-el-form-control input,
+.ff-el-form-control textarea,
+.ff-el-form-control select {
+  color: var(--color-text-primary);
+  border-color: var(--color-gray-200);
+}
+
+.ff-el-form-control::placeholder,
+.ff-el-form-control input::placeholder,
+.ff-el-form-control textarea::placeholder {
+  color: var(--color-text-secondary);
+}
+
+/* ==========================================================================
+   My Account Nav — wallet-balance-badge and active link contrast guard
+   The badge and active link text must always be readable on their bg.
+   The inline style in woocommerce.php already uses var(--color-on-primary);
+   this block ensures child themes that define --color-on-primary as a dark
+   canvas tone don't break the badge against a near-black primary bg.
+   We enforce --color-on-primary falls back to white when needed via the
+   .ncs-wallet-balance knob so child can override at the component level.
+   ========================================================================== */
+
+/* Wallet balance badge: ensure on-primary text is never a canvas/bg token */
+.wallet-balance-badge {
+  color: var(--color-on-primary) !important;
+}
+
+/* Active My Account nav link: readable text on primary gradient bg */
+.woocommerce-MyAccount-navigation-link.is-active a,
+.woocommerce-MyAccount-navigation-link.is-active a:hover {
+  color: var(--color-on-primary) !important;
 }

@@ -36,7 +36,7 @@ $last_winner_prize = get_field('last_winner_prize') ?: 'Won This Prize';
 ?>
 
 <section
-  class="ncs-hero hero-section relative py-16 lg:py-24 bg-gradient-to-br from-white via-gray-50 to-secondary overflow-hidden"
+  class="ncs-hero hero-section relative py-16 lg:py-24 bg-gradient-to-br from-surface via-gray-50 to-secondary overflow-hidden"
   id="hero" data-aos="fade-up" data-aos-duration="600">
 
   <div class="max-w-7xl mx-auto px-5 sm:px-6 lg:px-8">

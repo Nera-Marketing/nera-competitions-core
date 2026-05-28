@@ -3,6 +3,26 @@ namespace Nera\Components\About;
 
 if (!defined('ABSPATH')) exit;
 
+/**
+ * @param array $args
+ * @return array{
+ *   badge: string,            // required, default 'Who We Are' — eyebrow badge text
+ *   title: string,            // required, default 'Your Trusted Partner…' — section heading
+ *   subtitle: string,         // required, default 'Bringing dreams…' — subheading below title
+ *   description: string,      // required, default paragraph, wp_kses_post — body copy
+ *   features: list<array{icon:string,text:string,delay:string}>, // required, default [] — feature bullet list
+ *   show_cta: bool,           // required, default true — whether to render CTA button
+ *   cta_text: string,         // required, default 'Learn More About Us' — CTA label
+ *   cta_url: string,          // required, default '/about/' — CTA href
+ *   image_url: string,        // required, default '' — resolved image src (empty = placeholder shown)
+ *   image_alt: string,        // required, default title value — img alt text
+ *   bg_class: string,         // required, derived from 'background' ACF field — section background Tailwind class
+ *   text_order: string,       // required, derived from 'image_position' — order-1 or order-2
+ *   image_order: string,      // required, derived from 'image_position' — order-2 or order-1
+ *   orb_top_class: string,    // required, derived from 'image_position' — decorative orb top position classes
+ *   orb_bottom_class: string, // required, derived from 'image_position' — decorative orb bottom position classes
+ * }
+ */
 function get_data(array $args = []): array
 {
     $image_position = nera_component_field($args, 'image_position', 'about_image_position', 'right');
@@ -12,7 +32,7 @@ function get_data(array $args = []): array
     if ($background === 'gray') {
         $bg_class = 'bg-gray-50';
     } elseif ($background === 'gradient') {
-        $bg_class = 'bg-gradient-to-b from-white via-secondary/30 to-white';
+        $bg_class = 'bg-gradient-to-b from-surface via-secondary/30 to-surface';
     }
 
     $text_order  = $image_position === 'right' ? 'order-1' : 'order-2';

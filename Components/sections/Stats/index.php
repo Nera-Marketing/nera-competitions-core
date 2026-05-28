@@ -3,6 +3,16 @@ namespace Nera\Components\Stats;
 
 if (!defined('ABSPATH')) exit;
 
+/**
+ * @param array $args
+ * @return array{
+ *   total_winners: string, // required, default '150' — winners count for count-up target
+ *   total_value: string,   // required, default '2' — prize value (£M) for count-up target
+ *   secure_entry: string,  // required, default '100' — secure entry % for count-up target
+ *   tp_score: string,      // required, default '4.8' — Trustpilot score display
+ *   tp_reviews: string,    // required, default '1,250' — Trustpilot review count display
+ * }
+ */
 function get_data(array $args = []): array
 {
     return [

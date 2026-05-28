@@ -1,3 +1,29 @@
+{#
+  Contact — view data contract (authoritative source: index.php get_data() PHPDoc)
+  Child themes may override this view; data is provided by the parent's get_data().
+  key                   type     req/opt   default         note
+  title                 string   required
+  description           string   required
+  get_in_touch_heading  string   required
+  get_in_touch_description string required
+  show_contact_cards    bool     required  true
+  contact_address       string   required
+  contact_email         string   required
+  contact_phone         string   required
+  form_heading          string   required
+  form_description      string   required  ''
+  fluent_form_id        int      required  0               0 = form not configured
+  facebook_url          string   required  ''
+  twitter_url           string   required  ''
+  instagram_url         string   required  ''
+  linkedin_url          string   required  ''
+  address_html          string   required              pre-formatted address HTML (raw output)
+  phone_digits          string   required              digits-only phone for href="tel:"
+  can_edit              bool     required              true when current user can edit the page
+  edit_link             string   required              admin edit URL for the page
+  form_html             string   required  ''            rendered Fluent Form HTML (raw output); empty when form not configured
+  form_plugin_missing   bool     required              true when Fluent Forms plugin is not active
+#}
 <main id="main" class="nera-contact-page bg-gray-50" role="main">
 
   {# === HERO (inlined from page-hero.php, default variant) === #}

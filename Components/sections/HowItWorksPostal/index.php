@@ -3,6 +3,22 @@ namespace Nera\Components\HowItWorksPostal;
 
 if (!defined('ABSPATH')) exit;
 
+/**
+ * @param array $args
+ * @return array{
+ *   title: string,        // required, default 'Free Postal Entry Route' — esc_html section heading
+ *   intro: string,        // required, default 'We offer a free entry route…' — esc_html intro paragraph
+ *   steps: list<array{    // required, default 3-item list — postal entry steps
+ *     number: string,     // esc_html step number string e.g. '1'
+ *     title: string,      // esc_html step title
+ *     icon: string,       // esc_html Material Symbol name
+ *     text: string,       // esc_html step description
+ *     delay: int,         // animation delay in ms (index × 100)
+ *   }>,
+ *   note: string,         // required, default 'Please note: One entry per postcard…' — esc_html footer note
+ *   note_delay: int,      // required — animation delay for note = count(steps) × 100
+ * }
+ */
 function get_data(array $args = []): array
 {
     $title = nera_component_field($args, 'title', 'hiw_postal_title',

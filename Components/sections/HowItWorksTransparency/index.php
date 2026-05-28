@@ -3,6 +3,18 @@ namespace Nera\Components\HowItWorksTransparency;
 
 if (!defined('ABSPATH')) exit;
 
+/**
+ * @param array $args
+ * @return array{
+ *   title: string,         // required, default 'Transparency & Fairness' — esc_html section heading
+ *   subtitle: string,      // required, default 'We pride ourselves…' — esc_html section subheading
+ *   features: list<array{  // required, default 3-item list — trust feature cards
+ *     icon: string,        // esc_html Material Symbol name
+ *     title: string,       // esc_html card heading
+ *     description: string, // esc_html card body text
+ *   }>,
+ * }
+ */
 function get_data(array $args = []): array
 {
     $title    = nera_component_field($args, 'title', 'hiw_transparency_title',

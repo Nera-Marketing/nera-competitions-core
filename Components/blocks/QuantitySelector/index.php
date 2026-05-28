@@ -5,6 +5,15 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+/**
+ * @param array $args
+ * @return array{
+ *   min: int,              // required, default 1 — minimum quantity for the number input
+ *   max: int,              // required, default 1 — maximum quantity for the number input
+ *   quick_add: list<int>,  // required, default [5,10,20] — amounts rendered as quick-add buttons
+ *   default: int,          // required, default 1 — initial value of the quantity input
+ * }
+ */
 function get_data(array $args = []): array
 {
     return [

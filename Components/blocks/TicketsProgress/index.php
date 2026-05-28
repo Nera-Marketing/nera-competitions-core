@@ -5,6 +5,19 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+/**
+ * @param array $args
+ * @return array{
+ *   sold: int,                // required, default 0 — raw sold ticket count (not consumed by twig directly)
+ *   max: int,                 // required, default 0 — raw max ticket count (not consumed by twig directly)
+ *   progress: int,            // required, default 0 — percentage 0-100 for the progress bar width
+ *   remaining: int,           // required, default 0 — raw remaining count (not consumed by twig directly)
+ *   is_low_stock: bool,       // required, default false — shows "Selling fast" warning row
+ *   sold_formatted: string,   // required — number_format of sold; shown in "X / Y" label
+ *   max_formatted: string,    // required — number_format of max; shown in "X / Y" label
+ *   remaining_formatted: string, // required — number_format of remaining; shown in low-stock warning
+ * }
+ */
 function get_data(array $args = []): array
 {
     $sold      = (int) ($args['sold'] ?? 0);

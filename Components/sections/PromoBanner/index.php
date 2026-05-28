@@ -3,6 +3,21 @@ namespace Nera\Components\PromoBanner;
 
 if (!defined('ABSPATH')) exit;
 
+/**
+ * @param array $args
+ * @return array{
+ *   badge: string,       // required, default 'Stay Connected' — eyebrow badge text
+ *   title: string,       // required, default 'Follow us on socials' — banner heading
+ *   description: string, // required, default 'Follow us for updates…' — banner body text
+ *   bg_image: string,    // required, default Unsplash URL — background image src
+ *   links: list<array{   // required, default [{facebook,#},{instagram,#}] — social link items
+ *     platform: string,  // e.g. 'facebook'
+ *     url: string,       // href
+ *     icon: string,      // trusted HTML SVG from nera_get_social_icon()
+ *     label: string,     // display label from nera_get_social_label()
+ *   }>,
+ * }
+ */
 function get_data(array $args = []): array
 {
     $default_links = [

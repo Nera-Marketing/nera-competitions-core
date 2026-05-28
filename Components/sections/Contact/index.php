@@ -3,6 +3,32 @@ namespace Nera\Components\Contact;
 
 if (!defined('ABSPATH')) exit;
 
+/**
+ * @param array $args
+ * @return array{
+ *   title: string,                    // required, default 'Contact Us' — hero heading
+ *   description: string,              // required, default "We'd love to hear…" — hero subheading
+ *   get_in_touch_heading: string,     // required, default 'Get in Touch' — left column heading
+ *   get_in_touch_description: string, // required, default "Have questions…" — left column intro
+ *   show_contact_cards: bool,         // required, default true — whether to render contact info column
+ *   contact_address: string,          // required, default placeholder address — raw address text
+ *   contact_email: string,            // required, default 'support@competition.com' — email
+ *   contact_phone: string,            // required, default '+1 (555) 012-3456' — phone display string
+ *   form_heading: string,             // required, default 'Send Us a Message' — form column heading
+ *   form_description: string,         // required, default '' — optional form intro text
+ *   fluent_form_id: int,              // required, default 0 — Fluent Forms ID (0 = not set)
+ *   facebook_url: string,             // required, default '' — from get_theme_mod
+ *   twitter_url: string,              // required, default '' — from get_theme_mod
+ *   instagram_url: string,            // required, default '' — from get_theme_mod
+ *   linkedin_url: string,             // required, default '' — from get_theme_mod
+ *   address_html: string,             // required — nl2br/esc_html of contact_address
+ *   phone_digits: string,             // required — digits-only version of contact_phone for tel: href
+ *   can_edit: bool,                   // required — current_user_can('edit_pages')
+ *   edit_link: string,                // required — get_edit_post_link() or ''
+ *   form_html: string,                // required, default '' — rendered shortcode output or ''
+ *   form_plugin_missing: bool,        // required — true when fluent_form_id > 0 but plugin inactive
+ * }
+ */
 function get_data(array $args = []): array
 {
     $title = nera_component_field($args, 'title', 'contact_heading', 'Contact Us');

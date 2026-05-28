@@ -39,7 +39,7 @@ $bg_class = 'bg-surface';
 if ($background === 'gray') {
   $bg_class = 'bg-gray-50';
 } elseif ($background === 'gradient') {
-  $bg_class = 'bg-gradient-to-b from-white via-secondary/30 to-white';
+  $bg_class = 'bg-gradient-to-b from-surface via-secondary/30 to-surface';
 }
 
 // Determine layout order classes

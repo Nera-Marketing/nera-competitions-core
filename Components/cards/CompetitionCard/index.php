@@ -3,6 +3,35 @@ namespace Nera\Components\CompetitionCard;
 
 if (!defined('ABSPATH')) exit;
 
+/**
+ * @param array $args
+ * @return array{}|array{
+ *   product_id: int,                                        // required — WC product ID
+ *   permalink: string,                                      // required — product URL
+ *   image_url: string|false|null,                          // required — featured image URL at 'large' size, or null/false when no image
+ *   title: string,                                          // required — product display name
+ *   price: string,                                          // required — raw price value from WC
+ *   price_html: string,                                     // required — WC-formatted price HTML (use |raw)
+ *   accent_color: string,                                   // required — hex color derived from primary category or fallback
+ *   badge_text: string,                                     // required, default '' — urgency badge label; empty = no badge
+ *   badge_class: string,                                    // required — Tailwind gradient classes for the badge background
+ *   is_urgent: bool,                                        // required — adds animate-pulse to badge
+ *   max_tickets: int,                                       // required — total ticket capacity (0 = unlimited/unknown)
+ *   progress: int,                                          // required — sold percentage 0-100
+ *   primary_category: \WP_Term|null,                        // required — first product_cat term; null when uncategorised
+ *   other_cats: list<\WP_Term>,                             // required, default [] — remaining category terms for "+N" tooltip
+ *   cat_accent: string,                                     // required — hex for primary category (alias of accent_color when primary exists)
+ *   show_countdown: bool,                                   // required — renders Alpine countdown widget in card footer
+ *   end_timestamp_ms: int,                                  // required, default 0 — Unix ms for Alpine countdown x-data
+ *   data_attrs: array{price:string,end_date:string,posted_date:string,popularity:string,categories:string}, // required — JS filter data attributes
+ *   x_show?: string|null,                                   // optional, default null — Alpine x-show expression for filter hiding
+ *   extra_attributes?: string|null,                         // optional, default null — raw HTML attributes injected onto <article>
+ *   sold_tickets: int,                                      // required — tickets purchased; used in buy_tickets variant label
+ *   button_variant: string,                                 // required, default 'full' — 'full'|'compact'|'buy_tickets' controls CTA style
+ *   button_mode: string,                                    // required, default 'link' — 'link'|'ajax' controls buy_tickets CTA element
+ * }
+ * Returns empty array {} when no product can be resolved.
+ */
 function get_data(array $args = []): array
 {
     // Support both:

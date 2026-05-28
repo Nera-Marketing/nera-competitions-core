@@ -3,6 +3,34 @@ namespace Nera\Components\AboutUsPage;
 
 if (!defined('ABSPATH')) exit;
 
+/**
+ * @param array $args
+ * @return array{
+ *   hero_eyebrow: string,         // required, default 'About us' — eyebrow label above hero title
+ *   title: string,                // required, default get_the_title() — page/hero heading
+ *   hero_tagline: string,         // required, default 'Building a community…' — italic subtitle in hero
+ *   hero_image_url: string,       // required, default '' — hero image src (empty = placeholder shown)
+ *   hero_image_alt: string,       // required, default '' — hero image alt text
+ *   narrative: string,            // required, default '', wp_kses_post — prose narrative block (may be empty)
+ *   story_left_title: string,     // required, default 'Our story' — left story card heading
+ *   story_left_content: string,   // required, default '', wp_kses_post — left story card body
+ *   story_right_title: string,    // required, default 'What drives us' — right story card heading
+ *   story_right_content: string,  // required, default '', wp_kses_post — right story card body
+ *   cta_heading: string,          // required, default 'Join the community' — CTA section heading
+ *   cta_description: string,      // required, default 'Be part of…' — CTA body text
+ *   cta_primary_text: string,     // required, default 'Explore competitions' — primary button label
+ *   cta_primary_url: string,      // required, default home_url('/shop/') — primary button href
+ *   cta_secondary_text: string,   // required, default 'Get in touch' — secondary button label
+ *   cta_secondary_url: string,    // required, default home_url('/contact/') — secondary button href
+ *   i18n: array{
+ *     image_placeholder: string,       // 'Image placeholder'
+ *     narrative_label: string,         // 'Our narrative' (sr-only label)
+ *     narrative_placeholder: string,   // shown when narrative is empty
+ *     story_left_placeholder: string,  // shown when story_left_content is empty
+ *     story_right_placeholder: string, // shown when story_right_content is empty
+ *   },                            // required — translated UI strings
+ * }
+ */
 function get_data(array $args = []): array
 {
     $hero_image = nera_component_field($args, 'hero_image', 'about_hero_image', null);

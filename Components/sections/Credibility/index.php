@@ -3,6 +3,12 @@ namespace Nera\Components\Credibility;
 
 if (!defined('ABSPATH')) exit;
 
+/**
+ * @param array $args
+ * @return array{
+ *   items: list<array{icon:string, label:string}>, // required, default 5-item trust strip — credibility icons + labels
+ * }
+ */
 function get_data(array $args = []): array
 {
     $default_items = [

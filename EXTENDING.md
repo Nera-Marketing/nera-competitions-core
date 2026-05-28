@@ -34,6 +34,8 @@ Override any of these in your child `@theme` block. All parent templates and com
 | `--color-accent` | `#1313ec` | Accent highlights (CTA, featured badges) |
 | `--color-accent-dark` | `#0d0db3` | Hover state for accent |
 | `--color-secondary` | `#f4f7ff` | Subtle section backgrounds, hover fills |
+| `--color-primary-gradient-end` | `#4f46e5` | 2nd stop of `bg-gradient-primary` + checkout button gradient |
+| `--color-primary-gradient-end-light` | `#6366f1` | 2nd stop of `text-gradient-primary` |
 
 ### Canvas & surfaces
 
@@ -447,3 +449,91 @@ The parent Vite build runs `frontend/scripts/lint-templates.js` on every `yarn d
 - `mode: 'error'` — violations block the build (recommended for production). Edit `frontend/vite.config.js` to flip.
 
 If you add a new component to the parent and trigger a violation, replace the raw utility with the appropriate semantic token before committing.
+
+---
+
+## 10. Overriding component views (Timber)
+
+Parent UI is built from Timber components under `Components/<type>/<Name>/`, each with an `index.php` (data provider — `get_data()`) and a `template.twig` (view). A child theme can **override the view (`template.twig`) only**, reusing the parent's data.
+
+### How it works (no parent code change needed)
+
+Timber's loader searches the **child theme directory before the parent** by default (`LocationManager::get_locations_theme()` registers `get_stylesheet_directory()` ahead of `get_template_directory()`). The component renderer (`lib/components.php`) calls `Timber::render('Components/<type>/<Name>/template.twig', $data)` with a path relative to the theme root, so:
+
+```
+<child>/Components/sections/HomepageHero/template.twig   ← wins if present
+<parent>/Components/sections/HomepageHero/template.twig  ← fallback
+```
+
+To override a view, a child creates a file at the **same relative path** under its own `Components/`. Nothing else is required — no filter, no functions.php change. (Verified on a live install: a child `HomepageHero/template.twig` renders in place of the parent's, with parent data intact.)
+
+### Rules
+
+- **Overriding an existing component = view only.** Data still comes from the parent's `get_data()`. **Do not** add a child `index.php` for an *overridden* component — it shares the parent's `namespace Nera\Components\<Name>` + `get_data()`, so a duplicate declaration is a fatal `Cannot redeclare` error. To change an existing component's *data*, use the filters in the next subsection instead.
+- **Adding a brand-new component from a child IS supported.** `lib/components.php` discovers components in the parent's `Components/` then the child's. A child-only component (unique name) gets its own `index.php` loaded and `template.twig` rendered when called via `nera_render_component('<Name>')`. For a name present in BOTH parent and child, the parent's `index.php`/`get_data()` wins (child `index.php` is skipped — no redeclare); the child can still override that component's *view* via Timber's child-first twig resolution. (Editor-pickability via the ACF page-components picker stays parent-only; child components render via code.)
+- **Data defaults live in `get_data()`**, not the view. Each `get_data()` guarantees its return shape, so an override view can rely on every documented key existing. The view owns **render decisions** (`{% if cta_url %}`, `{% for x in items %}{% else %}…{% endfor %}`) — those are not data fallbacks and stay in twig.
+- **Don't mask critical fields.** Cosmetic/optional keys may degrade silently; commerce-critical values (price, ticket counts, end date) are guaranteed by `get_data()` and must not be silently defaulted in the view.
+
+### Modifying component data from a child (without overriding the view)
+
+To change a component's context data without copying its `template.twig` or redeclaring `get_data()`, hook the data filters that `nera_render_component()` applies just before render:
+
+```php
+// Change one component's data:
+add_filter('nera_component_data_HomepageHero', function (array $data, array $args): array {
+    $data['highlight'] = 'Your Brand.';
+    return $data;
+}, 10, 2);
+
+// Or inspect/modify any component generically:
+add_filter('nera_component_data', function (array $data, string $name, array $args): array {
+    return $data;
+}, 10, 3);
+```
+
+Use this to rebrand *data* (titles, CTAs, items); pair it with a view override only when the markup must also change.
+
+### The data contract
+
+Every component's contract is documented in two places (keep them in sync; the PHPDoc is authoritative):
+
+1. **`@return array{…}` PHPDoc** above each `get_data()` in `index.php` — types + required/optional (`key?` = optional) + defaults.
+2. **A header comment** at the top of each `template.twig` mirroring the same keys — it travels with the file when a child copies the view to override it.
+
+### Component → context keys (index; `?` = optional)
+
+For exact types, defaults, and notes, read the `get_data()` PHPDoc or the `template.twig` header for that component.
+
+| Component | Context keys |
+|---|---|
+| blocks/AddToCartButton | product_id, is_expired, is_manual_ticket, label_active, label_ended |
+| blocks/CountdownTimer | countdown_date, days, hours, minutes, seconds, is_expired |
+| blocks/ProductTitle | name, is_sold_out |
+| blocks/QuantitySelector | min, max, quick_add, default |
+| blocks/SkillQuestionAnswer | question_text, answers, cart_answer_id, qa_can_display |
+| blocks/TicketPrice | price_html |
+| blocks/TicketsProgress | sold, max, progress, remaining, is_low_stock, sold_formatted, max_formatted, remaining_formatted |
+| blocks/TrustBadges | badges |
+| cards/CompetitionCard | product_id, permalink, image_url, title, price, price_html, accent_color, badge_text, badge_class, is_urgent, max_tickets, progress, primary_category, other_cats, cat_accent, show_countdown, end_timestamp_ms, data_attrs, x_show?, extra_attributes?, sold_tickets, button_variant, button_mode |
+| sections/About | badge, title, subtitle, description, features, show_cta, cta_text, cta_url, image_url, image_alt, bg_class, text_order, image_order, orb_top_class, orb_bottom_class |
+| sections/AboutUsPage | hero_eyebrow, title, hero_tagline, hero_image_url, hero_image_alt, narrative, story_left_title, story_left_content, story_right_title, story_right_content, cta_heading, cta_description, cta_primary_text, cta_primary_url, cta_secondary_text, cta_secondary_url, i18n (sub-keys: image_placeholder, narrative_label, narrative_placeholder, story_left_placeholder, story_right_placeholder) |
+| sections/CategoriesCompetitions | title, subtitle, categories, total_count, cards, has_cards |
+| sections/Contact | title, description, get_in_touch_heading, get_in_touch_description, show_contact_cards, contact_address, contact_email, contact_phone, form_heading, form_description, fluent_form_id, facebook_url, twitter_url, instagram_url, linkedin_url, address_html, phone_digits, can_edit, edit_link, form_html, form_plugin_missing |
+| sections/Credibility | items |
+| sections/Faq | title, faqs, contact_url |
+| sections/FeaturedCompetitions | title, subtitle, cards, has_cards |
+| sections/HomepageHero | title, highlight, description, cta, secondary, image, last_winner, i18n |
+| sections/HowItWorksDraw | eyebrow, title, content, image_url, image_alt, placeholder_title, placeholder_text, placeholder_icon |
+| sections/HowItWorksHero | title, subtitle, badge, steps, cta_url, cta_button_text, cta_target, cta_footer_text |
+| sections/HowItWorksPostal | title, intro, steps, note, note_delay |
+| sections/HowItWorksTransparency | title, subtitle, features |
+| sections/PromoBanner | badge, title, description, bg_image, links |
+| sections/QuickGuide | title, subtitle, steps, cta_url |
+| sections/Stats | total_winners, total_value, secure_entry, tp_score, tp_reviews |
+| sections/Testimonials | title, subtitle, list |
+
+### Known contract notes
+
+- **HomepageHero `image`** — resolved: `get_data()` now returns a URL `string` (`''` when none), used directly by the view. (Was previously a raw ACF value that could break `<img src>`.)
+- **CompetitionCard** — resolved: `get_data()` returns `[]` when the product can't be resolved, and the view now guards with `{% if product_id %}` so it renders nothing rather than broken markup.
+- **Unused-but-returned keys** (intentional, not bugs): `AddToCartButton.is_manual_ticket`, `SkillQuestionAnswer.cart_answer_id`, and `TicketsProgress.{sold,max,remaining}` (only the `*_formatted` variants are rendered).

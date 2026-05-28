@@ -3,6 +3,20 @@ namespace Nera\Components\QuickGuide;
 
 if (!defined('ABSPATH')) exit;
 
+/**
+ * @param array $args
+ * @return array{
+ *   title: string,        // required, default 'How to Play' — section heading
+ *   subtitle: string,     // required, default 'Win your dream prizes in just three simple steps' — section subheading
+ *   steps: list<array{    // required, default 3-item list — guide step cards
+ *     number: string,     // e.g. '01'
+ *     icon: string,       // trusted HTML — inline SVG string
+ *     title: string,
+ *     description: string,
+ *   }>,
+ *   cta_url: string,      // required, always home_url('/all-competitions') — CTA href
+ * }
+ */
 function get_data(array $args = []): array
 {
     $default_steps = [

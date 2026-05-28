@@ -5,6 +5,13 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+/**
+ * @param array $args
+ * @return array{
+ *   name: string,        // required, default '' — product/competition name used in "Win a {name}" heading
+ *   is_sold_out: bool,   // required, default false — shows "Sold Out" badge when true
+ * }
+ */
 function get_data(array $args = []): array
 {
     return [

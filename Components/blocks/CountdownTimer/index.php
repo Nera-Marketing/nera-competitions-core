@@ -5,6 +5,17 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+/**
+ * @param array $args
+ * @return array{
+ *   countdown_date: string, // required, default '' — ISO/GMT date string; passed to data-time attr for JS
+ *   days: string,           // required, default '00' — zero-padded days remaining
+ *   hours: string,          // required, default '00' — zero-padded hours remaining
+ *   minutes: string,        // required, default '00' — zero-padded minutes remaining
+ *   seconds: string,        // required, default '00' — zero-padded seconds remaining
+ *   is_expired: bool,       // required, default false — switches to expired (static 00s) variant
+ * }
+ */
 function get_data(array $args = []): array
 {
     $countdown = $args['countdown'] ?? [];

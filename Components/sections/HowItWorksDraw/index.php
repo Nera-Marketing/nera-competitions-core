@@ -3,6 +3,19 @@ namespace Nera\Components\HowItWorksDraw;
 
 if (!defined('ABSPATH')) exit;
 
+/**
+ * @param array $args
+ * @return array{
+ *   eyebrow: string,           // required, default 'Fair & Transparent' — esc_html eyebrow label
+ *   title: string,             // required, default 'The Draw Process' — esc_html section heading
+ *   content: string,           // required, default HTML paragraph — wp_kses_post body copy
+ *   image_url: string,         // required, default '' — esc_url image src (empty = placeholder shown)
+ *   image_alt: string,         // required, default '' — esc_attr image alt text
+ *   placeholder_title: string, // required, default 'Live Draw Streams' — esc_html placeholder heading
+ *   placeholder_text: string,  // required, default 'Watch us live on Facebook…' — esc_html placeholder body
+ *   placeholder_icon: string,  // required, default 'videocam' — esc_html Material Symbol name
+ * }
+ */
 function get_data(array $args = []): array
 {
     $eyebrow = nera_component_field($args, 'eyebrow', 'hiw_draw_eyebrow',

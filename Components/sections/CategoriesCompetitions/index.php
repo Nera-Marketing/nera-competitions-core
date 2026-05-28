@@ -3,6 +3,27 @@ namespace Nera\Components\CategoriesCompetitions;
 
 if (!defined('ABSPATH')) exit;
 
+/**
+ * @param array $args
+ * @return array{
+ *   title: string,           // required, default 'Find Your Dream Prize' — section heading
+ *   subtitle: string,        // required, default 'Browse competitions by category…' — section subheading
+ *   categories: list<array{  // required, default [] — non-empty active categories
+ *     slug: string,
+ *     name: string,
+ *     count: int,
+ *     icon: string,          // Material Symbol name, fallback 'category'
+ *     color: string,         // hex from nera_advanced_filter_category_colors(), fallback '#1313ec'
+ *   }>,
+ *   total_count: int,        // required, default 0 — sum of all category competition counts
+ *   cards: list<array{       // required, default [] — one entry per active lottery product
+ *     product_id: int,
+ *     x_show: string,        // Alpine x-show expression string
+ *     category_colors: array<string, string>, // full color map passed through to CompetitionCard
+ *   }>,
+ *   has_cards: bool,         // required — true when cards is non-empty
+ * }
+ */
 function get_data(array $args = []): array
 {
     $title    = nera_component_field($args, 'title',    'categories_section_title',    __('Find Your Dream Prize', 'nera-competitions'));
