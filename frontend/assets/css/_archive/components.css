@@ -1,0 +1,922 @@
+/**
+ * Nera Competitions - Component Styles
+ * Reusable UI components for competition site
+ */
+
+/* ==========================================================================
+   Competition Card Component - Base & Variations
+   ========================================================================== */
+
+.competition-card {
+  background: var(--nera-color-white);
+  border-radius: var(--nera-radius-lg);
+  box-shadow: var(--nera-shadow-card, var(--nera-shadow-md));
+  overflow: hidden;
+  transition: var(--nera-transition-base);
+  position: relative;
+}
+
+.competition-card:hover {
+  transform: translateY(-8px);
+  box-shadow: var(--nera-shadow-xl);
+}
+
+.competition-card__image {
+  position: relative;
+  padding-top: 66.67%;
+  /* 3:2 aspect ratio */
+  overflow: hidden;
+}
+
+.competition-card__image img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: var(--nera-transition-slow);
+}
+
+.competition-card:hover .competition-card__image img {
+  transform: scale(1.05);
+}
+
+.competition-card__content {
+  padding: var(--nera-spacing-lg);
+}
+
+.competition-card__title {
+  font-size: var(--nera-font-size-xl);
+  font-weight: var(--nera-font-weight-bold);
+  margin-bottom: var(--nera-spacing-sm);
+  color: var(--nera-color-gray-900);
+}
+
+.competition-card__price {
+  font-size: var(--nera-font-size-lg);
+  font-weight: var(--nera-font-weight-semibold);
+  color: var(--nera-color-primary);
+  margin-bottom: var(--nera-spacing-md);
+}
+
+/* Card Style: Flat */
+.competition-card--flat {
+  box-shadow: none;
+  border: 1px solid var(--nera-color-gray-200);
+}
+
+.competition-card--flat:hover {
+  box-shadow: var(--nera-shadow-md);
+  transform: translateY(-4px);
+}
+
+/* Card Style: Bordered */
+.competition-card--bordered {
+  border: 2px solid var(--nera-color-gray-200);
+  box-shadow: none;
+}
+
+.competition-card--bordered:hover {
+  border-color: var(--nera-color-primary);
+  transform: translateY(-4px);
+}
+
+/* Card Style: Glass (Glassmorphism) */
+.competition-card--glass {
+  background: rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+}
+
+.competition-card--glass:hover {
+  background: rgba(255, 255, 255, 0.35);
+  transform: translateY(-6px);
+}
+
+/* Card Style: Elevated */
+.competition-card--elevated {
+  box-shadow: var(--nera-shadow-lg);
+}
+
+.competition-card--elevated:hover {
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  transform: translateY(-12px);
+}
+
+/* ==========================================================================
+   Badge Component
+   ========================================================================== */
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: var(--nera-spacing-xs) var(--nera-spacing-md);
+  border-radius: var(--nera-radius-full);
+  font-size: var(--nera-font-size-xs);
+  font-weight: var(--nera-font-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  position: absolute;
+  top: var(--nera-spacing-md);
+  z-index: 10;
+}
+
+.badge--live {
+  background: var(--nera-color-danger);
+  color: var(--nera-color-white);
+  right: var(--nera-spacing-md);
+  animation: pulse 2s infinite;
+}
+
+.badge--live::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  background: var(--nera-color-white);
+  border-radius: 50%;
+  animation: blink 1s infinite;
+}
+
+.badge--ending {
+  background: linear-gradient(135deg, var(--nera-color-warning, #f77f00), #ff9500);
+  color: var(--nera-color-white);
+  left: var(--nera-spacing-md);
+}
+
+.badge--new {
+  background: linear-gradient(135deg, var(--nera-color-success), #00d68f);
+  color: var(--nera-color-white);
+  left: var(--nera-spacing-md);
+}
+
+.badge--soldout {
+  background: var(--nera-color-gray-600);
+  color: var(--nera-color-white);
+  right: var(--nera-spacing-md);
+}
+
+.badge--featured {
+  background: linear-gradient(135deg, var(--nera-color-accent), #ffd93d);
+  color: var(--nera-color-gray-900);
+  left: var(--nera-spacing-md);
+}
+
+@keyframes blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.3;
+  }
+}
+
+/* ==========================================================================
+   Progress Bar Component - Base & Variations
+   ========================================================================== */
+
+.progress-bar {
+  width: 100%;
+  height: 8px;
+  background: var(--nera-color-gray-200);
+  border-radius: var(--nera-radius-full);
+  overflow: hidden;
+  margin-bottom: var(--nera-spacing-sm);
+  position: relative;
+}
+
+.progress-bar__fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--nera-color-primary), var(--nera-color-accent));
+  border-radius: var(--nera-radius-full);
+  transition: width var(--nera-transition-slow);
+  position: relative;
+}
+
+.progress-text {
+  font-size: var(--nera-font-size-sm);
+  color: var(--nera-color-gray-600);
+  display: block;
+  margin-bottom: var(--nera-spacing-md);
+}
+
+/* Progress Bar: Solid */
+.progress-bar--solid .progress-bar__fill {
+  background: var(--nera-color-primary);
+}
+
+/* Progress Bar: Striped Animation */
+.progress-bar--striped .progress-bar__fill {
+  background: linear-gradient(
+    45deg,
+    rgba(255, 255, 255, 0.15) 25%,
+    transparent 25%,
+    transparent 50%,
+    rgba(255, 255, 255, 0.15) 50%,
+    rgba(255, 255, 255, 0.15) 75%,
+    transparent 75%,
+    transparent
+  );
+  background-color: var(--nera-color-primary);
+  background-size: 1rem 1rem;
+  animation: progress-stripes 1s linear infinite;
+}
+
+@keyframes progress-stripes {
+  from {
+    background-position: 1rem 0;
+  }
+
+  to {
+    background-position: 0 0;
+  }
+}
+
+/* Progress Bar: Glow Effect */
+.progress-bar--glow {
+  box-shadow: 0 0 10px rgba(var(--nera-color-primary), 0.3);
+}
+
+.progress-bar--glow .progress-bar__fill {
+  box-shadow: 0 0 20px var(--nera-color-primary);
+}
+
+/* Progress Bar: Large */
+.progress-bar--large {
+  height: 16px;
+}
+
+.progress-bar--large .progress-bar__fill::after {
+  content: attr(data-value);
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: var(--nera-font-size-xs);
+  font-weight: var(--nera-font-weight-bold);
+  color: var(--nera-color-white);
+}
+
+/* ==========================================================================
+   Countdown Timer Component - Base & Variations
+   ========================================================================== */
+
+.countdown {
+  display: flex;
+  gap: var(--nera-spacing-sm);
+  justify-content: center;
+  margin-bottom: var(--nera-spacing-lg);
+}
+
+.countdown__item {
+  text-align: center;
+  padding: var(--nera-spacing-md);
+  background: var(--nera-color-gray-50);
+  border-radius: var(--nera-radius-md);
+  min-width: 60px;
+}
+
+.countdown__value {
+  display: block;
+  font-size: var(--nera-font-size-2xl);
+  font-weight: var(--nera-font-weight-bold);
+  color: var(--nera-color-primary);
+  line-height: 1;
+}
+
+.countdown__label {
+  display: block;
+  font-size: var(--nera-font-size-xs);
+  color: var(--nera-color-gray-600);
+  text-transform: uppercase;
+  margin-top: var(--nera-spacing-xs);
+}
+
+/* Countdown: Minimal Style */
+.countdown--minimal {
+  gap: var(--nera-spacing-xs);
+}
+
+.countdown--minimal .countdown__item {
+  background: transparent;
+  padding: var(--nera-spacing-sm);
+  min-width: auto;
+}
+
+.countdown--minimal .countdown__value {
+  font-size: var(--nera-font-size-xl);
+}
+
+.countdown--minimal .countdown__separator {
+  font-size: var(--nera-font-size-xl);
+  color: var(--nera-color-gray-400);
+  align-self: center;
+  padding-bottom: 1.5rem;
+}
+
+/* Countdown: Gradient Style */
+.countdown--gradient .countdown__item {
+  background: linear-gradient(135deg, var(--nera-color-primary), var(--nera-color-secondary));
+  color: var(--nera-color-white);
+  border-radius: var(--nera-radius-lg);
+}
+
+.countdown--gradient .countdown__value {
+  color: var(--nera-color-white);
+}
+
+.countdown--gradient .countdown__label {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+/* Countdown: Flip Animation Style */
+.countdown--flip .countdown__item {
+  background: var(--nera-color-gray-900);
+  border-radius: var(--nera-radius-md);
+  position: relative;
+  perspective: 200px;
+}
+
+.countdown--flip .countdown__value {
+  color: var(--nera-color-white);
+  font-size: var(--nera-font-size-3xl);
+}
+
+.countdown--flip .countdown__label {
+  color: var(--nera-color-gray-400);
+}
+
+.countdown--flip .countdown__item::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 2px;
+  background: rgba(0, 0, 0, 0.3);
+}
+
+/* Countdown: Cards Style (Default) */
+.countdown--cards .countdown__item {
+  box-shadow: var(--nera-shadow-sm);
+  border: 1px solid var(--nera-color-gray-100);
+}
+
+/* Countdown: Urgent State */
+.countdown--urgent .countdown__value {
+  color: var(--nera-color-danger);
+  animation: countdown-pulse 1s infinite;
+}
+
+@keyframes countdown-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+/* ==========================================================================
+   Button Styles
+   ========================================================================== */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--nera-spacing-sm);
+  padding: var(--nera-spacing-md) var(--nera-spacing-xl);
+  border-radius: var(--nera-radius-lg);
+  font-size: var(--nera-font-size-base);
+  font-weight: var(--nera-font-weight-semibold);
+  text-align: center;
+  text-decoration: none;
+  transition: var(--nera-transition-base);
+  border: 2px solid transparent;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn--primary {
+  background: linear-gradient(135deg, var(--nera-color-primary), var(--nera-color-accent));
+  color: var(--nera-color-white);
+  box-shadow: var(--nera-shadow-md);
+}
+
+.btn--primary:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--nera-shadow-lg);
+  filter: brightness(1.1);
+}
+
+.btn--secondary {
+  background: var(--nera-color-secondary);
+  color: var(--nera-color-white);
+}
+
+.btn--secondary:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.2);
+}
+
+.btn--outline {
+  background: transparent;
+  border-color: var(--nera-color-primary);
+  color: var(--nera-color-primary);
+}
+
+.btn--outline:hover {
+  background: var(--nera-color-primary);
+  color: var(--nera-color-white);
+}
+
+.btn--ghost {
+  background: transparent;
+  color: var(--nera-color-gray-700);
+}
+
+.btn--ghost:hover {
+  background: var(--nera-color-gray-100);
+}
+
+.btn--large {
+  padding: var(--nera-spacing-lg) var(--nera-spacing-2xl);
+  font-size: var(--nera-font-size-lg);
+}
+
+.btn--small {
+  padding: var(--nera-spacing-sm) var(--nera-spacing-md);
+  font-size: var(--nera-font-size-sm);
+}
+
+.btn--glow {
+  box-shadow: 0 0 20px rgba(255, 107, 53, 0.4);
+}
+
+.btn--glow:hover {
+  box-shadow: 0 0 30px rgba(255, 107, 53, 0.6);
+}
+
+/* Button: Shimmer Effect */
+.btn--shimmer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  100% {
+    left: 100%;
+  }
+}
+
+/* Button: Lucky Dip */
+.btn--lucky-dip {
+  background: linear-gradient(135deg, var(--nera-color-success), #00d68f);
+  color: var(--nera-color-white);
+  font-size: var(--nera-font-size-lg);
+}
+
+.btn--lucky-dip::before {
+  content: '🍀';
+  margin-right: 8px;
+}
+
+/* ==========================================================================
+   Ticket Grid Component
+   ========================================================================== */
+
+.ticket-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(50px, 1fr));
+  gap: var(--nera-spacing-xs);
+  margin-bottom: var(--nera-spacing-lg);
+}
+
+.ticket-item {
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--nera-color-gray-300);
+  border-radius: var(--nera-radius-md);
+  font-weight: var(--nera-font-weight-semibold);
+  cursor: pointer;
+  transition: var(--nera-transition-base);
+  font-size: var(--nera-font-size-sm);
+}
+
+.ticket-item:hover:not(.ticket-item--sold) {
+  border-color: var(--nera-color-primary);
+  background: var(--nera-color-gray-50);
+  transform: scale(1.05);
+}
+
+.ticket-item--selected {
+  background: var(--nera-color-primary);
+  color: var(--nera-color-white);
+  border-color: var(--nera-color-primary);
+  box-shadow: 0 0 10px rgba(255, 107, 53, 0.3);
+}
+
+.ticket-item--sold {
+  background: var(--nera-color-gray-200);
+  color: var(--nera-color-gray-400);
+  cursor: not-allowed;
+  opacity: 0.6;
+  text-decoration: line-through;
+}
+
+.ticket-item--instant-win {
+  border-color: var(--nera-color-accent);
+  background: linear-gradient(135deg, rgba(247, 184, 1, 0.1), rgba(247, 184, 1, 0.2));
+}
+
+.ticket-item--instant-win::after {
+  content: '🎁';
+  font-size: 10px;
+  position: absolute;
+  top: 2px;
+  right: 2px;
+}
+
+/* Quick Select Buttons */
+.ticket-quick-select {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--nera-spacing-sm);
+  margin-bottom: var(--nera-spacing-lg);
+}
+
+.ticket-quick-select__btn {
+  padding: var(--nera-spacing-md) var(--nera-spacing-lg);
+  border: 2px solid var(--nera-color-gray-300);
+  border-radius: var(--nera-radius-md);
+  background: var(--nera-color-white);
+  cursor: pointer;
+  transition: var(--nera-transition-base);
+  font-weight: var(--nera-font-weight-medium);
+}
+
+.ticket-quick-select__btn:hover {
+  border-color: var(--nera-color-primary);
+  background: var(--nera-color-gray-50);
+}
+
+.ticket-quick-select__btn--popular {
+  border-color: var(--nera-color-primary);
+  background: linear-gradient(135deg, rgba(255, 107, 53, 0.05), rgba(247, 184, 1, 0.05));
+  position: relative;
+}
+
+.ticket-quick-select__btn--popular::before {
+  content: 'Popular';
+  position: absolute;
+  top: -10px;
+  right: 10px;
+  background: var(--nera-color-primary);
+  color: var(--nera-color-white);
+  font-size: 10px;
+  padding: 2px 8px;
+  border-radius: var(--nera-radius-full);
+}
+
+/* ==========================================================================
+   How It Works Component
+   ========================================================================== */
+
+.how-it-works {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: var(--nera-spacing-xl);
+  padding: var(--nera-spacing-3xl) 0;
+}
+
+.how-it-works__step {
+  text-align: center;
+  padding: var(--nera-spacing-xl);
+  position: relative;
+}
+
+.how-it-works__icon {
+  width: 80px;
+  height: 80px;
+  background: linear-gradient(135deg, var(--nera-color-primary), var(--nera-color-accent));
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto var(--nera-spacing-lg);
+  font-size: 32px;
+  color: var(--nera-color-white);
+  box-shadow: var(--nera-shadow-md);
+}
+
+.how-it-works__number {
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 30px;
+  height: 30px;
+  background: var(--nera-color-secondary);
+  color: var(--nera-color-white);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: var(--nera-font-weight-bold);
+  font-size: var(--nera-font-size-sm);
+}
+
+.how-it-works__title {
+  font-size: var(--nera-font-size-xl);
+  margin-bottom: var(--nera-spacing-sm);
+}
+
+.how-it-works__description {
+  color: var(--nera-color-gray-600);
+  line-height: var(--nera-line-height-relaxed);
+}
+
+/* ==========================================================================
+   Winner Showcase Component
+   ========================================================================== */
+
+.winner-card {
+  background: var(--nera-color-white);
+  border-radius: var(--nera-radius-xl);
+  overflow: hidden;
+  box-shadow: var(--nera-shadow-md);
+  transition: var(--nera-transition-base);
+}
+
+.winner-card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--nera-shadow-lg);
+}
+
+.winner-card__image {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
+
+.winner-card__content {
+  padding: var(--nera-spacing-lg);
+}
+
+.winner-card__name {
+  font-size: var(--nera-font-size-lg);
+  font-weight: var(--nera-font-weight-bold);
+  margin-bottom: var(--nera-spacing-xs);
+}
+
+.winner-card__prize {
+  color: var(--nera-color-primary);
+  font-weight: var(--nera-font-weight-semibold);
+  margin-bottom: var(--nera-spacing-sm);
+}
+
+.winner-card__date {
+  font-size: var(--nera-font-size-sm);
+  color: var(--nera-color-gray-500);
+}
+
+.winner-card__quote {
+  font-style: italic;
+  color: var(--nera-color-gray-600);
+  margin-top: var(--nera-spacing-md);
+  padding-top: var(--nera-spacing-md);
+  border-top: 1px solid var(--nera-color-gray-200);
+}
+
+/* ==========================================================================
+   Testimonial Component
+   ========================================================================== */
+
+.testimonial {
+  background: var(--nera-color-white);
+  border-radius: var(--nera-radius-xl);
+  padding: var(--nera-spacing-xl);
+  box-shadow: var(--nera-shadow-md);
+  position: relative;
+}
+
+.testimonial::before {
+  content: '"';
+  font-size: 80px;
+  font-family: Georgia, serif;
+  color: var(--nera-color-primary);
+  opacity: 0.2;
+  position: absolute;
+  top: 10px;
+  left: 20px;
+  line-height: 1;
+}
+
+.testimonial__content {
+  font-size: var(--nera-font-size-lg);
+  line-height: var(--nera-line-height-relaxed);
+  color: var(--nera-color-gray-700);
+  margin-bottom: var(--nera-spacing-lg);
+  position: relative;
+  z-index: 1;
+}
+
+.testimonial__author {
+  display: flex;
+  align-items: center;
+  gap: var(--nera-spacing-md);
+}
+
+.testimonial__avatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.testimonial__name {
+  font-weight: var(--nera-font-weight-bold);
+}
+
+.testimonial__info {
+  font-size: var(--nera-font-size-sm);
+  color: var(--nera-color-gray-500);
+}
+
+/* Testimonial Stars */
+.testimonial__stars {
+  color: var(--nera-color-accent);
+  margin-bottom: var(--nera-spacing-md);
+}
+
+/* ==========================================================================
+   Competition Question Component
+   ========================================================================== */
+
+.competition-question {
+  background: linear-gradient(135deg, var(--nera-color-gray-50), var(--nera-color-gray-100));
+  border-radius: var(--nera-radius-xl);
+  padding: var(--nera-spacing-xl);
+  margin-bottom: var(--nera-spacing-lg);
+  border: 2px solid var(--nera-color-gray-200);
+}
+
+.competition-question__label {
+  font-size: var(--nera-font-size-lg);
+  font-weight: var(--nera-font-weight-bold);
+  color: var(--nera-color-gray-900);
+  margin-bottom: var(--nera-spacing-lg);
+  display: block;
+}
+
+.competition-question__options {
+  display: flex;
+  flex-direction: column;
+  gap: var(--nera-spacing-sm);
+}
+
+.competition-question__option {
+  padding: var(--nera-spacing-md) var(--nera-spacing-lg);
+  border: 2px solid var(--nera-color-gray-300);
+  border-radius: var(--nera-radius-md);
+  background: var(--nera-color-white);
+  cursor: pointer;
+  transition: var(--nera-transition-base);
+  display: flex;
+  align-items: center;
+  gap: var(--nera-spacing-md);
+}
+
+.competition-question__option:hover {
+  border-color: var(--nera-color-primary);
+  background: rgba(255, 107, 53, 0.05);
+}
+
+.competition-question__option--selected {
+  border-color: var(--nera-color-success);
+  background: rgba(46, 196, 182, 0.1);
+}
+
+.competition-question__option--selected::before {
+  content: '✓';
+  width: 24px;
+  height: 24px;
+  background: var(--nera-color-success);
+  color: var(--nera-color-white);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+
+/* ==========================================================================
+   Trust Badges Component
+   ========================================================================== */
+
+.trust-badges {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--nera-spacing-xl);
+  padding: var(--nera-spacing-xl) 0;
+}
+
+.trust-badge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--nera-spacing-sm);
+}
+
+.trust-badge__icon {
+  width: 60px;
+  height: 60px;
+  background: var(--nera-color-gray-100);
+  border-radius: var(--nera-radius-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+}
+
+.trust-badge__label {
+  font-size: var(--nera-font-size-sm);
+  font-weight: var(--nera-font-weight-medium);
+  color: var(--nera-color-gray-600);
+}
+
+/* ==========================================================================
+   Responsive Utilities
+   ========================================================================== */
+
+@media (max-width: 768px) {
+  .competition-card__title {
+    font-size: var(--nera-font-size-lg);
+  }
+
+  .countdown {
+    gap: var(--nera-spacing-xs);
+  }
+
+  .countdown__item {
+    padding: var(--nera-spacing-sm);
+    min-width: 50px;
+  }
+
+  .countdown__value {
+    font-size: var(--nera-font-size-xl);
+  }
+
+  .ticket-grid {
+    grid-template-columns: repeat(auto-fill, minmax(40px, 1fr));
+  }
+
+  .how-it-works {
+    grid-template-columns: 1fr;
+    gap: var(--nera-spacing-lg);
+  }
+
+  .ticket-quick-select {
+    justify-content: center;
+  }
+
+  .ticket-quick-select__btn {
+    flex: 1;
+    min-width: 100px;
+    text-align: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .countdown--minimal {
+    flex-wrap: wrap;
+  }
+
+  .competition-question__options {
+    gap: var(--nera-spacing-xs);
+  }
+
+  .competition-question__option {
+    padding: var(--nera-spacing-sm) var(--nera-spacing-md);
+    font-size: var(--nera-font-size-sm);
+  }
+}
