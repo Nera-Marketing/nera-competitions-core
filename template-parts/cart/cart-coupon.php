@@ -38,7 +38,7 @@ if (!defined('ABSPATH')) {
           ); ?>" id="coupon_code" value="" />
       </div>
       <button type="submit"
-        class="h-12 px-6 rounded-xl bg-gray-900 text-white font-bold text-sm hover:bg-primary transition-colors flex-shrink-0"
+        class="h-12 px-6 rounded-xl bg-background-dark text-white font-bold text-sm hover:bg-primary transition-colors flex-shrink-0"
         name="apply_coupon" value="<?php esc_attr_e('Apply', 'nera-competitions'); ?>">
         <?php _e('Apply', 'nera-competitions'); ?>
       </button>

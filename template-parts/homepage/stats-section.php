@@ -29,7 +29,7 @@ $tp_reviews = get_field('tp_reviews') ?: '1,250';
 			<!-- Left: Trustpilot -->
 			<div class="trustpilot-badge flex flex-col items-center md:items-start text-center md:text-left shrink-0">
 				<div class="flex items-center gap-2 mb-1">
-					<span class="text-xl lg:text-2xl font-bold italic text-gray-900 tracking-tight">Trustpilot</span>
+					<span class="text-xl lg:text-2xl font-bold italic text-text-primary tracking-tight">Trustpilot</span>
 					<div class="flex gap-0.5">
 						<?php for ($i = 0; $i < 5; $i++): ?>
 							<svg class="w-5 h-5 lg:w-6 lg:h-6 text-success fill-current" viewBox="0 0 24 24">
@@ -38,11 +38,11 @@ $tp_reviews = get_field('tp_reviews') ?: '1,250';
 						<?php endfor; ?>
 					</div>
 				</div>
-				<p class="text-xs lg:text-sm text-gray-500">
-					Excellent <span class="font-semibold text-gray-700"><?php echo esc_html(
+				<p class="text-xs lg:text-sm text-text-secondary">
+					Excellent <span class="font-semibold text-text-primary"><?php echo esc_html(
        $tp_score,
      ); ?></span> out of 5 based
-					on <span class="font-semibold text-gray-700"><?php echo esc_html($tp_reviews); ?></span> reviews
+					on <span class="font-semibold text-text-primary"><?php echo esc_html($tp_reviews); ?></span> reviews
 				</p>
 			</div>
 

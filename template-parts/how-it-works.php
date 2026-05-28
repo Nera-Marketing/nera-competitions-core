@@ -60,7 +60,7 @@ $cta_target = isset($args['cta_target']) ? (string) $args['cta_target'] : '';
 <section class="how-it-works-section relative py-20 lg:py-32 overflow-hidden" id="how-it-works">
 
   <!-- Animated Background -->
-  <div class="absolute inset-0 bg-gradient-to-b from-gray-50 via-white to-gray-50"></div>
+  <div class="absolute inset-0 bg-gradient-to-b from-gray-50 via-surface to-gray-50"></div>
 
   <!-- Floating Particles Background -->
   <div class="how-it-works-particles absolute inset-0 overflow-hidden pointer-events-none">
@@ -182,7 +182,7 @@ $cta_target = isset($args['cta_target']) ? (string) $args['cta_target'] : '';
                     class="w-20 h-20 <?php echo esc_attr(
                       $bg_color,
                     ); ?> rounded-2xl flex items-center justify-center group-hover:scale-105 transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] will-change-transform">
-                    <div class="text-gray-700 group-hover:text-primary transition-colors duration-250 ease-[cubic-bezier(0.22,1,0.36,1)]">
+                    <div class="text-text-secondary group-hover:text-primary transition-colors duration-250 ease-[cubic-bezier(0.22,1,0.36,1)]">
                       <?php echo $step['icon']; ?>
                     </div>
                   </div>
@@ -193,7 +193,7 @@ $cta_target = isset($args['cta_target']) ? (string) $args['cta_target'] : '';
                 </div>
 
                 <!-- Title -->
-                <h3 class="text-xl font-bold text-text-primary mb-3 group-hover:text-gray-900 transition-colors duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]">
+                <h3 class="text-xl font-bold text-text-primary mb-3 group-hover:text-text-primary transition-colors duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]">
                   <?php echo esc_html($step['title']); ?>
                 </h3>
 

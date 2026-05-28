@@ -1,0 +1,283 @@
+/* ==========================================================================
+   Checkout Page Styles
+   ========================================================================== */
+
+/* Neutralize WooCommerce legacy float-based layout classes inside grid */
+.woocommerce-billing-fields__field-wrapper.grid .form-row-first,
+.woocommerce-billing-fields__field-wrapper.grid .form-row-last,
+.woocommerce-billing-fields__field-wrapper.grid .form-row-wide,
+.woocommerce-shipping-fields__field-wrapper.grid .form-row-first,
+.woocommerce-shipping-fields__field-wrapper.grid .form-row-last,
+.woocommerce-shipping-fields__field-wrapper.grid .form-row-wide {
+  @apply w-full float-none;
+}
+
+/* Dropdown list styling — outside .woocommerce-checkout scope (appended to <body>) */
+.select2-dropdown {
+  @apply border-gray-200 rounded-xl mt-1 overflow-hidden;
+  box-shadow: 0 10px 40px -10px rgba(13, 13, 27, 0.15);
+}
+
+.select2-results__option {
+  @apply px-4 text-sm transition-colors duration-200;
+  padding-top: 0.625rem;
+  padding-bottom: 0.625rem;
+  line-height: 1.4;
+}
+
+.select2-results__option--highlighted {
+  @apply bg-primary/5 text-primary;
+}
+
+.select2-results__option--selected {
+  @apply bg-primary text-white;
+}
+
+.select2-search--dropdown .select2-search__field {
+  @apply h-10 px-4 border-gray-200 rounded-lg text-sm outline-none focus:border-primary;
+}
+
+/* Wallet transfer Select2 */
+#select2-woo_wallet_transfer_user_id-container,
+#woo_wallet_transfer_form .select2-selection__rendered {
+  @apply !pt-[22px] !pb-[22px];
+}
+#woo_wallet_transfer_form .select2-container .select2-selection--single {
+  @apply !h-auto min-h-[46px];
+}
+
+/* Spinner keyframe for place-order processing state */
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+#place_order:disabled,
+.nera-place-order-btn:disabled {
+  @apply opacity-70 cursor-not-allowed transform-none;
+}
+
+.nera-place-order-btn .animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+button:focus-visible {
+  @apply ring-2 ring-primary ring-offset-2 outline-none;
+}
+
+/* --- Form fields --- */
+.woocommerce-checkout {
+  .woocommerce-billing-fields__field-wrapper,
+  .woocommerce-shipping-fields__field-wrapper {
+    @apply gap-y-4;
+  }
+
+  .form-row {
+    @apply mb-0;
+
+    label {
+      @apply block text-sm font-semibold text-text-primary mb-2;
+
+      .required {
+        @apply text-danger ml-0.5;
+      }
+    }
+
+    input[type='text'],
+    input[type='email'],
+    input[type='tel'],
+    input[type='number'],
+    input[type='password'],
+    select,
+    textarea {
+      @apply w-full h-12 px-4 rounded-xl border border-gray-200 text-sm font-medium
+             bg-surface text-text-primary placeholder:text-gray-400
+             focus:border-primary focus:ring-1 focus:ring-primary outline-none
+             transition-all duration-300;
+    }
+
+    textarea {
+      @apply h-24 py-3;
+    }
+
+    &.woocommerce-invalid {
+      label { @apply text-danger; }
+      input, select { @apply border-danger focus:ring-danger/30; }
+    }
+
+    &.woocommerce-validated {
+      input, select { @apply border-success; }
+    }
+  }
+
+  input[type='checkbox'] {
+    @apply w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary cursor-pointer;
+  }
+
+  /* Select2 within checkout */
+  .select2-container {
+    .select2-selection--single {
+      height: 3rem !important;
+      @apply rounded-xl border-gray-200 bg-surface flex items-center;
+
+      .select2-selection__rendered {
+        @apply px-4 text-sm font-medium text-text-primary flex items-center h-full;
+        line-height: 1.4;
+        padding-top: 0;
+        padding-bottom: 0;
+      }
+
+      .select2-selection__arrow {
+        @apply h-12 right-3 flex items-center;
+      }
+    }
+
+    &--focus, &--open {
+      .select2-selection--single {
+        @apply border-primary ring-1 ring-primary outline-none;
+      }
+    }
+  }
+
+  /* Notices */
+  .woocommerce-NoticeGroup { @apply mb-6; }
+
+  .woocommerce-error {
+    @apply list-none p-4 rounded-xl border border-danger/20 bg-danger/5 text-danger text-sm font-medium;
+
+    li { @apply mb-1 last:mb-0; }
+  }
+
+  .woocommerce-message {
+    @apply p-4 rounded-xl border border-success/20 bg-success/5 text-success text-sm font-medium mb-6;
+  }
+
+  .woocommerce-message::before,
+  .woocommerce-error::before {
+    content: none;
+    display: none;
+  }
+
+  /* Login / coupon toggle */
+  .woocommerce-form-login-toggle, .woocommerce-form-coupon-toggle {
+    .woocommerce-info {
+      @apply pl-6 pr-4 py-4 rounded-xl border border-primary/10 bg-primary/5 text-sm text-text-primary mb-6;
+
+      &::before { content: none; display: none; }
+
+      a { @apply text-primary font-semibold; }
+    }
+  }
+
+  .woocommerce-form-login {
+    @apply bg-surface rounded-2xl border border-gray-100 shadow-sm p-6 mb-6;
+  }
+
+  /* Keyboard focus */
+  input:focus-visible,
+  select:focus-visible,
+  textarea:focus-visible {
+    @apply ring-2 ring-primary ring-offset-2 outline-none;
+  }
+}
+
+/* --- Payment methods --- */
+.woocommerce-checkout-payment {
+  .wc_payment_methods,
+  .wc_payment_methods li {
+    background: #ffffff !important;
+    background-color: #ffffff !important;
+  }
+
+  .wc_payment_methods {
+    @apply list-none p-0 m-0 flex flex-col gap-5;
+  }
+
+  .wc_payment_method {
+    @apply border border-gray-200 rounded-xl p-4 transition-all duration-300 cursor-pointer;
+    background: #ffffff !important;
+    background-color: #ffffff !important;
+
+    &:hover {
+      @apply border-gray-300 shadow-sm;
+      background: #ffffff !important;
+    }
+
+    &.active {
+      @apply border-gray-400 ring-2 ring-gray-300 shadow-sm;
+      background: #ffffff !important;
+
+      > div > label .material-symbols-outlined { @apply text-text-primary; }
+
+      .nera-wallet-gateway-description { @apply border-gray-300; }
+    }
+
+    > div > label {
+      @apply mb-0 flex min-h-11 items-center gap-3 rounded-lg text-base font-semibold text-text-primary cursor-pointer;
+    }
+
+    input[type='radio'] {
+      @apply mt-0.5 h-5 w-5 shrink-0 cursor-pointer border-gray-300 accent-gray-600 focus:ring-0 focus:outline-none;
+    }
+
+    .gateway-title { @apply flex-1 leading-tight; }
+
+    .gateway-brand-icons img { @apply max-h-6 w-auto; }
+  }
+
+  .payment_box,
+  .payment_box .nera-wallet-gateway-description {
+    background-color: #ffffff !important;
+  }
+
+  .payment_box {
+    @apply mt-4 p-4 rounded-lg border border-gray-200 text-sm text-text-secondary leading-relaxed;
+
+    &::before { content: none; }
+
+    p:last-child { @apply mb-0; }
+
+    .nera-wallet-gateway-description {
+      @apply rounded-xl border border-gray-200 p-3;
+    }
+  }
+
+  .payment_method_wallet label .inline-flex { @apply animate-pulse; }
+}
+
+/* ==========================================================================
+   My Account — Edit Address Select2
+   ========================================================================== */
+
+.nera-edit-address {
+  .form-row select {
+    @apply w-full h-12 px-4 rounded-xl border border-gray-200 text-sm font-medium
+           bg-surface text-text-primary
+           focus:border-primary focus:ring-1 focus:ring-primary outline-none
+           transition-all duration-300;
+  }
+
+  .select2-container {
+    .select2-selection--single {
+      height: 3rem !important;
+      @apply rounded-xl border-gray-200 bg-surface flex items-center;
+
+      .select2-selection__rendered {
+        @apply px-4 text-sm font-medium text-text-primary flex items-center h-full;
+        line-height: 1.4;
+        padding-top: 0;
+        padding-bottom: 0;
+      }
+
+      .select2-selection__arrow {
+        @apply h-12 right-3 flex items-center;
+      }
+    }
+
+    &--focus, &--open {
+      .select2-selection--single {
+        @apply border-primary ring-1 ring-primary outline-none;
+      }
+    }
+  }
+}

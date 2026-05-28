@@ -87,7 +87,7 @@ $youtube_url = get_theme_mod('nera_youtube_url', '#');
           } else {
             // Default content if field is empty (matching original design as fallback)
             ?>
-            <span class="text-gray-500 text-xs"><?php _e('Secure payments:', 'nera-competitions'); ?></span>
+            <span class="text-text-secondary text-xs"><?php _e('Secure payments:', 'nera-competitions'); ?></span>
             <div class="text-gray-400 text-xs font-medium flex gap-2">
               <span>Visa</span> <span>Mastercard</span> <span>PayPal</span> <span>Apple Pay</span>
             </div>
@@ -102,7 +102,7 @@ $youtube_url = get_theme_mod('nera_youtube_url', '#');
 
   <!-- Scroll to Top Button -->
   <button id="nera-scroll-top"
-    class="fixed bottom-8 cursor-pointer right-8 z-[100] p-3 bg-gray-900 text-white rounded-full shadow-xl hover:bg-black hover:shadow-xl hover:scale-110 hover:-translate-y-1 transform transition-all duration-300 translate-y-20 opacity-0 invisible border border-gray-800"
+    class="fixed bottom-8 cursor-pointer right-8 z-[100] p-3 bg-background-dark text-white rounded-full shadow-xl hover:bg-black hover:shadow-xl hover:scale-110 hover:-translate-y-1 transform transition-all duration-300 translate-y-20 opacity-0 invisible border border-gray-800"
     aria-label="<?php esc_attr_e('Scroll to top', 'nera-competitions'); ?>">
     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"
       stroke-width="2.5">

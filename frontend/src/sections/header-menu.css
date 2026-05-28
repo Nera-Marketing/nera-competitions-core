@@ -1,0 +1,103 @@
+/* --- Mobile Menu Animations --- */
+#mobile-menu {
+  @apply overflow-hidden transition-all duration-300 ease-in-out;
+}
+
+#mobile-menu.menu-opening {
+  @apply animate-[slideDown_300ms_ease-in-out_forwards];
+}
+
+#mobile-menu.menu-closing {
+  @apply animate-[slideUp_300ms_ease-in-out_forwards];
+}
+
+#mobile-menu a,
+#mobile-menu hr {
+  @apply opacity-0 animate-[menuItemFadeIn_300ms_ease-in-out_forwards];
+}
+
+#mobile-menu.menu-opening a:nth-child(1),
+#mobile-menu.menu-opening hr {
+  @apply delay-[50ms];
+}
+
+#mobile-menu.menu-opening a:nth-child(2) {
+  @apply delay-[100ms];
+}
+
+#mobile-menu.menu-opening a:nth-child(3) {
+  @apply delay-[150ms];
+}
+
+#mobile-menu.menu-opening a:nth-child(4) {
+  @apply delay-[200ms];
+}
+
+#mobile-menu.menu-opening a:nth-child(5) {
+  @apply delay-[250ms];
+}
+
+#mobile-menu.menu-opening a:nth-child(6) {
+  @apply delay-[300ms];
+}
+
+/* Hamburger icon animation */
+#mobile-menu-toggle {
+  @apply transition-transform duration-200;
+}
+
+#mobile-menu-toggle:active {
+  @apply scale-95;
+}
+
+#menu-icon-open,
+#menu-icon-close {
+  @apply transition-all duration-300;
+}
+
+#menu-icon-open.rotating {
+  @apply rotate-90 opacity-0;
+}
+
+#menu-icon-close.rotating {
+  @apply -rotate-90;
+}
+
+/* --- Header: 2-level primary menu (desktop dropdown + mobile accordion) --- */
+#site-header nav {
+  /* Invisible hover bridge so moving pointer from top link to panel does not close dropdown */
+  .menu-item-has-children.group::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 100%;
+    height: 0.5rem;
+  }
+
+  .sub-menu {
+    .menu-item { list-style: none; }
+
+    /* Submenu links: explicit default + hover (beats global `a` / `a:hover` in this scope) */
+    a {
+      @apply text-text-secondary no-underline transition-colors;
+
+      &:hover { @apply text-primary; }
+      &:focus-visible { @apply outline outline-2 outline-offset-2 outline-primary; }
+    }
+
+    .current-menu-item > a {
+      @apply font-semibold text-primary;
+    }
+  }
+}
+
+#mobile-menu .nera-mobile-submenu-toggle[aria-expanded='true'] .nera-mobile-submenu-chevron {
+  transform: rotate(180deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #mobile-menu .nera-mobile-submenu-chevron {
+    transition: none;
+  }
+}

@@ -1,0 +1,70 @@
+/* =================================================================
+   Winners Modal Styles
+   ================================================================= */
+
+/* Modal Backdrop with Blur */
+.winners-modal-backdrop {
+  backdrop-filter: blur(4px);
+}
+
+/* Smooth scrollbar for winners list */
+.winners-modal-list {
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 #f1f5f9;
+}
+
+.winners-modal-list::-webkit-scrollbar {
+  width: 8px;
+}
+
+.winners-modal-list::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 4px;
+}
+
+.winners-modal-list::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+.winners-modal-list::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Spin To Win side lists custom scrollbar */
+.stw-side-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 #f8fafc;
+}
+
+.stw-side-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.stw-side-scrollbar::-webkit-scrollbar-track {
+  background: #f8fafc;
+  border-radius: 9999px;
+}
+
+.stw-side-scrollbar::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 9999px;
+  border: 2px solid #f8fafc;
+}
+
+.stw-side-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Winner item hover effect */
+.winners-modal-list > div > div {
+  @apply transition-all duration-200;
+}
+
+/* Mobile responsive adjustments for modal */
+@media (max-width: 640px) {
+  .winners-modal-list {
+    @apply max-h-[calc(80vh-100px)];
+  }
+}
+

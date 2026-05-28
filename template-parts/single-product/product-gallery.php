@@ -92,14 +92,14 @@ $alpine_images = array_map(function ($img) {
         data-gallery-prev
         aria-label="<?php esc_attr_e('Previous image', 'nera-competitions'); ?>"
       >
-        <span class="material-symbols-outlined text-gray-700">chevron_left</span>
+        <span class="material-symbols-outlined text-text-secondary">chevron_left</span>
       </button>
       <button
         class="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-surface/90 rounded-full shadow-lg flex items-center justify-center hover:bg-surface opacity-0 group-hover:opacity-100 transition-opacity z-10"
         data-gallery-next
         aria-label="<?php esc_attr_e('Next image', 'nera-competitions'); ?>"
       >
-        <span class="material-symbols-outlined text-gray-700">chevron_right</span>
+        <span class="material-symbols-outlined text-text-secondary">chevron_right</span>
       </button>
     <?php endif; ?>
   </div>
@@ -127,7 +127,7 @@ $alpine_images = array_map(function ($img) {
               data-video-thumb
               onclick="window.open('<?php echo esc_url($video_url); ?>', '_blank', 'noopener,noreferrer')"
             >
-              <div class="aspect-square rounded-lg overflow-hidden border-2 border-transparent bg-gray-900 flex items-center justify-center transition-all hover:border-primary/50">
+              <div class="aspect-square rounded-lg overflow-hidden border-2 border-transparent bg-background-dark flex items-center justify-center transition-all hover:border-primary/50">
                 <span class="material-symbols-outlined text-white text-2xl">play_arrow</span>
               </div>
             </div>

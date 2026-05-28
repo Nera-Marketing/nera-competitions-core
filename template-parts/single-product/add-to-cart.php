@@ -33,7 +33,7 @@ $is_ended = $end_date_gmt && strtotime($end_date_gmt) < time();
     <!-- Competition Ended -->
     <button
       type="button"
-      class="w-full py-4 px-6 rounded-2xl bg-gray-300 text-gray-600 font-bold text-lg cursor-not-allowed"
+      class="w-full py-4 px-6 rounded-2xl bg-gray-300 text-text-secondary font-bold text-lg cursor-not-allowed"
       disabled
     >
       <span class="flex items-center justify-center gap-2">
@@ -54,7 +54,7 @@ $is_ended = $end_date_gmt && strtotime($end_date_gmt) < time();
     <!-- Sold Out -->
     <button
       type="button"
-      class="w-full py-4 px-6 rounded-2xl bg-gray-300 text-gray-600 font-bold text-lg cursor-not-allowed"
+      class="w-full py-4 px-6 rounded-2xl bg-gray-300 text-text-secondary font-bold text-lg cursor-not-allowed"
       disabled
     >
       <span class="flex items-center justify-center gap-2">

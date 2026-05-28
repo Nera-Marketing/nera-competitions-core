@@ -297,6 +297,10 @@ get_header();
 
 <main id="main" class="nera-attribution-page" role="main">
 
+	<?php if (nera_render_page_components()): ?>
+    <?php // page-components rendered via ACF Flexible Content ?>
+  <?php else: ?>
+
 	<!-- ── HERO ─────────────────────────────────────────────────────────────── -->
 	<section class="py-20 lg:py-28 border-b border-gray-200 overflow-hidden relative" data-aos="fade-up" data-aos-duration="600">
 		<div class="max-w-7xl mx-auto px-4 lg:px-0">
@@ -564,6 +568,8 @@ get_header();
 			</a>
 		</div>
 	</div>
+
+  <?php endif; ?>
 
 </main>
 

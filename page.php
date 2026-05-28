@@ -54,6 +54,10 @@ if (
   ? ' !py-0'
   : ''; ?>">
 
+    <?php if (function_exists('nera_render_page_components') && nera_render_page_components()): ?>
+        <?php // Page composed via ACF Page Components — default body skipped. ?>
+    <?php else: ?>
+
     <?php while (have_posts()):
       the_post(); ?>
 
@@ -92,7 +96,7 @@ if (
             ]); ?>
 
             </article>
-  
+
               <?php if (comments_open() || get_comments_number()) {
                 echo '<div class="container mx-auto px-4 pb-12"><div class="max-w-4xl mx-auto bg-surface rounded-2xl p-8 shadow-sm">';
                 comments_template();
@@ -101,6 +105,8 @@ if (
 
     <?php
     endwhile; ?>
+
+    <?php endif; ?>
 
 </main>
 

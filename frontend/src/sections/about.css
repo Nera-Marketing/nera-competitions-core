@@ -1,0 +1,60 @@
+/* --- About Section (Premium Blue) --- */
+/* Prose styling for WYSIWYG content */
+.about-section-premium .prose p {
+  @apply mb-4 text-text-secondary;
+}
+
+.about-section-premium .prose p:last-child {
+  @apply mb-0;
+}
+
+.about-section-premium .prose strong {
+  @apply text-text-primary font-semibold;
+}
+
+.about-section-premium .prose em {
+  @apply italic text-primary;
+}
+
+@media (max-width: 1023px) {
+  .about-floating-badge {
+    @apply hidden;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .about-section-premium,
+  .about-badge,
+  .about-title,
+  .about-subtitle,
+  .about-divider,
+  .about-description,
+  .about-features,
+  .about-cta,
+  .about-feature-item,
+  .about-image-container,
+  .about-frame,
+  .about-floating-badge,
+  .about-corner-accent {
+    @apply opacity-100;
+    transform: none;
+    transition: none;
+  }
+
+  .about-image:hover,
+  a:hover {
+    transform: none;
+  }
+}
+
+@media print {
+  .about-section-premium {
+    @apply !bg-surface;
+  }
+
+  .about-floating-badge,
+  .about-frame,
+  .about-corner-accent {
+    @apply hidden;
+  }
+}

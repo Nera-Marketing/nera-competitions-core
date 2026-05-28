@@ -25,7 +25,7 @@ $description = function_exists('get_field')
   );
 ?>
 
-<section class="nera-contact-hero py-12 lg:py-16 bg-gradient-to-b from-white via-gray-50 to-secondary">
+<section class="nera-contact-hero py-12 lg:py-16 bg-gradient-to-b from-surface via-gray-50 to-secondary">
     <div class="max-w-4xl mx-auto px-4 lg:px-8 text-center">
         <?php if ($subheading): ?>
             <p class="text-primary font-semibold text-sm uppercase tracking-wider mb-3">
