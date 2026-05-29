@@ -155,10 +155,10 @@ if (!$cta_label) {
           </span>
           <span class="text-primary"><?php echo esc_html($progress); ?>%</span>
         </div>
-        <div class="h-1.5 sm:h-2 w-full bg-gray-100 rounded-full overflow-hidden">
-          <div class="h-full bg-gradient-primary rounded-full transition-all duration-500"
-            style="width: <?php echo esc_attr($progress); ?>%">
-          </div>
+        <div class="ncs-progress__track relative h-[14px] w-full rounded-full overflow-hidden shadow-inner">
+          <div class="ncs-progress__fill h-full rounded-full transition-all duration-1000 ease-out"
+            style="width: 0%;"
+            data-progress="<?php echo esc_attr($progress); ?>"></div>
         </div>
       </div>
 

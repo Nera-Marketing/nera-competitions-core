@@ -132,11 +132,20 @@ function nera_component_field(array $args, string $row_key, string $legacy_key, 
         if ($value !== '' && $value !== null) {
             return $value;
         }
+        if ($value === false || $value === 0 || $value === '0') {
+            return $value;
+        }
     }
     if (function_exists('get_field')) {
         $value = get_field($legacy_key);
-        if ($value !== false && $value !== null && $value !== '') {
+        if ($value !== null && $value !== '') {
             return $value;
+        }
+        if ($value === false || $value === 0 || $value === '0') {
+            $post_id = get_queried_object_id() ?: get_the_ID();
+            if ($post_id && metadata_exists('post', (int) $post_id, $legacy_key)) {
+                return $value;
+            }
         }
     }
     return $default;

@@ -125,8 +125,11 @@ Parent templates add `.ncs-*` classes to the components child themes most often 
 | `.ncs-order-status--on-hold` | On-hold modifier | same |
 | `.ncs-order-status--cancelled` | Cancelled modifier | same |
 | `.ncs-order-status--failed` | Failed modifier | same |
-| `.ncs-progress` | Competition progress bar | `template-parts/single-product/progress-bar.php` |
-| `.ncs-progress__fill` | Progress fill element | same |
+| `.ncs-progress` | Competition progress bar root (tokens) | `progress-bar.php`, `TicketsProgress`, cards, listings |
+| `.ncs-progress__track` | Progress track (14px) | same |
+| `.ncs-progress__fill` | Progress fill + shimmer | same |
+| `.ncs-progress__fill--urgent` | Urgent fill (≥90% sold) | `progress-bar.php` |
+| `.ncs-progress__fill--muted` | Muted fill (closed prizes) | `closed-prize-card.php` |
 | `.ncs-countdown` | Countdown timer root | `template-parts/single-product/countdown-timer.php` |
 | `.ncs-site-footer` | Site footer strip | `template-parts/footer.php` |
 
@@ -280,11 +283,13 @@ scope — and the parent rule repaints without `!important` or selector wars.
 
 ### `.ncs-progress`
 
+Track height is **14px** (`h-[14px]` on `.ncs-progress__track`). Fill uses a horizontal shimmer (`::after`, disabled under `prefers-reduced-motion`). Load animation: `data-progress` on the fill, `width: 0%` initially, animated by `assets/js/single-product.js`.
+
 | Knob | Default | Controls |
 |---|---|---|
-| `--ncs-progress-track` | `var(--color-gray-200)` | Empty track |
+| `--ncs-progress-track` | `var(--color-gray-100)` | Empty track background |
 | `--ncs-progress-fill` | `var(--color-primary)` | Filled portion |
-| `--ncs-progress-fill-urgent` | `var(--color-danger)` | Urgent fill (low time/stock) |
+| `--ncs-progress-fill-urgent` | `var(--color-danger)` | Urgent fill (≥90% sold) |
 | `--ncs-progress-text` | `var(--color-text-secondary)` | Counter label |
 
 ### `.ncs-countdown`

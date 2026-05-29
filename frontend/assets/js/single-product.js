@@ -257,37 +257,62 @@
   }
 
   /**
-   * Initialize progress bar animation
+   * Initialize progress bar animation (observes track; fill starts at width 0).
    */
   function initProgressBarAnimation() {
-    const progressBars = document.querySelectorAll('[data-progress]');
+    const tracks = document.querySelectorAll('.ncs-progress__track, .ncs-product-card__progress-track');
 
-    if (!progressBars.length) {
+    if (!tracks.length) {
       return;
     }
+
+    const applyProgress = fill => {
+      const raw = fill.dataset.progress;
+      if (raw === undefined || raw === '') {
+        return;
+      }
+      const progress = parseFloat(raw, 10);
+      if (Number.isNaN(progress)) {
+        return;
+      }
+      fill.style.width = `${Math.min(100, Math.max(0, progress))}%`;
+    };
+
+    const isInViewport = el => {
+      const rect = el.getBoundingClientRect();
+      return rect.top < window.innerHeight && rect.bottom > 0;
+    };
 
     const observer = new IntersectionObserver(
       entries => {
         entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            const bar = entry.target;
-            const progress = bar.dataset.progress;
-
-            // Animate the progress bar
-            setTimeout(() => {
-              bar.style.width = progress + '%';
-            }, 100);
-
-            // Stop observing once animated
-            observer.unobserve(bar);
+          if (!entry.isIntersecting) {
+            return;
           }
+          const track = entry.target;
+          const fill = track.querySelector('[data-progress]');
+          if (!fill) {
+            return;
+          }
+          setTimeout(() => applyProgress(fill), 100);
+          observer.unobserve(track);
         });
       },
-      { threshold: 0.5 }
+      { threshold: 0 }
     );
 
-    progressBars.forEach(bar => {
-      observer.observe(bar);
+    tracks.forEach(track => {
+      const fill = track.querySelector('[data-progress]');
+      if (!fill) {
+        return;
+      }
+
+      if (isInViewport(track)) {
+        setTimeout(() => applyProgress(fill), 100);
+        return;
+      }
+
+      observer.observe(track);
     });
   }
 
@@ -344,5 +369,6 @@
     initQuantitySelector: initQuantitySelector,
     initProductTabs: initProductTabs,
     initFaqAccordion: initFaqAccordion,
+    initProgressBarAnimation: initProgressBarAnimation,
   };
 })();

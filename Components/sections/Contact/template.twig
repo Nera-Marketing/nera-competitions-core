@@ -52,7 +52,7 @@
 
   {# === GRID === #}
   <div class="max-w-7xl mx-auto px-4 lg:px-0 py-12 lg:py-16">
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
+    <div class="gap-8 lg:gap-12 {% if show_contact_cards %}grid grid-cols-1 lg:grid-cols-2{% else %}flex flex-col items-center{% endif %}">
 
       {# LEFT: contact info (from contact-info.php) #}
       {% if show_contact_cards %}
@@ -181,7 +181,7 @@
       {% endif %}
 
       {# RIGHT: form (from form-section.php) #}
-      <div class="bg-surface rounded-2xl p-6 lg:p-8 shadow-md">
+      <div class="bg-surface rounded-2xl p-6 lg:p-8 shadow-md{% if not show_contact_cards %} w-full max-w-[36rem] min-w-0 shrink{% endif %}">
 
         {# Form Header #}
         {% if form_heading %}

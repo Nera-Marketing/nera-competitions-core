@@ -167,9 +167,10 @@
           </span>
         </div>
 
-        <div class="ncs-product-card__progress-track relative h-[14px] w-full rounded-full overflow-hidden shadow-inner">
-          <div class="ncs-product-card__progress-fill h-full rounded-full transition-all duration-500"
-            style="width: {{ progress|default(0) }}%; --ncs-product-card-progress-accent: {{ accent_color }};">
+        <div class="ncs-product-card__progress-track ncs-progress__track relative h-[14px] w-full rounded-full overflow-hidden shadow-inner">
+          <div class="ncs-product-card__progress-fill ncs-progress__fill h-full rounded-full transition-all duration-1000 ease-out"
+            style="width: 0%; --ncs-product-card-progress-accent: {{ accent_color }};"
+            data-progress="{{ progress|default(0) }}">
           </div>
         </div>
       </div>

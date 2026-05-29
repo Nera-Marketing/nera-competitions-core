@@ -57,11 +57,11 @@ $is_low_stock = $remaining <= 50 && $remaining > 0;
     </span>
   </div>
 
-  <div class="progress-bar-wrapper h-3 w-full bg-gray-200 rounded-full overflow-hidden">
+  <div class="ncs-progress__track relative h-[14px] w-full rounded-full overflow-hidden shadow-inner">
     <div
-      class="ncs-progress__fill progress-bar-fill h-full rounded-full transition-all duration-1000 ease-out <?php echo $is_almost_sold_out
-        ? 'bg-gradient-to-r from-danger to-warning'
-        : 'bg-gradient-to-r from-primary to-primary'; ?>"
+      class="ncs-progress__fill h-full rounded-full transition-all duration-1000 ease-out<?php echo $is_almost_sold_out
+        ? ' ncs-progress__fill--urgent'
+        : ''; ?>"
       style="width: 0%;"
       data-progress="<?php echo esc_attr($progress); ?>"
     ></div>
