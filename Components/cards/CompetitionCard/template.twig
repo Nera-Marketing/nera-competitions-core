@@ -25,9 +25,12 @@
   sold_tickets      int                                                                      required  —         tickets purchased; used in buy_tickets label
   button_variant    string                                                                   required  'full'    'full'|'compact'|'buy_tickets'
   button_mode       string                                                                   required  'link'    'link'|'ajax' (buy_tickets only)
+  card_layout       string|null                                                              optional  classic   'classic'|'portrait' — shop listing only (filter)
+  image_aspect_ratio string|null                                                             optional  null      sanitized CSS aspect-ratio — shop listing only (filter)
   NOTE: get_data() returns [] (empty) if the product can't be resolved — view renders nothing in that case (guarded by {% if product_id %}).
 #}
 {% if product_id %}
+{% set card_layout_mode = card_layout|default('classic') %}
 <article class="ncs-product-card group min-w-0 transition-all duration-400 ease-out"
   data-price="{{ data_attrs.price }}"
   data-end-date="{{ data_attrs.end_date }}"
@@ -44,7 +47,13 @@
     class="bg-surface rounded-xl sm:rounded-2xl overflow-hidden shadow-lg border border-gray-100 h-full flex flex-col transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl hover:border-gray-200">
 
     <!-- Image Container -->
+    {% if image_aspect_ratio %}
+    <div class="relative overflow-hidden bg-gray-100" style="aspect-ratio: {{ image_aspect_ratio }};">
+    {% elseif card_layout_mode == 'portrait' %}
+    <div class="relative overflow-hidden bg-gray-100" style="aspect-ratio: 4/5;">
+    {% else %}
     <div class="relative aspect-5/3 sm:aspect-4/3 overflow-hidden bg-gray-100">
+    {% endif %}
 
       <!-- Status Badge (Top Left) -->
       {% if badge_text %}
@@ -167,7 +176,7 @@
 
       <!-- Footer: Countdown & CTA -->
       <div
-        class="flex flex-col items-stretch gap-2 pt-3 mt-3 border-t border-gray-100 sm:flex-row sm:items-center sm:justify-between sm:gap-3 sm:pt-5 sm:mt-4">
+        class="flex flex-col items-stretch gap-2 pt-3 mt-3 border-t border-gray-100{% if card_layout_mode == 'portrait' %} sm:pt-5 sm:mt-4{% else %} sm:flex-row sm:items-center sm:justify-between sm:gap-3 sm:pt-5 sm:mt-4{% endif %}">
 
         {% if button_variant == 'buy_tickets' %}
 
@@ -179,14 +188,14 @@
 
           {% if button_mode == 'ajax' %}
             <button
-              class="ncs-product-card__cta add-to-cart-btn inline-flex w-full min-h-[44px] items-center justify-center rounded-xl px-5 py-2.5 text-sm font-bold uppercase tracking-wide bg-primary hover:bg-primary-dark text-white shadow-sm hover:shadow-md transition-all duration-300 sm:w-auto sm:min-h-0 sm:ml-auto"
+              class="ncs-product-card__cta add-to-cart-btn inline-flex w-full min-h-[44px] items-center justify-center rounded-xl px-5 py-2.5 text-sm font-bold uppercase tracking-wide bg-primary hover:bg-primary-dark text-white shadow-sm hover:shadow-md transition-all duration-300{% if card_layout_mode != 'portrait' %} sm:w-auto sm:min-h-0 sm:ml-auto{% endif %}"
               data-product-id="{{ product_id }}"
               data-quantity="1">
               Buy Tickets
             </button>
           {% else %}
             <a href="{{ permalink }}"
-              class="ncs-product-card__cta inline-flex w-full min-h-[44px] items-center justify-center rounded-xl px-5 py-2.5 text-sm font-bold uppercase tracking-wide bg-primary hover:bg-primary-dark text-white shadow-sm hover:shadow-md transition-all duration-300 sm:w-auto sm:min-h-0 sm:ml-auto">
+              class="ncs-product-card__cta inline-flex w-full min-h-[44px] items-center justify-center rounded-xl px-5 py-2.5 text-sm font-bold uppercase tracking-wide bg-primary hover:bg-primary-dark text-white shadow-sm hover:shadow-md transition-all duration-300{% if card_layout_mode != 'portrait' %} sm:w-auto sm:min-h-0 sm:ml-auto{% endif %}">
               Buy Tickets
             </a>
           {% endif %}
@@ -196,14 +205,14 @@
           <!-- Countdown Timer (full and compact variants) -->
           {% if show_countdown %}
             <div
-              class="flex w-full items-center justify-center gap-1 text-text-secondary sm:w-auto sm:justify-start sm:gap-1.5"
+              class="flex w-full items-center gap-1 text-text-secondary{% if card_layout_mode == 'portrait' %} justify-start sm:gap-1.5{% else %} justify-center sm:w-auto sm:justify-start sm:gap-1.5{% endif %}"
               x-data="countdown('{{ end_timestamp_ms }}')">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                 class="hidden h-3.5 w-3.5 shrink-0 opacity-60 sm:block sm:h-3.5 sm:w-3.5" aria-hidden="true">
                 <circle cx="12" cy="12" r="10"></circle>
                 <polyline points="12 6 12 12 16 14"></polyline>
               </svg>
-              <span class="text-center text-[10px] font-bold uppercase leading-snug tabular-nums sm:text-left sm:text-xs">
+              <span class="text-[10px] font-bold uppercase leading-snug tabular-nums{% if card_layout_mode == 'portrait' %} text-left sm:text-xs{% else %} text-center sm:text-left sm:text-xs{% endif %}">
                 <span x-text="days">00</span>d : <span x-text="hours">00</span>h : <span x-text="minutes">00</span>m : <span x-text="seconds">00</span>s
               </span>
             </div>
@@ -212,13 +221,13 @@
           {% if button_variant == 'compact' %}
             <!-- compact CTA -->
             <a href="{{ permalink }}"
-              class="ncs-product-card__cta inline-flex w-full min-h-[44px] items-center justify-center rounded-lg px-4 py-2 text-xs font-extrabold uppercase tracking-wide transition-all duration-300 bg-primary/5 hover:bg-primary text-primary hover:text-white sm:w-auto sm:min-h-0 sm:ml-auto">
+              class="ncs-product-card__cta inline-flex w-full min-h-[44px] items-center justify-center rounded-lg px-4 py-2 text-xs font-extrabold uppercase tracking-wide transition-all duration-300 bg-primary/5 hover:bg-primary text-primary hover:text-white{% if card_layout_mode != 'portrait' %} sm:w-auto sm:min-h-0 sm:ml-auto{% endif %}">
               ENTER
             </a>
           {% else %}
             <!-- full CTA (default) -->
             <a href="{{ permalink }}"
-              class="ncs-product-card__cta group/cta inline-flex w-full min-h-[44px] items-center justify-center gap-1.5 rounded-lg px-3 py-2 text-[11px] font-extrabold uppercase tracking-wide text-white shadow-md transition-all duration-300 hover:shadow-xl hover:scale-105 sm:w-auto sm:min-h-0 sm:px-5 sm:py-2.5 sm:text-xs sm:ml-auto"
+              class="ncs-product-card__cta group/cta inline-flex w-full min-h-[44px] items-center justify-center gap-1.5 rounded-lg px-3 py-2 text-[11px] font-extrabold uppercase tracking-wide text-white shadow-md transition-all duration-300 hover:shadow-xl hover:scale-105{% if card_layout_mode != 'portrait' %} sm:w-auto sm:min-h-0 sm:px-5 sm:py-2.5 sm:text-xs sm:ml-auto{% else %} sm:px-5 sm:py-2.5 sm:text-xs{% endif %}"
               style="background: linear-gradient(135deg, {{ accent_color }} 0%, {{ accent_color }} 100%);">
               <span>ENTER NOW</span>
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"

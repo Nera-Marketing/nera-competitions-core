@@ -29,6 +29,8 @@ if (!defined('ABSPATH')) exit;
  *   sold_tickets: int,                                      // required — tickets purchased; used in buy_tickets variant label
  *   button_variant: string,                                 // required, default 'full' — 'full'|'compact'|'buy_tickets' controls CTA style
  *   button_mode: string,                                    // required, default 'link' — 'link'|'ajax' controls buy_tickets CTA element
+ *   card_layout?: string,                                   // optional — 'classic'|'portrait'; shop listing via nera_component_data_CompetitionCard
+ *   image_aspect_ratio?: string|null,                       // optional — sanitized CSS aspect-ratio; shop listing only
  * }
  * Returns empty array {} when no product can be resolved.
  */
