@@ -92,7 +92,8 @@ function nera_render_component(string $name, array $args = []): void
         }
     }
 
-    $data = array_merge($data, $args);
+    // get_data() transformations win over raw caller $args (e.g. normalized answers).
+    $data = array_merge($args, $data);
 
     // Allow child themes / plugins to filter a component's context without
     // overriding the twig template or get_data(). Per-component filter fires

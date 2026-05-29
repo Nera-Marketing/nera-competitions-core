@@ -304,11 +304,13 @@ Track height is **14px** (`h-[14px]` on `.ncs-progress__track`). Fill uses a hor
 
 ### `.ncs-cart-item`
 
+Cart rows are **borderless by default** (`border: none` on `.ncs-cart-item`). The outer “Your Selections” panel border in `woocommerce/cart/cart.php` is unchanged.
+
 | Knob | Default | Controls |
 |---|---|---|
 | `--ncs-cart-item-bg` | `var(--color-surface)` | Row background |
-| `--ncs-cart-item-border` | `var(--color-gray-100)` | Row border |
-| `--ncs-cart-item-border-hover` | `color-mix(in srgb, var(--color-primary) 20%, var(--color-gray-200))` | Hover border |
+| `--ncs-cart-item-border` | `var(--color-gray-100)` | Optional row border color (not applied unless child adds `border: 1px solid var(--ncs-cart-item-border)`) |
+| `--ncs-cart-item-border-hover` | `color-mix(in srgb, var(--color-primary) 20%, var(--color-gray-200))` | Optional hover border (pair with custom border rule above) |
 | `--ncs-cart-item-title` | `var(--color-text-primary)` | Product title color |
 | `--ncs-cart-item-text-secondary` | `var(--color-text-secondary)` | Metadata text |
 | `--ncs-cart-item-price` | `var(--color-primary)` | Price color |

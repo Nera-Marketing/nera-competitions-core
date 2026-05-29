@@ -1111,11 +1111,7 @@ body h6 {
   --ncs-cart-item-price: var(--color-primary);
 
   background-color: var(--ncs-cart-item-bg);
-  border: 1px solid var(--ncs-cart-item-border);
-}
-
-.ncs-cart-item:hover {
-  border-color: var(--ncs-cart-item-border-hover);
+  border: none;
 }
 
 .ncs-cart-item h3,

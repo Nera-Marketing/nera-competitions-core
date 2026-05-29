@@ -31,11 +31,28 @@
 
     /**
      * @param {number|string} newValue
+     * @param {{ fromEvent?: boolean }} [options]
      */
-    function updateQuantity(newValue) {
+    function updateQuantity(newValue, options = {}) {
+      const fromEvent = options.fromEvent === true;
       const min = getMin();
       const max = getMax();
       const value = Math.max(min, Math.min(max, parseInt(String(newValue), 10) || min));
+      const current = parseInt(quantityInput.value, 10);
+
+      if (
+        current === value &&
+        (!rangeInput || parseInt(rangeInput.value, 10) === value) &&
+        (!display || display.textContent === String(value))
+      ) {
+        if (minusBtn) {
+          minusBtn.disabled = value <= min;
+        }
+        if (plusBtn) {
+          plusBtn.disabled = value >= max;
+        }
+        return;
+      }
 
       quantityInput.value = String(value);
 
@@ -59,7 +76,9 @@
         plusBtn.disabled = value >= max;
       }
 
-      quantityInput.dispatchEvent(new Event('change', { bubbles: true }));
+      if (!fromEvent) {
+        quantityInput.dispatchEvent(new Event('change', { bubbles: true }));
+      }
 
       document.dispatchEvent(
         new CustomEvent('nera:quantity:change', {
@@ -172,11 +191,11 @@
     }
 
     quantityInput.addEventListener('change', function () {
-      updateQuantity(this.value);
+      updateQuantity(this.value, { fromEvent: true });
     });
 
     quantityInput.addEventListener('input', function () {
-      updateQuantity(this.value);
+      updateQuantity(this.value, { fromEvent: true });
     });
 
     updateQuantity(quantityInput.value || getMin());
