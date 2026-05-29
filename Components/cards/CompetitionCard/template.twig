@@ -167,9 +167,9 @@
           </span>
         </div>
 
-        <div class="relative h-1.5 sm:h-2 w-full bg-gray-100 rounded-full overflow-hidden shadow-inner">
-          <div class="h-full rounded-full transition-all duration-500"
-            style="width: {{ progress|default(0) }}%; background: linear-gradient(90deg, {{ accent_color }}, {{ accent_color }}CC);">
+        <div class="ncs-product-card__progress-track relative h-[14px] w-full rounded-full overflow-hidden shadow-inner">
+          <div class="ncs-product-card__progress-fill h-full rounded-full transition-all duration-500"
+            style="width: {{ progress|default(0) }}%; --ncs-product-card-progress-accent: {{ accent_color }};">
           </div>
         </div>
       </div>
