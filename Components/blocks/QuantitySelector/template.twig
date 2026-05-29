@@ -4,48 +4,95 @@
   key        type        req/opt   default     note
   min        int         required  1           input min attr
   max        int         required  1           input max attr
-  quick_add  list<int>   required  [5,10,20]   quick-add button amounts
+  quick_add  list<int>   required  [5,10,20]   quick-add button amounts (buttons layout only)
   default    int         required  1           input initial value
+  layout     string      required  buttons     buttons|slider
+  i18n       array       required  —           tickets, decrease_quantity, increase_quantity, number_of_tickets
 #}
 {# QuantitySelector atom #}
-{# Variables: min, max, default, quick_add (array of amounts, e.g. [5, 10, 20]) #}
 
-<div class="flex items-center gap-3">
-  {# Main Quantity Control #}
-  <div class="flex items-center border border-gray-200 rounded-lg overflow-hidden">
-    <button type="button"
-      class="w-10 h-10 flex items-center justify-center text-text-secondary hover:text-primary hover:bg-gray-50 transition-colors"
-      data-quantity-minus>
-      <span class="material-symbols-outlined text-xl">remove</span>
-    </button>
-    <input type="number" name="quantity" value="{{ default }}"
-      min="{{ min }}"
-      max="{{ max }}"
-      class="qty w-12 h-10 text-center font-semibold text-text-primary border-x border-gray-200 focus:outline-none"
-      data-quantity-input />
-    <button type="button"
-      class="w-10 h-10 flex items-center justify-center text-text-secondary hover:text-primary hover:bg-gray-50 transition-colors"
-      data-quantity-plus>
-      <span class="material-symbols-outlined text-xl">add</span>
-    </button>
-  </div>
+<div data-quantity-control class="w-full min-w-0" data-quantity-layout="{{ layout }}">
+  {% if layout == 'slider' %}
+    <div class="ncs-quantity-slider flex flex-col gap-3 w-full">
+      <p class="text-center text-sm font-semibold text-text-secondary" aria-live="polite">
+        <span class="text-2xl font-bold text-text-primary tabular-nums" data-quantity-display>{{ default }}</span>
+        <span class="ml-1">{{ i18n.tickets }}</span>
+      </p>
+      <div class="flex items-center gap-3 w-full">
+        <button type="button"
+          class="ncs-quantity-slider__step w-11 h-11 shrink-0 flex items-center justify-center rounded-lg border border-gray-200 bg-surface text-text-primary hover:border-primary hover:text-primary transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          data-quantity-minus
+          aria-label="{{ i18n.decrease_quantity }}">
+          <span class="material-symbols-outlined text-xl" aria-hidden="true">remove</span>
+        </button>
+        <input type="range"
+          class="ncs-quantity-slider__range flex-1 min-w-0 h-11"
+          data-quantity-range
+          min="{{ min }}"
+          max="{{ max }}"
+          value="{{ default }}"
+          step="1"
+          aria-valuemin="{{ min }}"
+          aria-valuemax="{{ max }}"
+          aria-valuenow="{{ default }}"
+          aria-label="{{ i18n.number_of_tickets }}" />
+        <button type="button"
+          class="ncs-quantity-slider__step w-11 h-11 shrink-0 flex items-center justify-center rounded-lg border border-gray-200 bg-surface text-text-primary hover:border-primary hover:text-primary transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          data-quantity-plus
+          aria-label="{{ i18n.increase_quantity }}">
+          <span class="material-symbols-outlined text-xl" aria-hidden="true">add</span>
+        </button>
+      </div>
+      <input type="number"
+        name="quantity"
+        value="{{ default }}"
+        min="{{ min }}"
+        max="{{ max }}"
+        class="sr-only"
+        tabindex="-1"
+        aria-hidden="true"
+        data-quantity-input />
+    </div>
+  {% else %}
+    <div class="flex items-center gap-3">
+      <div class="flex items-center border border-gray-200 rounded-lg overflow-hidden">
+        <button type="button"
+          class="w-10 h-10 flex items-center justify-center text-text-secondary hover:text-primary hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          data-quantity-minus
+          aria-label="{{ i18n.decrease_quantity }}">
+          <span class="material-symbols-outlined text-xl" aria-hidden="true">remove</span>
+        </button>
+        <input type="number" name="quantity" value="{{ default }}"
+          min="{{ min }}"
+          max="{{ max }}"
+          class="qty w-12 h-10 text-center font-semibold text-text-primary border-x border-gray-200 focus:outline-none"
+          data-quantity-input
+          aria-label="{{ i18n.number_of_tickets }}" />
+        <button type="button"
+          class="w-10 h-10 flex items-center justify-center text-text-secondary hover:text-primary hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          data-quantity-plus
+          aria-label="{{ i18n.increase_quantity }}">
+          <span class="material-symbols-outlined text-xl" aria-hidden="true">add</span>
+        </button>
+      </div>
 
-  {# Quick Add Buttons #}
-  <div class="flex items-center gap-2">
-    {% for amount in quick_add %}
-      {% if loop.index0 == 0 %}
-        <button type="button"
-          class="px-4 h-10 bg-primary text-white font-semibold text-sm rounded-lg hover:bg-primary-dark transition-colors"
-          data-quantity-add="{{ amount }}">
-          +{{ amount }}
-        </button>
-      {% else %}
-        <button type="button"
-          class="px-4 h-10 border border-gray-200 text-text-secondary font-semibold text-sm rounded-lg hover:border-primary hover:text-primary transition-colors"
-          data-quantity-add="{{ amount }}">
-          +{{ amount }}
-        </button>
-      {% endif %}
-    {% endfor %}
-  </div>
+      <div class="flex items-center gap-2">
+        {% for amount in quick_add %}
+          {% if loop.index0 == 0 %}
+            <button type="button"
+              class="px-4 h-10 bg-primary text-white font-semibold text-sm rounded-lg hover:bg-primary-dark transition-colors"
+              data-quantity-add="{{ amount }}">
+              +{{ amount }}
+            </button>
+          {% else %}
+            <button type="button"
+              class="px-4 h-10 border border-gray-200 text-text-secondary font-semibold text-sm rounded-lg hover:border-primary hover:text-primary transition-colors"
+              data-quantity-add="{{ amount }}">
+              +{{ amount }}
+            </button>
+          {% endif %}
+        {% endfor %}
+      </div>
+    </div>
+  {% endif %}
 </div>

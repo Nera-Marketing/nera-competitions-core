@@ -191,9 +191,10 @@ function nera_shortcode_competition_progress()
       </span>
     </div>
 
-    <div class="h-1.5 w-full bg-gray-100 rounded-full overflow-hidden">
-      <div class="h-full bg-primary rounded-full transition-all duration-500"
-        style="width: <?php echo esc_attr($progress); ?>%"></div>
+    <div class="ncs-progress__track relative h-[14px] w-full rounded-full overflow-hidden shadow-inner">
+      <div class="ncs-progress__fill h-full rounded-full transition-all duration-1000 ease-out"
+        style="width: 0%;"
+        data-progress="<?php echo esc_attr($progress); ?>"></div>
     </div>
   </div>
   <?php return ob_get_clean();

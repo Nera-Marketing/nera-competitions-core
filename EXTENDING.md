@@ -125,8 +125,11 @@ Parent templates add `.ncs-*` classes to the components child themes most often 
 | `.ncs-order-status--on-hold` | On-hold modifier | same |
 | `.ncs-order-status--cancelled` | Cancelled modifier | same |
 | `.ncs-order-status--failed` | Failed modifier | same |
-| `.ncs-progress` | Competition progress bar | `template-parts/single-product/progress-bar.php` |
-| `.ncs-progress__fill` | Progress fill element | same |
+| `.ncs-progress` | Competition progress bar root (tokens) | `progress-bar.php`, `TicketsProgress`, cards, listings |
+| `.ncs-progress__track` | Progress track (14px) | same |
+| `.ncs-progress__fill` | Progress fill + shimmer | same |
+| `.ncs-progress__fill--urgent` | Urgent fill (≥90% sold) | `progress-bar.php` |
+| `.ncs-progress__fill--muted` | Muted fill (closed prizes) | `closed-prize-card.php` |
 | `.ncs-countdown` | Countdown timer root | `template-parts/single-product/countdown-timer.php` |
 | `.ncs-site-footer` | Site footer strip | `template-parts/footer.php` |
 
@@ -280,11 +283,13 @@ scope — and the parent rule repaints without `!important` or selector wars.
 
 ### `.ncs-progress`
 
+Track height is **14px** (`h-[14px]` on `.ncs-progress__track`). Fill uses a horizontal shimmer (`::after`, disabled under `prefers-reduced-motion`). Load animation: `data-progress` on the fill, `width: 0%` initially, animated by `assets/js/single-product.js`.
+
 | Knob | Default | Controls |
 |---|---|---|
-| `--ncs-progress-track` | `var(--color-gray-200)` | Empty track |
+| `--ncs-progress-track` | `var(--color-gray-100)` | Empty track background |
 | `--ncs-progress-fill` | `var(--color-primary)` | Filled portion |
-| `--ncs-progress-fill-urgent` | `var(--color-danger)` | Urgent fill (low time/stock) |
+| `--ncs-progress-fill-urgent` | `var(--color-danger)` | Urgent fill (≥90% sold) |
 | `--ncs-progress-text` | `var(--color-text-secondary)` | Counter label |
 
 ### `.ncs-countdown`
@@ -299,11 +304,13 @@ scope — and the parent rule repaints without `!important` or selector wars.
 
 ### `.ncs-cart-item`
 
+Cart rows are **borderless by default** (`border: none` on `.ncs-cart-item`). The outer “Your Selections” panel border in `woocommerce/cart/cart.php` is unchanged.
+
 | Knob | Default | Controls |
 |---|---|---|
 | `--ncs-cart-item-bg` | `var(--color-surface)` | Row background |
-| `--ncs-cart-item-border` | `var(--color-gray-100)` | Row border |
-| `--ncs-cart-item-border-hover` | `color-mix(in srgb, var(--color-primary) 20%, var(--color-gray-200))` | Hover border |
+| `--ncs-cart-item-border` | `var(--color-gray-100)` | Optional row border color (not applied unless child adds `border: 1px solid var(--ncs-cart-item-border)`) |
+| `--ncs-cart-item-border-hover` | `color-mix(in srgb, var(--color-primary) 20%, var(--color-gray-200))` | Optional hover border (pair with custom border rule above) |
 | `--ncs-cart-item-title` | `var(--color-text-primary)` | Product title color |
 | `--ncs-cart-item-text-secondary` | `var(--color-text-secondary)` | Metadata text |
 | `--ncs-cart-item-price` | `var(--color-primary)` | Price color |
@@ -509,7 +516,7 @@ For exact types, defaults, and notes, read the `get_data()` PHPDoc or the `templ
 | blocks/AddToCartButton | product_id, is_expired, is_manual_ticket, label_active, label_ended |
 | blocks/CountdownTimer | countdown_date, days, hours, minutes, seconds, is_expired |
 | blocks/ProductTitle | name, is_sold_out |
-| blocks/QuantitySelector | min, max, quick_add, default |
+| blocks/QuantitySelector | min, max, quick_add, default, layout (resolved via `nera_get_quantity_selector_layout()`: global Theme Settings → WooCommerce + optional product override) |
 | blocks/SkillQuestionAnswer | question_text, answers, cart_answer_id, qa_can_display |
 | blocks/TicketPrice | price_html |
 | blocks/TicketsProgress | sold, max, progress, remaining, is_low_stock, sold_formatted, max_formatted, remaining_formatted |

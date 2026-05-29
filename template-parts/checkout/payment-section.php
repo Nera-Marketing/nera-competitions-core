@@ -69,14 +69,15 @@ if (!defined('ABSPATH')) {
               required
               <?php checked(apply_filters('woocommerce_terms_is_checked_default', isset($_POST['terms'])), true); ?>>
             <span>
-              <?php printf(
-                wp_kses_post(__('I have read and agree to the website %s', 'woocommerce')),
-                '<a href="' .
-                  esc_url(get_permalink($terms_page_id)) .
-                  '" class="font-semibold text-primary underline underline-offset-2 transition-colors hover:text-primary-dark" target="_blank">' .
-                  esc_html__('terms and conditions', 'woocommerce') .
-                  '</a>',
-              ); ?>
+              <?php
+              echo esc_html(
+                sprintf(
+                  /* translators: %s: terms and conditions (plain text, not a link) */
+                  __('I have read and agree to the website %s', 'woocommerce'),
+                  __('terms and conditions', 'woocommerce'),
+                ),
+              );
+              ?>
             </span>
           </label>
           <input type="hidden" name="terms-field" value="1">

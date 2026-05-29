@@ -240,46 +240,6 @@ $extra_images = max(0, count($gallery_images) - $visible_thumbs);
         });
       });
     });
-
-    // Quantity controls
-    const quantityInput = document.querySelector('[data-quantity-input]');
-    const quantityHidden = document.querySelector('[data-quantity-hidden]');
-    const minusBtn = document.querySelector('[data-quantity-minus]');
-    const plusBtn = document.querySelector('[data-quantity-plus]');
-    const addBtns = document.querySelectorAll('[data-quantity-add]');
-
-    function updateQuantity(newValue) {
-      const max = parseInt(quantityInput.max, 10) || 999;
-      const min = parseInt(quantityInput.min, 10) || 1;
-      const value = Math.max(min, Math.min(max, newValue));
-      quantityInput.value = value;
-      if (quantityHidden) quantityHidden.value = value;
-    }
-
-    if (minusBtn && quantityInput) {
-      minusBtn.addEventListener('click', function () {
-        updateQuantity(parseInt(quantityInput.value, 10) - 1);
-      });
-    }
-
-    if (plusBtn && quantityInput) {
-      plusBtn.addEventListener('click', function () {
-        updateQuantity(parseInt(quantityInput.value, 10) + 1);
-      });
-    }
-
-    addBtns.forEach(function (btn) {
-      btn.addEventListener('click', function () {
-        const addAmount = parseInt(this.dataset.quantityAdd, 10);
-        updateQuantity(parseInt(quantityInput.value, 10) + addAmount);
-      });
-    });
-
-    if (quantityInput) {
-      quantityInput.addEventListener('change', function () {
-        updateQuantity(parseInt(this.value, 10) || 1);
-      });
-    }
   });
 </script>
 

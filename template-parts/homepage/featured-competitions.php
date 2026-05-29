@@ -194,9 +194,10 @@ if (!$competitions->have_posts()) {
                   </div>
 
                   <!-- Progress Bar -->
-                  <div class="h-1.5 w-full bg-gray-100 rounded-full overflow-hidden">
-                    <div class="h-full bg-primary rounded-full transition-all duration-500"
-                      style="width: <?php echo esc_attr($progress); ?>%"></div>
+                  <div class="ncs-progress__track relative h-[14px] w-full rounded-full overflow-hidden shadow-inner">
+                    <div class="ncs-progress__fill h-full rounded-full transition-all duration-1000 ease-out"
+                      style="width: 0%;"
+                      data-progress="<?php echo esc_attr($progress); ?>"></div>
                   </div>
                 <?php endif; ?>
 
@@ -255,8 +256,10 @@ if (!$competitions->have_posts()) {
                   <span class="text-text-secondary uppercase tracking-tighter">Tickets Sold</span>
                   <span class="text-primary">0%</span>
                 </div>
-                <div class="h-1.5 w-full bg-gray-100 rounded-full overflow-hidden">
-                  <div class="h-full bg-primary rounded-full w-0"></div>
+                <div class="ncs-progress__track relative h-[14px] w-full rounded-full overflow-hidden shadow-inner">
+                  <div class="ncs-progress__fill h-full rounded-full transition-all duration-1000 ease-out"
+                    style="width: 0%;"
+                    data-progress="0"></div>
                 </div>
                 <div class="flex items-center justify-between pt-4">
                   <span class="text-xs text-text-secondary"><?php _e(

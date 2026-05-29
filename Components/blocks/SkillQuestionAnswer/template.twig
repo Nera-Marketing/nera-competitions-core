@@ -28,31 +28,32 @@
         {{ question_text }}
       </div>
 
-      <ul class="nera-contest-answers flex flex-col gap-3">
-        {% for answer in answers %}
-          <li class="relative group cursor-pointer" @click="selectAnswer('{{ answer.key }}')">
+      <ul class="nera-contest-answers flex flex-col gap-3" x-cloak>
+        {% for answerId, answer in answers %}
+          {% set optionKey = answer.key is defined ? answer.key : answerId %}
+          <li class="relative group cursor-pointer" @click="selectAnswer('{{ optionKey }}')">
 
             <div class="flex items-center p-4 bg-surface border-2 rounded-xl transition-all duration-200"
-              :class="selectedAnswer === '{{ answer.key }}' ? 'border-primary ring-1 ring-primary/20 shadow-sm' : 'border-gray-200 hover:border-primary/50'">
+              :class="selectedAnswer === '{{ optionKey }}' ? 'border-primary ring-1 ring-primary/20 shadow-sm' : 'border-gray-200 hover:border-primary/50'">
               {# Radio Circle #}
               <div
                 class="w-6 h-6 rounded-full border-2 mr-4 flex items-center justify-center flex-shrink-0 transition-colors"
-                :class="selectedAnswer === '{{ answer.key }}' ? 'border-primary bg-primary' : 'border-gray-300 group-hover:border-primary/50 bg-surface'">
+                :class="selectedAnswer === '{{ optionKey }}' ? 'border-primary bg-primary' : 'border-gray-300 group-hover:border-primary/50 bg-surface'">
                 <div class="w-2.5 h-2.5 rounded-full bg-surface transition-opacity duration-200"
-                  :class="selectedAnswer === '{{ answer.key }}' ? 'opacity-100' : 'opacity-0'">
+                  :class="selectedAnswer === '{{ optionKey }}' ? 'opacity-100' : 'opacity-0'">
                 </div>
               </div>
 
               {# Label #}
               <span class="text-base font-medium"
-                :class="selectedAnswer === '{{ answer.key }}' ? 'text-text-primary' : 'text-text-secondary group-hover:text-text-primary'">
+                :class="selectedAnswer === '{{ optionKey }}' ? 'text-text-primary' : 'text-text-secondary group-hover:text-text-primary'">
                 {{ answer.label }}
               </span>
             </div>
 
             {# Keep submitted key aligned with lottery plugin request parsing #}
-            <input type="radio" name="lty_question_answer_id" value="{{ answer.key }}"
-              :checked="selectedAnswer === '{{ answer.key }}'" class="sr-only"
+            <input type="radio" name="lty_question_answer_id" value="{{ optionKey }}"
+              :checked="selectedAnswer === '{{ optionKey }}'" class="sr-only"
               style="display:none !important;" />
           </li>
         {% endfor %}

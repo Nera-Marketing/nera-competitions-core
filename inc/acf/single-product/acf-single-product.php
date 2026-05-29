@@ -41,6 +41,21 @@ if (function_exists('acf_add_local_field_group')) {
         'ui' => 1,
       ],
       [
+        'key' => 'field_sp_quantity_selector_layout',
+        'label' => 'Quantity Selector Layout (override)',
+        'name' => 'quantity_selector_layout',
+        'type' => 'select',
+        'instructions' =>
+          'Optional override for this product. Use site default to follow Theme Settings → WooCommerce. Only applies when tickets are auto-assigned (not Browse & Choose).',
+        'choices' => [
+          'inherit' => 'Use site default (Theme Settings → WooCommerce)',
+          'buttons' => 'Buttons (+ quick add)',
+          'slider' => 'Slider',
+        ],
+        'default_value' => 'inherit',
+        'ui' => 1,
+      ],
+      [
         'key' => 'field_sp_product_specifications',
         'label' => 'Product Specifications',
         'name' => 'product_specifications',

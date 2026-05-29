@@ -12,6 +12,30 @@ if (!defined('ABSPATH')) {
 }
 
 /**
+ * Resolve purchase-card quantity selector layout (buttons or slider).
+ *
+ * Product override wins when set to buttons or slider; inherit/empty uses Theme Settings → WooCommerce.
+ *
+ * @param int|null $product_id Product post ID.
+ * @return string buttons|slider
+ */
+function nera_get_quantity_selector_layout(?int $product_id = null): string
+{
+  $allowed = ['buttons', 'slider'];
+
+  if ($product_id && function_exists('get_field')) {
+    $product_layout = get_field('quantity_selector_layout', $product_id);
+    if (is_string($product_layout) && in_array($product_layout, $allowed, true)) {
+      return $product_layout;
+    }
+  }
+
+  $global = function_exists('get_field') ? get_field('quantity_selector_layout', 'option') : 'buttons';
+
+  return in_array($global, $allowed, true) ? $global : 'buttons';
+}
+
+/**
  * Custom template loader for lottery products
  * Uses our custom lottery.php template for lottery product type
  * Supports multiple template styles via ACF field
@@ -245,6 +269,155 @@ function nera_validate_lottery_not_sold_out($passed, $product_id, $quantity)
   return false;
 }
 add_filter('woocommerce_add_to_cart_validation', 'nera_validate_lottery_not_sold_out', 10, 3);
+
+/**
+ * Submitted skill-question answer key from the add-to-cart request.
+ */
+function nera_get_submitted_question_answer_id(): string
+{
+  if (!isset($_REQUEST['lty_question_answer_id'])) {
+    return '';
+  }
+
+  return (string) wc_clean(wp_unslash($_REQUEST['lty_question_answer_id']));
+}
+
+/**
+ * Whether this lottery product requires a skill question answer before add to cart.
+ *
+ * @param WC_Product|null $product Product object.
+ */
+function nera_product_requires_skill_question_answer($product): bool
+{
+  if (!is_object($product) || $product->get_type() !== 'lottery') {
+    return false;
+  }
+
+  if (!method_exists($product, 'is_valid_question_answer') || !$product->is_valid_question_answer()) {
+    return false;
+  }
+
+  if (!method_exists($product, 'is_force_answer_enabled') || 'yes' !== $product->is_force_answer_enabled()) {
+    return false;
+  }
+
+  return true;
+}
+
+/**
+ * User-facing message when a skill question answer is incorrect.
+ *
+ * @param WC_Product $product    Lottery product.
+ * @param string     $answer_key Submitted answer key.
+ */
+function nera_get_skill_question_incorrect_answer_message($product, string $answer_key = ''): string
+{
+  $theme_default = __(
+    "That's not the correct answer. Please choose the right answer to enter this competition.",
+    'nera-competitions',
+  );
+
+  $lfw_message = get_option(
+    'lty_settings_unlimited_type_error_message',
+    'Incorrect answer. Please select the correct answer to participate in the lottery',
+  );
+
+  $message = is_string($lfw_message) && $lfw_message !== '' ? $lfw_message : $theme_default;
+
+  /**
+   * Filter the incorrect skill-question answer message shown on add to cart failure.
+   *
+   * @param string     $message    Message text.
+   * @param WC_Product $product    Lottery product.
+   * @param string     $answer_key Submitted answer key.
+   */
+  return (string) apply_filters('nera_skill_question_incorrect_answer_message', $message, $product, $answer_key);
+}
+
+/**
+ * Whether the submitted answer key is present and marked invalid for this product.
+ *
+ * @param WC_Product $product    Lottery product.
+ * @param string     $answer_key Submitted answer key.
+ */
+function nera_is_submitted_skill_question_answer_incorrect($product, string $answer_key): bool
+{
+  if ($answer_key === '') {
+    return false;
+  }
+
+  if (!method_exists($product, 'get_answers')) {
+    return false;
+  }
+
+  $answers = $product->get_answers();
+  if (!is_array($answers) || !array_key_exists($answer_key, $answers)) {
+    return false;
+  }
+
+  $answer_data = $answers[$answer_key];
+
+  return isset($answer_data['valid']) && 'yes' !== $answer_data['valid'];
+}
+
+/**
+ * Error message when the current request has a wrong skill answer; empty otherwise.
+ */
+function nera_skill_question_error_message_for_product(int $product_id): string
+{
+  if (!$product_id) {
+    return '';
+  }
+
+  $product = wc_get_product($product_id);
+  if (!nera_product_requires_skill_question_answer($product)) {
+    return '';
+  }
+
+  $answer_key = nera_get_submitted_question_answer_id();
+  if (!nera_is_submitted_skill_question_answer_incorrect($product, $answer_key)) {
+    return '';
+  }
+
+  return nera_get_skill_question_incorrect_answer_message($product, $answer_key);
+}
+
+/**
+ * Block add to cart when the skill question answer is incorrect.
+ *
+ * Runs after Lottery for WooCommerce validation (priority 12) so we can supply a
+ * clear notice when the plugin fails silently or skips validation.
+ *
+ * @param bool $passed     Validation passed.
+ * @param int  $product_id Product ID.
+ * @param int  $quantity   Quantity.
+ * @return bool
+ */
+function nera_validate_skill_question_answer_add_to_cart($passed, $product_id, $quantity)
+{
+  if (!$passed) {
+    return false;
+  }
+
+  $product = wc_get_product($product_id);
+  if (!nera_product_requires_skill_question_answer($product)) {
+    return $passed;
+  }
+
+  $answer_key = nera_get_submitted_question_answer_id();
+  if ($answer_key === '') {
+    return $passed;
+  }
+
+  if (!nera_is_submitted_skill_question_answer_incorrect($product, $answer_key)) {
+    return $passed;
+  }
+
+  wc_add_notice(nera_get_skill_question_incorrect_answer_message($product, $answer_key), 'error');
+
+  return false;
+}
+add_filter('woocommerce_add_to_cart_validation', 'nera_validate_skill_question_answer_add_to_cart', 15, 3);
 
 /**
  * Get product gallery images

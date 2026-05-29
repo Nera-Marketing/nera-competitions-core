@@ -1877,6 +1877,26 @@ function nera_pop_first_wc_error_notice(): string
 }
 
 /**
+ * Resolve the user-facing message for a failed AJAX add to cart.
+ */
+function nera_resolve_ajax_add_to_cart_error_message(int $product_id): string
+{
+  $message = nera_pop_first_wc_error_notice();
+  if ($message !== '') {
+    return $message;
+  }
+
+  if (function_exists('nera_skill_question_error_message_for_product')) {
+    $message = nera_skill_question_error_message_for_product($product_id);
+    if ($message !== '') {
+      return $message;
+    }
+  }
+
+  return __('Could not add to cart.', 'nera-competitions');
+}
+
+/**
  * AJAX add to cart handler for WooCommerce
  * Ensures proper AJAX response for add to cart requests
  */
@@ -1911,8 +1931,10 @@ function nera_ajax_add_to_cart()
   // theme sold-out check, Woo Wallet restrictions) silently never run.
   $passed_validation = apply_filters('woocommerce_add_to_cart_validation', true, $product_id, $quantity);
   if (!$passed_validation) {
-    $message = nera_pop_first_wc_error_notice() ?: __('Could not add to cart.', 'nera-competitions');
-    wp_send_json(['error' => true, 'message' => $message]);
+    wp_send_json([
+      'error' => true,
+      'message' => nera_resolve_ajax_add_to_cart_error_message($product_id),
+    ]);
   }
 
   // Add to cart
@@ -1929,8 +1951,10 @@ function nera_ajax_add_to_cart()
       if (WC()->session) {
         WC()->session->save_data();
       }
-      $message = nera_pop_first_wc_error_notice() ?: __('Could not add to cart.', 'nera-competitions');
-      wp_send_json(['error' => true, 'message' => $message]);
+      wp_send_json([
+        'error' => true,
+        'message' => nera_resolve_ajax_add_to_cart_error_message($product_id),
+      ]);
     }
 
     // Fire the cart cookies action so woocommerce_items_in_cart cookie is set.
@@ -1967,8 +1991,10 @@ function nera_ajax_add_to_cart()
   } else {
     // add_to_cart() failed — the lottery plugin (or WooCommerce) added a specific notice;
     // surface it so the user sees the real reason instead of a generic message.
-    $message = nera_pop_first_wc_error_notice() ?: __('Could not add to cart.', 'nera-competitions');
-    wp_send_json(['error' => true, 'message' => $message]);
+    wp_send_json([
+      'error' => true,
+      'message' => nera_resolve_ajax_add_to_cart_error_message($product_id),
+    ]);
   }
 }
 add_action('wp_ajax_woocommerce_ajax_add_to_cart', 'nera_ajax_add_to_cart');

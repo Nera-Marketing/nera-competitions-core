@@ -122,13 +122,13 @@ function nera_is_shop_listing_context(): bool
 }
 
 /**
- * Tailwind class for advanced-filter grid columns at lg breakpoint.
+ * Tailwind class for advanced-filter grid columns at xl breakpoint.
  */
 function nera_shop_listing_grid_lg_class(): string
 {
   $settings = nera_get_shop_listing_settings();
 
-  return ($settings['grid_columns'] ?? 3) === 4 ? 'lg:grid-cols-4' : 'lg:grid-cols-3';
+  return ($settings['grid_columns'] ?? 3) === 4 ? 'xl:grid-cols-4' : 'xl:grid-cols-3';
 }
 
 add_filter('nera_component_data_CompetitionCard', function (array $data, array $args): array {

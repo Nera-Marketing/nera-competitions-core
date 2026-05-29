@@ -31,6 +31,7 @@ import '@assets/js/cart-sound.js';
 
 // Single product page modules
 // Product gallery: assets/js/single-product-gallery.js + alpine-product-gallery.js (enqueued in functions.php)
+import '@assets/js/quantity-control.js';
 import '@assets/js/single-product.js';
 
 // Checkout page - loaded separately in functions.php before Alpine.js

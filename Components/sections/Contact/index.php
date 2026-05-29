@@ -45,7 +45,7 @@ function get_data(array $args = []): array
         'get_in_touch_description',
         "Have questions about our competitions? We're here to help."
     );
-    $show_contact_cards = nera_component_field($args, 'show_contact_cards', 'show_contact_cards', true);
+    $show_contact_cards = (bool) nera_component_field($args, 'show_contact_cards', 'show_contact_cards', true);
     $contact_address = nera_component_field($args, 'contact_address', 'contact_address', '123 Innovation Blvd, Tech City, TC 12345');
     $contact_email = nera_component_field($args, 'contact_email', 'contact_email', 'support@competition.com');
     $contact_phone = nera_component_field($args, 'contact_phone', 'contact_phone', '+1 (555) 012-3456');

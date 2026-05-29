@@ -93,10 +93,13 @@ $is_manual_ticket = method_exists($product, 'is_manual_ticket') ? $product->is_m
       <?php if (function_exists('nera_render_component')) { nera_render_component('TicketPrice', ['price' => $price]); } ?>
       <?php if ($is_manual_ticket): ?>
         <?php do_action('woocommerce_before_add_to_cart_button'); ?>
-      <?php else: ?>
+      <?php else:
+        $quantity_layout = nera_get_quantity_selector_layout($product_id);
+        ?>
         <?php if (function_exists('nera_render_component')) { nera_render_component('QuantitySelector', [
           'min' => $lottery_data['minPerOrder'] ?? 1,
           'max' => $lottery_data['maxPerOrder'] ?: $remaining,
+          'layout' => $quantity_layout,
         ]); } ?>
       <?php endif; ?>
     </div>

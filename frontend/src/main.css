@@ -377,7 +377,7 @@ button {
   }
 }
 
-@keyframes ncs-product-card-progress-shimmer {
+@keyframes ncs-progress-shimmer {
   0% {
     transform: translateX(-120%);
   }
@@ -673,6 +673,68 @@ button {
   }
 }
 
+/* ==========================================================================
+   Purchase card — quantity slider layout
+   ========================================================================== */
+
+.ncs-quantity-slider__range {
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  cursor: pointer;
+  accent-color: var(--color-primary);
+}
+
+.ncs-quantity-slider__range:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 3px;
+  border-radius: 0.25rem;
+}
+
+.ncs-quantity-slider__range::-webkit-slider-runnable-track {
+  height: 0.5rem;
+  border-radius: 9999px;
+  background: color-mix(in srgb, var(--color-primary) 18%, var(--color-surface));
+}
+
+.ncs-quantity-slider__range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 1.75rem;
+  height: 1.75rem;
+  margin-top: -0.625rem;
+  border-radius: 50%;
+  background: var(--color-primary);
+  border: 2px solid var(--color-surface);
+  box-shadow: 0 2px 10px color-mix(in srgb, var(--color-primary) 40%, transparent);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.ncs-quantity-slider__range:active::-webkit-slider-thumb {
+  transform: scale(1.08);
+}
+
+.ncs-quantity-slider__range::-moz-range-track {
+  height: 0.5rem;
+  border-radius: 9999px;
+  background: color-mix(in srgb, var(--color-primary) 18%, var(--color-surface));
+}
+
+.ncs-quantity-slider__range::-moz-range-thumb {
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 50%;
+  background: var(--color-primary);
+  border: 2px solid var(--color-surface);
+  box-shadow: 0 2px 10px color-mix(in srgb, var(--color-primary) 40%, transparent);
+  cursor: pointer;
+}
+
+.ncs-quantity-slider__step:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
 /* Hide spinners for quantity input */
 .qty::-webkit-outer-spin-button,
 .qty::-webkit-inner-spin-button {
@@ -922,15 +984,22 @@ body h6 {
   background-color: var(--ncs-product-card-media-bg);
 }
 
-.ncs-product-card__progress-track {
-  --ncs-product-card-progress-track: var(--color-gray-100);
+.ncs-product-card__progress-track,
+.ncs-progress__track {
+  background-color: var(--ncs-progress-track, var(--color-gray-100));
+}
 
-  background-color: var(--ncs-product-card-progress-track);
+.ncs-product-card__progress-track {
+  --ncs-progress-track: var(--ncs-product-card-progress-track, var(--color-gray-100));
+}
+
+.ncs-product-card__progress-fill,
+.ncs-progress__fill {
+  position: relative;
+  overflow: hidden;
 }
 
 .ncs-product-card__progress-fill {
-  position: relative;
-  overflow: hidden;
   background: linear-gradient(
     90deg,
     var(--ncs-product-card-progress-accent, var(--color-primary)),
@@ -938,7 +1007,8 @@ body h6 {
   );
 }
 
-.ncs-product-card__progress-fill::after {
+.ncs-product-card__progress-fill::after,
+.ncs-progress__fill::after {
   content: '';
   position: absolute;
   inset: 0;
@@ -950,11 +1020,12 @@ body h6 {
     transparent 100%
   );
   transform: translateX(-120%);
-  animation: ncs-product-card-progress-shimmer 2.8s ease-in-out infinite;
+  animation: ncs-progress-shimmer 2.8s ease-in-out infinite;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .ncs-product-card__progress-fill::after {
+  .ncs-product-card__progress-fill::after,
+  .ncs-progress__fill::after {
     animation: none;
     content: none;
   }
@@ -967,14 +1038,41 @@ body h6 {
    ──────────────────────────────────────────────────────────────────────── */
 
 .ncs-progress {
-  --ncs-progress-track: var(--color-gray-200);
+  --ncs-progress-track: var(--color-gray-100);
   --ncs-progress-fill: var(--color-primary);
   --ncs-progress-fill-urgent: var(--color-danger);
   --ncs-progress-text: var(--color-text-secondary);
 }
 
+.ncs-progress__track {
+  --ncs-progress-track: var(--color-gray-100);
+  --ncs-progress-fill: var(--color-primary);
+  --ncs-progress-fill-urgent: var(--color-danger);
+}
+
 .ncs-progress__fill {
-  background-color: var(--ncs-progress-fill);
+  background: linear-gradient(
+    90deg,
+    var(--ncs-progress-fill, var(--color-primary)),
+    color-mix(in srgb, var(--ncs-progress-fill, var(--color-primary)) 80%, transparent)
+  );
+}
+
+.ncs-progress__fill--urgent {
+  background: linear-gradient(
+    90deg,
+    var(--ncs-progress-fill-urgent, var(--color-danger)),
+    var(--color-warning)
+  );
+}
+
+.ncs-progress__fill--muted {
+  background: var(--color-gray-300);
+}
+
+.ncs-progress__fill--muted::after {
+  animation: none;
+  content: none;
 }
 
 .ncs-countdown {
@@ -1013,11 +1111,7 @@ body h6 {
   --ncs-cart-item-price: var(--color-primary);
 
   background-color: var(--ncs-cart-item-bg);
-  border: 1px solid var(--ncs-cart-item-border);
-}
-
-.ncs-cart-item:hover {
-  border-color: var(--ncs-cart-item-border-hover);
+  border: none;
 }
 
 .ncs-cart-item h3,
