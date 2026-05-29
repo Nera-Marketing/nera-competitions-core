@@ -4,7 +4,7 @@ Tags: competition, giveaway, lottery, woocommerce
 Requires at least: 6.0
 Tested up to: 6.8
 Requires PHP: 8.1
-Stable tag: 1.1.0
+Stable tag: 1.2.0
 License: GPLv2 or later
 
 Premium competition and giveaway theme for WooCommerce, with Tailwind-powered front-end assets.
@@ -20,6 +20,13 @@ Nera Competitions Standard is built for competition and lottery sites: product t
 3. Run `yarn build` or `npm run build` in `frontend/` and `lty-result-screens/` after pulling updates that change assets.
 
 == Changelog ==
+
+= 1.2.0 =
+* Added: Purchase card slider quantity selector with global ACF style (classic / slider) on WooCommerce and single-product settings.
+* Added: `quantity-control.js` and purchase-card / QuantitySelector block updates.
+* Fixed: Advanced filter product grid stays 2 columns on tablet.
+* Fixed: Single product page and Alpine toast messaging.
+* Updated: `EXTENDING.md` quantity override notes; removed redundant `woocommerce/single-product*.php` theme overrides.
 
 = 1.1.0 =
 * Added: Shop listing options on the WooCommerce Shop page — ACF field group (`inc/acf/shop-listing/acf-shop-listing.php`) with grid columns, card layout (classic / portrait), and optional per-card image aspect ratio; helpers in `inc/helpers/shop-listing.php` wired from `functions.php`.
