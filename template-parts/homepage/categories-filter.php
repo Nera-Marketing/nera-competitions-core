@@ -48,7 +48,7 @@ $nera_adv_posts_per_page = function_exists('nera_advanced_filter_get_posts_per_p
   ? nera_advanced_filter_get_posts_per_page()
   : 9;
 
-$nera_adv_grid_lg_class = 'lg:grid-cols-3';
+$nera_adv_grid_lg_class = 'xl:grid-cols-3';
 if (
   function_exists('is_shop') &&
   is_shop() &&
