@@ -21,6 +21,14 @@ Nera Competitions Standard is built for competition and lottery sites: product t
 
 == Changelog ==
 
+= 1.1.0 =
+* Added: Shop listing options on the WooCommerce Shop page — ACF field group (`inc/acf/shop-listing/acf-shop-listing.php`) with grid columns, card layout (classic / portrait), and optional per-card image aspect ratio; helpers in `inc/helpers/shop-listing.php` wired from `functions.php`.
+* Added: Competition card portrait layout and configurable image aspect ratio on shop/archive listings (`Components/cards/CompetitionCard/template.twig`, `index.php`); portrait mode stacks footer CTA/countdown vertically on larger breakpoints.
+* Updated: Competition card sold-tickets progress bar — taller track, BEM hooks `.ncs-product-card__progress-track` / `__progress-fill`, accent via `--ncs-product-card-progress-accent` in `frontend/src/main.css`.
+* Added: Default theme branding asset `logo.png` (for Custom Logo / header use).
+* Updated: Superseded frontend CSS moved to `frontend/assets/css/_archive/` (not loaded in production); `frontend/yarn.lock` refreshed.
+* Updated: Homepage categories filter partial (`template-parts/homepage/categories-filter.php`).
+
 = 1.0.18 =
 * Fix — Pin `timber/timber` to `^2.3.3 <2.4` for PHP 8.1 hosts (Timber 2.4+ requires PHP 8.2); Composer platform set to 8.1.10 so `vendor/` loads without platform_check fatal on Laragon and similar stacks.
 * Updated: `readme.txt` Requires PHP aligned with `style.css` (8.1).
