@@ -509,7 +509,7 @@ For exact types, defaults, and notes, read the `get_data()` PHPDoc or the `templ
 | blocks/AddToCartButton | product_id, is_expired, is_manual_ticket, label_active, label_ended |
 | blocks/CountdownTimer | countdown_date, days, hours, minutes, seconds, is_expired |
 | blocks/ProductTitle | name, is_sold_out |
-| blocks/QuantitySelector | min, max, quick_add, default |
+| blocks/QuantitySelector | min, max, quick_add, default, layout (resolved via `nera_get_quantity_selector_layout()`: global Theme Settings → WooCommerce + optional product override) |
 | blocks/SkillQuestionAnswer | question_text, answers, cart_answer_id, qa_can_display |
 | blocks/TicketPrice | price_html |
 | blocks/TicketsProgress | sold, max, progress, remaining, is_low_stock, sold_formatted, max_formatted, remaining_formatted |

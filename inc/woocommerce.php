@@ -12,6 +12,30 @@ if (!defined('ABSPATH')) {
 }
 
 /**
+ * Resolve purchase-card quantity selector layout (buttons or slider).
+ *
+ * Product override wins when set to buttons or slider; inherit/empty uses Theme Settings → WooCommerce.
+ *
+ * @param int|null $product_id Product post ID.
+ * @return string buttons|slider
+ */
+function nera_get_quantity_selector_layout(?int $product_id = null): string
+{
+  $allowed = ['buttons', 'slider'];
+
+  if ($product_id && function_exists('get_field')) {
+    $product_layout = get_field('quantity_selector_layout', $product_id);
+    if (is_string($product_layout) && in_array($product_layout, $allowed, true)) {
+      return $product_layout;
+    }
+  }
+
+  $global = function_exists('get_field') ? get_field('quantity_selector_layout', 'option') : 'buttons';
+
+  return in_array($global, $allowed, true) ? $global : 'buttons';
+}
+
+/**
  * Custom template loader for lottery products
  * Uses our custom lottery.php template for lottery product type
  * Supports multiple template styles via ACF field

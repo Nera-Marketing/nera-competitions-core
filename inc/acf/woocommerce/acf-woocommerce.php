@@ -30,6 +30,25 @@ if (function_exists('acf_add_options_page')) {
 if (function_exists('acf_add_local_field_group')) {
   $woocommerce_fields = [
     [
+      'key' => 'field_wc_quantity_selector_layout',
+      'label' => 'Quantity Selector Layout',
+      'name' => 'quantity_selector_layout',
+      'type' => 'select',
+      'instructions' =>
+        'Site-wide default for choosing ticket quantity on the purchase card (auto-assign products only). Manual Browse & Choose products are unaffected. Products can override under Competition Settings.',
+      'choices' => [
+        'buttons' => 'Buttons (+ quick add)',
+        'slider' => 'Slider',
+      ],
+      'default_value' => 'buttons',
+      'ui' => 1,
+      'wrapper' => [
+        'width' => '50',
+        'class' => '',
+        'id' => '',
+      ],
+    ],
+    [
       'key' => 'field_add_to_cart_success_message',
       'label' => 'Add to Cart Success Message',
       'name' => 'add_to_cart_success_message',
