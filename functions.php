@@ -997,11 +997,11 @@ require_once get_template_directory() . '/inc/acf/how-it-works/acf-how-it-works.
 // ACF Product Listing Fields
 require_once get_template_directory() . '/inc/acf/product-listing/acf-product-listing.php';
 
-// ACF Shop listing layout (WooCommerce Shop page)
-require_once get_template_directory() . '/inc/acf/shop-listing/acf-shop-listing.php';
-
 // Shop listing helpers (grid, card layout, aspect ratio)
 require_once get_template_directory() . '/inc/helpers/shop-listing.php';
+
+// Nera Settings — Customizer panel (shop listing + quantity layout)
+require_once get_template_directory() . '/inc/customizer/nera-settings.php';
 
 // ACF Postal Entry Fields
 require_once get_template_directory() . '/inc/acf/postal-entry/acf-postal-entry.php';
