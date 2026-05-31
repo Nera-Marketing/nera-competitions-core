@@ -9,7 +9,7 @@ defined('ABSPATH') || exit();
 // Cart content only - page.php provides header/footer so footer stays outside article
 ?>
 <div class="relative left-1/2 -translate-x-1/2 w-screen max-w-none border-b border-gray-200 py-10 lg:py-16">
-  <div class="max-w-7xl mx-auto px-4 lg:px-0">
+  <div class="container mx-auto px-4 lg:px-0">
     <div class="flex items-center gap-4">
       <div class="w-12 h-12 rounded-xl bg-surface shadow-sm flex items-center justify-center text-primary">
         <span class="material-symbols-outlined text-2xl">shopping_cart</span>

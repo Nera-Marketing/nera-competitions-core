@@ -46,7 +46,7 @@ if (!$competitions->have_posts()) {
 ?>
 
 <section class="ending-soon-section py-20 bg-background-light" id="ending-soon" data-aos="fade-up">
-  <div class="max-w-[1200px] mx-auto px-5 sm:px-6 lg:px-8">
+  <div class="container mx-auto px-5 sm:px-6 lg:px-8">
 
     <!-- Section Header with Navigation Arrows -->
     <div class="flex items-end justify-between mb-10">

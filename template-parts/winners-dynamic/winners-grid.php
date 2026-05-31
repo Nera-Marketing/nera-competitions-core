@@ -214,7 +214,7 @@ if ($include_entry_list_modal) {
 
 <section class="py-12 px-4 sm:px-6 bg-surface">
   <div
-    class="max-w-[1200px] mx-auto"
+    class="container mx-auto"
     <?php if ($include_entry_list_modal) : ?>
       x-data="<?php echo esc_attr($entry_list_x_data_expr); ?>"
       @nera-open-entry-list="openParticipants($event.detail)"

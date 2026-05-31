@@ -50,7 +50,7 @@ get_header();
                     <div class="absolute inset-0 z-[1] bg-gradient-to-t from-black/80 via-black/45 to-black/25" aria-hidden="true"></div>
 
                     <div class="relative z-10 flex flex-1 flex-col justify-end">
-                        <div class="container mx-auto max-w-7xl px-4 pb-10 pt-24 md:pb-14 md:pt-32">
+                        <div class="container mx-auto px-4 pb-10 pt-24 md:pb-14 md:pt-32">
                             <div class="max-w-3xl">
                                 <p class="mb-4 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs font-medium uppercase tracking-wide text-white/90">
                                     <?php if ($category_url): ?>
@@ -150,7 +150,7 @@ get_header();
             <?php endif; ?>
 
             <div class="bg-background-secondary py-10 md:py-14">
-                <div class="container mx-auto max-w-7xl px-4">
+                <div class="container mx-auto px-4">
 
                     <div class="prose prose-lg max-w-none text-text-secondary prose-headings:font-heading prose-headings:text-text-primary prose-a:text-primary prose-strong:text-text-primary">
                         <?php the_content(); ?>

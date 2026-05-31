@@ -19,7 +19,7 @@ $filter_items = $dataset['filter_items'];
 
 if (empty($winners)) { ?>
   <section class="py-16 px-5 sm:px-6 bg-surface">
-      <div class="container mx-auto max-w-7xl">
+      <div class="container mx-auto">
           <div class="text-center py-16">
               <div class="max-w-md mx-auto">
                   <svg class="w-16 h-16 mx-auto mb-4 text-gray-300" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
@@ -53,7 +53,7 @@ $alpine_config = [
 
 <section class="py-16 px-5 sm:px-6 bg-surface">
     <div
-      class="container mx-auto max-w-7xl"
+      class="container mx-auto"
       x-data="winnersPage(<?php echo esc_attr(wp_json_encode($alpine_config)); ?>)"
     >
         <div role="status" aria-live="polite" aria-atomic="true" class="sr-only">

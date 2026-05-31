@@ -39,7 +39,7 @@ if (empty($credibility_items)) {
 ?>
 
 <section class="credibility-section py-5 lg:py-6 bg-surface border-b border-gray-100" data-aos="fade-up">
-	<div class="max-w-7xl mx-auto px-4 lg:px-0">
+	<div class="container mx-auto px-4 lg:px-0">
 		<div class="flex flex-wrap items-center justify-around gap-x-8 gap-y-4 md:gap-x-12 lg:gap-x-16">
 
 			<?php foreach ($credibility_items as $item):

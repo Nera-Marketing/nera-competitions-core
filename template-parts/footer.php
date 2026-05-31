@@ -27,7 +27,7 @@ $youtube_url = get_theme_mod('nera_youtube_url', '#');
 <footer class="ncs-site-footer bg-surface border-t border-gray-200" id="site-footer">
 
   <!-- Main Footer -->
-  <div class="max-w-7xl mx-auto px-4 lg:px-0 py-12 lg:py-16 text-text-secondary">
+  <div class="container mx-auto px-4 lg:px-0 py-12 lg:py-16 text-text-secondary">
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 lg:gap-12">
 
       <!-- Brand Column (Spans 2) -->
@@ -63,7 +63,7 @@ $youtube_url = get_theme_mod('nera_youtube_url', '#');
 
   <!-- Dark Bottom Bar -->
   <div class="bg-background-dark">
-    <div class="max-w-7xl mx-auto px-4 lg:px-0 py-4">
+    <div class="container mx-auto px-4 lg:px-0 py-4">
       <div class="flex flex-col md:flex-row items-center justify-between gap-4">
 
         <!-- Copyright -->

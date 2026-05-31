@@ -48,7 +48,7 @@ get_template_part('template-parts/entry-list/entry-list-grid-alpine');
 
 <section class="py-8 sm:py-12 px-3 sm:px-6 bg-surface">
   <div
-    class="max-w-[1200px] mx-auto"
+    class="container mx-auto"
     x-data="<?php echo esc_attr($x_data_expr); ?>"
     @nera-open-entry-list="openParticipants($event.detail)"
     @keydown.escape.window="handleEscape()"

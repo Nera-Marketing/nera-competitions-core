@@ -223,7 +223,7 @@ if (!empty($acf_trans_features) && is_array($acf_trans_features)) {
   <section
     class="py-20 lg:py-32 relative overflow-hidden border-t border-gray-200 bg-surface"
     aria-labelledby="hiw-draw-heading">
-    <div class="max-w-7xl mx-auto px-4 lg:px-0 relative z-10">
+    <div class="container mx-auto px-4 lg:px-0 relative z-10">
       <div class="grid lg:grid-cols-2 gap-16 items-center">
         <div data-aos="fade-right">
           <span
@@ -297,7 +297,7 @@ if (!empty($acf_trans_features) && is_array($acf_trans_features)) {
   </section>
 
   <section class="py-20 lg:py-32 relative bg-background-dark" aria-labelledby="hiw-postal-heading">
-    <div class="max-w-7xl mx-auto px-4 lg:px-0 relative z-10">
+    <div class="container mx-auto px-4 lg:px-0 relative z-10">
       <div class="text-center mb-16" data-aos="fade-up">
         <h2 id="hiw-postal-heading" class="font-heading text-4xl lg:text-5xl text-white mb-6">
           <?php echo esc_html($postal_title); ?>
@@ -375,7 +375,7 @@ if (!empty($acf_trans_features) && is_array($acf_trans_features)) {
   </section>
 
   <section class="py-20 lg:py-32 relative overflow-hidden bg-background-light" aria-labelledby="hiw-trans-heading">
-    <div class="max-w-7xl mx-auto px-4 lg:px-0 relative z-10">
+    <div class="container mx-auto px-4 lg:px-0 relative z-10">
       <div class="text-center mb-16" data-aos="fade-up">
         <h2 id="hiw-trans-heading" class="font-heading text-4xl lg:text-5xl text-text-primary mb-6">
           <?php echo esc_html($trans_title); ?>

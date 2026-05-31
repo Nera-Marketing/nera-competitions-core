@@ -130,11 +130,71 @@ function nera_customize_register_settings(WP_Customize_Manager $wp_customize): v
   $wp_customize->add_panel('nera_settings', [
     'title' => __('Nera Settings', 'nera-competitions'),
     'description' => __(
-      'Shop listing layout for the All Competitions page and the site-wide quantity selector default.',
+      'Site content max width, shop listing layout for the All Competitions page, and the site-wide quantity selector default.',
       'nera-competitions',
     ),
     'priority' => 160,
     'capability' => 'edit_theme_options',
+  ]);
+
+  $wp_customize->add_section('nera_site_layout', [
+    'title' => __('Site layout', 'nera-competitions'),
+    'panel' => 'nera_settings',
+    'description' => __(
+      'Maximum width for header, footer, and all sections using the Tailwind container class.',
+      'nera-competitions',
+    ),
+    'priority' => 5,
+  ]);
+
+  $wp_customize->add_setting('nera_site_container_preset', [
+    'default' => '1280',
+    'sanitize_callback' => 'nera_sanitize_site_container_preset',
+    'transport' => 'refresh',
+  ]);
+
+  $wp_customize->add_control('nera_site_container_preset', [
+    'label' => __('Content max width', 'nera-competitions'),
+    'description' => __(
+      'Applies site-wide to container-aligned content (header, footer, page sections).',
+      'nera-competitions',
+    ),
+    'section' => 'nera_site_layout',
+    'type' => 'select',
+    'choices' => [
+      '1280' => __('Standard — 1280px', 'nera-competitions'),
+      '1400' => __('Wide — 1400px', 'nera-competitions'),
+      '1536' => __('Extra wide — 1536px', 'nera-competitions'),
+      'custom' => __('Custom (px)', 'nera-competitions'),
+    ],
+  ]);
+
+  $wp_customize->add_setting('nera_site_container_custom_px', [
+    'default' => 1280,
+    'sanitize_callback' => 'nera_sanitize_site_container_custom_px',
+    'transport' => 'refresh',
+  ]);
+
+  $wp_customize->add_control('nera_site_container_custom_px', [
+    'label' => __('Custom max width (px)', 'nera-competitions'),
+    'description' => sprintf(
+      /* translators: 1: min px, 2: max px */
+      __('Used when Content max width is Custom. Allowed range: %1$d–%2$d.', 'nera-competitions'),
+      NERA_SITE_CONTAINER_MIN_PX,
+      NERA_SITE_CONTAINER_MAX_PX,
+    ),
+    'section' => 'nera_site_layout',
+    'type' => 'number',
+    'input_attrs' => [
+      'min' => NERA_SITE_CONTAINER_MIN_PX,
+      'max' => NERA_SITE_CONTAINER_MAX_PX,
+      'step' => 1,
+    ],
+    'active_callback' => static function (\WP_Customize_Control $control): bool {
+      $preset = $control->manager->get_setting('nera_site_container_preset');
+
+      return $preset && $preset->value() === 'custom';
+    },
   ]);
 
   $wp_customize->add_section('nera_shop_listing', [

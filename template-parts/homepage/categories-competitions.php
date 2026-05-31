@@ -75,7 +75,7 @@ $category_icons = [
     </div>
   </div>
 
-  <div class="max-w-[1200px] mx-auto px-4 relative z-10">
+  <div class="container mx-auto px-4 relative z-10">
 
     <!-- Section Header -->
     <div class="mb-16 text-center">

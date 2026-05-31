@@ -51,7 +51,7 @@ if (empty($faqs)) {
 ?>
 
 <section class="faq-section py-20 bg-surface" id="faq" data-aos="fade-up">
-  <div class="max-w-7xl mx-auto px-4 lg:px-0">
+  <div class="container mx-auto px-4 lg:px-0">
 
     <!-- Section Header -->
     <div class="text-center mb-12">
