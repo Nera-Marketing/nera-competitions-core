@@ -55,7 +55,7 @@ $current_showing = min($per_page, $total_products);
 ?>
 
 <section class="py-12 md:py-16 bg-background-light" data-product-listing>
-  <div class="max-w-[1200px] mx-auto px-4 lg:px-8">
+  <div class="container mx-auto px-4 lg:px-8">
 
     <!-- Loading Overlay -->
     <div class="hidden fixed inset-0 bg-surface/80 backdrop-blur-sm z-50 items-center justify-center" data-loading-overlay>

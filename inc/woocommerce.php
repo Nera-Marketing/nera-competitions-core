@@ -14,7 +14,7 @@ if (!defined('ABSPATH')) {
 /**
  * Resolve purchase-card quantity selector layout (buttons or slider).
  *
- * Product override wins when set to buttons or slider; inherit/empty uses Theme Settings → WooCommerce.
+ * Product override wins when set to buttons or slider; inherit/empty uses Appearance → Customize → Nera Settings → WooCommerce.
  *
  * @param int|null $product_id Product post ID.
  * @return string buttons|slider
@@ -30,7 +30,13 @@ function nera_get_quantity_selector_layout(?int $product_id = null): string
     }
   }
 
-  $global = function_exists('get_field') ? get_field('quantity_selector_layout', 'option') : 'buttons';
+  if (get_option('nera_customizer_settings_migrated') || nera_theme_mod_is_set('nera_quantity_selector_layout')) {
+    $global = get_theme_mod('nera_quantity_selector_layout', 'buttons');
+  } elseif (function_exists('get_field')) {
+    $global = get_field('quantity_selector_layout', 'option');
+  } else {
+    $global = 'buttons';
+  }
 
   return in_array($global, $allowed, true) ? $global : 'buttons';
 }

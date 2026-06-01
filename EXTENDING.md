@@ -20,7 +20,26 @@ The parent's Vite build is loaded first; the child enqueues its stylesheet after
 
 ---
 
-## 2. Semantic color tokens
+## 2. Site content container
+
+Parent templates use Tailwind **`container mx-auto`** (plus section-specific horizontal padding utilities) for header, footer, and page sections—not `max-w-7xl`, legacy `max-w-[1200px]`, or other arbitrary `max-w-[…]` values.
+
+| Mechanism | Role |
+|---|---|
+| `--nera-site-container-max` | CSS variable on `:root`; default `80rem` (1280px) in `frontend/src/main.css` |
+| `.container` | `@utility` in parent `main.css`; `max-width: var(--nera-site-container-max)` |
+| **Customizer → Nera Settings → Site layout** | Presets: 1280px, 1400px, 1536px, or custom px (960–1920) |
+
+PHP helper: `nera_get_site_container_max_css()` in `inc/helpers/site-container.php`.
+
+Child themes:
+
+- Use `container mx-auto` in new templates; do not reintroduce `max-w-7xl` for site width.
+- To force a width in code: `apply_filters( 'nera_site_container_max_css', $value )` or override the theme mod—avoid hard-coded max-width utilities for global layout.
+
+---
+
+## 3. Semantic color tokens
 
 Override any of these in your child `@theme` block. All parent templates and component styles use these tokens — never raw Tailwind palette names.
 
@@ -86,7 +105,7 @@ Use these for status badges instead of raw `blue-*` / `green-*`. All six triplet
 
 ---
 
-## 3. Typography tokens
+## 4. Typography tokens
 
 | Token | Parent default |
 |---|---|
@@ -98,7 +117,7 @@ Override `--font-heading` and `--font-body` in your child `@theme` to switch typ
 
 ---
 
-## 4. BEM slot classes (`.ncs-*` hooks)
+## 5. BEM slot classes (`.ncs-*` hooks)
 
 Parent templates add `.ncs-*` classes to the components child themes most often need to reshape. Target these in your child CSS instead of overriding utility classes.
 
@@ -167,7 +186,7 @@ body.woocommerce-account .ncs-order-status--processing {
 
 ---
 
-## 5. Color-utility mapping (Phase B reference)
+## 6. Color-utility mapping (Phase B reference)
 
 When replacing legacy raw utilities in parent templates, use this table:
 
@@ -185,7 +204,7 @@ When replacing legacy raw utilities in parent templates, use this table:
 
 ---
 
-## 6. Child theme quick-start
+## 7. Child theme quick-start
 
 ### Minimal setup
 
@@ -245,7 +264,7 @@ add_action('wp_enqueue_scripts', function () {
 
 ---
 
-## 7. Component Knob Reference
+## 8. Component Knob Reference
 
 Every `.ncs-*` component rule in parent `frontend/src/main.css` declares a set of
 `--ncs-<component>-<property>` CSS custom properties **at the component selector
@@ -408,7 +427,7 @@ variable at the matched element; whichever selector wins specificity for
 
 ---
 
-## 8. Migrating an existing child theme
+## 9. Migrating an existing child theme
 
 When folding selector-based overrides into the knob API:
 
@@ -448,7 +467,7 @@ override files).
 
 ---
 
-## 9. Build-time lint
+## 10. Build-time lint
 
 The parent Vite build runs `frontend/scripts/lint-templates.js` on every `yarn dev` and `yarn build`. It reports any PHP template that contains a forbidden raw-palette color utility.
 
@@ -459,7 +478,7 @@ If you add a new component to the parent and trigger a violation, replace the ra
 
 ---
 
-## 10. Overriding component views (Timber)
+## 11. Overriding component views (Timber)
 
 Parent UI is built from Timber components under `Components/<type>/<Name>/`, each with an `index.php` (data provider — `get_data()`) and a `template.twig` (view). A child theme can **override the view (`template.twig`) only**, reusing the parent's data.
 
@@ -516,7 +535,7 @@ For exact types, defaults, and notes, read the `get_data()` PHPDoc or the `templ
 | blocks/AddToCartButton | product_id, is_expired, is_manual_ticket, label_active, label_ended |
 | blocks/CountdownTimer | countdown_date, days, hours, minutes, seconds, is_expired |
 | blocks/ProductTitle | name, is_sold_out |
-| blocks/QuantitySelector | min, max, quick_add, default, layout (resolved via `nera_get_quantity_selector_layout()`: global Theme Settings → WooCommerce + optional product override) |
+| blocks/QuantitySelector | min, max, quick_add, default, layout (resolved via `nera_get_quantity_selector_layout()`: global **Appearance → Customize → Nera Settings → WooCommerce** + optional product ACF override) |
 | blocks/SkillQuestionAnswer | question_text, answers, cart_answer_id, qa_can_display |
 | blocks/TicketPrice | price_html |
 | blocks/TicketsProgress | sold, max, progress, remaining, is_low_stock, sold_formatted, max_formatted, remaining_formatted |

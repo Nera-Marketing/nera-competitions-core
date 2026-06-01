@@ -55,7 +55,7 @@ $cta_secondary_url = get_field('about_cta_secondary_btn_url') ?: home_url('/cont
     </div>
     <div class="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_at_top_right,rgba(255,255,255,0.15)_0%,transparent_55%)]"></div>
 
-    <div class="max-w-7xl mx-auto px-4 lg:px-0 relative z-10 w-full">
+    <div class="container mx-auto px-4 lg:px-0 relative z-10 w-full">
       <div class="grid lg:grid-cols-2 gap-10 lg:gap-12 items-center">
         <div data-aos="fade-up">
           <span
@@ -104,7 +104,7 @@ $cta_secondary_url = get_field('about_cta_secondary_btn_url') ?: home_url('/cont
   </section>
 
   <section class="py-16 lg:py-24 border-y border-gray-200 bg-surface" aria-labelledby="about-us-narrative">
-    <div class="max-w-7xl mx-auto px-4 lg:px-0">
+    <div class="container mx-auto px-4 lg:px-0">
       <div id="about-us-narrative" class="sr-only"><?php esc_html_e('Our narrative', 'nera-competitions'); ?></div>
       <div data-aos="fade-up">
         <?php if ($narrative) : ?>
@@ -122,7 +122,7 @@ $cta_secondary_url = get_field('about_cta_secondary_btn_url') ?: home_url('/cont
   </section>
 
   <section class="py-16 lg:py-24 bg-gray-50 relative overflow-hidden" aria-labelledby="about-us-stories">
-    <div class="max-w-7xl mx-auto px-4 lg:px-0">
+    <div class="container mx-auto px-4 lg:px-0">
       <div class="grid md:grid-cols-2 gap-10 lg:gap-12">
         <div
           class="bg-surface p-8 lg:p-12 rounded-3xl border border-gray-200 shadow-lg transition-all duration-300 hover:border-primary/25 hover:shadow-xl hover:-translate-y-0.5 group"

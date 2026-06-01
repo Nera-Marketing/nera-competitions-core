@@ -1,6 +1,6 @@
 <?php
 /**
- * Shop listing layout helpers (All Competitions / WC shop page).
+ * Shop listing layout helpers (All Competitions / WC shop page; Customizer theme_mod).
  *
  * @package Nera_Competitions
  */
@@ -57,7 +57,7 @@ function nera_sanitize_aspect_ratio(string $raw): ?string
 }
 
 /**
- * Shop listing settings from the Shop page ACF fields.
+ * Shop listing settings (Customizer theme_mod; ACF post meta fallback before migration).
  *
  * @return array{
  *   grid_columns: int,
@@ -68,6 +68,11 @@ function nera_sanitize_aspect_ratio(string $raw): ?string
 function nera_get_shop_listing_settings(): array
 {
   static $settings = null;
+
+  if (is_customize_preview()) {
+    $settings = null;
+  }
+
   if ($settings !== null) {
     return $settings;
   }
@@ -77,6 +82,27 @@ function nera_get_shop_listing_settings(): array
     'card_layout' => 'classic',
     'image_aspect_ratio' => null,
   ];
+
+  if (get_option('nera_customizer_settings_migrated') || nera_theme_mod_is_set('nera_shop_grid_columns')) {
+    $grid_raw = get_theme_mod('nera_shop_grid_columns', 3);
+    $grid_columns = (int) $grid_raw === 4 ? 4 : 3;
+
+    $layout_raw = get_theme_mod('nera_shop_card_layout', 'classic');
+    $card_layout = $layout_raw === 'portrait' ? 'portrait' : 'classic';
+
+    $aspect_mod = get_theme_mod('nera_shop_card_image_aspect_ratio', '');
+    $image_aspect_ratio = is_string($aspect_mod) && $aspect_mod !== ''
+      ? nera_sanitize_aspect_ratio($aspect_mod)
+      : null;
+
+    $settings = [
+      'grid_columns' => $grid_columns,
+      'card_layout' => $card_layout,
+      'image_aspect_ratio' => $image_aspect_ratio,
+    ];
+
+    return $settings;
+  }
 
   $page_id = nera_shop_page_id();
   if ($page_id <= 0 || !function_exists('get_field')) {

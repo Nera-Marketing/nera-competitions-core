@@ -45,8 +45,8 @@ $section_class =
 
 $container_class =
   $variant === 'compact'
-    ? 'max-w-[1200px] mx-auto px-3 sm:px-4 lg:px-8'
-    : 'max-w-[1200px] mx-auto px-4 lg:px-8';
+    ? 'container mx-auto px-3 sm:px-4 lg:px-8'
+    : 'container mx-auto px-4 lg:px-8';
 
 $h1_class =
   $variant === 'compact'

@@ -25,7 +25,7 @@ $_blog_desc    = $_blog_page_id ? get_the_excerpt($_blog_page_id) : '';
     ]);
     ?>
     <div class="bg-background-secondary min-h-screen">
-        <div class="max-w-7xl mx-auto px-4 py-10 md:py-12">
+        <div class="container mx-auto px-4 py-10 md:py-12">
 
             <?php get_template_part('template-parts/blog/loop'); ?>
 

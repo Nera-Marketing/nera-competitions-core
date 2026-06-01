@@ -105,8 +105,21 @@
   --transition-base: 300ms cubic-bezier(0.4, 0, 0.2, 1);
   --transition-slow: 500ms cubic-bezier(0.4, 0, 0.2, 1);
 
-  /* Container */
-  --container-xl: 1280px;
+  /* Site content width — Customizer overrides via inline :root (--nera-site-container-max). */
+  --nera-site-container-max: 80rem;
+  --container-3xs: var(--nera-site-container-max);
+  --container-2xs: var(--nera-site-container-max);
+  --container-xs: var(--nera-site-container-max);
+  --container-sm: var(--nera-site-container-max);
+  --container-md: var(--nera-site-container-max);
+  --container-lg: var(--nera-site-container-max);
+  --container-xl: var(--nera-site-container-max);
+  --container-2xl: var(--nera-site-container-max);
+  --container-3xl: var(--nera-site-container-max);
+  --container-4xl: var(--nera-site-container-max);
+  --container-5xl: var(--nera-site-container-max);
+  --container-6xl: var(--nera-site-container-max);
+  --container-7xl: var(--nera-site-container-max);
 
   /* Animations */
   --animate-pulse-slow: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
@@ -126,6 +139,13 @@
 
 @utility hide-scrollbar {
   @apply [&::-webkit-scrollbar]:hidden [scrollbar-width:none] [-ms-overflow-style:none];
+}
+
+/* Fixed site max-width (Customizer-driven); replaces Tailwind’s stepped responsive .container. */
+@utility container {
+  width: 100%;
+  margin-inline: auto;
+  max-width: var(--nera-site-container-max);
 }
 
 /* ==========================================================================
@@ -193,7 +213,7 @@ ol {
 
 #primary,
 .site-main {
-  @apply max-w-7xl w-full mx-auto px-4 lg:px-0 pt-8 pb-8 lg:pt-12 lg:pb-12 m-0;
+  @apply container w-full mx-auto px-4 lg:px-0 pt-8 pb-8 lg:pt-12 lg:pb-12 m-0;
 }
 
 /* Single blog post: full-bleed hero under header; inner prose/prev/comments stay max-w-* in template. */

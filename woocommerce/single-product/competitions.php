@@ -122,7 +122,7 @@ $extra_images = max(0, count($gallery_images) - $visible_thumbs);
 
     <!-- Main Content Section -->
     <section class="py-8 lg:py-10">
-      <div class="max-w-7xl mx-auto flex w-full min-w-0 flex-col px-4 lg:px-8">
+      <div class="container mx-auto flex w-full min-w-0 flex-col px-4 lg:px-8">
         <div class="grid w-full min-w-0 grid-cols-1 gap-8 lg:grid-cols-12 lg:gap-x-10 lg:gap-y-0">
 
           <!-- Left column: gallery + tabs (contents on mobile, flex-col on desktop) -->
@@ -187,7 +187,7 @@ $extra_images = max(0, count($gallery_images) - $visible_thumbs);
     $related_ids = nera_get_related_lottery_products($product_id, 4);
     if (!empty($related_ids)): ?>
       <section class="py-12 lg:py-16 bg-surface border-t border-gray-100">
-        <div class="max-w-7xl mx-auto px-4 lg:px-0">
+        <div class="container mx-auto px-4 lg:px-0">
           <?php get_template_part('template-parts/single-product/related-competitions', null, [
             'product' => $product,
             'related_ids' => $related_ids,

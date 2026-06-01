@@ -68,7 +68,7 @@ $journal_url = $page_for_posts ? get_permalink($page_for_posts) : home_url('/');
     class="border-t border-gray-200 py-12 md:py-16"
     aria-label="<?php esc_attr_e('Related articles', 'nera-competitions'); ?>"
 >
-    <div class="container mx-auto max-w-7xl px-4">
+    <div class="container mx-auto px-4">
         <div class="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
             <div>
                 <p class="text-xs font-semibold uppercase tracking-wider text-text-secondary">

@@ -288,7 +288,7 @@ get_template_part('template-parts/competition-card', null, [
 
 ### Theme mods and branding
 
-There is **no** Appearance → Customize panel for Nera theme options. **Brand colors and typography** come from Tailwind `@theme` in [`frontend/src/main.css`](frontend/src/main.css). Some template parts still use `get_theme_mod('nera_*', $default)` for header CTAs and social URLs (defaults in PHP; optional child-theme overrides).
+**Appearance → Customize → Nera Settings** controls shop listing layout (grid columns, card layout, image aspect ratio on the All Competitions / shop archive) and the site-wide **quantity selector layout** default (`theme_mod`). Add to cart success message remains on **Theme Settings → WooCommerce** (ACF). **Brand colors and typography** come from Tailwind `@theme` in [`frontend/src/main.css`](frontend/src/main.css). Other template parts use `get_theme_mod('nera_*', $default)` for header CTAs and social URLs (defaults in PHP; optional child-theme overrides).
 
 ## JavaScript Patterns
 

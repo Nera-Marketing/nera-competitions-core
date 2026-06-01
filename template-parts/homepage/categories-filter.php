@@ -318,7 +318,7 @@ if (
 
 <section class="py-12 bg-surface" id="advanced-filter-competitions" x-data="advancedFilterSection">
 
-  <div class="max-w-[1400px] mx-auto px-4 lg:px-10">
+  <div class="container mx-auto px-4 lg:px-10">
 
     <!-- Section Header -->
     <div class="mb-10 text-center" data-aos="fade-up" data-aos-duration="600">

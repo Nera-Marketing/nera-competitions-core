@@ -91,7 +91,7 @@ $x_data_expr = 'neraClosedPrizesGrid(' . $config_json . ')';
 
 <section class="py-8 sm:py-12 px-3 sm:px-6 bg-surface">
   <div
-    class="max-w-[1200px] mx-auto"
+    class="container mx-auto"
     x-data="<?php echo esc_attr($x_data_expr); ?>"
   >
 
