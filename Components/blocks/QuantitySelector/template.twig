@@ -14,10 +14,24 @@
 <div data-quantity-control class="w-full min-w-0" data-quantity-layout="{{ layout }}">
   {% if layout == 'slider' %}
     <div class="ncs-quantity-slider flex flex-col gap-3 w-full">
-      <p class="text-center text-sm font-semibold text-text-secondary" aria-live="polite">
+      <button type="button"
+        class="ncs-quantity-slider__display w-full text-center text-sm font-semibold text-text-secondary bg-transparent border-0 cursor-pointer p-0"
+        data-quantity-display-trigger
+        aria-live="polite"
+        aria-label="{{ i18n.edit_quantity }}">
         <span class="text-2xl font-bold text-text-primary tabular-nums" data-quantity-display>{{ default }}</span>
         <span class="ml-1">{{ i18n.tickets }}</span>
-      </p>
+      </button>
+      <input type="number"
+        data-quantity-edit
+        class="ncs-quantity-slider__edit w-full text-center text-2xl font-bold text-text-primary tabular-nums border border-primary rounded-lg px-3 py-1 focus:outline-none bg-surface"
+        inputmode="numeric"
+        min="{{ min }}"
+        max="{{ max }}"
+        value="{{ default }}"
+        step="1"
+        hidden
+        aria-label="{{ i18n.number_of_tickets }}" />
       <div class="flex items-center gap-3 w-full">
         <button type="button"
           class="ncs-quantity-slider__step w-11 h-11 shrink-0 flex items-center justify-center rounded-lg border border-gray-200 bg-surface text-text-primary hover:border-primary hover:text-primary transition-colors disabled:opacity-50 disabled:cursor-not-allowed"

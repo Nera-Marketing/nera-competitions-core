@@ -25,6 +25,8 @@
     const addBtns = root.querySelectorAll('[data-quantity-add]');
     const rangeInput = root.querySelector('[data-quantity-range]');
     const display = root.querySelector('[data-quantity-display]');
+    const displayTrigger = root.querySelector('[data-quantity-display-trigger]');
+    const editInput = root.querySelector('[data-quantity-edit]');
 
     const getMin = () => parseInt(quantityInput.min, 10) || 1;
     const getMax = () => parseInt(quantityInput.max, 10) || 999;
@@ -85,6 +87,35 @@
           detail: { quantity: value },
         })
       );
+    }
+
+    /**
+     * Switch the display line into edit mode.
+     * Syncs the edit input's value to the canonical input, hides the trigger,
+     * reveals the number input, and focuses + selects it.
+     */
+    function enterEdit() {
+      editInput.value = quantityInput.value;
+      displayTrigger.hidden = true;
+      editInput.hidden = false;
+      editInput.focus();
+      editInput.select();
+    }
+
+    /**
+     * Commit whatever the user typed, clamp it via updateQuantity, then exit edit mode.
+     */
+    function commitEdit() {
+      updateQuantity(editInput.value);
+      exitEdit();
+    }
+
+    /**
+     * Discard the current edit and return to display mode without changing the value.
+     */
+    function exitEdit() {
+      editInput.hidden = true;
+      displayTrigger.hidden = false;
     }
 
     /**
@@ -197,6 +228,22 @@
     quantityInput.addEventListener('input', function () {
       updateQuantity(this.value, { fromEvent: true });
     });
+
+    if (displayTrigger && editInput) {
+      displayTrigger.addEventListener('click', enterEdit);
+
+      editInput.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') {
+          e.preventDefault();   // block form submit
+          commitEdit();
+        } else if (e.key === 'Escape') {
+          e.preventDefault();
+          exitEdit();           // discard, keep prior value
+        }
+      });
+
+      editInput.addEventListener('blur', commitEdit);
+    }
 
     updateQuantity(quantityInput.value || getMin());
   }

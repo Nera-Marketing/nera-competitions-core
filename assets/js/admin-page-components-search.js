@@ -48,6 +48,14 @@
         wrap.appendChild(input);
         popup.insertBefore(wrap, popup.firstChild);
 
+        // Cap the component list so it scrolls inside the popup instead of
+        // overflowing the viewport; the search wrap above stays pinned.
+        var list = popup.querySelector('ul');
+        if (list) {
+            list.style.maxHeight = '60vh';
+            list.style.overflowY = 'auto';
+        }
+
         // Stop ACF's outside-click handler from closing the popup when
         // interacting with the search field.
         ['mousedown', 'click', 'focusin', 'touchstart'].forEach(function (evt) {

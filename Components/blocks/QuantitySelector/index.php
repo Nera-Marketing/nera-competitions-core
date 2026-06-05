@@ -13,7 +13,7 @@ if (!defined('ABSPATH')) {
  *   quick_add: list<int>,  // required, default [5,10,20] — amounts rendered as quick-add buttons
  *   default: int,          // required, default 1 — initial value of the quantity input
  *   layout: string,        // required, default buttons — buttons|slider
- *   i18n: array<string,string> // required — localised labels for aria/text
+ *   i18n: array<string,string> // required — localised labels for aria/text: tickets, decrease_quantity, increase_quantity, number_of_tickets, edit_quantity
  * }
  */
 function get_data(array $args = []): array
@@ -34,6 +34,7 @@ function get_data(array $args = []): array
             'decrease_quantity' => __('Decrease quantity', 'nera-competitions'),
             'increase_quantity' => __('Increase quantity', 'nera-competitions'),
             'number_of_tickets' => __('Number of tickets', 'nera-competitions'),
+            'edit_quantity'     => __('Edit quantity', 'nera-competitions'),
         ],
     ];
 }
