@@ -21,6 +21,10 @@ Nera Competitions Standard is built for competition and lottery sites: product t
 
 == Changelog ==
 
+= 1.2.1 =
+* Added: Slider quantity layout — tap ticket count to type a quantity directly (Enter to confirm, Escape to cancel).
+* Updated: QuantitySelector block i18n (`edit_quantity`); quantity-control.js edit mode.
+
 = 1.2.0 =
 * Added: Purchase card slider quantity selector with global ACF style (classic / slider) on WooCommerce and single-product settings.
 * Added: `quantity-control.js` and purchase-card / QuantitySelector block updates.
