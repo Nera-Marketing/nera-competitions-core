@@ -120,14 +120,28 @@
 
       <!-- Prizes Grid - gap-5 per plan -->
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-5 items-start">
-        <PrizeCard
-          v-for="(prize, index) in data.prizes"
-          :key="prize.key || index"
-          :prize="prize"
-          :index="index"
-          :on-show-all-winners="handleShowAllWinners"
-          :show-winners="showWinners"
-        />
+        <!-- Group mode: PrizeGroupCard per entry -->
+        <template v-if="displayMode === 'group'">
+          <PrizeGroupCard
+            v-for="(prize, index) in data.prizes"
+            :key="prize.key || index"
+            :prize="prize"
+            :index="index"
+            :on-show-all-winners="handleShowAllWinners"
+            :show-winners="showWinners"
+          />
+        </template>
+        <!-- Default mode: unchanged PrizeCard per entry -->
+        <template v-else>
+          <PrizeCard
+            v-for="(prize, index) in data.prizes"
+            :key="prize.key || index"
+            :prize="prize"
+            :index="index"
+            :on-show-all-winners="handleShowAllWinners"
+            :show-winners="showWinners"
+          />
+        </template>
       </div>
 
       <!-- Winners Modal - Vue component -->
@@ -145,6 +159,7 @@
 import { ref, onMounted } from 'vue';
 import StatsBar from './StatsBar.vue';
 import PrizeCard from './PrizeCard.vue';
+import PrizeGroupCard from './PrizeGroupCard.vue';
 import WinnersModal from '../shared/WinnersModal.vue';
 
 /**
@@ -174,6 +189,7 @@ const props = defineProps({
 const loading = ref(true);
 const error = ref(null);
 const data = ref(null);
+const displayMode = ref('default');
 const modalState = ref({
   isOpen: false,
   prizeTitle: '',
@@ -198,11 +214,15 @@ const fetchInstantWins = async () => {
       throw new Error(result.message || 'Failed to load instant wins');
     }
 
-    // Transform API data to match component expectations
-    // API returns: { title, image, total_available, won_count, winners }
-    // Components expect: { prizeMessage, prizeImage, totalCount, wonCount, isWon, winners }
-    const transformedData = {
-      prizes: result.data.prizes.map(prize => ({
+    // Capture display mode (default when absent).
+    const mode = result.data.display_mode || 'default';
+    displayMode.value = mode;
+
+    // Transform API data to match component expectations.
+    // API base shape: { id, title, image, total_available, won_count, winners }
+    // Group mode adds: tickets[] — passed through as-is (normalized below).
+    const transformPrize = prize => {
+      const base = {
         key: prize.id,
         prizeMessage: prize.title, // API returns stripped text, not HTML
         prizeImage: prize.image
@@ -212,7 +232,19 @@ const fetchInstantWins = async () => {
         wonCount: prize.won_count ?? 0,
         isWon: prize.total_available != null && prize.won_count >= prize.total_available,
         winners: prize.winners || [],
-      })),
+      };
+      if (mode === 'group') {
+        // Normalize tickets array: ensure each entry has { number, status }.
+        base.tickets = (prize.tickets || []).map(t => ({
+          number: String(t.number ?? ''),
+          status: t.status || 'available',
+        }));
+      }
+      return base;
+    };
+
+    const transformedData = {
+      prizes: result.data.prizes.map(transformPrize),
       stats: {
         availableCount: result.data.stats.total_available - result.data.stats.total_won,
         wonCount: result.data.stats.total_won,
