@@ -24,7 +24,7 @@ add_action('after_setup_theme', function () {
         require_once $component_fields;
     }
 
-    // When a child theme is active, also load its component index.php files —
+    // When a child theme is active, also load its component index.php and fields.php —
     // but only for names that do NOT already exist in the parent.
     $child_dir = get_stylesheet_directory() . '/Components';
     if (get_stylesheet_directory() !== get_template_directory() && is_dir($child_dir)) {
@@ -34,6 +34,12 @@ add_action('after_setup_theme', function () {
                 require_once $component_index;
             }
             // Collision: parent already loaded this name — skip silently.
+        }
+        foreach (glob($child_dir . '/*/*/fields.php') ?: [] as $component_fields) {
+            $name = basename(dirname($component_fields));
+            if (!isset($parent_names[$name])) {
+                require_once $component_fields;
+            }
         }
     }
 });
@@ -157,6 +163,7 @@ add_action('acf/init', function () {
 
     $components_dir = get_template_directory() . '/Components';
     $layouts = [];
+    $seen_layout_names = [];
 
     foreach (glob($components_dir . '/*/*', GLOB_ONLYDIR) ?: [] as $dir) {
         $name = basename($dir);
@@ -169,6 +176,26 @@ add_action('acf/init', function () {
         $layout = $fn();
         if (is_array($layout) && !empty($layout['name'])) {
             $layouts[] = $layout;
+            $seen_layout_names[$name] = true;
+        }
+    }
+
+    // Also collect child-theme-only components (names not in parent).
+    if (get_stylesheet_directory() !== get_template_directory()) {
+        $child_components_dir = get_stylesheet_directory() . '/Components';
+        foreach (glob($child_components_dir . '/*/*', GLOB_ONLYDIR) ?: [] as $dir) {
+            $name = basename($dir);
+
+            if (file_exists($dir . '/.not-top-level')) continue;
+            if (isset($seen_layout_names[$name])) continue; // parent wins — avoid duplicate layout
+
+            $fn = "Nera\\Components\\{$name}\\get_acf_layout";
+            if (!function_exists($fn)) continue;
+
+            $layout = $fn();
+            if (is_array($layout) && !empty($layout['name'])) {
+                $layouts[] = $layout;
+            }
         }
     }
 
