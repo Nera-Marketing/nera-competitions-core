@@ -4,7 +4,7 @@ Tags: competition, giveaway, lottery, woocommerce
 Requires at least: 6.0
 Tested up to: 6.8
 Requires PHP: 8.1
-Stable tag: 1.2.1
+Stable tag: 1.2.2
 License: GPLv2 or later
 
 Premium competition and giveaway theme for WooCommerce, with Tailwind-powered front-end assets.
@@ -20,6 +20,10 @@ Nera Competitions Standard is built for competition and lottery sites: product t
 3. Run `yarn build` or `npm run build` in `frontend/` and `lty-result-screens/` after pulling updates that change assets.
 
 == Changelog ==
+
+= 1.2.2 =
+* Added: Instant Wins group display mode — new PrizeGroupCard.vue when API returns display_mode=group.
+* Updated: InstantWinsContainer.vue — switches between PrizeCard and PrizeGroupCard; normalizes tickets[] payload.
 
 = 1.2.1 =
 * Added: Slider quantity layout — tap ticket count to type a quantity directly (Enter to confirm, Escape to cancel).
