@@ -1323,6 +1323,7 @@ function nera_advanced_filter_competitions_wp_query_args(array $url_category_slu
     'orderby' => 'meta_value',
     'order' => 'ASC',
     'meta_query' => function_exists('nera_active_lottery_meta_query') ? nera_active_lottery_meta_query() : [],
+    'post__not_in' => function_exists('nera_sold_out_lottery_ids') ? nera_sold_out_lottery_ids() : [],
   ];
 }
 
@@ -2257,6 +2258,9 @@ add_action('admin_notices', 'nera_sample_winners_admin_notice');
 
 // ACE Footer Fields
 require_once get_template_directory() . '/inc/acf/footer/acf-footer.php';
+
+// ACF Listing Visibility Fields
+require_once get_template_directory() . '/inc/acf/listing-visibility/acf-listing-visibility.php';
 
 // This line disables all default WooCommerce stylesheets from loading on the frontend,
 // allowing the theme to control all styling. To re-enable default WooCommerce CSS, remove this filter.
