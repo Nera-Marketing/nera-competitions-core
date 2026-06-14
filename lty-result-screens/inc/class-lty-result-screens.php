@@ -159,17 +159,20 @@ class LTY_Result_Screens {
 		if ( ! is_wc_endpoint_url( 'order-received' ) ) {
 			return;
 		}
+		$css_path = LTY_RS_PATH . 'assets/css/lty-result-screens.css';
+		$js_path  = LTY_RS_PATH . 'assets/js/lty-result-screens.js';
+
 		wp_enqueue_style(
 			'lty-result-screens',
 			LTY_RS_URL . 'assets/css/lty-result-screens.css',
 			array(),
-			LTY_RS_VERSION
+			file_exists( $css_path ) ? filemtime( $css_path ) : LTY_RS_VERSION
 		);
 		wp_enqueue_script(
 			'lty-result-screens',
 			LTY_RS_URL . 'assets/js/lty-result-screens.js',
 			array(),
-			LTY_RS_VERSION,
+			file_exists( $js_path ) ? filemtime( $js_path ) : LTY_RS_VERSION,
 			true
 		);
 	}
