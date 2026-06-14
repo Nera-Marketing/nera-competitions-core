@@ -562,6 +562,7 @@ function nera_active_lottery_meta_query()
 {
   $now_gmt = current_time('mysql', 1);
 
+  // The start-date clause always applies: never list a lottery before it starts.
   $query = [
     'relation' => 'AND',
     [
@@ -570,20 +571,31 @@ function nera_active_lottery_meta_query()
       ['key' => '_lty_start_date_gmt', 'value' => '', 'compare' => '='],
       ['key' => '_lty_start_date_gmt', 'value' => $now_gmt, 'type' => 'DATETIME', 'compare' => '<='],
     ],
-    [
+  ];
+
+  // Hide Ended Competitions controls whether *ended/closed* competitions appear in
+  // the regular competition listings (homepage grids, All Competitions, etc.):
+  //   - OFF: no ended-filtering — ended / closed / finished / failed competitions
+  //          are SHOWN in every listing.
+  //   - ON : ended competitions are HIDDEN here and appear ONLY on the Closed
+  //          Prizes page. This is the exact inverse of nera_closed_lottery_meta_query()
+  //          (status finished/closed OR end date < now): a competition is "active"
+  //          while its status is not_started/started AND its end time has not passed
+  //          (end >= now). Once the end time passes (now >= end time) the Lottery
+  //          plugin closes it and it moves to Closed Prizes — no overlap, no gap.
+  $hide_ended = function_exists('get_field') ? get_field('hide_ended_competitions', 'option') : true;
+  if ($hide_ended !== '0' && $hide_ended !== 0 && $hide_ended !== false) {
+    // Not ended by status.
+    $query[] = [
       'relation' => 'OR',
       ['key' => '_lty_lottery_status', 'compare' => 'NOT EXISTS'],
       [
-        'key' => '_lty_lottery_status',
-        'value' => ['lty_lottery_not_started', 'lty_lottery_started'],
+        'key'     => '_lty_lottery_status',
+        'value'   => ['lty_lottery_not_started', 'lty_lottery_started'],
         'compare' => 'IN',
       ],
-    ],
-  ];
-
-  // Default ON: hide ended competitions unless the option is explicitly disabled.
-  $hide_ended = function_exists('get_field') ? get_field('hide_ended_competitions', 'option') : true;
-  if ($hide_ended !== '0' && $hide_ended !== 0 && $hide_ended !== false) {
+    ];
+    // Not ended by date (end time still in the future, or no end date).
     $query[] = [
       'relation' => 'OR',
       ['key' => '_lty_end_date_gmt', 'compare' => 'NOT EXISTS'],
