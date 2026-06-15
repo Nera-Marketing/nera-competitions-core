@@ -33,6 +33,7 @@ function get_data(array $args = []): array
         'meta_query'     => function_exists('nera_active_lottery_meta_query')
             ? nera_active_lottery_meta_query()
             : [],
+        'post__not_in'   => function_exists('nera_sold_out_lottery_ids') ? nera_sold_out_lottery_ids() : [],
     ];
     $query = new \WP_Query($query_args);
 

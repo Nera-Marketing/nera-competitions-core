@@ -552,13 +552,18 @@ function nera_format_draw_date($date_gmt)
  * Excludes: lty_lottery_failed, lty_lottery_finished, lty_lottery_closed.
  * Includes: lty_lottery_not_started, lty_lottery_started, or missing meta.
  *
- * @return array Meta query array (relation AND with NOT EXISTS + IN).
+ * When the hide_ended_competitions ACF option is ON (default), a third clause
+ * is appended that filters out lotteries whose end date is in the past while
+ * preserving products with no end date (unlimited/scheduled type).
+ *
+ * @return array Meta query array (relation AND, two or three OR-groups).
  */
 function nera_active_lottery_meta_query()
 {
   $now_gmt = current_time('mysql', 1);
 
-  return [
+  // The start-date clause always applies: never list a lottery before it starts.
+  $query = [
     'relation' => 'AND',
     [
       'relation' => 'OR',
@@ -566,16 +571,40 @@ function nera_active_lottery_meta_query()
       ['key' => '_lty_start_date_gmt', 'value' => '', 'compare' => '='],
       ['key' => '_lty_start_date_gmt', 'value' => $now_gmt, 'type' => 'DATETIME', 'compare' => '<='],
     ],
-    [
+  ];
+
+  // Hide Ended Competitions controls whether *ended/closed* competitions appear in
+  // the regular competition listings (homepage grids, All Competitions, etc.):
+  //   - OFF: no ended-filtering — ended / closed / finished / failed competitions
+  //          are SHOWN in every listing.
+  //   - ON : ended competitions are HIDDEN here and appear ONLY on the Closed
+  //          Prizes page. This is the exact inverse of nera_closed_lottery_meta_query()
+  //          (status finished/closed OR end date < now): a competition is "active"
+  //          while its status is not_started/started AND its end time has not passed
+  //          (end >= now). Once the end time passes (now >= end time) the Lottery
+  //          plugin closes it and it moves to Closed Prizes — no overlap, no gap.
+  $hide_ended = function_exists('get_field') ? get_field('hide_ended_competitions', 'option') : true;
+  if ($hide_ended !== '0' && $hide_ended !== 0 && $hide_ended !== false) {
+    // Not ended by status.
+    $query[] = [
       'relation' => 'OR',
       ['key' => '_lty_lottery_status', 'compare' => 'NOT EXISTS'],
       [
-        'key' => '_lty_lottery_status',
-        'value' => ['lty_lottery_not_started', 'lty_lottery_started'],
+        'key'     => '_lty_lottery_status',
+        'value'   => ['lty_lottery_not_started', 'lty_lottery_started'],
         'compare' => 'IN',
       ],
-    ],
-  ];
+    ];
+    // Not ended by date (end time still in the future, or no end date).
+    $query[] = [
+      'relation' => 'OR',
+      ['key' => '_lty_end_date_gmt', 'compare' => 'NOT EXISTS'],
+      ['key' => '_lty_end_date_gmt', 'value' => '', 'compare' => '='],
+      ['key' => '_lty_end_date_gmt', 'value' => $now_gmt, 'type' => 'DATETIME', 'compare' => '>='],
+    ];
+  }
+
+  return $query;
 }
 
 /**
@@ -598,6 +627,7 @@ function nera_count_active_lottery_products_in_category($term_id)
     'posts_per_page' => 1,
     'fields' => 'ids',
     'no_found_rows' => false,
+    'post__not_in' => function_exists('nera_sold_out_lottery_ids') ? nera_sold_out_lottery_ids() : [],
     'tax_query' => [
       'relation' => 'AND',
       [
@@ -616,6 +646,89 @@ function nera_count_active_lottery_products_in_category($term_id)
 
   return (int) $query->found_posts;
 }
+
+/**
+ * Return an array of published lottery product IDs that are currently sold out.
+ *
+ * A product is sold out when max tickets are set and sold tickets >= max tickets,
+ * matching the card template definition: $max && $sold >= $max.
+ *
+ * Results are cached in a transient for 5 minutes. The cache is invalidated
+ * whenever a ticket is created or an order status changes.
+ *
+ * When the hide_sold_out_competitions ACF option is explicitly disabled this
+ * function returns an empty array immediately (no filtering).
+ *
+ * @return int[]
+ */
+function nera_sold_out_lottery_ids()
+{
+  // Default ON: only an explicit falsy value disables sold-out hiding.
+  if (function_exists('get_field')) {
+    $hide_sold_out = get_field('hide_sold_out_competitions', 'option');
+    if ($hide_sold_out === '0' || $hide_sold_out === 0 || $hide_sold_out === false) {
+      return [];
+    }
+  }
+
+  $transient_key = 'nera_sold_out_lottery_ids';
+  $cached = get_transient($transient_key);
+  if (is_array($cached)) {
+    return $cached;
+  }
+
+  $product_query = new WP_Query([
+    'post_type'      => 'product',
+    'post_status'    => 'publish',
+    'posts_per_page' => -1,
+    'fields'         => 'ids',
+    'no_found_rows'  => true,
+    'tax_query'      => [
+      [
+        'taxonomy' => 'product_type',
+        'field'    => 'slug',
+        'terms'    => 'lottery',
+      ],
+    ],
+    'meta_query'     => function_exists('nera_active_lottery_meta_query') ? nera_active_lottery_meta_query() : [],
+  ]);
+
+  $sold_out_ids = [];
+
+  foreach ($product_query->posts as $id) {
+    $product = wc_get_product($id);
+    if (!is_object($product)) {
+      continue;
+    }
+
+    $max  = method_exists($product, 'get_lty_maximum_tickets')
+      ? (int) $product->get_lty_maximum_tickets()
+      : (int) get_post_meta($id, '_lty_maximum_tickets', true);
+    $sold = (int) (method_exists($product, 'get_purchased_ticket_count') ? $product->get_purchased_ticket_count() : 0);
+
+    if ($max && $sold >= $max) {
+      $sold_out_ids[] = (int) $id;
+    }
+  }
+
+  set_transient($transient_key, $sold_out_ids, 5 * MINUTE_IN_SECONDS);
+
+  return $sold_out_ids;
+}
+
+/**
+ * Clear the sold-out lottery IDs transient cache.
+ *
+ * Registered on ticket creation and order status changes so the cache
+ * never shows stale sold-out state for more than 5 minutes even when
+ * tickets arrive in rapid succession.
+ */
+function nera_clear_sold_out_lottery_cache()
+{
+  delete_transient('nera_sold_out_lottery_ids');
+}
+add_action('lty_lottery_ticket_after_created', 'nera_clear_sold_out_lottery_cache');
+add_action('woocommerce_order_status_changed', 'nera_clear_sold_out_lottery_cache');
 
 /**
  * Get related lottery products
@@ -2092,16 +2205,27 @@ function nera_account_closed_flash_notice()
 add_action('template_redirect', 'nera_account_closed_flash_notice', 1);
 
 /**
- * Meta query for closed/finished lottery products (excludes active and failed).
+ * Meta query for closed/finished lottery products: status finished/closed OR end date passed.
  *
- * @return array Single meta query clause.
+ * @return array Meta query (OR relation).
  */
 function nera_closed_lottery_meta_query()
 {
+  $now_gmt = current_time('mysql', 1);
+
   return [
-    'key'     => '_lty_lottery_status',
-    'value'   => ['lty_lottery_finished', 'lty_lottery_closed'],
-    'compare' => 'IN',
+    'relation' => 'OR',
+    [
+      'key'     => '_lty_lottery_status',
+      'value'   => ['lty_lottery_finished', 'lty_lottery_closed'],
+      'compare' => 'IN',
+    ],
+    [
+      'key'     => '_lty_end_date_gmt',
+      'value'   => $now_gmt,
+      'type'    => 'DATETIME',
+      'compare' => '<',
+    ],
   ];
 }
 
