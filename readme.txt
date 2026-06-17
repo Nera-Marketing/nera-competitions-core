@@ -21,6 +21,13 @@ Nera Competitions Standard is built for competition and lottery sites: product t
 
 == Changelog ==
 
+= 1.2.6 =
+* Updated: Product title on single product pages shows the product name only (removed "Win a" prefix).
+* Added: Site-wide **Show Entry List Tab** toggle under Theme Settings → WooCommerce.
+* Updated: Per-product Entry List tab control is now inherit / show / hide (replaces true/false); legacy postmeta supported.
+* Updated: Listing Visibility settings moved to Theme Settings → WooCommerce.
+* Removed: Dev-only listing visibility test scripts from `tests/`.
+
 = 1.2.2 =
 * Added: Instant Wins group display mode — new PrizeGroupCard.vue when API returns display_mode=group.
 * Updated: InstantWinsContainer.vue — switches between PrizeCard and PrizeGroupCard; normalizes tickets[] payload.
