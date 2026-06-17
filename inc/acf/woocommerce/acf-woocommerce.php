@@ -121,6 +121,27 @@ if (function_exists('acf_add_local_field_group')) {
         'CSS aspect-ratio value for the main gallery image. Leave empty for the default 4/3. Examples: 4/5, 16/9, 1.25.',
       'required' => 0,
       'placeholder' => '4/3',
+      'wrapper' => [
+        'width' => '50',
+        'class' => '',
+        'id' => '',
+      ],
+    ],
+    [
+      'key' => 'field_wc_single_image_max_height',
+      'label' => 'Single product — featured image max height',
+      'name' => 'single_image_max_height',
+      'type' => 'text',
+      'instructions' =>
+        'Caps the gallery image height so the left column stays compact (keeps the buy controls above the fold). CSS length: e.g. 70vh, 520px. Defaults to 70vh; type "none" to disable the cap.',
+      'required' => 0,
+      'default_value' => '70vh',
+      'placeholder' => '70vh',
+      'wrapper' => [
+        'width' => '50',
+        'class' => '',
+        'id' => '',
+      ],
     ],
   ];
 

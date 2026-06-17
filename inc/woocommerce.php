@@ -132,6 +132,36 @@ function nera_get_single_product_image_aspect_ratio(): ?string
 }
 
 /**
+ * Resolve the single-product featured image max-height for inline CSS.
+ *
+ * Reads the global Theme Settings → WooCommerce option and validates it as a
+ * CSS length, so a tall aspect ratio cannot stretch the gallery column past the
+ * fold. Defaults to 70vh (cap on) when unset/invalid; returns null only when the
+ * admin explicitly types "none" to disable the cap.
+ *
+ * @return string|null Valid CSS length, or null to disable the cap.
+ */
+function nera_get_single_product_image_max_height(): ?string
+{
+  $default = '70vh';
+
+  if (!function_exists('get_field')) {
+    return $default;
+  }
+
+  $raw = is_string($raw = get_field('single_image_max_height', 'option')) ? trim($raw) : '';
+
+  if ($raw === '') {
+    return $default;
+  }
+  if (strtolower($raw) === 'none') {
+    return null;
+  }
+
+  return preg_match('/^\d+(?:\.\d+)?(?:px|vh|vw|rem|em|%)$/', $raw) ? $raw : $default;
+}
+
+/**
  * Custom template loader for lottery products
  * Uses our custom lottery.php template for lottery product type
  * Supports multiple template styles via ACF field

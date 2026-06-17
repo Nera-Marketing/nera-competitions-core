@@ -22,6 +22,25 @@ $aspect_ratio = function_exists('nera_get_single_product_image_aspect_ratio')
   ? nera_get_single_product_image_aspect_ratio()
   : null;
 
+// Configurable main image max-height cap; null = no cap (keeps left column compact)
+$max_height = function_exists('nera_get_single_product_image_max_height')
+  ? nera_get_single_product_image_max_height()
+  : null;
+
+// Combined inline style for the main gallery box: aspect-ratio sets the shape,
+// max-height clamps it so the gallery column does not push the buy controls down.
+$gallery_styles = [];
+if ($aspect_ratio) {
+  $gallery_styles[] = 'aspect-ratio: ' . $aspect_ratio;
+}
+if ($max_height) {
+  $gallery_styles[] = 'max-height: ' . $max_height;
+}
+$gallery_main_class = 'swiper' . ($aspect_ratio ? '' : ' aspect-[4/3]');
+$gallery_main_style = $gallery_styles
+  ? ' style="' . esc_attr(implode('; ', $gallery_styles)) . ';"'
+  : '';
+
 if (!$product) {
   return;
 }
@@ -73,7 +92,7 @@ $alpine_images = array_map(function ($img) {
       </div>
     <?php endif; ?>
 
-    <div class="swiper<?php echo $aspect_ratio ? '' : ' aspect-[4/3]'; ?>"<?php echo $aspect_ratio ? ' style="aspect-ratio: ' . esc_attr($aspect_ratio) . ';"' : ''; ?> data-gallery-main>
+    <div class="<?php echo esc_attr($gallery_main_class); ?>"<?php echo $gallery_main_style; ?> data-gallery-main>
       <div class="swiper-wrapper">
         <?php foreach ($images as $index => $image): ?>
           <div
