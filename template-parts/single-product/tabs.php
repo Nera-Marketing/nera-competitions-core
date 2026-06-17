@@ -21,10 +21,9 @@ $product_id = $product->get_id();
 $has_instant_wins = false;
 $is_stw_product = has_term( 'spin-to-win', 'product_cat', $product_id );
 
-$show_entry_list_tab = get_field('show_entry_list_tab', $product_id);
-if ($show_entry_list_tab === null) {
-  $show_entry_list_tab = true;
-}
+$show_entry_list_tab = function_exists('nera_show_entry_list_tab')
+  ? nera_show_entry_list_tab($product_id)
+  : true;
 
 if (
   function_exists('lty_is_lottery_product') &&
