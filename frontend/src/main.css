@@ -12,6 +12,9 @@
 @source "../**/*.{js,jsx,vue}";
 @source "../../Components/**/*.twig";
 
+/* Safelist single-product grid spans built dynamically in PHP (Theme Settings → WooCommerce) */
+@source inline("lg:grid-cols-12 lg:col-span-{1,2,3,4,5,6,7,8,9,10,11} lg:col-start-{2,3,4,5,6,7,8,9,10,11,12}");
+
 /* ==========================================================================
    Theme Configuration (TailwindCSS v4 CSS-first config)
    Migrated from design-tokens.css

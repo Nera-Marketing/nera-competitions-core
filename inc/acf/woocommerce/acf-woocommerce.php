@@ -78,6 +78,50 @@ if (function_exists('acf_add_local_field_group')) {
       'ui_on_text' => 'Visible',
       'ui_off_text' => 'Hidden',
     ],
+    [
+      'key' => 'field_wc_single_left_col_span',
+      'label' => 'Single product — left column span (of 12)',
+      'name' => 'single_left_col_span',
+      'type' => 'number',
+      'instructions' =>
+        'Width of the gallery (left) column on a 12-column grid for single competition pages. Left + right should total 12 or less. Default: 7.',
+      'min' => 1,
+      'max' => 11,
+      'default_value' => 7,
+      'placeholder' => '7',
+      'wrapper' => [
+        'width' => '50',
+        'class' => '',
+        'id' => '',
+      ],
+    ],
+    [
+      'key' => 'field_wc_single_right_col_span',
+      'label' => 'Single product — right column span (of 12)',
+      'name' => 'single_right_col_span',
+      'type' => 'number',
+      'instructions' =>
+        'Width of the purchase card (right) column on a 12-column grid. Set higher than the left span to make the right side wider. Default: 5.',
+      'min' => 1,
+      'max' => 11,
+      'default_value' => 5,
+      'placeholder' => '5',
+      'wrapper' => [
+        'width' => '50',
+        'class' => '',
+        'id' => '',
+      ],
+    ],
+    [
+      'key' => 'field_wc_single_image_aspect_ratio',
+      'label' => 'Single product — featured image aspect ratio',
+      'name' => 'single_image_aspect_ratio',
+      'type' => 'text',
+      'instructions' =>
+        'CSS aspect-ratio value for the main gallery image. Leave empty for the default 4/3. Examples: 4/5, 16/9, 1.25.',
+      'required' => 0,
+      'placeholder' => '4/3',
+    ],
   ];
 
   if (class_exists('Nera_STW_ACF_Copy_Settings')) {

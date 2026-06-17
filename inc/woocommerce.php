@@ -74,6 +74,64 @@ function nera_show_entry_list_tab(?int $product_id = null): bool
 }
 
 /**
+ * Resolve the single-product two-column grid spans (12-column grid).
+ *
+ * Reads global Theme Settings → WooCommerce options. Each span is clamped to
+ * 1–11; if a value is empty/invalid or the pair sums to more than 12, the
+ * layout falls back to left 7 / right 5. A set left with an unset right derives
+ * right = 12 - left.
+ *
+ * @return array{left:int,right:int}
+ */
+function nera_get_single_product_grid_spans(): array
+{
+  $default = ['left' => 7, 'right' => 5];
+
+  if (!function_exists('get_field')) {
+    return $default;
+  }
+
+  $left_raw = get_field('single_left_col_span', 'option');
+  $right_raw = get_field('single_right_col_span', 'option');
+
+  $left = is_numeric($left_raw) ? (int) $left_raw : 0;
+  $right = is_numeric($right_raw) ? (int) $right_raw : 0;
+
+  // Derive the missing span from the other when only one is provided.
+  if ($left >= 1 && $right < 1) {
+    $right = 12 - $left;
+  } elseif ($right >= 1 && $left < 1) {
+    $left = 12 - $right;
+  }
+
+  $valid =
+    $left >= 1 && $left <= 11 &&
+    $right >= 1 && $right <= 11 &&
+    ($left + $right) <= 12;
+
+  return $valid ? ['left' => $left, 'right' => $right] : $default;
+}
+
+/**
+ * Resolve the single-product featured image aspect ratio for inline CSS.
+ *
+ * Reads the global Theme Settings → WooCommerce option and validates it through
+ * the shared aspect-ratio sanitizer.
+ *
+ * @return string|null Valid CSS aspect-ratio value, or null to use the default.
+ */
+function nera_get_single_product_image_aspect_ratio(): ?string
+{
+  if (!function_exists('get_field') || !function_exists('nera_sanitize_aspect_ratio')) {
+    return null;
+  }
+
+  $raw = get_field('single_image_aspect_ratio', 'option');
+
+  return is_string($raw) ? nera_sanitize_aspect_ratio($raw) : null;
+}
+
+/**
  * Custom template loader for lottery products
  * Uses our custom lottery.php template for lottery product type
  * Supports multiple template styles via ACF field

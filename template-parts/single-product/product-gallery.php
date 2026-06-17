@@ -17,6 +17,11 @@ $badge_text = $args['badge_text'] ?? '';
 $badge_color = $args['badge_color'] ?? 'red';
 $video_url = $args['video_url'] ?? '';
 
+// Configurable main image aspect ratio (Theme Settings → WooCommerce); null = default 4/3
+$aspect_ratio = function_exists('nera_get_single_product_image_aspect_ratio')
+  ? nera_get_single_product_image_aspect_ratio()
+  : null;
+
 if (!$product) {
   return;
 }
@@ -68,7 +73,7 @@ $alpine_images = array_map(function ($img) {
       </div>
     <?php endif; ?>
 
-    <div class="swiper aspect-[4/3]" data-gallery-main>
+    <div class="swiper<?php echo $aspect_ratio ? '' : ' aspect-[4/3]'; ?>"<?php echo $aspect_ratio ? ' style="aspect-ratio: ' . esc_attr($aspect_ratio) . ';"' : ''; ?> data-gallery-main>
       <div class="swiper-wrapper">
         <?php foreach ($images as $index => $image): ?>
           <div

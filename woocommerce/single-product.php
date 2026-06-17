@@ -108,6 +108,9 @@ if (function_exists('lty_is_lottery_product') && lty_is_lottery_product($product
 // Thumbnail display settings
 $visible_thumbs = 4;
 $extra_images = max(0, count($gallery_images) - $visible_thumbs);
+
+// Configurable two-column grid spans (Theme Settings → WooCommerce)
+$grid = nera_get_single_product_grid_spans();
 ?>
 
 <main id="primary" class="site-main min-h-screen">
@@ -124,7 +127,7 @@ $extra_images = max(0, count($gallery_images) - $visible_thumbs);
         <div class="grid w-full min-w-0 grid-cols-1 gap-8 lg:grid-cols-12 lg:gap-x-10 lg:gap-y-0">
 
           <!-- Left column: gallery + tabs (contents on mobile, flex-col on desktop) -->
-          <div class="contents lg:flex lg:flex-col lg:col-span-7 lg:row-start-1 lg:self-start">
+          <div class="contents lg:flex lg:flex-col lg:col-span-<?php echo (int) $grid['left']; ?> lg:row-start-1 lg:self-start">
 
             <!-- Product Gallery (mobile order 1) -->
             <div class="order-1 bg-surface p-6 rounded-2xl lg:rounded-b-none lg:pb-4">
@@ -150,7 +153,7 @@ $extra_images = max(0, count($gallery_images) - $visible_thumbs);
           </div>
 
           <!-- Product Details / Purchase Card (mobile order 2 | desktop col 8-12) -->
-          <div class="order-2 lg:order-none lg:col-start-8 lg:col-span-5 lg:row-start-1 lg:self-start">
+          <div class="order-2 lg:order-none lg:col-start-<?php echo (int) (13 - $grid['right']); ?> lg:col-span-<?php echo (int) $grid['right']; ?> lg:row-start-1 lg:self-start">
             <?php get_template_part('template-parts/single-product/purchase-card', null, [
               'product' => $product,
               'countdown' => $countdown,
