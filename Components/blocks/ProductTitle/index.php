@@ -8,7 +8,7 @@ if (!defined('ABSPATH')) {
 /**
  * @param array $args
  * @return array{
- *   name: string,        // required, default '' — product/competition name used in "Win a {name}" heading
+ *   name: string,        // required, default '' — product/competition name used in the page heading
  *   is_sold_out: bool,   // required, default false — shows "Sold Out" badge when true
  * }
  */
