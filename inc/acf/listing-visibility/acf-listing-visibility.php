@@ -1,6 +1,6 @@
 <?php
 /**
- * ACF Listing Visibility Settings
+ * ACF Listing Visibility Settings (Theme Settings → WooCommerce)
  *
  * @package Nera_Competitions
  */
@@ -8,26 +8,6 @@
 // Exit if accessed directly
 if (!defined('ABSPATH')) {
   exit();
-}
-
-if (function_exists('acf_add_options_page')) {
-  // Check if Theme Settings page exists, if not create it
-  if (!function_exists('acf_get_options_page') || !acf_get_options_page('theme-settings')) {
-    acf_add_options_page([
-      'page_title' => 'Theme Settings',
-      'menu_title' => 'Theme Settings',
-      'menu_slug' => 'theme-settings',
-      'capability' => 'edit_posts',
-      'redirect' => false,
-    ]);
-  }
-
-  // Add Listing Visibility Subpage
-  acf_add_options_sub_page([
-    'page_title' => 'Listing Visibility',
-    'menu_title' => 'Listing Visibility',
-    'parent_slug' => 'theme-settings',
-  ]);
 }
 
 if (function_exists('acf_add_local_field_group')) {
@@ -73,11 +53,11 @@ if (function_exists('acf_add_local_field_group')) {
         [
           'param' => 'options_page',
           'operator' => '==',
-          'value' => 'acf-options-listing-visibility',
+          'value' => 'acf-options-woocommerce',
         ],
       ],
     ],
-    'menu_order' => 0,
+    'menu_order' => 10,
     'position' => 'normal',
     'style' => 'default',
     'label_placement' => 'top',
