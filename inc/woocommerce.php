@@ -777,11 +777,32 @@ add_action('woocommerce_order_status_changed', 'nera_clear_sold_out_lottery_cach
  */
 function nera_get_related_lottery_products($product_id, $limit = 4)
 {
+  // Shared listing-visibility filters (same helpers the homepage grids use) so the
+  // More Competitions section honors the Hide Sold Out / Hide Ended toggles.
+  $sold_out_ids = function_exists('nera_sold_out_lottery_ids') ? nera_sold_out_lottery_ids() : [];
+  $active_meta  = function_exists('nera_active_lottery_meta_query') ? nera_active_lottery_meta_query() : [];
+
   // Check for manually selected related products
   $manual_related = get_field('related_products_manual', $product_id);
 
   if ($manual_related && !empty($manual_related)) {
-    return array_slice($manual_related, 0, $limit);
+    // Run the editor's picks through the same visibility rules, preserving their order.
+    // No product_type constraint here: nera_active_lottery_meta_query() clauses are all
+    // OR'd with NOT EXISTS, so non-lottery picks still pass.
+    $manual_ids = array_map('intval', (array) $manual_related);
+    $manual_query = new WP_Query([
+      'post_type'      => 'product',
+      'post_status'    => 'publish',
+      'post__in'       => $manual_ids,
+      'post__not_in'   => $sold_out_ids,
+      'posts_per_page' => $limit,
+      'orderby'        => 'post__in',
+      'fields'         => 'ids',
+      'no_found_rows'  => true,
+      'meta_query'     => $active_meta,
+    ]);
+
+    return $manual_query->posts;
   }
 
   // Fall back to auto-related products
@@ -791,7 +812,7 @@ function nera_get_related_lottery_products($product_id, $limit = 4)
     'post_type' => 'product',
     'posts_per_page' => $limit,
     'post_status' => 'publish',
-    'post__not_in' => [$product_id],
+    'post__not_in' => array_merge([$product_id], $sold_out_ids),
     'tax_query' => [
       [
         'taxonomy' => 'product_type',
@@ -800,14 +821,7 @@ function nera_get_related_lottery_products($product_id, $limit = 4)
       ],
     ],
     'fields' => 'ids',
-    'meta_query' => [
-      [
-        'key' => '_lty_end_date_gmt',
-        'value' => current_time('mysql', 1),
-        'compare' => '>',
-        'type' => 'DATETIME',
-      ],
-    ],
+    'meta_query' => $active_meta,
   ];
 
   // Add category filter if available
@@ -834,7 +848,7 @@ function nera_get_related_lottery_products($product_id, $limit = 4)
       'post_type' => 'product',
       'posts_per_page' => $limit,
       'post_status' => 'publish',
-      'post__not_in' => [$product_id],
+      'post__not_in' => array_merge([$product_id], $sold_out_ids),
       'tax_query' => [
         [
           'taxonomy' => 'product_type',
@@ -846,14 +860,7 @@ function nera_get_related_lottery_products($product_id, $limit = 4)
       'meta_key' => '_lty_end_date_gmt',
       'orderby' => 'meta_value',
       'order' => 'ASC',
-      'meta_query' => [
-        [
-          'key' => '_lty_end_date_gmt',
-          'value' => current_time('mysql', 1),
-          'compare' => '>',
-          'type' => 'DATETIME',
-        ],
-      ],
+      'meta_query' => $active_meta,
     ];
 
     $fallback_query = new WP_Query($fallback_args);
