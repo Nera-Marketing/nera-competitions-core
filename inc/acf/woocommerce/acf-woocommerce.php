@@ -67,6 +67,17 @@ if (function_exists('acf_add_local_field_group')) {
       'append' => '',
       'maxlength' => '',
     ],
+    [
+      'key' => 'field_wc_show_entry_list_tab',
+      'label' => 'Show Entry List Tab',
+      'name' => 'show_entry_list_tab',
+      'type' => 'true_false',
+      'instructions' => 'Site-wide default for the Entry List tab on competition product pages. Products can override under Competition Settings.',
+      'default_value' => 1,
+      'ui' => 1,
+      'ui_on_text' => 'Visible',
+      'ui_off_text' => 'Hidden',
+    ],
   ];
 
   if (class_exists('Nera_STW_ACF_Copy_Settings')) {

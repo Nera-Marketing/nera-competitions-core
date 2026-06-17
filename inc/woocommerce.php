@@ -36,6 +36,44 @@ function nera_get_quantity_selector_layout(?int $product_id = null): string
 }
 
 /**
+ * Resolve whether the Entry List tab is shown on a product page.
+ *
+ * Product show/hide wins; inherit/empty uses Theme Settings → WooCommerce.
+ * Legacy true_false postmeta (0 = hide, 1 = inherit global) is supported.
+ *
+ * @param int|null $product_id Product post ID.
+ * @return bool
+ */
+function nera_show_entry_list_tab(?int $product_id = null): bool
+{
+  $global = true;
+  if (function_exists('get_field')) {
+    $global_value = get_field('show_entry_list_tab', 'option');
+    $global = $global_value === null ? true : (bool) $global_value;
+  }
+
+  if (!$product_id || !function_exists('get_field')) {
+    return $global;
+  }
+
+  $override = get_field('show_entry_list_tab', $product_id);
+
+  if ($override === 'show') {
+    return true;
+  }
+  if ($override === 'hide') {
+    return false;
+  }
+
+  // Legacy true_false postmeta before select migration
+  if ($override === 0 || $override === false || $override === '0') {
+    return false;
+  }
+
+  return $global;
+}
+
+/**
  * Custom template loader for lottery products
  * Uses our custom lottery.php template for lottery product type
  * Supports multiple template styles via ACF field

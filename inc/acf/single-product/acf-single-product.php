@@ -395,14 +395,17 @@ if (function_exists('acf_add_local_field_group')) {
 
       [
         'key' => 'field_sp_show_entry_list_tab',
-        'label' => 'Show Entry List Tab',
+        'label' => 'Show Entry List Tab (override)',
         'name' => 'show_entry_list_tab',
-        'type' => 'true_false',
-        'instructions' => 'Toggle the Entry List tab on the product page.',
-        'default_value' => 1,
+        'type' => 'select',
+        'instructions' => 'Optional override for this product. Use site default to follow Theme Settings → WooCommerce.',
+        'choices' => [
+          'inherit' => 'Use site default (Theme Settings → WooCommerce)',
+          'show' => 'Visible',
+          'hide' => 'Hidden',
+        ],
+        'default_value' => 'inherit',
         'ui' => 1,
-        'ui_on_text' => 'Visible',
-        'ui_off_text' => 'Hidden',
       ],
 
       // ========================================
