@@ -52,11 +52,26 @@ if ($gateway->id === 'wallet') {
     </label>
   </div>
 
-  <?php if ($gateway->has_fields() || $gateway->get_description()): ?>
+  <?php
+  $nera_cashflow_custom =
+    function_exists('nera_cashflow_card_gateway_ids') &&
+    in_array($gateway->id, nera_cashflow_card_gateway_ids(), true) &&
+    function_exists('nera_cashflow_use_custom_info') &&
+    nera_cashflow_use_custom_info();
+  ?>
+  <?php if ($gateway->has_fields() || $gateway->get_description() || $nera_cashflow_custom): ?>
     <div class="payment_box payment_method_<?php echo esc_attr($gateway->id); ?>" <?php if (
   !$gateway->chosen
 ): ?>style="display:none;"<?php endif; ?>>
-      <?php $gateway->payment_fields(); ?>
+      <?php if ($nera_cashflow_custom): ?>
+        <div class="nera-cashflow-description">
+          <?php echo wp_kses_post(wpautop(esc_html(nera_cashflow_card_description())));
+          // Escape first so the editable copy can't inject markup, then wpautop adds the <p> breaks we keep.
+          ?>
+        </div>
+      <?php else: ?>
+        <?php $gateway->payment_fields(); ?>
+      <?php endif; ?>
     </div>
   <?php endif; ?>
 </li>

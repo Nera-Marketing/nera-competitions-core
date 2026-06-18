@@ -1418,6 +1418,119 @@ function nera_customize_wallet_gateway_description($description, $gateway_id)
 add_filter('woocommerce_gateway_description', 'nera_customize_wallet_gateway_description', 10, 2);
 
 /**
+ * ============================================
+ * CashFlows "Cards" payment method copy
+ * ============================================
+ *
+ * The CashFlows card gateway echoes its description through
+ * sanitize_text_field() in payment_fields() (which collapses line breaks) and
+ * its title via get_title(). When "Use custom info" is enabled under
+ * Theme Settings → WooCommerce → CashFlow Info we override both with the
+ * editable copy; otherwise the gateway's own CashFlows defaults are kept.
+ *
+ * Title override happens here via woocommerce_gateway_title; the multi-paragraph
+ * description is rendered in checkout/payment-method.php (so wpautop can keep the
+ * paragraph breaks that sanitize_text_field would otherwise strip).
+ */
+
+/**
+ * Gateway IDs that the CashFlow Info copy applies to.
+ *
+ * @return string[]
+ */
+function nera_cashflow_card_gateway_ids()
+{
+    return ['cashflows_card'];
+}
+
+/**
+ * Whether the editable CashFlow Info copy should replace the gateway defaults.
+ *
+ * @return bool
+ */
+function nera_cashflow_use_custom_info()
+{
+    // ACF stores options-page values under the "options_" prefix. ACF does not
+    // return a field's default_value via get_field() for an options page that has
+    // never been saved, so read the raw option and distinguish "not saved yet"
+    // (fall back to the field default = enabled) from an explicit "No".
+    $stored = get_option('options_cashflow_custom_info', null);
+
+    if ($stored === null) {
+        return true;
+    }
+
+    return (bool) (int) $stored;
+}
+
+/**
+ * Editable CashFlows card title (with fallback default).
+ *
+ * @return string
+ */
+function nera_cashflow_card_title()
+{
+    $title = function_exists('get_field') ? (string) get_field('cashflow_title', 'option') : '';
+
+    if ($title === '') {
+        $title = 'Pay with Apple / Google Pay ( Debit & Credit )';
+    }
+
+    return $title;
+}
+
+/**
+ * Editable CashFlows card description (with fallback default).
+ *
+ * @return string
+ */
+function nera_cashflow_card_description()
+{
+    $description = function_exists('get_field') ? (string) get_field('cashflow_description', 'option') : '';
+
+    if ($description === '') {
+        $description =
+            "You will taken to a third party checkout page, please do not refresh. You will be bought back to the website when payment is processed and tickets will be allocated.\n\nThe bigger heading will be Pay with Apple / Google Pay ( Debit & Credit )";
+    }
+
+    return $description;
+}
+
+/**
+ * Override the CashFlows card title with the editable copy when enabled.
+ */
+function nera_customize_cashflow_gateway_title($title, $gateway_id)
+{
+    if (!in_array($gateway_id, nera_cashflow_card_gateway_ids(), true)) {
+        return $title;
+    }
+
+    if (!nera_cashflow_use_custom_info()) {
+        return $title;
+    }
+
+    return nera_cashflow_card_title();
+}
+add_filter('woocommerce_gateway_title', 'nera_customize_cashflow_gateway_title', 10, 2);
+
+/**
+ * Paragraph spacing for the CashFlows multi-paragraph description on checkout.
+ * Tailwind's preflight resets <p> margins, so add them back for this block.
+ */
+function nera_cashflow_description_inline_style()
+{
+    if (!function_exists('is_checkout') || !is_checkout() || is_order_received_page()) {
+        return;
+    }
+
+    $css = '.woocommerce-checkout .nera-cashflow-description p{margin:0;}'
+        . '.woocommerce-checkout .nera-cashflow-description p + p{margin-top:0.6em;}';
+
+    wp_add_inline_style('nera-style', $css);
+}
+add_action('wp_enqueue_scripts', 'nera_cashflow_description_inline_style', 30);
+
+/**
  * Add wallet balance indicator via JavaScript (to avoid HTML escaping issues)
  * Adds a badge next to "My Wallet" menu item showing current balance
  */
