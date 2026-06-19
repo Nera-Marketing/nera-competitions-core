@@ -1,0 +1,46 @@
+/* Details Above Image (Mobile) — one unified hero card from header + gallery + body segments */
+
+@media (max-width: 1023px) {
+  /* header — top corners only, same curve as rounded-2xl */
+  [data-ncs-unified-mobile] .ncs-unified-mobile-seg--header {
+    border-radius: var(--radius-2xl, 1rem) var(--radius-2xl, 1rem) 0 0 !important;
+    border: 1px solid #f3f4f6 !important;
+    border-bottom-width: 0 !important;
+    box-shadow: none !important;
+  }
+
+  [data-ncs-unified-mobile] .ncs-unified-mobile-seg--gallery {
+    border-radius: 0 !important;
+    border-left: 1px solid #f3f4f6 !important;
+    border-right: 1px solid #f3f4f6 !important;
+    border-top: 0 !important;
+    border-bottom: 0 !important;
+    box-shadow: none !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+  }
+
+  [data-ncs-unified-mobile] .ncs-unified-mobile-seg--gallery .product-gallery-main-frame {
+    border-radius: var(--radius-2xl, 1rem) !important;
+    box-shadow: none !important;
+  }
+
+  /* body — bottom corners only, same curve as rounded-2xl */
+  [data-ncs-unified-mobile] .ncs-unified-mobile-seg--body {
+    border-radius: 0 0 var(--radius-2xl, 1rem) var(--radius-2xl, 1rem) !important;
+    border: 1px solid #f3f4f6 !important;
+    border-top-width: 0 !important;
+    box-shadow:
+      0 20px 25px -5px rgb(0 0 0 / 0.1),
+      0 8px 10px -6px rgb(0 0 0 / 0.1) !important;
+  }
+
+  [data-ncs-unified-mobile] .ncs-unified-mobile-seam-bottom {
+    padding-bottom: 0 !important;
+    margin-bottom: 1.5rem !important;
+  }
+
+  [data-ncs-unified-mobile] .ncs-unified-mobile-seam-top {
+    padding-top: 1rem !important;
+  }
+}
