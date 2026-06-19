@@ -36,6 +36,29 @@ function nera_get_quantity_selector_layout(?int $product_id = null): string
 }
 
 /**
+ * Resolve mobile purchase card layout (default or details_first).
+ *
+ * Product override wins when set to default or details_first; inherit/empty uses Theme Settings → WooCommerce.
+ *
+ * @param int|null $product_id Product post ID.
+ * @return string default|details_first
+ */
+function nera_get_mobile_card_layout(?int $product_id = null): string
+{
+  $allowed = ['default', 'details_first'];
+
+  if ($product_id && function_exists('get_field')) {
+    $override = get_field('mobile_card_layout', $product_id);
+    if (is_string($override) && in_array($override, $allowed, true)) {
+      return $override;
+    }
+  }
+
+  $global = function_exists('get_field') ? get_field('mobile_card_layout', 'option') : 'default';
+  return in_array($global, $allowed, true) ? $global : 'default';
+}
+
+/**
  * Resolve whether the Entry List tab is shown on a product page.
  *
  * Product show/hide wins; inherit/empty uses Theme Settings → WooCommerce.

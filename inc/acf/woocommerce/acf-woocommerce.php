@@ -49,6 +49,24 @@ if (function_exists('acf_add_local_field_group')) {
       ],
     ],
     [
+      'key'          => 'field_wc_mobile_card_layout',
+      'label'        => 'Mobile Purchase Card Layout',
+      'name'         => 'mobile_card_layout',
+      'type'         => 'select',
+      'instructions' => 'Controls element order on mobile. "Details Above Image" shows the title, countdown and tickets sold above the gallery image on small screens. Desktop layout is unaffected. Products can override under Competition Settings.',
+      'choices'      => [
+        'default'       => 'Default (Image → Details)',
+        'details_first' => 'Details Above Image (Mobile)',
+      ],
+      'default_value' => 'default',
+      'ui'            => 1,
+      'wrapper'       => [
+        'width' => '50',
+        'class' => '',
+        'id'    => '',
+      ],
+    ],
+    [
       'key' => 'field_add_to_cart_success_message',
       'label' => 'Add to Cart Success Message',
       'name' => 'add_to_cart_success_message',
