@@ -4,7 +4,7 @@ Tags: competition, giveaway, lottery, woocommerce
 Requires at least: 6.0
 Tested up to: 6.8
 Requires PHP: 8.1
-Stable tag: 1.2.8
+Stable tag: 1.3.0
 License: GPLv2 or later.
 
 Premium competition and giveaway theme for WooCommerce, with Tailwind-powered front-end assets.
@@ -20,6 +20,12 @@ Nera Competitions Standard is built for competition and lottery sites: product t
 3. Run `yarn build` or `npm run build` in `frontend/` and `lty-result-screens/` after pulling updates that change assets.
 
 == Changelog ==
+
+= 1.3.0 =
+* Added: Heading Style system — Theme Settings → Headings sets a site-wide default heading font + accent colour; per-section two-tone overrides with custom Google Font loading (`inc/heading-style.php`, `inc/helpers/heading-style.php`, `inc/acf/heading-style/`).
+* Added: Single-product details-first mobile purchase card — site-wide + per-product layout option; purchase card split into header/body partials; unified rounded mobile card (`template-parts/single-product/purchase-card*.php`, `frontend/src/sections/single-product-unified-mobile.css`).
+* Added: Winners (Dynamic) per-page winner-type visibility — pick Live draw / Instant Win per page; disabled types are never queried and their filter tab is hidden, enforced server-side in load-more AJAX (`inc/acf/winners-dynamic/acf-winners-dynamic.php`).
+* Updated: Legacy per-page ACF metaboxes are hidden once a page uses the Page Components builder (`inc/legacy-acf-visibility.php`).
 
 = 1.2.6 =
 * Updated: Product title on single product pages shows the product name only (removed "Win a" prefix).
