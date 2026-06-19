@@ -21,8 +21,9 @@ if (!defined('ABSPATH')) {
  * Merge heading style data into a section component's Twig context.
  * Exposes (consumed by section templates, all |raw-safe / pre-sanitised):
  *   - heading_highlight    : trailing accent text (autoescaped in template)
- *   - heading_font_style   : "font-family: 'Sora', sans-serif" or '' (per-section override only)
- *   - heading_accent_style : "color: #84cc16" or "color: var(--heading-accent)"
+ *   - heading_accent_style : highlight span style — colour + font-family, e.g.
+ *                            "color: #84cc16; font-family: 'Sora', sans-serif".
+ *                            The chosen heading font paints the highlight only.
  *
  * @param array  $data
  * @param string $name Component name.
@@ -41,23 +42,26 @@ function nera_inject_heading_style($data, $name, $args)
 
     $hs = nera_resolve_heading_style(is_array($args) ? $args : []);
 
-    $font_style = $hs['font_family'] !== '' ? 'font-family: ' . $hs['font_family'] : '';
+    // Per-section override wins as a literal font stack; otherwise fall back to
+    // the global highlight font var. Applied to the highlight span only — the
+    // whole heading keeps the --font-heading theme default.
+    $highlight_font = $hs['font_family'] !== '' ? $hs['font_family'] : 'var(--heading-highlight-font)';
 
-    $accent = $hs['accent_color'] !== '' ? sanitize_hex_color($hs['accent_color']) : '';
-    $accent_style = $accent ? 'color: ' . $accent : 'color: var(--heading-accent)';
+    $accent       = $hs['accent_color'] !== '' ? sanitize_hex_color($hs['accent_color']) : '';
+    $accent_color = $accent ?: 'var(--heading-accent)';
 
     $data['heading_highlight']    = $hs['highlight'];
-    $data['heading_font_style']   = $font_style;
-    $data['heading_accent_style'] = $accent_style;
+    $data['heading_accent_style'] = 'color: ' . $accent_color . '; font-family: ' . $highlight_font;
 
     return $data;
 }
 add_filter('nera_component_data', 'nera_inject_heading_style', 10, 3);
 
 /**
- * Print the global heading font + accent colour as CSS variables.
- * Overrides the --font-heading token (so all `font-heading` headings update)
- * and sets --heading-accent (default highlight colour).
+ * Print the global heading-highlight font + accent colour as CSS variables.
+ * Sets --heading-highlight-font (font for the highlighted part of headings)
+ * and --heading-accent (default highlight colour). The whole heading keeps the
+ * --font-heading theme default.
  */
 function nera_print_heading_style_vars()
 {
@@ -73,7 +77,7 @@ function nera_print_heading_style_vars()
 
     $css = '';
     if ($family !== '') {
-        $css .= '--font-heading:' . $family . ';';
+        $css .= '--heading-highlight-font:' . $family . ';';
     }
     if ($accent) {
         $css .= '--heading-accent:' . $accent . ';';

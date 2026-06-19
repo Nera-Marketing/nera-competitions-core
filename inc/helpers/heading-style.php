@@ -139,14 +139,14 @@ function nera_heading_style_fields(string $slug): array
         ],
         [
             'key'           => $p . 'heading_font',
-            'label'         => __('Heading Font', 'nera-competitions'),
+            'label'         => __('Highlight Font', 'nera-competitions'),
             'name'          => 'heading_font',
             'type'          => 'select',
             'choices'       => nera_heading_font_choices(true),
             'default_value' => 'inherit',
             'allow_null'    => 0,
             'ui'            => 0,
-            'instructions'  => __('Override the global heading font for this section only.', 'nera-competitions'),
+            'instructions'  => __('Font for this section\'s heading highlight. Overrides the global highlight font.', 'nera-competitions'),
         ],
         [
             'key'               => $p . 'heading_font_custom',
@@ -203,7 +203,7 @@ function nera_with_heading_fields(array $sub_fields, string $slug): array
 /**
  * Resolve a section's per-instance heading overrides from its ACF flexible-content row.
  * Returns override-only values; empty strings mean "inherit the global default"
- * (the global font is applied via --font-heading and the accent via var(--heading-accent)).
+ * (the global highlight font is applied via --heading-highlight-font and the accent via var(--heading-accent)).
  *
  * @param array $args Component args (expects 'acf_row').
  * @return array{highlight:string,accent_color:string,font_family:string,font_custom:string,font_slug:string}

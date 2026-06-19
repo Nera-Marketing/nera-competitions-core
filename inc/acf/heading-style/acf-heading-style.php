@@ -42,10 +42,10 @@ if (function_exists('acf_add_local_field_group')) {
         'fields' => [
             [
                 'key'           => 'field_heading_default_font',
-                'label'         => 'Default Heading Font',
+                'label'         => 'Default Highlight Font',
                 'name'          => 'heading_default_font',
                 'type'          => 'select',
-                'instructions'  => 'Site-wide font for all section headings. Sections can override this individually.',
+                'instructions'  => 'Font for the highlighted (accent) part of section headings. Sections can override this individually.',
                 'choices'       => function_exists('nera_heading_font_choices')
                     ? nera_heading_font_choices(false)
                     : ['poppins' => 'Poppins'],
