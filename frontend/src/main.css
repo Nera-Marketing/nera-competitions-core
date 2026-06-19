@@ -955,6 +955,13 @@ body h6 {
   overflow: hidden;
 }
 
+/* Heading accent colour — default for the highlighted (trailing) part of
+   two-tone section headings. Overridden at runtime by the Heading Style
+   options page (see inc/heading-style.php → nera_print_heading_style_vars). */
+:root {
+  --heading-accent: #84cc16;
+}
+
 /* ==========================================================================
    Component Knob API — .ncs-* BEM hooks (Phase 1 — Groups 1A–1F)
    Each rule declares --ncs-<component>-<property> custom properties with

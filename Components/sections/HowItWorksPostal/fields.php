@@ -10,7 +10,7 @@ function get_acf_layout(): array
         'name'       => 'HowItWorksPostal',
         'label'      => __('How It Works — Postal Entry', 'nera-competitions-standard'),
         'display'    => 'block',
-        'sub_fields' => [
+        'sub_fields' => nera_with_heading_fields([
             [
                 'key'           => 'field_pc_HowItWorksPostal_title',
                 'label'         => __('Section Title', 'nera-competitions-standard'),
@@ -70,7 +70,7 @@ function get_acf_layout(): array
                 'type'  => 'textarea',
                 'rows'  => 2,
             ],
-        ],
+        ], 'HowItWorksPostal'),
         'min' => '',
         'max' => '',
     ];

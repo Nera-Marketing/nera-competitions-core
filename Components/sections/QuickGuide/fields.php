@@ -9,7 +9,7 @@ function get_acf_layout(): array {
         'name'       => 'QuickGuide',
         'label'      => __('Quick Guide', 'nera-competitions-standard'),
         'display'    => 'block',
-        'sub_fields' => [
+        'sub_fields' => nera_with_heading_fields([
             [
                 'key'           => 'field_pc_guide_title',
                 'label'         => __('Section Title', 'nera-competitions-standard'),
@@ -63,7 +63,7 @@ function get_acf_layout(): array {
                     ],
                 ],
             ],
-        ],
+        ], 'QuickGuide'),
         'min' => '',
         'max' => '',
     ];

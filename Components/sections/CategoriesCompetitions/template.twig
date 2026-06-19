@@ -33,8 +33,8 @@
       </div>
 
       <!-- Main Title -->
-      <h2 class="text-5xl md:text-6xl font-black text-text-primary tracking-tight leading-[0.95] mb-4">
-        {{ title }}
+      <h2 class="font-heading text-5xl md:text-6xl font-black text-text-primary tracking-tight leading-[0.95] mb-4"{% if heading_font_style %} style="{{ heading_font_style|raw }}"{% endif %}>
+        {{ title }}{% if heading_highlight %} <span style="{{ heading_accent_style|raw }}">{{ heading_highlight }}</span>{% endif %}
       </h2>
 
       <!-- Subtitle with Decorative Line -->

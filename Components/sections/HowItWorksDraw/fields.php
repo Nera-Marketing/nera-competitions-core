@@ -10,7 +10,7 @@ function get_acf_layout(): array
         'name'       => 'HowItWorksDraw',
         'label'      => __('How It Works — Draw Process', 'nera-competitions-standard'),
         'display'    => 'block',
-        'sub_fields' => [
+        'sub_fields' => nera_with_heading_fields([
             [
                 'key'           => 'field_pc_HowItWorksDraw_eyebrow',
                 'label'         => __('Eyebrow Label', 'nera-competitions-standard'),
@@ -65,7 +65,7 @@ function get_acf_layout(): array
                 'default_value' => 'videocam',
                 'instructions'  => __('Material Symbols icon name (e.g. "videocam", "live_tv").', 'nera-competitions-standard'),
             ],
-        ],
+        ], 'HowItWorksDraw'),
         'min' => '',
         'max' => '',
     ];

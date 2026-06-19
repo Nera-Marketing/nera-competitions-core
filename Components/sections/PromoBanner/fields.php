@@ -9,7 +9,7 @@ function get_acf_layout(): array {
         'name'       => 'PromoBanner',
         'label'      => __('Promo Banner', 'nera-competitions-standard'),
         'display'    => 'block',
-        'sub_fields' => [
+        'sub_fields' => nera_with_heading_fields([
             [
                 'key'           => 'field_pc_promo_badge',
                 'label'         => __('Badge Text', 'nera-competitions-standard'),
@@ -70,7 +70,7 @@ function get_acf_layout(): array {
                     ],
                 ],
             ],
-        ],
+        ], 'PromoBanner'),
         'min' => '',
         'max' => '',
     ];

@@ -505,6 +505,14 @@ function nera_enqueue_styles()
     null,
   );
 
+  // Google Fonts - Sora & Hanken Grotesk (heading font options)
+  wp_enqueue_style(
+    'nera-google-fonts-headings',
+    'https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Hanken+Grotesk:wght@400;600;700;800&display=swap',
+    [],
+    null,
+  );
+
   // Material Symbols Icons
   wp_enqueue_style(
     'nera-material-symbols',
@@ -993,6 +1001,14 @@ require_once get_template_directory() . '/inc/helpers/how-it-works-defaults.php'
 
 // ACF How It Works Page Fields
 require_once get_template_directory() . '/inc/acf/how-it-works/acf-how-it-works.php';
+
+// Hide legacy per-page ACF metaboxes when a page uses Timber Page Components
+require_once get_template_directory() . '/inc/legacy-acf-visibility.php';
+
+// Heading Style — editor-driven two-tone section headings (helpers must load first)
+require_once get_template_directory() . '/inc/helpers/heading-style.php';
+require_once get_template_directory() . '/inc/acf/heading-style/acf-heading-style.php';
+require_once get_template_directory() . '/inc/heading-style.php';
 
 // ACF Product Listing Fields
 require_once get_template_directory() . '/inc/acf/product-listing/acf-product-listing.php';

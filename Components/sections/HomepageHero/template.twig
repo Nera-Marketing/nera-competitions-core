@@ -24,9 +24,9 @@
           🏆 {{ i18n.badge }}
         </span>
 
-        <h1 class="ncs-hero__title font-heading text-4xl md:text-5xl lg:text-6xl font-bold text-text-primary leading-tight mb-6">
-          {{ title }}<br>
-          <span class="text-gradient-primary">{{ highlight }}</span>
+        <h1 class="ncs-hero__title font-heading text-4xl md:text-5xl lg:text-6xl font-bold text-text-primary leading-tight mb-6"{% if heading_font_style %} style="{{ heading_font_style|raw }}"{% endif %}>
+          {{ title }}{% set _hl = heading_highlight ?: highlight %}{% if _hl %}<br>
+          <span style="{{ heading_accent_style|raw }}">{{ _hl }}</span>{% endif %}
         </h1>
 
         <p class="text-lg text-text-secondary leading-relaxed mb-8 max-w-lg">{{ description }}</p>

@@ -9,7 +9,7 @@ function get_acf_layout(): array {
         'name'       => 'HomepageHero',
         'label'      => __('Homepage Hero', 'nera-competitions-standard'),
         'display'    => 'block',
-        'sub_fields' => [
+        'sub_fields' => nera_with_heading_fields([
             [
                 'key'           => 'field_pc_homepage_hero_title',
                 'label'         => __('Title', 'nera-competitions-standard'),
@@ -86,7 +86,7 @@ function get_acf_layout(): array {
                 'type'          => 'text',
                 'default_value' => 'Won This Prize',
             ],
-        ],
+        ], 'HomepageHero'),
         'min' => '',
         'max' => '',
     ];
