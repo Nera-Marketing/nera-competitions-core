@@ -56,6 +56,20 @@ if (function_exists('acf_add_local_field_group')) {
         'ui' => 1,
       ],
       [
+        'key'          => 'field_sp_mobile_card_layout',
+        'label'        => 'Mobile Purchase Card Layout (override)',
+        'name'         => 'mobile_card_layout',
+        'type'         => 'select',
+        'instructions' => 'Optional override for this product. Use site default to follow Theme Settings → WooCommerce.',
+        'choices'      => [
+          'inherit'       => 'Use site default (Theme Settings → WooCommerce)',
+          'default'       => 'Default (Image → Details)',
+          'details_first' => 'Details Above Image (Mobile)',
+        ],
+        'default_value' => 'inherit',
+        'ui'            => 1,
+      ],
+      [
         'key' => 'field_sp_product_specifications',
         'label' => 'Product Specifications',
         'name' => 'product_specifications',

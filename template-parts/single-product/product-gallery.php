@@ -16,6 +16,31 @@ $product = $args['product'] ?? null;
 $badge_text = $args['badge_text'] ?? '';
 $badge_color = $args['badge_color'] ?? 'red';
 $video_url = $args['video_url'] ?? '';
+$unified_mobile = !empty($args['unified_mobile']);
+
+// Configurable main image aspect ratio (Theme Settings → WooCommerce); null = default 4/3
+$aspect_ratio = function_exists('nera_get_single_product_image_aspect_ratio')
+  ? nera_get_single_product_image_aspect_ratio()
+  : null;
+
+// Configurable main image max-height cap; null = no cap (keeps left column compact)
+$max_height = function_exists('nera_get_single_product_image_max_height')
+  ? nera_get_single_product_image_max_height()
+  : null;
+
+// Combined inline style for the main gallery box: aspect-ratio sets the shape,
+// max-height clamps it so the gallery column does not push the buy controls down.
+$gallery_styles = [];
+if ($aspect_ratio) {
+  $gallery_styles[] = 'aspect-ratio: ' . $aspect_ratio;
+}
+if ($max_height) {
+  $gallery_styles[] = 'max-height: ' . $max_height;
+}
+$gallery_main_class = 'swiper' . ($aspect_ratio ? '' : ' aspect-[4/3]');
+$gallery_main_style = $gallery_styles
+  ? ' style="' . esc_attr(implode('; ', $gallery_styles)) . ';"'
+  : '';
 
 if (!$product) {
   return;
@@ -58,7 +83,7 @@ $alpine_images = array_map(function ($img) {
 
   <div class="group">
 
-  <div class="relative rounded-2xl overflow-hidden shadow-lg">
+  <div class="relative rounded-2xl overflow-hidden shadow-lg product-gallery-main-frame<?php echo $unified_mobile ? ' max-lg:shadow-none' : ''; ?>">
 
     <?php if ($badge_text): ?>
       <div class="absolute top-4 left-4 z-20">
@@ -68,7 +93,7 @@ $alpine_images = array_map(function ($img) {
       </div>
     <?php endif; ?>
 
-    <div class="swiper aspect-[4/3]" data-gallery-main>
+    <div class="<?php echo esc_attr($gallery_main_class); ?>"<?php echo $gallery_main_style; ?> data-gallery-main>
       <div class="swiper-wrapper">
         <?php foreach ($images as $index => $image): ?>
           <div
