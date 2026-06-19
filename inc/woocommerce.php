@@ -2679,24 +2679,79 @@ function nera_winners_dynamic_can_show_instant_log($log, $product)
 }
 
 /**
+ * Normalize a list of winner types to the supported set.
+ *
+ * Empty / invalid input means "show everything" (both types).
+ *
+ * @param array|string|null $types Raw type list (e.g. from ACF) or single slug.
+ * @return array<int, string> Ordered subset of ['main', 'instant'] (at least one).
+ */
+function nera_winners_dynamic_allowed_types($types = null)
+{
+  $supported = ['main', 'instant'];
+
+  if (is_string($types)) {
+    $types = [$types];
+  }
+
+  $allowed = is_array($types)
+    ? array_values(array_intersect($supported, array_map('strval', $types)))
+    : [];
+
+  if (empty($allowed)) {
+    $allowed = $supported;
+  }
+
+  $allowed = apply_filters('nera_winners_dynamic_allowed_types', $allowed, $types);
+
+  // Re-clamp after the filter so an override can't introduce unsupported slugs.
+  $allowed = array_values(array_intersect($supported, array_map('strval', (array) $allowed)));
+
+  return empty($allowed) ? $supported : $allowed;
+}
+
+/**
+ * Resolve the allowed winner types for a given Winners (Dynamic) page.
+ *
+ * Reads the per-page ACF checkbox `winners_dynamic_show_types`; defaults to both.
+ *
+ * @param int $page_id Page ID.
+ * @return array<int, string> Subset of ['main', 'instant'].
+ */
+function nera_winners_dynamic_get_allowed_types_for_page($page_id)
+{
+  $page_id = (int) $page_id;
+  $stored  = ($page_id && function_exists('get_field'))
+    ? get_field('winners_dynamic_show_types', $page_id)
+    : null;
+
+  return nera_winners_dynamic_allowed_types($stored);
+}
+
+/**
  * Build merged, sorted list of main winner rows (ended only) + instant winner rows (won logs).
  *
+ * @param array|null $allowed Allowed winner types (subset of main|instant); null = both.
  * @return array<int, array<string, mixed>>
  */
-function nera_winners_dynamic_get_merged_entries()
+function nera_winners_dynamic_get_merged_entries($allowed = null)
 {
-  static $cache = null;
-  if ($cache !== null) {
-    return $cache;
+  $allowed = nera_winners_dynamic_allowed_types($allowed);
+  $cache_key = implode('-', $allowed);
+
+  static $cache = [];
+  if (isset($cache[$cache_key])) {
+    return $cache[$cache_key];
   }
 
-  $cache = [];
+  $entries = [];
 
   if (!function_exists('lty_get_lottery_winner') || !function_exists('lty_get_instant_winner_log')) {
-    return $cache;
+    $cache[$cache_key] = $entries;
+    return $entries;
   }
 
-  $main_ids = get_posts([
+  $main_ids = in_array('main', $allowed, true) ? get_posts([
     'post_type'              => 'lty_lottery_winner',
     'post_status'            => 'lty_publish',
     'posts_per_page'         => -1,
@@ -2706,7 +2761,7 @@ function nera_winners_dynamic_get_merged_entries()
     'no_found_rows'          => true,
     'update_post_meta_cache' => false,
     'update_post_term_cache' => false,
-  ]);
+  ]) : [];
 
   foreach ($main_ids as $winner_post_id) {
     $winner = lty_get_lottery_winner((int) $winner_post_id);
@@ -2737,7 +2792,7 @@ function nera_winners_dynamic_get_merged_entries()
 
     $ticket = method_exists($winner, 'get_lottery_ticket_number') ? (string) $winner->get_lottery_ticket_number() : '';
 
-    $cache[] = [
+    $entries[] = [
       'type'          => 'main',
       'source_id'     => (int) $winner_post_id,
       'sort_ts'       => $sort_ts,
@@ -2753,7 +2808,7 @@ function nera_winners_dynamic_get_merged_entries()
     ];
   }
 
-  $instant_ids = get_posts([
+  $instant_ids = in_array('instant', $allowed, true) ? get_posts([
     'post_type'              => 'lty_ins_winner_log',
     'post_status'            => 'lty_won',
     'posts_per_page'         => -1,
@@ -2763,7 +2818,7 @@ function nera_winners_dynamic_get_merged_entries()
     'no_found_rows'          => true,
     'update_post_meta_cache' => false,
     'update_post_term_cache' => false,
-  ]);
+  ]) : [];
 
   foreach ($instant_ids as $log_id) {
     $log = lty_get_instant_winner_log((int) $log_id);
@@ -2794,7 +2849,7 @@ function nera_winners_dynamic_get_merged_entries()
 
     $ticket = method_exists($log, 'get_ticket_number') ? (string) $log->get_ticket_number() : '';
 
-    $cache[] = [
+    $entries[] = [
       'type'          => 'instant',
       'source_id'     => (int) $log_id,
       'sort_ts'       => $sort_ts,
@@ -2811,39 +2866,49 @@ function nera_winners_dynamic_get_merged_entries()
   }
 
   usort(
-    $cache,
+    $entries,
     static function ($a, $b) {
       return (int) ($b['sort_ts'] ?? 0) <=> (int) ($a['sort_ts'] ?? 0);
     },
   );
 
-  return $cache;
+  $cache[$cache_key] = $entries;
+
+  return $entries;
 }
 
 /**
  * Whitelist filter key for dynamic winners (tab bar).
  *
- * @param string $filter Raw filter slug.
+ * @param string     $filter  Raw filter slug.
+ * @param array|null $allowed Allowed winner types (subset of main|instant); null = both.
  * @return string One of all|main|instant.
  */
-function nera_winners_dynamic_whitelist_filter($filter)
+function nera_winners_dynamic_whitelist_filter($filter, $allowed = null)
 {
-  $filter = is_string($filter) ? strtolower(trim($filter)) : '';
-  $allowed = ['all', 'main', 'instant'];
+  $allowed = nera_winners_dynamic_allowed_types($allowed);
+  $filter  = is_string($filter) ? strtolower(trim($filter)) : '';
 
-  return in_array($filter, $allowed, true) ? $filter : 'all';
+  // 'all' is valid whenever more than one type is shown; otherwise it collapses
+  // to the single allowed type. A requested type that isn't allowed falls back.
+  if (in_array($filter, $allowed, true)) {
+    return $filter;
+  }
+
+  return count($allowed) === 1 ? $allowed[0] : 'all';
 }
 
 /**
  * Filter merged winner rows by tab (live draw / instant win / all).
  *
- * @param array<int, array<string, mixed>> $rows Merged entries.
- * @param string                           $filter all|main|instant.
+ * @param array<int, array<string, mixed>> $rows    Merged entries.
+ * @param string                           $filter  all|main|instant.
+ * @param array|null                       $allowed Allowed winner types; null = both.
  * @return array<int, array<string, mixed>>
  */
-function nera_winners_dynamic_filter_entries(array $rows, $filter)
+function nera_winners_dynamic_filter_entries(array $rows, $filter, $allowed = null)
 {
-  $filter = nera_winners_dynamic_whitelist_filter((string) $filter);
+  $filter = nera_winners_dynamic_whitelist_filter((string) $filter, $allowed);
   if ($filter === 'all') {
     return $rows;
   }
@@ -2863,11 +2928,12 @@ function nera_winners_dynamic_filter_entries(array $rows, $filter)
 /**
  * Badge counts per tab from the merged dataset (single pass).
  *
+ * @param array|null $allowed Allowed winner types; null = both.
  * @return array{all:int,main:int,instant:int}
  */
-function nera_winners_dynamic_get_filter_counts()
+function nera_winners_dynamic_get_filter_counts($allowed = null)
 {
-  $merged  = nera_winners_dynamic_get_merged_entries();
+  $merged  = nera_winners_dynamic_get_merged_entries($allowed);
   $main    = 0;
   $instant = 0;
 
@@ -2890,16 +2956,18 @@ function nera_winners_dynamic_get_filter_counts()
 /**
  * Paginated slice of dynamic winner rows (filter-aware).
  *
- * @param int    $page   Page (1-based).
- * @param string $filter all|main|instant.
+ * @param int        $page    Page (1-based).
+ * @param string     $filter  all|main|instant.
+ * @param array|null $allowed Allowed winner types; null = both.
  * @return array{rows:array,total:int,max_pages:int,per_page:int,has_more:bool,filter:string}
  */
-function nera_winners_dynamic_get_page_dataset($page, $filter = 'all')
+function nera_winners_dynamic_get_page_dataset($page, $filter = 'all', $allowed = null)
 {
-  $filter     = nera_winners_dynamic_whitelist_filter((string) $filter);
+  $allowed    = nera_winners_dynamic_allowed_types($allowed);
+  $filter     = nera_winners_dynamic_whitelist_filter((string) $filter, $allowed);
   $per        = nera_winners_dynamic_per_page();
-  $merged     = nera_winners_dynamic_get_merged_entries();
-  $filtered   = nera_winners_dynamic_filter_entries($merged, $filter);
+  $merged     = nera_winners_dynamic_get_merged_entries($allowed);
+  $filtered   = nera_winners_dynamic_filter_entries($merged, $filter, $allowed);
   $total      = count($filtered);
   $max_pages  = $total > 0 && $per > 0 ? (int) ceil($total / $per) : 0;
   $page       = max(1, (int) $page);

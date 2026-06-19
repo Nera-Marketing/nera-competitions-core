@@ -9,7 +9,7 @@ function get_acf_layout(): array {
         'name'       => 'Faq',
         'label'      => __('FAQ', 'nera-competitions-standard'),
         'display'    => 'block',
-        'sub_fields' => [
+        'sub_fields' => nera_with_heading_fields([
             [
                 'key'           => 'field_pc_faq_title',
                 'label'         => __('Section Title', 'nera-competitions-standard'),
@@ -40,7 +40,7 @@ function get_acf_layout(): array {
                     ],
                 ],
             ],
-        ],
+        ], 'Faq'),
         'min' => '',
         'max' => '',
     ];

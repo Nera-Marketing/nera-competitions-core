@@ -9,7 +9,7 @@ function get_acf_layout(): array {
         'name'       => 'FeaturedCompetitions',
         'label'      => __('Featured Competitions', 'nera-competitions-standard'),
         'display'    => 'block',
-        'sub_fields' => [
+        'sub_fields' => nera_with_heading_fields([
             [
                 'key'           => 'field_pc_featured_title',
                 'label'         => __('Section Title', 'nera-competitions-standard'),
@@ -24,7 +24,7 @@ function get_acf_layout(): array {
                 'type'          => 'text',
                 'default_value' => "Grab your tickets before they're gone forever.",
             ],
-        ],
+        ], 'FeaturedCompetitions'),
         'min' => '',
         'max' => '',
     ];

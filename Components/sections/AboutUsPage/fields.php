@@ -10,7 +10,7 @@ function get_acf_layout(): array
         'name'       => 'AboutUsPage',
         'label'      => 'About Us Page',
         'display'    => 'block',
-        'sub_fields' => [
+        'sub_fields' => nera_with_heading_fields([
             ['key' => 'field_pc_AboutUsPage_hero_eyebrow',        'name' => 'hero_eyebrow',        'label' => 'Hero Eyebrow',        'type' => 'text'],
             ['key' => 'field_pc_AboutUsPage_title',               'name' => 'title',               'label' => 'Title',               'type' => 'text'],
             ['key' => 'field_pc_AboutUsPage_hero_tagline',        'name' => 'hero_tagline',        'label' => 'Hero Tagline',        'type' => 'textarea'],
@@ -26,6 +26,6 @@ function get_acf_layout(): array
             ['key' => 'field_pc_AboutUsPage_cta_primary_url',     'name' => 'cta_primary_url',     'label' => 'CTA Primary URL',     'type' => 'url'],
             ['key' => 'field_pc_AboutUsPage_cta_secondary_text',  'name' => 'cta_secondary_text',  'label' => 'CTA Secondary Text',  'type' => 'text'],
             ['key' => 'field_pc_AboutUsPage_cta_secondary_url',   'name' => 'cta_secondary_url',   'label' => 'CTA Secondary URL',   'type' => 'url'],
-        ],
+        ], 'AboutUsPage'),
     ];
 }

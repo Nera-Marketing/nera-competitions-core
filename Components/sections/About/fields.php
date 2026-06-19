@@ -9,7 +9,7 @@ function get_acf_layout(): array {
         'name'       => 'About',
         'label'      => __('About', 'nera-competitions-standard'),
         'display'    => 'block',
-        'sub_fields' => [
+        'sub_fields' => nera_with_heading_fields([
             [
                 'key'           => 'field_pc_about_badge',
                 'label'         => __('Badge Label', 'nera-competitions-standard'),
@@ -147,7 +147,7 @@ function get_acf_layout(): array {
                 ],
                 'default_value' => 'gradient',
             ],
-        ],
+        ], 'About'),
         'min' => '',
         'max' => '',
     ];

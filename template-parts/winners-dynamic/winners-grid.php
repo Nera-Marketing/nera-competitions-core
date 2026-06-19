@@ -18,12 +18,23 @@ $show_participants_cta    = !empty($args['show_participants_cta']);
 $include_entry_list_modal = !empty($args['include_entry_list_modal']);
 $stack_layout             = !empty($args['stack_layout']);
 
+$page_id       = get_queried_object_id();
+$allowed_types = function_exists('nera_winners_dynamic_get_allowed_types_for_page')
+  ? nera_winners_dynamic_get_allowed_types_for_page($page_id)
+  : ['main', 'instant'];
+
+// One type shown ⇒ no tab bar; default the active filter to that lone type.
+$default_filter = count($allowed_types) === 1 ? $allowed_types[0] : 'all';
+$show_main_tab    = in_array('main', $allowed_types, true);
+$show_instant_tab = in_array('instant', $allowed_types, true);
+$show_tabs        = count($allowed_types) > 1;
+
 $counts = function_exists('nera_winners_dynamic_get_filter_counts')
-  ? nera_winners_dynamic_get_filter_counts()
+  ? nera_winners_dynamic_get_filter_counts($allowed_types)
   : ['all' => 0, 'main' => 0, 'instant' => 0];
 
 $dataset = function_exists('nera_winners_dynamic_get_page_dataset')
-  ? nera_winners_dynamic_get_page_dataset(1, 'all')
+  ? nera_winners_dynamic_get_page_dataset(1, $default_filter, $allowed_types)
   : ['rows' => [], 'has_more' => false, 'total' => 0, 'per_page' => 12];
 
 $rows = isset($dataset['rows']) && is_array($dataset['rows']) ? $dataset['rows'] : [];
@@ -40,6 +51,9 @@ $nonce    = wp_create_nonce('nera_nonce');
 $alpine_config = [
   'hasMore'              => $has_more,
   'counts'               => $counts,
+  'activeFilter'         => $default_filter,
+  'allowedTypes'         => array_values($allowed_types),
+  'pageId'               => (int) $page_id,
   'showingCount'         => (int) $showing_start,
   'totalForActive'       => (int) $total_active,
   'perPage'              => (int) $per_page_ds,
@@ -89,7 +103,8 @@ if ($include_entry_list_modal) {
     const strings = config.strings || {};
 
     return {
-      activeFilter: 'all',
+      activeFilter: config.activeFilter || 'all',
+      pageId: config.pageId || 0,
       page: 1,
       hasMore: !!config.hasMore,
       loading: false,
@@ -125,6 +140,7 @@ if ($include_entry_list_modal) {
         body.append('nonce', this.ajaxNonce);
         body.append('paged', String(paged));
         body.append('filter', filter);
+        body.append('page_id', String(this.pageId));
         if (this.showParticipantsCta) {
           body.append('show_participants_cta', '1');
         }
@@ -239,6 +255,7 @@ if ($include_entry_list_modal) {
 
     <?php else : ?>
 
+      <?php if ($show_tabs) : ?>
       <div
         class="flex flex-wrap gap-2 sm:gap-3 mb-8"
         role="tablist"
@@ -255,6 +272,7 @@ if ($include_entry_list_modal) {
           <?php esc_html_e('All Winners', 'nera-competitions'); ?>
           <span :class="badgeClass('all')" x-text="counts.all"></span>
         </button>
+        <?php if ($show_main_tab) : ?>
         <button
           type="button"
           role="tab"
@@ -266,6 +284,8 @@ if ($include_entry_list_modal) {
           <?php esc_html_e('Live draw', 'nera-competitions'); ?>
           <span :class="badgeClass('main')" x-text="counts.main"></span>
         </button>
+        <?php endif; ?>
+        <?php if ($show_instant_tab) : ?>
         <button
           type="button"
           role="tab"
@@ -277,7 +297,9 @@ if ($include_entry_list_modal) {
           <?php esc_html_e('Instant Win', 'nera-competitions'); ?>
           <span :class="badgeClass('instant')" x-text="counts.instant"></span>
         </button>
+        <?php endif; ?>
       </div>
+      <?php endif; ?>
 
       <p
         x-show="showingCount === 0 && !loading"

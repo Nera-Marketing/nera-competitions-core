@@ -14,8 +14,8 @@
       <span class="inline-block px-4 py-1.5 mb-4 text-sm font-semibold text-primary bg-primary/5 rounded-full border border-primary/10">
         Winner Stories
       </span>
-      <h2 class="font-heading text-3xl lg:text-4xl xl:text-5xl font-bold text-text-primary mb-4">
-        {{ title }}
+      <h2 class="font-heading text-3xl lg:text-4xl xl:text-5xl font-bold text-text-primary mb-4"{% if heading_font_style %} style="{{ heading_font_style|raw }}"{% endif %}>
+        {{ title }}{% if heading_highlight %} <span style="{{ heading_accent_style|raw }}">{{ heading_highlight }}</span>{% endif %}
       </h2>
       <p class="text-lg text-text-secondary text-center">
         {{ subtitle }}

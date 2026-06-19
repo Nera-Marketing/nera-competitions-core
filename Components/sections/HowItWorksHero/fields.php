@@ -10,7 +10,7 @@ function get_acf_layout(): array
         'name'       => 'HowItWorksHero',
         'label'      => __('How It Works — Hero', 'nera-competitions-standard'),
         'display'    => 'block',
-        'sub_fields' => [
+        'sub_fields' => nera_with_heading_fields([
             [
                 'key'           => 'field_pc_HowItWorksHero_hero_title',
                 'label'         => __('Title', 'nera-competitions-standard'),
@@ -77,7 +77,7 @@ function get_acf_layout(): array
                 'name'  => 'cta_footer_text',
                 'type'  => 'text',
             ],
-        ],
+        ], 'HowItWorksHero'),
         'min' => '',
         'max' => '',
     ];

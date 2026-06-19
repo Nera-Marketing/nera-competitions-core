@@ -505,6 +505,14 @@ function nera_enqueue_styles()
     null,
   );
 
+  // Google Fonts - Sora & Hanken Grotesk (heading font options)
+  wp_enqueue_style(
+    'nera-google-fonts-headings',
+    'https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Hanken+Grotesk:wght@400;600;700;800&display=swap',
+    [],
+    null,
+  );
+
   // Material Symbols Icons
   wp_enqueue_style(
     'nera-material-symbols',
@@ -994,6 +1002,14 @@ require_once get_template_directory() . '/inc/helpers/how-it-works-defaults.php'
 // ACF How It Works Page Fields
 require_once get_template_directory() . '/inc/acf/how-it-works/acf-how-it-works.php';
 
+// Hide legacy per-page ACF metaboxes when a page uses Timber Page Components
+require_once get_template_directory() . '/inc/legacy-acf-visibility.php';
+
+// Heading Style — editor-driven two-tone section headings (helpers must load first)
+require_once get_template_directory() . '/inc/helpers/heading-style.php';
+require_once get_template_directory() . '/inc/acf/heading-style/acf-heading-style.php';
+require_once get_template_directory() . '/inc/heading-style.php';
+
 // ACF Product Listing Fields
 require_once get_template_directory() . '/inc/acf/product-listing/acf-product-listing.php';
 
@@ -1017,6 +1033,9 @@ require_once get_template_directory() . '/inc/legal-placeholders.php';
 
 // ACF Winners Page Fields
 require_once get_template_directory() . '/inc/acf/winners/acf-winners.php';
+
+// ACF Winners (Dynamic) Page Fields
+require_once get_template_directory() . '/inc/acf/winners-dynamic/acf-winners-dynamic.php';
 
 // ACF Attribution Page Fields
 require_once get_template_directory() . '/inc/acf/attribution/acf-attribution.php';
@@ -1527,8 +1546,14 @@ function nera_ajax_winners_dynamic_load_more()
 
   $paged = isset($_POST['paged']) ? max(1, absint($_POST['paged'])) : 1;
   $raw_filter = isset($_POST['filter']) ? wp_unslash($_POST['filter']) : 'all';
+
+  $page_id = isset($_POST['page_id']) ? absint($_POST['page_id']) : 0;
+  $allowed = function_exists('nera_winners_dynamic_get_allowed_types_for_page')
+    ? nera_winners_dynamic_get_allowed_types_for_page($page_id)
+    : ['main', 'instant'];
+
   $filter = function_exists('nera_winners_dynamic_whitelist_filter')
-    ? nera_winners_dynamic_whitelist_filter(sanitize_text_field($raw_filter))
+    ? nera_winners_dynamic_whitelist_filter(sanitize_text_field($raw_filter), $allowed)
     : 'all';
 
   if (!function_exists('nera_winners_dynamic_get_page_dataset')) {
@@ -1543,7 +1568,7 @@ function nera_ajax_winners_dynamic_load_more()
     ]);
   }
 
-  $dataset = nera_winners_dynamic_get_page_dataset($paged, $filter);
+  $dataset = nera_winners_dynamic_get_page_dataset($paged, $filter, $allowed);
   $rows    = isset($dataset['rows']) && is_array($dataset['rows']) ? $dataset['rows'] : [];
 
   $show_participants_cta = isset($_POST['show_participants_cta'])

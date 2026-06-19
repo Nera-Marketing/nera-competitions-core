@@ -9,7 +9,7 @@ function get_acf_layout(): array {
         'name'       => 'Contact',
         'label'      => 'Contact',
         'display'    => 'block',
-        'sub_fields' => [
+        'sub_fields' => nera_with_heading_fields([
             // Tab: Hero
             ['key' => 'field_pc_contact_tab_hero', 'label' => 'Hero', 'name' => 'tab_hero', 'type' => 'tab'],
             ['key' => 'field_pc_contact_title', 'label' => 'Heading', 'name' => 'title', 'type' => 'text', 'default_value' => 'Contact Us'],
@@ -39,6 +39,6 @@ function get_acf_layout(): array {
             ['key' => 'field_pc_contact_form_heading', 'label' => 'Form Heading', 'name' => 'form_heading', 'type' => 'text', 'default_value' => 'Send Us a Message'],
             ['key' => 'field_pc_contact_form_description', 'label' => 'Form Description', 'name' => 'form_description', 'type' => 'textarea', 'default_value' => ''],
             ['key' => 'field_pc_contact_fluent_form_id', 'label' => 'Fluent Form ID', 'name' => 'fluent_form_id', 'type' => 'number', 'default_value' => 0, 'min' => 0],
-        ],
+        ], 'Contact'),
     ];
 }
