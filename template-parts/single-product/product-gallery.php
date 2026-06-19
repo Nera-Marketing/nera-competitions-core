@@ -16,6 +16,7 @@ $product = $args['product'] ?? null;
 $badge_text = $args['badge_text'] ?? '';
 $badge_color = $args['badge_color'] ?? 'red';
 $video_url = $args['video_url'] ?? '';
+$unified_mobile = !empty($args['unified_mobile']);
 
 // Configurable main image aspect ratio (Theme Settings → WooCommerce); null = default 4/3
 $aspect_ratio = function_exists('nera_get_single_product_image_aspect_ratio')
@@ -82,7 +83,7 @@ $alpine_images = array_map(function ($img) {
 
   <div class="group">
 
-  <div class="relative rounded-2xl overflow-hidden shadow-lg">
+  <div class="relative rounded-2xl overflow-hidden shadow-lg product-gallery-main-frame<?php echo $unified_mobile ? ' max-lg:shadow-none' : ''; ?>">
 
     <?php if ($badge_text): ?>
       <div class="absolute top-4 left-4 z-20">

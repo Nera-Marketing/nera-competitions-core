@@ -111,6 +111,27 @@ $extra_images = max(0, count($gallery_images) - $visible_thumbs);
 
 // Configurable two-column grid spans (Theme Settings → WooCommerce)
 $grid = nera_get_single_product_grid_spans();
+
+// Mobile purchase card layout (default: image first | details_first: title/countdown/tickets above image)
+$mobile_card_layout = nera_get_mobile_card_layout($product_id);
+
+// Shared args for all purchase-card template part calls
+$purchase_card_args = [
+  'product'       => $product,
+  'countdown'     => $countdown,
+  'sold_tickets'  => $sold_tickets,
+  'max_tickets'   => $max_tickets,
+  'remaining'     => $remaining,
+  'progress'      => $progress,
+  'is_low_stock'  => $is_low_stock,
+  'price'         => $price,
+  'lottery_data'  => $lottery_data,
+  'has_qa'        => $has_qa,
+  'questions'     => $questions,
+  'qa_can_display' => $qa_can_display,
+  'cart_answer_id' => $cart_answer_id,
+  'is_expired'    => $is_expired,
+];
 ?>
 
 <main id="primary" class="site-main min-h-screen">
@@ -124,53 +145,88 @@ $grid = nera_get_single_product_grid_spans();
     <!-- Main Content Section -->
     <section>
       <div class="flex w-full min-w-0 flex-col">
-        <div class="grid w-full min-w-0 grid-cols-1 gap-8 lg:grid-cols-12 lg:gap-x-10 lg:gap-y-0">
+        <div
+          class="grid w-full min-w-0 grid-cols-1 <?php echo $mobile_card_layout === 'details_first' ? 'gap-x-8 gap-y-0' : 'gap-8'; ?> lg:grid-cols-12 lg:gap-x-10 lg:gap-y-0"
+          <?php echo $mobile_card_layout === 'details_first' ? 'data-ncs-unified-mobile' : ''; ?>
+        >
 
-          <!-- Left column: gallery + tabs (contents on mobile, flex-col on desktop) -->
-          <div class="contents lg:flex lg:flex-col lg:col-span-<?php echo (int) $grid['left']; ?> lg:row-start-1 lg:self-start">
+          <?php if ($mobile_card_layout === 'details_first'): ?>
 
-            <!-- Product Gallery (mobile order 1) -->
-            <div class="order-1 bg-surface p-6 rounded-2xl lg:rounded-b-none lg:pb-4">
-              <?php get_template_part('template-parts/single-product/product-gallery', null, [
-                'images' => $gallery_images,
-                'product' => $product,
-                'badge_text' => nera_product_has_featured_tag($product)
-                  ? __('Featured Prize', 'nera-competitions')
-                  : '',
-                'badge_color' => 'red',
-              ]); ?>
+            <!-- details_first: Left column — gallery (order-1 mobile) + tabs (order-3 mobile, same as default) -->
+            <div class="contents lg:flex lg:flex-col lg:col-span-<?php echo (int) $grid['left']; ?> lg:row-start-1 lg:self-start">
+
+              <!-- Product Gallery (mobile order 1 — middle of unified block | desktop left col) -->
+              <div class="order-1 ncs-unified-mobile-seg ncs-unified-mobile-seg--gallery bg-surface px-6 max-lg:pb-0 max-lg:pt-0 max-lg:rounded-none max-lg:border-x max-lg:border-gray-100 max-lg:shadow-none rounded-2xl lg:rounded-b-none lg:p-6 lg:pb-4">
+                <?php get_template_part('template-parts/single-product/product-gallery', null, [
+                  'images' => $gallery_images,
+                  'product' => $product,
+                  'badge_text' => nera_product_has_featured_tag($product)
+                    ? __('Featured Prize', 'nera-competitions')
+                    : '',
+                  'badge_color' => 'red',
+                  'unified_mobile' => true,
+                ]); ?>
+              </div>
+
+              <!-- Tabs Section (mobile order 3 — separate card below unified block | desktop left col) -->
+              <div class="order-3 max-lg:mt-8 bg-surface p-6 rounded-2xl lg:rounded-t-none lg:pt-4">
+                <?php get_template_part('template-parts/single-product/tabs', null, [
+                  'product' => $product,
+                  'specifications' => $specifications,
+                  'end_date_gmt' => $end_date_gmt,
+                ]); ?>
+              </div>
+
             </div>
 
-            <!-- Tabs Section (mobile order 3) -->
-            <div class="order-3 bg-surface p-6 rounded-2xl lg:rounded-t-none lg:pt-4">
-              <?php get_template_part('template-parts/single-product/tabs', null, [
-                'product' => $product,
-                'specifications' => $specifications,
-                'end_date_gmt' => $end_date_gmt,
-              ]); ?>
+            <!-- details_first: Purchase card split — contents on mobile, block column on desktop -->
+            <div class="contents lg:block lg:col-start-<?php echo (int) (13 - $grid['right']); ?> lg:col-span-<?php echo (int) $grid['right']; ?> lg:row-start-1 lg:self-start">
+
+              <!-- Card header: title + countdown + tickets (mobile order 1 — above gallery) -->
+              <?php get_template_part('template-parts/single-product/purchase-card', null,
+                array_merge($purchase_card_args, ['section' => 'header', 'unified_mobile' => true])); ?>
+
+              <!-- Card body: price + qty + form (mobile order 3 — after gallery) -->
+              <?php get_template_part('template-parts/single-product/purchase-card', null,
+                array_merge($purchase_card_args, ['section' => 'body', 'unified_mobile' => true])); ?>
+
             </div>
 
-          </div>
+          <?php else: ?>
 
-          <!-- Product Details / Purchase Card (mobile order 2 | desktop col 8-12) -->
-          <div class="order-2 lg:order-none lg:col-start-<?php echo (int) (13 - $grid['right']); ?> lg:col-span-<?php echo (int) $grid['right']; ?> lg:row-start-1 lg:self-start">
-            <?php get_template_part('template-parts/single-product/purchase-card', null, [
-              'product' => $product,
-              'countdown' => $countdown,
-              'sold_tickets' => $sold_tickets,
-              'max_tickets' => $max_tickets,
-              'remaining' => $remaining,
-              'progress' => $progress,
-              'is_low_stock' => $is_low_stock,
-              'price' => $price,
-              'lottery_data' => $lottery_data,
-              'has_qa' => $has_qa,
-              'questions' => $questions,
-              'qa_can_display' => $qa_can_display,
-              'cart_answer_id' => $cart_answer_id,
-              'is_expired' => $is_expired,
-            ]); ?>
-          </div>
+            <!-- Default: Left column — gallery (order-1) + tabs (order-3) -->
+            <div class="contents lg:flex lg:flex-col lg:col-span-<?php echo (int) $grid['left']; ?> lg:row-start-1 lg:self-start">
+
+              <!-- Product Gallery (mobile order 1) -->
+              <div class="order-1 bg-surface p-6 rounded-2xl lg:rounded-b-none lg:pb-4">
+                <?php get_template_part('template-parts/single-product/product-gallery', null, [
+                  'images' => $gallery_images,
+                  'product' => $product,
+                  'badge_text' => nera_product_has_featured_tag($product)
+                    ? __('Featured Prize', 'nera-competitions')
+                    : '',
+                  'badge_color' => 'red',
+                ]); ?>
+              </div>
+
+              <!-- Tabs Section (mobile order 3) -->
+              <div class="order-3 bg-surface p-6 rounded-2xl lg:rounded-t-none lg:pt-4">
+                <?php get_template_part('template-parts/single-product/tabs', null, [
+                  'product' => $product,
+                  'specifications' => $specifications,
+                  'end_date_gmt' => $end_date_gmt,
+                ]); ?>
+              </div>
+
+            </div>
+
+            <!-- Default: Product Details / Purchase Card (mobile order 2 | desktop col 8-12) -->
+            <div class="order-2 lg:order-none lg:col-start-<?php echo (int) (13 - $grid['right']); ?> lg:col-span-<?php echo (int) $grid['right']; ?> lg:row-start-1 lg:self-start">
+              <?php get_template_part('template-parts/single-product/purchase-card', null,
+                array_merge($purchase_card_args, ['section' => 'full'])); ?>
+            </div>
+
+          <?php endif; ?>
 
         </div>
 
