@@ -964,6 +964,9 @@ body h6 {
    options page (see inc/heading-style.php → nera_print_heading_style_vars). */
 :root {
   --heading-accent: #84cc16;
+  /* Font for the highlighted (trailing) part of two-tone section headings.
+     Defaults to the heading font; overridden by the Heading Style options page. */
+  --heading-highlight-font: var(--font-heading);
 }
 
 /* ==========================================================================
