@@ -42,6 +42,52 @@ function nera_heading_font_choices(bool $include_inherit = false): array
 }
 
 /**
+ * Curated heading-highlight font-weight choices for the ACF select fields.
+ * Limited to weights loaded for every curated font (see nera_enqueue_styles()):
+ * Poppins/Playfair/Sora/Hanken all ship 400;600;700;800, so any choice renders.
+ *
+ * @param bool $include_inherit Prepend the per-section "Inherit (global)" option.
+ * @return array<string,string> weight => label
+ */
+function nera_heading_font_weight_choices(bool $include_inherit = false): array
+{
+    $choices = [
+        '400'    => 'Regular (400)',
+        '600'    => 'Semibold (600)',
+        '700'    => 'Bold (700)',
+        '800'    => 'Extrabold (800)',
+        'custom' => 'Custom (number)',
+    ];
+
+    if ($include_inherit) {
+        return ['inherit' => __('Inherit (global default)', 'nera-competitions')] + $choices;
+    }
+
+    return $choices;
+}
+
+/**
+ * Resolve a heading-highlight font-weight slug (+ custom value) to a valid int.
+ * Returns 0 for inherit / empty / out-of-range so callers can fall back.
+ *
+ * @param string $slug   '400'..'800', 'custom', 'inherit', or ''.
+ * @param string $custom Raw numeric value used when $slug === 'custom'.
+ * @return int 1–1000, or 0 when nothing valid to apply.
+ */
+function nera_heading_font_weight(string $slug, string $custom = ''): int
+{
+    if ($slug === 'custom') {
+        $w = (int) $custom;
+    } elseif ($slug !== '' && $slug !== 'inherit') {
+        $w = (int) $slug;
+    } else {
+        return 0; // inherit / empty
+    }
+
+    return ($w >= 1 && $w <= 1000) ? $w : 0; // clamp to CSS font-weight range
+}
+
+/**
  * Map a font slug to a CSS font-family stack.
  *
  * @param string $slug   One of the keys from nera_heading_font_choices().
@@ -161,6 +207,31 @@ function nera_heading_style_fields(string $slug): array
             ],
         ],
         [
+            'key'           => $p . 'heading_font_weight',
+            'label'         => __('Highlight Font Weight', 'nera-competitions'),
+            'name'          => 'heading_font_weight',
+            'type'          => 'select',
+            'choices'       => nera_heading_font_weight_choices(true),
+            'default_value' => 'inherit',
+            'allow_null'    => 0,
+            'ui'            => 0,
+            'instructions'  => __('Font weight for this section\'s heading highlight. Overrides the global highlight weight.', 'nera-competitions'),
+        ],
+        [
+            'key'               => $p . 'heading_font_weight_custom',
+            'label'             => __('Custom Font Weight', 'nera-competitions'),
+            'name'              => 'heading_font_weight_custom',
+            'type'              => 'number',
+            'instructions'      => __('Numeric font weight (1–1000), e.g. 350, 500, 900.', 'nera-competitions'),
+            'min'               => 1,
+            'max'               => 1000,
+            'conditional_logic' => [
+                [
+                    ['field' => $p . 'heading_font_weight', 'operator' => '==', 'value' => 'custom'],
+                ],
+            ],
+        ],
+        [
             'key'          => $p . 'heading_accent_color',
             'label'        => __('Heading Accent Colour', 'nera-competitions'),
             'name'         => 'heading_accent_color',
@@ -206,7 +277,7 @@ function nera_with_heading_fields(array $sub_fields, string $slug): array
  * (the global highlight font is applied via --heading-highlight-font and the accent via var(--heading-accent)).
  *
  * @param array $args Component args (expects 'acf_row').
- * @return array{highlight:string,accent_color:string,font_family:string,font_custom:string,font_slug:string}
+ * @return array{highlight:string,accent_color:string,font_family:string,font_custom:string,font_slug:string,font_weight:string}
  */
 function nera_resolve_heading_style(array $args): array
 {
@@ -224,12 +295,18 @@ function nera_resolve_heading_style(array $args): array
 
     $accent = isset($row['heading_accent_color']) ? trim((string) $row['heading_accent_color']) : '';
 
+    $weight_slug   = isset($row['heading_font_weight']) ? (string) $row['heading_font_weight'] : 'inherit';
+    $weight_custom = isset($row['heading_font_weight_custom']) ? (string) $row['heading_font_weight_custom'] : '';
+    $weight        = nera_heading_font_weight($weight_slug, $weight_custom);
+    $font_weight   = $weight ? (string) $weight : '';
+
     return [
         'highlight'    => $highlight,
         'accent_color' => $accent,
         'font_family'  => $font_family,
         'font_custom'  => $font_custom,
         'font_slug'    => $font_slug,
+        'font_weight'  => $font_weight,
     ];
 }
 

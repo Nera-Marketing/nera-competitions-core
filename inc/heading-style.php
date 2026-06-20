@@ -21,9 +21,9 @@ if (!defined('ABSPATH')) {
  * Merge heading style data into a section component's Twig context.
  * Exposes (consumed by section templates, all |raw-safe / pre-sanitised):
  *   - heading_highlight    : trailing accent text (autoescaped in template)
- *   - heading_accent_style : highlight span style — colour + font-family, e.g.
- *                            "color: #84cc16; font-family: 'Sora', sans-serif".
- *                            The chosen heading font paints the highlight only.
+ *   - heading_accent_style : highlight span style — colour + font-family + weight, e.g.
+ *                            "color: #84cc16; font-family: 'Sora', sans-serif; font-weight: 700".
+ *                            The chosen heading font/weight paints the highlight only.
  *
  * @param array  $data
  * @param string $name Component name.
@@ -50,18 +50,21 @@ function nera_inject_heading_style($data, $name, $args)
     $accent       = $hs['accent_color'] !== '' ? sanitize_hex_color($hs['accent_color']) : '';
     $accent_color = $accent ?: 'var(--heading-accent)';
 
+    // Per-section weight wins as a literal; otherwise fall back to the global weight var.
+    $highlight_weight = $hs['font_weight'] !== '' ? (int) $hs['font_weight'] : 'var(--heading-highlight-weight)';
+
     $data['heading_highlight']    = $hs['highlight'];
-    $data['heading_accent_style'] = 'color: ' . $accent_color . '; font-family: ' . $highlight_font;
+    $data['heading_accent_style'] = 'color: ' . $accent_color . '; font-family: ' . $highlight_font . '; font-weight: ' . $highlight_weight;
 
     return $data;
 }
 add_filter('nera_component_data', 'nera_inject_heading_style', 10, 3);
 
 /**
- * Print the global heading-highlight font + accent colour as CSS variables.
- * Sets --heading-highlight-font (font for the highlighted part of headings)
- * and --heading-accent (default highlight colour). The whole heading keeps the
- * --font-heading theme default.
+ * Print the global heading-highlight font + weight + accent colour as CSS variables.
+ * Sets --heading-highlight-font (font for the highlighted part of headings),
+ * --heading-highlight-weight (its font-weight) and --heading-accent (default
+ * highlight colour). The whole heading keeps the --font-heading theme default.
  */
 function nera_print_heading_style_vars()
 {
@@ -73,11 +76,22 @@ function nera_print_heading_style_vars()
     $custom = (string) get_field('heading_default_font_custom', 'option');
     $family = nera_heading_font_family($font, $custom);
 
+    $weight = nera_heading_font_weight(
+        (string) get_field('heading_default_font_weight', 'option'),
+        (string) get_field('heading_default_font_weight_custom', 'option')
+    );
+    if (!$weight) {
+        $weight = 700;
+    }
+
     $accent = sanitize_hex_color((string) get_field('heading_default_accent_color', 'option'));
 
     $css = '';
     if ($family !== '') {
         $css .= '--heading-highlight-font:' . $family . ';';
+    }
+    if ($weight) {
+        $css .= '--heading-highlight-weight:' . $weight . ';';
     }
     if ($accent) {
         $css .= '--heading-accent:' . $accent . ';';

@@ -66,6 +66,33 @@ if (function_exists('acf_add_local_field_group')) {
                 ],
             ],
             [
+                'key'           => 'field_heading_default_font_weight',
+                'label'         => 'Default Highlight Font Weight',
+                'name'          => 'heading_default_font_weight',
+                'type'          => 'select',
+                'instructions'  => 'Font weight for the highlighted (accent) part of section headings. Sections can override this individually.',
+                'choices'       => function_exists('nera_heading_font_weight_choices')
+                    ? nera_heading_font_weight_choices(false)
+                    : ['700' => 'Bold (700)'],
+                'default_value' => '700',
+                'allow_null'    => 0,
+                'ui'            => 0,
+            ],
+            [
+                'key'               => 'field_heading_default_font_weight_custom',
+                'label'             => 'Custom Font Weight',
+                'name'              => 'heading_default_font_weight_custom',
+                'type'              => 'number',
+                'instructions'      => 'Numeric font weight (1–1000), e.g. 350, 500, 900.',
+                'min'               => 1,
+                'max'               => 1000,
+                'conditional_logic' => [
+                    [
+                        ['field' => 'field_heading_default_font_weight', 'operator' => '==', 'value' => 'custom'],
+                    ],
+                ],
+            ],
+            [
                 'key'           => 'field_heading_default_accent_color',
                 'label'         => 'Default Accent Colour',
                 'name'          => 'heading_default_accent_color',
