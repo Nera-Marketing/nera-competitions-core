@@ -42,6 +42,52 @@ function nera_heading_font_choices(bool $include_inherit = false): array
 }
 
 /**
+ * Curated heading-highlight font-weight choices for the ACF select fields.
+ * Limited to weights loaded for every curated font (see nera_enqueue_styles()):
+ * Poppins/Playfair/Sora/Hanken all ship 400;600;700;800, so any choice renders.
+ *
+ * @param bool $include_inherit Prepend the per-section "Inherit (global)" option.
+ * @return array<string,string> weight => label
+ */
+function nera_heading_font_weight_choices(bool $include_inherit = false): array
+{
+    $choices = [
+        '400'    => 'Regular (400)',
+        '600'    => 'Semibold (600)',
+        '700'    => 'Bold (700)',
+        '800'    => 'Extrabold (800)',
+        'custom' => 'Custom (number)',
+    ];
+
+    if ($include_inherit) {
+        return ['inherit' => __('Inherit (global default)', 'nera-competitions')] + $choices;
+    }
+
+    return $choices;
+}
+
+/**
+ * Resolve a heading-highlight font-weight slug (+ custom value) to a valid int.
+ * Returns 0 for inherit / empty / out-of-range so callers can fall back.
+ *
+ * @param string $slug   '400'..'800', 'custom', 'inherit', or ''.
+ * @param string $custom Raw numeric value used when $slug === 'custom'.
+ * @return int 1–1000, or 0 when nothing valid to apply.
+ */
+function nera_heading_font_weight(string $slug, string $custom = ''): int
+{
+    if ($slug === 'custom') {
+        $w = (int) $custom;
+    } elseif ($slug !== '' && $slug !== 'inherit') {
+        $w = (int) $slug;
+    } else {
+        return 0; // inherit / empty
+    }
+
+    return ($w >= 1 && $w <= 1000) ? $w : 0; // clamp to CSS font-weight range
+}
+
+/**
  * Map a font slug to a CSS font-family stack.
  *
  * @param string $slug   One of the keys from nera_heading_font_choices().
@@ -161,6 +207,31 @@ function nera_heading_style_fields(string $slug): array
             ],
         ],
         [
+            'key'           => $p . 'heading_font_weight',
+            'label'         => __('Highlight Font Weight', 'nera-competitions'),
+            'name'          => 'heading_font_weight',
+            'type'          => 'select',
+            'choices'       => nera_heading_font_weight_choices(true),
+            'default_value' => 'inherit',
+            'allow_null'    => 0,
+            'ui'            => 0,
+            'instructions'  => __('Font weight for this section\'s heading highlight. Overrides the global highlight weight.', 'nera-competitions'),
+        ],
+        [
+            'key'               => $p . 'heading_font_weight_custom',
+            'label'             => __('Custom Font Weight', 'nera-competitions'),
+            'name'              => 'heading_font_weight_custom',
+            'type'              => 'number',
+            'instructions'      => __('Numeric font weight (1–1000), e.g. 350, 500, 900.', 'nera-competitions'),
+            'min'               => 1,
+            'max'               => 1000,
+            'conditional_logic' => [
+                [
+                    ['field' => $p . 'heading_font_weight', 'operator' => '==', 'value' => 'custom'],
+                ],
+            ],
+        ],
+        [
             'key'          => $p . 'heading_accent_color',
             'label'        => __('Heading Accent Colour', 'nera-competitions'),
             'name'         => 'heading_accent_color',
@@ -171,9 +242,19 @@ function nera_heading_style_fields(string $slug): array
 }
 
 /**
- * Insert the per-section heading-style fields immediately after the section's
- * primary Title/Heading sub-field, so "Heading Highlight" sits next to the title
- * it accents. Falls back to appending if no title/heading field is found.
+ * Insert the per-section heading-style fields into the layout, split across two
+ * ACF tabs:
+ *   - "Content": the content-type heading field ("Heading Highlight") is placed
+ *     immediately after the section's primary Title/Heading sub-field, so it sits
+ *     next to the title it accents.
+ *   - "Styles": the visual override fields (highlight font, font weight, accent
+ *     colour, and their conditional custom inputs) are appended under a dedicated
+ *     tab so they don't clutter the content fields.
+ *
+ * Tabs are presentational only — field names are unchanged, so saved data and
+ * front-end rendering are unaffected. A "Content" tab is prepended only when the
+ * layout doesn't already start with its own tab (e.g. the Contact component keeps
+ * its existing Hero/Contact Info/Form tab bar and just gains a "Styles" tab).
  *
  * @param array  $sub_fields Existing top-level sub-fields of the layout.
  * @param string $slug       Component slug (for unique field keys).
@@ -181,8 +262,29 @@ function nera_heading_style_fields(string $slug): array
  */
 function nera_with_heading_fields(array $sub_fields, string $slug): array
 {
-    $heading_fields = nera_heading_style_fields($slug);
+    $p = "field_pc_{$slug}_";
 
+    // Partition the heading fields: styling/UI overrides go under "Styles",
+    // everything else (the "Heading Highlight" text) stays inline as content.
+    $style_names = [
+        'heading_font',
+        'heading_font_custom',
+        'heading_font_weight',
+        'heading_font_weight_custom',
+        'heading_accent_color',
+    ];
+    $content_heading = [];
+    $style_heading   = [];
+    foreach (nera_heading_style_fields($slug) as $f) {
+        $name = is_array($f) && isset($f['name']) ? (string) $f['name'] : '';
+        if (in_array($name, $style_names, true)) {
+            $style_heading[] = $f;
+        } else {
+            $content_heading[] = $f;
+        }
+    }
+
+    // Insert the content-group heading field(s) after the Title/Heading sub-field.
     $insert_at = null;
     foreach ($sub_fields as $i => $f) {
         $name = is_array($f) && isset($f['name']) ? (string) $f['name'] : '';
@@ -191,12 +293,38 @@ function nera_with_heading_fields(array $sub_fields, string $slug): array
             break;
         }
     }
-
     if ($insert_at === null) {
-        return array_merge($sub_fields, $heading_fields); // fallback: append
+        $sub_fields = array_merge($sub_fields, $content_heading); // fallback: append
+    } else {
+        array_splice($sub_fields, $insert_at, 0, $content_heading);
     }
 
-    array_splice($sub_fields, $insert_at, 0, $heading_fields);
+    // Wrap the content fields in a "Content" tab — but only if the layout isn't
+    // already tabbed, so a component defining its own tabs keeps its tab bar.
+    $first = $sub_fields[0] ?? null;
+    $already_tabbed = is_array($first) && isset($first['type']) && $first['type'] === 'tab';
+    if (!$already_tabbed) {
+        array_unshift($sub_fields, [
+            'key'       => $p . 'tab_content',
+            'label'     => __('Content', 'nera-competitions'),
+            'name'      => 'tab_content',
+            'type'      => 'tab',
+            'placement' => 'top',
+        ]);
+    }
+
+    // Append the "Styles" tab followed by the styling override fields.
+    $sub_fields[] = [
+        'key'       => $p . 'tab_styles',
+        'label'     => __('Styles', 'nera-competitions'),
+        'name'      => 'tab_styles',
+        'type'      => 'tab',
+        'placement' => 'top',
+    ];
+    foreach ($style_heading as $f) {
+        $sub_fields[] = $f;
+    }
+
     return $sub_fields;
 }
 
@@ -206,7 +334,7 @@ function nera_with_heading_fields(array $sub_fields, string $slug): array
  * (the global highlight font is applied via --heading-highlight-font and the accent via var(--heading-accent)).
  *
  * @param array $args Component args (expects 'acf_row').
- * @return array{highlight:string,accent_color:string,font_family:string,font_custom:string,font_slug:string}
+ * @return array{highlight:string,accent_color:string,font_family:string,font_custom:string,font_slug:string,font_weight:string}
  */
 function nera_resolve_heading_style(array $args): array
 {
@@ -224,12 +352,18 @@ function nera_resolve_heading_style(array $args): array
 
     $accent = isset($row['heading_accent_color']) ? trim((string) $row['heading_accent_color']) : '';
 
+    $weight_slug   = isset($row['heading_font_weight']) ? (string) $row['heading_font_weight'] : 'inherit';
+    $weight_custom = isset($row['heading_font_weight_custom']) ? (string) $row['heading_font_weight_custom'] : '';
+    $weight        = nera_heading_font_weight($weight_slug, $weight_custom);
+    $font_weight   = $weight ? (string) $weight : '';
+
     return [
         'highlight'    => $highlight,
         'accent_color' => $accent,
         'font_family'  => $font_family,
         'font_custom'  => $font_custom,
         'font_slug'    => $font_slug,
+        'font_weight'  => $font_weight,
     ];
 }
 

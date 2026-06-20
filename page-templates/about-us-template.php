@@ -62,7 +62,7 @@ $cta_secondary_url = get_field('about_cta_secondary_btn_url') ?: home_url('/cont
             class="inline-block text-white/90 uppercase tracking-[0.2em] text-xs font-semibold mb-6 pb-1 border-b border-white/25">
             <?php echo esc_html($hero_eyebrow); ?>
           </span>
-          <h1 id="about-us-hero-heading" class="font-heading text-4xl sm:text-5xl lg:text-6xl leading-tight mb-6 text-white">
+          <h1 id="about-us-hero-heading" class="font-heading font-bold text-4xl sm:text-5xl lg:text-6xl leading-tight mb-6 text-white">
             <?php echo esc_html($title); ?>
           </h1>
           <div class="w-20 h-1 bg-white/80 mb-8 rounded-full" aria-hidden="true"></div>
@@ -132,7 +132,7 @@ $cta_secondary_url = get_field('about_cta_secondary_btn_url') ?: home_url('/cont
               class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary transition-all duration-300 group-hover:bg-primary group-hover:text-white">
               <span class="material-symbols-outlined text-2xl" aria-hidden="true">groups</span>
             </div>
-            <h2 class="font-heading text-2xl lg:text-3xl text-text-primary">
+            <h2 class="font-heading font-bold text-2xl lg:text-3xl text-text-primary">
               <?php echo esc_html($story_left_title); ?>
             </h2>
           </div>
@@ -153,7 +153,7 @@ $cta_secondary_url = get_field('about_cta_secondary_btn_url') ?: home_url('/cont
               class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary transition-all duration-300 group-hover:bg-primary group-hover:text-white">
               <span class="material-symbols-outlined text-2xl" aria-hidden="true">lightbulb</span>
             </div>
-            <h2 class="font-heading text-2xl lg:text-3xl text-text-primary">
+            <h2 class="font-heading font-bold text-2xl lg:text-3xl text-text-primary">
               <?php echo esc_html($story_right_title); ?>
             </h2>
           </div>
@@ -172,7 +172,7 @@ $cta_secondary_url = get_field('about_cta_secondary_btn_url') ?: home_url('/cont
   <section class="py-16 lg:py-24 text-center relative overflow-hidden bg-surface" aria-labelledby="about-us-cta-heading">
     <div class="absolute inset-0 bg-gradient-to-b from-transparent via-primary/[0.04] to-transparent pointer-events-none"></div>
     <div class="max-w-3xl mx-auto px-4 lg:px-8 relative z-10" data-aos="zoom-in">
-      <h2 id="about-us-cta-heading" class="font-heading text-3xl lg:text-4xl mb-6 text-text-primary">
+      <h2 id="about-us-cta-heading" class="font-heading font-bold text-3xl lg:text-4xl mb-6 text-text-primary">
         <?php echo esc_html($cta_heading); ?>
       </h2>
       <p class="text-lg text-text-secondary mb-10 leading-relaxed">
