@@ -227,65 +227,34 @@ do_action('woocommerce_before_edit_account_form');
         </button>
       </form>
 
-      <dialog
-        id="nera-deactivate-account-dialog"
-        class="nera-deactivate-account-dialog fixed left-1/2 top-1/2 z-[100] max-h-[min(100vh-2rem,90dvh)] max-w-md w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-2xl border border-gray-200 bg-surface p-0 shadow-2xl backdrop:bg-black/50"
-        aria-labelledby="nera-deactivate-account-dialog-title"
-      >
-        <div class="flex max-h-[min(100vh-2rem,90dvh)] min-h-0 flex-col overflow-y-auto">
-          <div class="p-6 border-b border-gray-100">
-            <h4 id="nera-deactivate-account-dialog-title" class="text-lg font-bold text-gray-900 flex items-center gap-2">
-              <span class="material-symbols-outlined text-danger">help</span>
-              <?php esc_html_e('Delete your account?', 'nera-competitions-standard'); ?>
-            </h4>
-            <p class="text-sm text-gray-600 mt-2">
-              <?php esc_html_e(
-                'This will permanently remove your account. If you are sure, click Yes.',
-                'nera-competitions-standard',
-              ); ?>
-            </p>
-          </div>
-          <div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-2 p-4 bg-gray-50/80 rounded-b-2xl shrink-0">
-            <button
-              type="button"
-              id="nera-deactivate-account-cancel"
-              class="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl font-semibold border-2 border-gray-200 text-gray-700 bg-white hover:border-gray-300 transition-colors w-full sm:w-auto"
-            >
-              <?php esc_html_e('Cancel', 'nera-competitions-standard'); ?>
-            </button>
-            <button
-              type="button"
-              id="nera-deactivate-account-confirm"
-              class="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl font-semibold text-white bg-danger hover:bg-danger-text border border-danger-text shadow-sm transition-colors w-full sm:w-auto"
-            >
-              <?php esc_html_e('Yes', 'nera-competitions-standard'); ?>
-            </button>
-          </div>
-        </div>
-      </dialog>
-
       <script>
         (function () {
           var openBtn = document.getElementById('nera-deactivate-account-open');
-          var dlg = document.getElementById('nera-deactivate-account-dialog');
-          var cancelBtn = document.getElementById('nera-deactivate-account-cancel');
-          var yesBtn = document.getElementById('nera-deactivate-account-confirm');
           var form = document.getElementById('nera-deactivate-account-form');
-          if (!openBtn || !dlg || !cancelBtn || !yesBtn || !form) return;
+          if (!openBtn || !form) return;
 
           openBtn.addEventListener('click', function () {
-            if (typeof dlg.showModal === 'function') {
-              dlg.showModal();
+            // Shared custom HTML dialog store (native <dialog>/confirm replaced for WebView reliability)
+            if (window.Alpine && Alpine.store('dialog')) {
+              Alpine.store('dialog')
+                .confirm({
+                  title: '<?php echo esc_js(__('Delete your account?', 'nera-competitions-standard')); ?>',
+                  message: '<?php echo esc_js(
+                    __(
+                      'This will permanently remove your account. If you are sure, click Yes.',
+                      'nera-competitions-standard',
+                    ),
+                  ); ?>',
+                  confirmText: '<?php echo esc_js(__('Yes', 'nera-competitions-standard')); ?>',
+                  cancelText: '<?php echo esc_js(__('Cancel', 'nera-competitions-standard')); ?>',
+                  variant: 'danger',
+                })
+                .then(function (confirmed) {
+                  if (confirmed) form.submit();
+                });
+            } else if (window.confirm('<?php echo esc_js(__('Delete your account?', 'nera-competitions-standard')); ?>')) {
+              form.submit();
             }
-          });
-
-          cancelBtn.addEventListener('click', function () {
-            dlg.close();
-          });
-
-          yesBtn.addEventListener('click', function () {
-            dlg.close();
-            form.submit();
           });
         })();
       </script>

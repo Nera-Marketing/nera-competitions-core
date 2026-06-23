@@ -647,6 +647,15 @@ function nera_enqueue_scripts()
     true,
   );
 
+  // 1b. Dialog store (promise-based confirm/alert; replaces native window.confirm/alert)
+  wp_enqueue_script(
+    'nera-alpine-dialog',
+    NERA_ASSETS_URI . '/js/alpine-dialog.js',
+    [],
+    NERA_VERSION,
+    true,
+  );
+
   // 2. Countdown component
   wp_enqueue_script(
     'nera-alpine-countdown',
@@ -697,7 +706,7 @@ function nera_enqueue_scripts()
   }
 
   // 6. AlpineJS Collapse Plugin - loads AFTER stores/components
-  $alpine_component_deps = ['nera-alpine-toast', 'nera-alpine-countdown'];
+  $alpine_component_deps = ['nera-alpine-toast', 'nera-alpine-dialog', 'nera-alpine-countdown'];
   if (is_page_template('page-templates/winners-template.php')) {
     $alpine_component_deps[] = 'nera-alpine-winners-page';
   }

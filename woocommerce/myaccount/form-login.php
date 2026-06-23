@@ -532,7 +532,18 @@ $active_tab = isset($_GET['action']) && $_GET['action'] === 'register' ? 'regist
 
       if (errors.length > 0) {
         e.preventDefault();
-        alert(errors.join('\n'));
+        // Custom HTML alert dialog (native alert() is unreliable in mobile WebViews).
+        if (window.Alpine && Alpine.store('dialog')) {
+          Alpine.store('dialog').alert({
+            title: '<?php echo esc_js(__('Please check the form', 'woocommerce')); ?>',
+            message:
+              '<ul class="list-disc pl-5 space-y-1 text-left">' +
+              errors.map(function (m) { return '<li>' + m + '</li>'; }).join('') +
+              '</ul>',
+          });
+        } else {
+          alert(errors.join('\n'));
+        }
       }
     });
   }
