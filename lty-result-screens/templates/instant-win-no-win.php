@@ -34,5 +34,20 @@ $browse_url = get_field( 'lty_rs_browse_url', 'option' ) ?: get_permalink( wc_ge
 			<?php echo esc_html( $btn_text ); ?>
 		</a>
 
+		<?php if ( ! empty( $spin_links ) ) : ?>
+		<div class="lty-rs-spin-banner">
+			<div class="lty-rs-spin-banner__eyebrow">
+				<span class="lty-rs-spin-wheel" aria-hidden="true"></span>
+				<?php echo esc_html( $spin_eyebrow_text ); ?>
+			</div>
+			<?php foreach ( $spin_links as $row ) : ?>
+				<a href="<?php echo esc_url( $row['url'] ); ?>" class="lty-rs-btn lty-rs-btn-spin">
+					<span class="lty-rs-spin-wheel" aria-hidden="true"></span>
+					<?php esc_html_e( 'Spin the Wheel', 'lty-result-screens' ); ?>
+				</a>
+			<?php endforeach; ?>
+		</div>
+		<?php endif; ?>
+
 	</div>
 </div>
