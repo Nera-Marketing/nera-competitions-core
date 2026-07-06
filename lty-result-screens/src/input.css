@@ -136,10 +136,10 @@
 /* X close button — all: unset strips layout/position; re-apply everything here */
 .lty-rs-overlay .lty-rs-close-x {
   position: absolute !important;
-  top: 0.875rem !important;
-  right: 0.875rem !important;
-  width: 2.75rem !important;
-  height: 2.75rem !important;
+  top: 1rem !important;
+  right: 1rem !important;
+  width: 2.25rem !important;
+  height: 2.25rem !important;
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
@@ -149,7 +149,8 @@
   color: #888 !important;
   font-size: 1.5rem !important;
   font-weight: 700 !important;
-  z-index: 2 !important;
+  z-index: 20 !important;
+  cursor: pointer !important;
   transition: background 0.15s ease, color 0.15s ease !important;
 }
 .lty-rs-overlay .lty-rs-close-x:hover {
@@ -264,6 +265,31 @@
   padding: 0.5rem 0;
 }
 
+.lty-rs-overlay .lty-rs-wallet-prize--inline .lty-rs-wallet-prize__row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+}
+
+.lty-rs-overlay .lty-rs-wallet-prize--inline .lty-rs-wallet-prize__icon {
+  font-size: 2.25rem;
+}
+
+.lty-rs-overlay .lty-rs-wallet-prize--inline .lty-rs-wallet-prize__amount {
+  font-size: clamp(1.5rem, 5vw, 2rem);
+}
+
+/* Slightly smaller amounts inside multi-prize grid cards */
+.lty-rs-overlay [data-lty-rs-prizes] .lty-rs-wallet-prize--inline .lty-rs-wallet-prize__icon {
+  font-size: 1.75rem;
+}
+
+.lty-rs-overlay [data-lty-rs-prizes] .lty-rs-wallet-prize--inline .lty-rs-wallet-prize__amount {
+  font-size: clamp(1.125rem, 3.5vw, 1.5rem);
+}
+
 .lty-rs-overlay .lty-rs-wallet-prize__icon {
   font-size: 2.5rem;
   line-height: 1;
@@ -280,6 +306,16 @@
   line-height: 1.1;
   letter-spacing: -0.02em;
   filter: drop-shadow(0 2px 8px var(--lty-rs-win-accent-glow));
+  white-space: nowrap;
+}
+
+.lty-rs-overlay .lty-rs-wallet-prize__amount .woocommerce-Price-amount,
+.lty-rs-overlay .lty-rs-wallet-prize__amount .woocommerce-Price-currencySymbol {
+  background: inherit;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: inherit;
 }
 
 .lty-rs-overlay .lty-rs-wallet-prize__label {
@@ -292,6 +328,97 @@
 }
 
 /* ==========================================================================
+   V2 Spin reward banner + wheel icon
+   ========================================================================== */
+.lty-rs-overlay {
+  --spin-gold: #f5b50a;
+  --spin-red: #d62828;
+  --spin-red-dk: #b01e1e;
+}
+
+.lty-rs-overlay .lty-rs-spin-banner {
+  margin-top: 1.25rem;
+  padding: 1rem 1.25rem 1.25rem;
+  border-radius: 1rem;
+  background: linear-gradient(135deg, #fffbea 0%, #fff3c4 100%);
+  border: 1.5px solid rgba(200, 148, 10, 0.35);
+  text-align: center;
+}
+
+.lty-rs-overlay .lty-rs-spin-banner__eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  background: linear-gradient(135deg, #f5c842, #c8940a);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-size: 0.8125rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-bottom: 0.875rem;
+}
+
+.lty-rs-overlay .lty-rs-btn-spin {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.875rem 2.25rem;
+  border-radius: 0.75rem;
+  font-weight: 700;
+  font-size: 1rem;
+  line-height: 1;
+  text-decoration: none;
+  border: none;
+  color: #fff;
+  background: linear-gradient(135deg, var(--spin-red), var(--spin-red-dk));
+  box-shadow: 0 9px 20px -8px rgba(214, 40, 40, 0.6);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  cursor: pointer;
+}
+
+.lty-rs-overlay .lty-rs-btn-spin:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 24px -6px rgba(214, 40, 40, 0.7);
+}
+
+.lty-rs-overlay .lty-rs-spin-wheel {
+  display: inline-block;
+  width: 1rem;
+  height: 1rem;
+  border-radius: 50%;
+  flex: 0 0 auto;
+  position: relative;
+  vertical-align: middle;
+  background: conic-gradient(
+    var(--spin-gold) 0deg 45deg,
+    #fff 45deg 90deg,
+    var(--spin-gold) 90deg 135deg,
+    #fff 135deg 180deg,
+    var(--spin-gold) 180deg 225deg,
+    #fff 225deg 270deg,
+    var(--spin-gold) 270deg 315deg,
+    #fff 315deg 360deg
+  );
+}
+
+.lty-rs-overlay .lty-rs-spin-banner__eyebrow .lty-rs-spin-wheel {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.lty-rs-overlay .lty-rs-spin-wheel::after {
+  content: '';
+  position: absolute;
+  inset: 38%;
+  border-radius: 50%;
+  background: var(--spin-red);
+}
+
+/* ==========================================================================
    Reduced motion — kill all animations
    ========================================================================== */
 @media (prefers-reduced-motion: reduce) {
@@ -301,5 +428,9 @@
   .lty-rs-wallet-prize__icon {
     animation: none !important;
     opacity: 1 !important;
+  }
+
+  .lty-rs-overlay .lty-rs-btn-spin {
+    transition: none;
   }
 }

@@ -213,18 +213,36 @@ class LTY_Result_Screens {
 			}
 		}
 
+		$spin_links        = $this->collect_spin_links( $order );
+		$spin_eyebrow_text = $this->get_spin_eyebrow_text( $this->count_order_spins( $spin_links ) );
+
 		if ( ! empty( $instant_win_won ) ) {
-			$args = array( 'log_ids' => $instant_win_won, 'order' => $order );
+			$args = array(
+				'log_ids'           => $instant_win_won,
+				'order'             => $order,
+				'spin_links'        => $spin_links,
+				'spin_eyebrow_text' => $spin_eyebrow_text,
+			);
 			if ( apply_filters( 'lty_rs_show_overlay', true, 'instant-win-won', $order ) ) {
 				$this->render_template( 'instant-win-won.php', $args );
 			}
 		} elseif ( null !== $instant_win_no_win ) {
-			$args = array( 'order' => $order, 'product' => $instant_win_no_win );
+			$args = array(
+				'order'             => $order,
+				'product'           => $instant_win_no_win,
+				'spin_links'        => $spin_links,
+				'spin_eyebrow_text' => $spin_eyebrow_text,
+			);
 			if ( apply_filters( 'lty_rs_show_overlay', true, 'instant-win-no-win', $order ) ) {
 				$this->render_template( 'instant-win-no-win.php', $args );
 			}
 		} elseif ( null !== $prize_draw_product ) {
-			$args = array( 'order' => $order, 'product' => $prize_draw_product );
+			$args = array(
+				'order'             => $order,
+				'product'           => $prize_draw_product,
+				'spin_links'        => $spin_links,
+				'spin_eyebrow_text' => $spin_eyebrow_text,
+			);
 			if ( apply_filters( 'lty_rs_show_overlay', true, 'prize-draw', $order ) ) {
 				$this->render_template( 'prize-draw-good-luck.php', $args );
 			}
@@ -252,6 +270,95 @@ class LTY_Result_Screens {
 		}
 
 		return 'yes' === get_post_meta( $product_id, '_nera_stw_enabled', true );
+	}
+
+	/**
+	 * Collect Spin To Win links for all eligible products in an order.
+	 *
+	 * @param WC_Order $order Order object.
+	 * @return array<int, array{url: string, label: string, count: int}>
+	 */
+	private function collect_spin_links( $order ) {
+		if ( ! $order instanceof WC_Order ) {
+			return array();
+		}
+
+		if ( ! function_exists( 'lty_is_lottery_product' ) || ! function_exists( 'nera_stw_get_spin_url' ) ) {
+			return array();
+		}
+
+		if ( ! class_exists( 'Nera_STW_Product_Meta' ) ) {
+			return array();
+		}
+
+		$links = array();
+
+		foreach ( $order->get_items() as $item ) {
+			$product = $item->get_product();
+			if ( ! $product || ! lty_is_lottery_product( $product ) ) {
+				continue;
+			}
+
+			$pid = $product->get_id();
+
+			if ( ! Nera_STW_Product_Meta::is_enabled( $pid ) ) {
+				continue;
+			}
+
+			$url = nera_stw_get_spin_url( $pid );
+			if ( '' === $url ) {
+				continue;
+			}
+
+			$links[ $pid ] = array(
+				'url'   => $url,
+				'label' => $product->get_name(),
+				'count' => (int) $item->get_quantity(),
+			);
+		}
+
+		return $links;
+	}
+
+	/**
+	 * Total spins granted across all spin links in an order.
+	 *
+	 * @param array<int, array{url: string, label: string, count?: int}> $spin_links Spin links.
+	 * @return int
+	 */
+	private function count_order_spins( $spin_links ) {
+		if ( empty( $spin_links ) ) {
+			return 0;
+		}
+
+		$total = array_sum( array_map( 'intval', wp_list_pluck( $spin_links, 'count' ) ) );
+
+		return max( 1, $total );
+	}
+
+	/**
+	 * Eyebrow label for the spin banner.
+	 *
+	 * @param int $count Total spin count.
+	 * @return string
+	 */
+	private function get_spin_eyebrow_text( $count ) {
+		$count = max( 1, (int) $count );
+
+		if ( 1 === $count ) {
+			return __( "You've got a spin waiting!", 'lty-result-screens' );
+		}
+
+		return sprintf(
+			/* translators: %d: number of spins */
+			_n(
+				"You've got %d spin waiting!",
+				"You've got %d spins waiting!",
+				$count,
+				'lty-result-screens'
+			),
+			$count
+		);
 	}
 
 	/**
