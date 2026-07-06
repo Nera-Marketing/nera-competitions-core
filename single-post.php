@@ -73,8 +73,8 @@ get_header();
 
                                 <div class="flex flex-col gap-6 sm:flex-row sm:items-start sm:gap-12">
                                     <div class="flex items-start gap-3">
-                                        <?php echo get_avatar(get_the_author_meta('ID'), 48, '', '', [
-                                          'class' => 'h-12 w-12 shrink-0 rounded-full ring-2 ring-white/30',
+                                        <?php echo nera_render_author_avatar(get_the_author_meta('ID'), 48, [
+                                          'class' => 'h-12 w-12 shrink-0 rounded-full ring-2 ring-white/30 object-cover',
                                         ]); ?>
                                         <div>
                                             <p class="text-[10px] font-semibold uppercase tracking-wider text-white/70"><?php esc_html_e(
@@ -123,8 +123,8 @@ get_header();
 
                             <div class="flex flex-col gap-6 sm:flex-row sm:items-start sm:gap-12">
                                 <div class="flex items-start gap-3">
-                                    <?php echo get_avatar(get_the_author_meta('ID'), 48, '', '', [
-                                      'class' => 'h-12 w-12 shrink-0 rounded-full ring-2 ring-gray-200',
+                                    <?php echo nera_render_author_avatar(get_the_author_meta('ID'), 48, [
+                                      'class' => 'h-12 w-12 shrink-0 rounded-full ring-2 ring-gray-200 object-cover',
                                     ]); ?>
                                     <div>
                                         <p class="text-[10px] font-semibold uppercase tracking-wider text-text-secondary"><?php esc_html_e(

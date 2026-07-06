@@ -1040,6 +1040,10 @@ require_once get_template_directory() . '/inc/acf/winners-dynamic/acf-winners-dy
 // ACF Attribution Page Fields
 require_once get_template_directory() . '/inc/acf/attribution/acf-attribution.php';
 
+// ACF User Profile Fields (author avatar)
+require_once get_template_directory() . '/inc/acf/user/acf-user-profile.php';
+require_once get_template_directory() . '/inc/helpers/author-avatar.php';
+
 // Winners dataset helpers for server rendering
 require_once get_template_directory() . '/inc/helpers/winners-dataset.php';
 

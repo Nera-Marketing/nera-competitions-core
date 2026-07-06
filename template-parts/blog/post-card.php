@@ -75,6 +75,12 @@ if ($variant === 'featured') {
     </div>
 
     <div class="flex w-full flex-col justify-center p-6 lg:w-1/2 lg:p-10">
+        <div class="mb-3 flex items-center gap-2">
+            <?php echo nera_render_author_avatar(get_the_author_meta('ID'), 32, [
+              'class' => 'h-8 w-8 rounded-full object-cover',
+            ]); ?>
+            <span class="text-sm font-semibold text-text-primary"><?php the_author(); ?></span>
+        </div>
         <p class="mb-3 text-xs font-medium uppercase tracking-wide text-text-secondary">
             <?php echo esc_html($date_upper); ?>
             <span class="mx-1" aria-hidden="true">•</span>
@@ -117,6 +123,7 @@ $placeholder_cls = $tone_dark
   ? 'flex h-full items-center justify-center bg-gray-700'
   : 'flex h-full items-center justify-center bg-gray-200';
 $placeholder_text_cls = $tone_dark ? 'text-sm text-gray-400' : 'text-sm text-text-secondary';
+$author_cls = $tone_dark ? 'text-sm font-semibold text-gray-200' : 'text-sm font-semibold text-text-primary';
 ?>
 
 <article id="post-<?php the_ID(); ?>" <?php post_class($card_classes . ' flex h-full flex-col'); ?>>
@@ -144,6 +151,12 @@ $placeholder_text_cls = $tone_dark ? 'text-sm text-gray-400' : 'text-sm text-tex
     </div>
 
     <div class="flex flex-1 flex-col p-6">
+        <div class="mb-2 flex items-center gap-2">
+            <?php echo nera_render_author_avatar(get_the_author_meta('ID'), 32, [
+              'class' => 'h-8 w-8 rounded-full object-cover',
+            ]); ?>
+            <span class="<?php echo esc_attr($author_cls); ?>"><?php the_author(); ?></span>
+        </div>
         <p class="<?php echo esc_attr($meta_cls); ?>">
             <?php echo esc_html($date_upper); ?>
             <span class="mx-1" aria-hidden="true">•</span>
