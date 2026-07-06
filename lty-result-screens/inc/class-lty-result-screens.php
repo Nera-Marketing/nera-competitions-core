@@ -283,7 +283,7 @@ class LTY_Result_Screens {
 			return array();
 		}
 
-		if ( ! function_exists( 'lty_is_lottery_product' ) || ! function_exists( 'nera_stw_get_spin_url' ) ) {
+		if ( ! function_exists( 'nera_stw_get_spin_url' ) ) {
 			return array();
 		}
 
@@ -295,7 +295,7 @@ class LTY_Result_Screens {
 
 		foreach ( $order->get_items() as $item ) {
 			$product = $item->get_product();
-			if ( ! $product || ! lty_is_lottery_product( $product ) ) {
+			if ( ! $product ) {
 				continue;
 			}
 
