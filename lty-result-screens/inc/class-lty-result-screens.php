@@ -100,42 +100,78 @@ class LTY_Result_Screens {
 					'placeholder'  => 'https://',
 				),
 
-				// ── Prize draw screen ─────────────────────────────────────────
-				array(
-					'key'   => 'field_lty_rs_tab_draw',
-					'label' => 'Prize draw screen',
-					'type'  => 'tab',
-				),
-				array(
-					'key'           => 'field_lty_rs_draw_heading',
-					'label'         => 'Heading',
-					'name'          => 'lty_rs_draw_heading',
-					'type'          => 'text',
-					'default_value' => "You're in the draw!",
-				),
-				array(
-					'key'           => 'field_lty_rs_draw_subtext',
-					'label'         => 'Subtext',
-					'name'          => 'lty_rs_draw_subtext',
-					'type'          => 'text',
-					'default_value' => "Your entry is confirmed \xe2\x80\x94 fingers crossed!",
-				),
-				array(
-					'key'           => 'field_lty_rs_draw_good_luck',
-					'label'         => 'Good luck text',
-					'name'          => 'lty_rs_draw_good_luck',
-					'type'          => 'text',
-					'default_value' => 'Good luck!',
-				),
-				array(
-					'key'           => 'field_lty_rs_draw_button',
-					'label'         => 'Button text',
-					'name'          => 'lty_rs_draw_button',
-					'type'          => 'text',
-					'default_value' => 'Got it!',
-				),
-
+			// ── Prize draw screen ─────────────────────────────────────────
+			array(
+				'key'   => 'field_lty_rs_tab_draw',
+				'label' => 'Prize draw screen',
+				'type'  => 'tab',
 			),
+			array(
+				'key'           => 'field_lty_rs_draw_heading',
+				'label'         => 'Heading',
+				'name'          => 'lty_rs_draw_heading',
+				'type'          => 'text',
+				'default_value' => "You're in the draw!",
+			),
+			array(
+				'key'           => 'field_lty_rs_draw_subtext',
+				'label'         => 'Subtext',
+				'name'          => 'lty_rs_draw_subtext',
+				'type'          => 'text',
+				'default_value' => "Your entry is confirmed \xe2\x80\x94 fingers crossed!",
+			),
+			array(
+				'key'           => 'field_lty_rs_draw_good_luck',
+				'label'         => 'Good luck text',
+				'name'          => 'lty_rs_draw_good_luck',
+				'type'          => 'text',
+				'default_value' => 'Good luck!',
+			),
+			array(
+				'key'           => 'field_lty_rs_draw_button',
+				'label'         => 'Button text',
+				'name'          => 'lty_rs_draw_button',
+				'type'          => 'text',
+				'default_value' => 'Got it!',
+			),
+
+			// ── Spin To Win screen ────────────────────────────────────────
+			array(
+				'key'   => 'field_lty_rs_tab_stw',
+				'label' => 'Spin To Win screen',
+				'type'  => 'tab',
+			),
+			array(
+				'key'           => 'field_lty_rs_stw_heading',
+				'label'         => 'Heading',
+				'name'          => 'lty_rs_stw_heading',
+				'type'          => 'text',
+				'default_value' => "Your spins are ready!",
+			),
+			array(
+				'key'           => 'field_lty_rs_stw_subtext',
+				'label'         => 'Subtext',
+				'name'          => 'lty_rs_stw_subtext',
+				'type'          => 'text',
+				'instructions'  => 'Optional. Leave blank to hide.',
+				'default_value' => '',
+			),
+			array(
+				'key'           => 'field_lty_rs_stw_spin_button',
+				'label'         => 'Spin button text',
+				'name'          => 'lty_rs_stw_spin_button',
+				'type'          => 'text',
+				'default_value' => 'Spin the Wheel',
+			),
+			array(
+				'key'           => 'field_lty_rs_stw_dismiss_button',
+				'label'         => 'Dismiss button text',
+				'name'          => 'lty_rs_stw_dismiss_button',
+				'type'          => 'text',
+				'default_value' => 'Got it!',
+			),
+
+		),
 			'location' => array(
 				array(
 					array(
@@ -246,7 +282,32 @@ class LTY_Result_Screens {
 			if ( apply_filters( 'lty_rs_show_overlay', true, 'prize-draw', $order ) ) {
 				$this->render_template( 'prize-draw-good-luck.php', $args );
 			}
+		} elseif ( ! empty( $spin_links ) && $this->should_show_stw_overlay( $order ) ) {
+			$args = array(
+				'order'             => $order,
+				'spin_links'        => $spin_links,
+				'spin_eyebrow_text' => $spin_eyebrow_text,
+			);
+			if ( apply_filters( 'lty_rs_show_overlay', true, 'spin-to-win-ready', $order ) ) {
+				$this->render_template( 'spin-to-win-ready.php', $args );
+			}
 		}
+	}
+
+	/**
+	 * Whether the current request can show the solo STW overlay.
+	 *
+	 * Only logged-in users who own the order see the overlay; guests are
+	 * excluded because the spin wheel requires authentication.
+	 *
+	 * @param WC_Order $order Order object.
+	 * @return bool
+	 */
+	private function should_show_stw_overlay( $order ) {
+		if ( ! is_user_logged_in() || ! $order instanceof WC_Order ) {
+			return false;
+		}
+		return (int) $order->get_user_id() === get_current_user_id();
 	}
 
 	/**
