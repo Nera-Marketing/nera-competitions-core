@@ -24,6 +24,10 @@
     --lty-rs-draw-accent:      #4f46e5;
     --lty-rs-draw-bg:          #f8f7ff;
 
+    /* Spin To Win */
+    --lty-rs-stw-accent:       #d62828;
+    --lty-rs-stw-bg:           #fff9f0;
+
     /* Shared */
     --lty-rs-card-radius:      1.375rem;
   }
@@ -131,6 +135,28 @@
 .lty-rs-overlay .lty-rs-btn-draw:hover {
   transform: translateY(-2px);
   box-shadow: 0 6px 22px rgba(79, 70, 229, 0.38);
+}
+
+/* Spin To Win dismiss — text link secondary below primary spin CTA */
+.lty-rs-overlay .lty-rs-btn-stw-dismiss {
+  width: auto;
+  padding: 0.5rem 0.75rem;
+  margin-top: 0.75rem;
+  color: #111827;
+  background: transparent;
+  border: none;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  text-decoration: none;
+  box-shadow: none;
+}
+.lty-rs-overlay .lty-rs-btn-stw-dismiss:hover {
+  color: #374151;
+  background: transparent;
+  border: none;
+  text-decoration: none;
+  transform: none;
+  box-shadow: none;
 }
 
 /* X close button — all: unset strips layout/position; re-apply everything here */
