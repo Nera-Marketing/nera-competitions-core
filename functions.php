@@ -562,9 +562,33 @@ add_action('wp_enqueue_scripts', function () {
     wp_enqueue_style(
       'nera-lottery-plugin',
       $css_uri . 'lottery-plugin.css',
-      ['nera-style'],
+      ['nera-style', 'jquery-alertable'],
       file_exists($file) ? filemtime($file) : null
     );
+
+    $js_dir = get_template_directory() . '/frontend/assets/js/';
+    $js_uri = get_template_directory_uri() . '/frontend/assets/js/';
+    $sync_file = $js_dir . 'lottery-lucky-dip-sync.js';
+    if (file_exists($sync_file)) {
+      wp_enqueue_script(
+        'nera-lottery-lucky-dip-sync',
+        $js_uri . 'lottery-lucky-dip-sync.js',
+        ['jquery', 'lty-frontend', 'jquery-modal', 'wc-cart-fragments'],
+        filemtime($sync_file),
+        true
+      );
+    }
+
+    $alertable_file = $js_dir . 'lottery-alertable.js';
+    if (file_exists($alertable_file)) {
+      wp_enqueue_script(
+        'nera-lottery-alertable',
+        $js_uri . 'lottery-alertable.js',
+        ['jquery', 'jquery-alertable', 'lty-frontend'],
+        filemtime($alertable_file),
+        true
+      );
+    }
   }
 
   if (true) {
