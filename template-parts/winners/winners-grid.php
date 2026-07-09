@@ -17,6 +17,17 @@ $dataset = nera_winners_get_page_dataset(get_the_ID());
 $winners = $dataset['winners'];
 $filter_items = $dataset['filter_items'];
 
+$empty_heading = function_exists('get_field') ? get_field('winners_empty_heading') : '';
+$empty_description = function_exists('get_field') ? get_field('winners_empty_description') : '';
+$empty_heading = is_string($empty_heading) ? trim($empty_heading) : '';
+$empty_description = is_string($empty_description) ? trim($empty_description) : '';
+if ($empty_heading === '') {
+  $empty_heading = __('No Winners Yet', 'nera-competitions');
+}
+if ($empty_description === '') {
+  $empty_description = __('Check back soon to see our lucky winners!', 'nera-competitions');
+}
+
 if (empty($winners)) { ?>
   <section class="py-16 px-5 sm:px-6 bg-surface">
       <div class="container mx-auto max-w-7xl">
@@ -27,10 +38,10 @@ if (empty($winners)) { ?>
                       <circle cx="12" cy="12" r="10" />
                   </svg>
                   <h3 class="text-xl font-bold text-text-primary mb-2">
-                      <?php esc_html_e('No Winners Yet', 'nera-competitions'); ?>
+                      <?php echo esc_html($empty_heading); ?>
                   </h3>
                   <p class="text-text-secondary">
-                      <?php esc_html_e('Check back soon to see our lucky winners!', 'nera-competitions'); ?>
+                      <?php echo esc_html($empty_description); ?>
                   </p>
               </div>
           </div>

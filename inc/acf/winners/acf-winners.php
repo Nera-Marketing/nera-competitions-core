@@ -208,6 +208,39 @@ function nera_register_winners_fields()
         'default_value' => 1,
         'ui' => 1,
       ],
+
+      // Empty state Tab
+      [
+        'key' => 'field_winners_tab_empty',
+        'label' => __('Empty state', 'nera-competitions'),
+        'type' => 'tab',
+        'placement' => 'top',
+      ],
+      [
+        'key' => 'field_winners_empty_heading',
+        'label' => __('Heading', 'nera-competitions'),
+        'name' => 'winners_empty_heading',
+        'type' => 'text',
+        'instructions' => __(
+          'Shown on this page when there are no winners at all.',
+          'nera-competitions',
+        ),
+        'default_value' => __('No Winners Yet', 'nera-competitions'),
+        'placeholder' => __('No Winners Yet', 'nera-competitions'),
+      ],
+      [
+        'key' => 'field_winners_empty_description',
+        'label' => __('Description', 'nera-competitions'),
+        'name' => 'winners_empty_description',
+        'type' => 'textarea',
+        'instructions' => __(
+          'Supporting text below the empty-state heading.',
+          'nera-competitions',
+        ),
+        'default_value' => __('Check back soon to see our lucky winners!', 'nera-competitions'),
+        'rows' => 3,
+        'new_lines' => '',
+      ],
     ],
     'location' => [
       [

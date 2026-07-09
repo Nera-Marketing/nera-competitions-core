@@ -46,7 +46,7 @@ $showing_start  = count($rows);
 $global_empty   = (int) ($counts['all'] ?? 0) === 0;
 
 $empty_copy = function_exists('nera_get_winners_dynamic_empty_copy')
-  ? nera_get_winners_dynamic_empty_copy()
+  ? nera_get_winners_dynamic_empty_copy($page_id)
   : [
     'heading' => __('No winners to show yet', 'nera-competitions'),
     'description' => __(
