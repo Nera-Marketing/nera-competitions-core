@@ -1171,12 +1171,26 @@ add_action('wp_footer', 'nera_output_toast_data', 999);
  */
 function nera_shop_template_loader($template)
 {
-  if (is_shop() && !is_search()) {
-    $custom_template = locate_template('page-templates/shop-template-bridge.php');
-    if ($custom_template) {
-      return $custom_template;
-    }
+  if (!is_shop() || is_search()) {
+    return $template;
   }
+
+  $shop_id = function_exists('wc_get_page_id') ? (int) wc_get_page_id('shop') : 0;
+  if ($shop_id <= 0) {
+    return $template;
+  }
+
+  // Singular pages that are not the configured Shop page keep their own template
+  // (e.g. Winners Entry List must not be forced through the shop bridge).
+  if (is_singular('page') && (int) get_queried_object_id() !== $shop_id) {
+    return $template;
+  }
+
+  $custom_template = locate_template('page-templates/shop-template-bridge.php');
+  if ($custom_template) {
+    return $custom_template;
+  }
+
   return $template;
 }
 add_filter('template_include', 'nera_shop_template_loader', 20);
