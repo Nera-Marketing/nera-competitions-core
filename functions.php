@@ -1410,9 +1410,26 @@ function nera_advanced_filter_render_prize_cards_html(WP_Query $competitions, $c
  * Inner HTML for #advanced-filter-grid: cards plus empty / no-match blocks.
  *
  * @param WP_Query $competitions Query after running advanced filter args.
+ * @param int      $page_id      Optional page ID for per-page empty-state copy.
  */
-function nera_advanced_filter_render_grid_html(WP_Query $competitions)
+function nera_advanced_filter_render_grid_html(WP_Query $competitions, $page_id = 0)
 {
+  $page_id = absint($page_id);
+  $empty_heading = '';
+  $empty_description = '';
+  if ($page_id > 0 && function_exists('get_field')) {
+    $empty_heading = get_field('product_listing_empty_heading', $page_id);
+    $empty_description = get_field('product_listing_empty_description', $page_id);
+  }
+  $empty_heading = is_string($empty_heading) ? trim($empty_heading) : '';
+  $empty_description = is_string($empty_description) ? trim($empty_description) : '';
+  if ($empty_heading === '') {
+    $empty_heading = __('No competitions found', 'nera-competitions');
+  }
+  if ($empty_description === '') {
+    $empty_description = __('Check back soon for new amazing prizes!', 'nera-competitions');
+  }
+
   ob_start();
   if ($competitions->have_posts()) {
     echo nera_advanced_filter_render_prize_cards_html($competitions, 0);
@@ -1446,8 +1463,8 @@ function nera_advanced_filter_render_grid_html(WP_Query $competitions)
           <polyline points="21 15 16 10 5 21" />
         </svg>
       </div>
-      <h3 class="text-2xl font-bold text-text-primary mb-2"><?php esc_html_e('No competitions found', 'nera-competitions'); ?></h3>
-      <p class="text-text-secondary"><?php esc_html_e('Check back soon for new amazing prizes!', 'nera-competitions'); ?></p>
+      <h3 class="text-2xl font-bold text-text-primary mb-2"><?php echo esc_html($empty_heading); ?></h3>
+      <p class="text-text-secondary"><?php echo esc_html($empty_description); ?></p>
     </div>
     <?php
   }
@@ -1466,6 +1483,7 @@ function nera_ajax_advanced_filter_competitions()
   $url_category_slugs = nera_advanced_filter_whitelist_category_slugs($raw);
   $paged = isset($_POST['paged']) ? max(1, absint($_POST['paged'])) : 1;
   $append = !empty($_POST['append']) && (string) $_POST['append'] === '1';
+  $page_id = isset($_POST['page_id']) ? absint($_POST['page_id']) : 0;
 
   $args = nera_advanced_filter_competitions_wp_query_args($url_category_slugs, $paged);
   $competitions = new WP_Query($args);
@@ -1489,7 +1507,7 @@ function nera_ajax_advanced_filter_competitions()
     return;
   }
 
-  $html = nera_advanced_filter_render_grid_html($competitions);
+  $html = nera_advanced_filter_render_grid_html($competitions, $page_id);
   wp_reset_postdata();
 
   wp_send_json_success([

@@ -56,6 +56,8 @@ if (
 ) {
   $nera_adv_grid_lg_class = nera_shop_listing_grid_lg_class();
 }
+
+$nera_adv_page_id = (int) (get_queried_object_id() ?: get_the_ID());
 ?>
 
 <script>
@@ -71,6 +73,7 @@ if (
       categoryColors: <?php echo wp_json_encode($category_colors); ?>,
       ajaxUrl: <?php echo wp_json_encode(admin_url('admin-ajax.php')); ?>,
       ajaxNonce: <?php echo wp_json_encode(wp_create_nonce('nera_nonce')); ?>,
+      pageId: <?php echo (int) $nera_adv_page_id; ?>,
       gridFoundPosts: <?php echo (int) $competitions->found_posts; ?>,
       gridPage: 1,
       gridMaxPages: <?php echo (int) $nera_adv_grid_max_pages; ?>,
@@ -129,6 +132,9 @@ if (
         body.append('product_cat', this.selectedCategories.join(','));
         body.append('paged', '1');
         body.append('append', '0');
+        if (this.pageId) {
+          body.append('page_id', String(this.pageId));
+        }
         try {
           const res = await fetch(this.ajaxUrl, {
             method: 'POST',
@@ -173,6 +179,9 @@ if (
         body.append('product_cat', this.selectedCategories.join(','));
         body.append('paged', String(nextPage));
         body.append('append', '1');
+        if (this.pageId) {
+          body.append('page_id', String(this.pageId));
+        }
         try {
           const res = await fetch(this.ajaxUrl, {
             method: 'POST',
@@ -633,7 +642,7 @@ if (
          data-aos="fade-up" data-aos-duration="600" data-aos-delay="150">
 
       <?php
-      echo nera_advanced_filter_render_grid_html($competitions);
+      echo nera_advanced_filter_render_grid_html($competitions, $nera_adv_page_id);
       wp_reset_postdata();
       ?>
     </div>
