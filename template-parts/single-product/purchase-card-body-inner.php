@@ -132,6 +132,34 @@ if ($is_sold_out) {
             });
           },
 
+          resetManualTicketSelection() {
+            if (!config.isManualTicket || !window.jQuery) {
+              return;
+            }
+
+            const $ = window.jQuery;
+
+            // Unselect via plugin handlers — clears closure ticket_numbers[]
+            $('.lty-selected-ticket').trigger('click');
+
+            $('.lty-lottery-ticket-numbers').val('');
+            $('.lty-lottery-ticket-quantity').val(0);
+
+            document.querySelectorAll('[data-selected-ticket-count]').forEach((el) => {
+              el.textContent = '0';
+            });
+            document.querySelectorAll('[data-count-badge]').forEach((el) => {
+              el.dataset.hasSelection = 'false';
+            });
+
+            const $active = $('.nera-ticket-dialog .lty-lottery-ticket-tab.lty-active-tab');
+            if ($active.length) {
+              $active.trigger('click');
+            } else {
+              $('.nera-ticket-dialog .lty-lottery-ticket-tab').first().trigger('click');
+            }
+          },
+
           async submitForm(e) {
             if (config.isManualTicket) {
               const field = document.querySelector('.lty-lottery-ticket-numbers');
@@ -195,6 +223,10 @@ if ($is_sold_out) {
                     window.jQuery(document.body).trigger('wc_fragments_refreshed');
                     window.jQuery(document.body).trigger('wc_fragment_refresh');
                   }
+                }
+
+                if (config.isManualTicket) {
+                  this.resetManualTicketSelection();
                 }
               }
 
