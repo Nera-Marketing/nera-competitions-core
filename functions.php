@@ -1034,6 +1034,9 @@ require_once get_template_directory() . '/inc/legal-placeholders.php';
 // ACF Winners Page Fields
 require_once get_template_directory() . '/inc/acf/winners/acf-winners.php';
 
+// ACF Winners Theme Settings (site-wide empty-state copy)
+require_once get_template_directory() . '/inc/acf/winners/acf-winners-theme-settings.php';
+
 // ACF Winners (Dynamic) Page Fields
 require_once get_template_directory() . '/inc/acf/winners-dynamic/acf-winners-dynamic.php';
 
