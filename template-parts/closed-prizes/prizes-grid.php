@@ -25,6 +25,18 @@ $has_more   = $query->max_num_pages > 1;
 $ajax_url   = admin_url('admin-ajax.php');
 $ajax_nonce = wp_create_nonce('nera_nonce');
 
+$page_id = get_queried_object_id() ?: get_the_ID();
+$empty_heading = function_exists('get_field') ? get_field('closed_prizes_empty_heading', $page_id) : '';
+$empty_description = function_exists('get_field') ? get_field('closed_prizes_empty_description', $page_id) : '';
+$empty_heading = is_string($empty_heading) ? trim($empty_heading) : '';
+$empty_description = is_string($empty_description) ? trim($empty_description) : '';
+if ($empty_heading === '') {
+  $empty_heading = __('No closed prizes yet', 'nera-competitions');
+}
+if ($empty_description === '') {
+  $empty_description = __('Check back after our competitions have drawn their winners.', 'nera-competitions');
+}
+
 $alpine_config = [
   'hasMore'   => $has_more,
   'ajaxUrl'   => $ajax_url,
@@ -103,10 +115,10 @@ $x_data_expr = 'neraClosedPrizesGrid(' . $config_json . ')';
           <span class="material-symbols-outlined text-4xl text-text-secondary">emoji_events</span>
         </div>
         <h3 class="text-xl font-bold text-text-primary mb-2">
-          <?php esc_html_e('No closed prizes yet', 'nera-competitions'); ?>
+          <?php echo esc_html($empty_heading); ?>
         </h3>
         <p class="text-sm text-text-secondary">
-          <?php esc_html_e('Check back after our competitions have drawn their winners.', 'nera-competitions'); ?>
+          <?php echo esc_html($empty_description); ?>
         </p>
       </div>
 

@@ -1040,6 +1040,9 @@ require_once get_template_directory() . '/inc/heading-style.php';
 // ACF Product Listing Fields
 require_once get_template_directory() . '/inc/acf/product-listing/acf-product-listing.php';
 
+// ACF Closed Prizes Fields
+require_once get_template_directory() . '/inc/acf/closed-prizes/acf-closed-prizes.php';
+
 // ACF Shop listing layout (WooCommerce Shop page)
 require_once get_template_directory() . '/inc/acf/shop-listing/acf-shop-listing.php';
 
