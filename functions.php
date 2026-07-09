@@ -562,9 +562,33 @@ add_action('wp_enqueue_scripts', function () {
     wp_enqueue_style(
       'nera-lottery-plugin',
       $css_uri . 'lottery-plugin.css',
-      ['nera-style'],
+      ['nera-style', 'jquery-alertable'],
       file_exists($file) ? filemtime($file) : null
     );
+
+    $js_dir = get_template_directory() . '/frontend/assets/js/';
+    $js_uri = get_template_directory_uri() . '/frontend/assets/js/';
+    $sync_file = $js_dir . 'lottery-lucky-dip-sync.js';
+    if (file_exists($sync_file)) {
+      wp_enqueue_script(
+        'nera-lottery-lucky-dip-sync',
+        $js_uri . 'lottery-lucky-dip-sync.js',
+        ['jquery', 'lty-frontend', 'jquery-modal', 'wc-cart-fragments'],
+        filemtime($sync_file),
+        true
+      );
+    }
+
+    $alertable_file = $js_dir . 'lottery-alertable.js';
+    if (file_exists($alertable_file)) {
+      wp_enqueue_script(
+        'nera-lottery-alertable',
+        $js_uri . 'lottery-alertable.js',
+        ['jquery', 'jquery-alertable', 'lty-frontend'],
+        filemtime($alertable_file),
+        true
+      );
+    }
   }
 
   if (true) {
@@ -700,6 +724,9 @@ function nera_enqueue_scripts()
   $alpine_component_deps = ['nera-alpine-toast', 'nera-alpine-countdown'];
   if (is_page_template('page-templates/winners-template.php')) {
     $alpine_component_deps[] = 'nera-alpine-winners-page';
+  }
+  if (is_product()) {
+    $alpine_component_deps[] = 'nera-alpine-product-gallery';
   }
 
   wp_enqueue_script(
@@ -1033,6 +1060,9 @@ require_once get_template_directory() . '/inc/legal-placeholders.php';
 
 // ACF Winners Page Fields
 require_once get_template_directory() . '/inc/acf/winners/acf-winners.php';
+
+// ACF Winners Theme Settings (site-wide empty-state copy)
+require_once get_template_directory() . '/inc/acf/winners/acf-winners-theme-settings.php';
 
 // ACF Winners (Dynamic) Page Fields
 require_once get_template_directory() . '/inc/acf/winners-dynamic/acf-winners-dynamic.php';

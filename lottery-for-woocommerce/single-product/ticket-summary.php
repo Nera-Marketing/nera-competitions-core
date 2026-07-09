@@ -26,7 +26,18 @@ if (method_exists($product, 'get_lty_maximum_tickets_per_order')) {
 }
 ?>
 
-<div x-data="{ ticketOpen: false }" class="nera-ticket-picker-wrap">
+<div
+  x-data="{
+    ticketOpen: false,
+    init() {
+      const unlock = () => document.body.classList.remove('nera-ticket-dialog-open');
+      this.$watch('ticketOpen', open => {
+        document.body.classList.toggle('nera-ticket-dialog-open', open);
+      });
+      return unlock;
+    }
+  }"
+  class="nera-ticket-picker-wrap">
 
   <!-- ── Trigger Button ───────────────────────────────────────────── -->
   <button
@@ -52,7 +63,7 @@ if (method_exists($product, 'get_lty_maximum_tickets_per_order')) {
     x-show="ticketOpen"
     x-cloak
     @keydown.escape.window="ticketOpen = false"
-    class="fixed inset-0 flex items-end sm:items-center justify-center p-0 sm:p-4"
+    class="fixed inset-0 flex items-end sm:items-center justify-center overflow-hidden overscroll-none p-0 sm:p-4"
     style="z-index: 999990 !important; position: fixed !important;">
 
     <!-- Backdrop -->
