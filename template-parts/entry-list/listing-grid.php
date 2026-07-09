@@ -23,6 +23,18 @@ $ajax_url   = admin_url('admin-ajax.php');
 $ajax_nonce = wp_create_nonce('nera_nonce');
 $rest_base  = esc_url_raw(trailingslashit(rest_url('nera/v1')));
 
+$page_id = get_queried_object_id() ?: get_the_ID();
+$empty_heading = function_exists('get_field') ? get_field('entry_list_empty_heading', $page_id) : '';
+$empty_description = function_exists('get_field') ? get_field('entry_list_empty_description', $page_id) : '';
+$empty_heading = is_string($empty_heading) ? trim($empty_heading) : '';
+$empty_description = is_string($empty_description) ? trim($empty_description) : '';
+if ($empty_heading === '') {
+  $empty_heading = __('No competitions found', 'nera-competitions');
+}
+if ($empty_description === '') {
+  $empty_description = __('There are no participant lists available yet. Please check back soon.', 'nera-competitions');
+}
+
 $entry_list_alpine_config = [
   'restBase'   => $rest_base,
   'hasMore'    => $has_more,
@@ -59,10 +71,10 @@ get_template_part('template-parts/entry-list/entry-list-grid-alpine');
           <span class="material-symbols-outlined text-4xl text-text-secondary">emoji_events</span>
         </div>
         <h3 class="text-xl font-bold text-text-primary mb-2">
-          <?php esc_html_e('No competitions found', 'nera-competitions'); ?>
+          <?php echo esc_html($empty_heading); ?>
         </h3>
         <p class="text-sm text-text-secondary">
-          <?php esc_html_e('There are no participant lists available yet. Please check back soon.', 'nera-competitions'); ?>
+          <?php echo esc_html($empty_description); ?>
         </p>
       </div>
     <?php else: ?>

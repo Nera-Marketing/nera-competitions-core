@@ -74,6 +74,34 @@ if (function_exists('acf_add_local_field_group')) {
           ],
         ],
       ],
+      // Tab: Empty state
+      [
+        'key' => 'field_tab_product_listing_empty',
+        'label' => 'Empty state',
+        'name' => '',
+        'type' => 'tab',
+        'placement' => 'top',
+        'endpoint' => 0,
+      ],
+      [
+        'key' => 'field_product_listing_empty_heading',
+        'label' => 'Heading',
+        'name' => 'product_listing_empty_heading',
+        'type' => 'text',
+        'instructions' => 'Shown on this page when there are no competitions at all.',
+        'default_value' => 'No competitions found',
+        'placeholder' => 'No competitions found',
+      ],
+      [
+        'key' => 'field_product_listing_empty_description',
+        'label' => 'Description',
+        'name' => 'product_listing_empty_description',
+        'type' => 'textarea',
+        'instructions' => 'Supporting text below the empty-state heading.',
+        'default_value' => 'Check back soon for new amazing prizes!',
+        'rows' => 3,
+        'new_lines' => '',
+      ],
     ],
     'location' => [
       [
