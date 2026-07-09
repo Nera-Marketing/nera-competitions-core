@@ -725,6 +725,9 @@ function nera_enqueue_scripts()
   if (is_page_template('page-templates/winners-template.php')) {
     $alpine_component_deps[] = 'nera-alpine-winners-page';
   }
+  if (is_product()) {
+    $alpine_component_deps[] = 'nera-alpine-product-gallery';
+  }
 
   wp_enqueue_script(
     'alpinejs-collapse',
