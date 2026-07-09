@@ -93,6 +93,13 @@ function nera_register_winners_dynamic_fields()
           'value' => 'page-templates/winners-dynamic-template.php',
         ],
       ],
+      [
+        [
+          'param' => 'page_template',
+          'operator' => '==',
+          'value' => 'page-templates/winners-entry-list-template.php',
+        ],
+      ],
     ],
     'menu_order' => 0,
     'position' => 'normal',
@@ -100,7 +107,10 @@ function nera_register_winners_dynamic_fields()
     'label_placement' => 'top',
     'instruction_placement' => 'label',
     'active' => true,
-    'description' => __('Settings for the dynamic Winners page template', 'nera-competitions'),
+    'description' => __(
+      'Settings for the dynamic Winners and Winners Entry List page templates',
+      'nera-competitions',
+    ),
   ]);
 }
 add_action('acf/init', 'nera_register_winners_dynamic_fields');

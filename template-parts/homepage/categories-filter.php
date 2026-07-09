@@ -58,6 +58,12 @@ if (
 }
 
 $nera_adv_page_id = (int) (get_queried_object_id() ?: get_the_ID());
+if (function_exists('is_shop') && is_shop() && function_exists('wc_get_page_id')) {
+  $shop_id = (int) wc_get_page_id('shop');
+  if ($shop_id > 0) {
+    $nera_adv_page_id = $shop_id;
+  }
+}
 ?>
 
 <script>
