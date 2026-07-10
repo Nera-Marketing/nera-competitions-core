@@ -40,6 +40,7 @@ defined('ABSPATH') || exit;
         </button>
       <?php endif; ?>
     </div>
+    <p class="nera-lucky-dip-inline__error" hidden role="alert" aria-live="polite"></p>
   </div>
 
   <?php if ('regenerate' === $action) : ?>

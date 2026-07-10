@@ -892,6 +892,10 @@ body.nera-ticket-dialog-open {
   flex-wrap: wrap;
 }
 
+.nera-lucky-dip-regenerate__quantity .nera-lucky-dip-inline__error {
+  margin-top: 8px;
+}
+
 .nera-lucky-dip-regenerate__generate {
   flex: 1;
   min-width: 140px;
