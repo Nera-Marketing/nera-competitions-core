@@ -13,6 +13,8 @@
   var MODAL_CLASS = 'nera-lottery-alert';
   var OVERLAY_CLASS = 'nera-lottery-alert-overlay';
   var ERROR_SELECTOR = '.nera-lucky-dip-inline__error';
+  var LUCKY_DIP_ACTION_SELECTOR =
+    '.lty-add-to-cart-lucky-dip-button, .lty-lucky-dip-button, .lty-regenerate-lucky-dip-button, .lty-regenerate-lucky-dip-add-to-cart-button';
   var luckyDipPending = false;
 
   /**
@@ -30,12 +32,27 @@
   }
 
   /**
+   * Prefer the error slot inside an open regenerate modal; else inline Lucky Dip.
+   *
+   * @return {jQuery}
+   */
+  function getLuckyDipErrorTarget() {
+    var $inModal = $(
+      '.jquery-modal .nera-lucky-dip-regenerate ' + ERROR_SELECTOR
+    ).first();
+    if ($inModal.length) {
+      return $inModal;
+    }
+    return $(ERROR_SELECTOR).first();
+  }
+
+  /**
    * Show Lucky Dip error as inline text under the controls.
    *
    * @param {string} message
    */
   function showLuckyDipInlineError(message) {
-    var $error = $(ERROR_SELECTOR).first();
+    var $error = getLuckyDipErrorTarget();
     if (!$error.length) {
       return;
     }
@@ -44,7 +61,7 @@
   }
 
   /**
-   * Clear Lucky Dip inline error.
+   * Clear Lucky Dip inline error(s).
    */
   function clearLuckyDipInlineError() {
     $(ERROR_SELECTOR).text('').prop('hidden', true);
@@ -111,27 +128,36 @@
     };
 
     // Flag before plugin click handlers (mousedown fires first).
+    $(document).on('mousedown', LUCKY_DIP_ACTION_SELECTOR, function () {
+      luckyDipPending = true;
+      clearLuckyDipInlineError();
+    });
+
+    // Clear error when quantity changes (inline or regenerate modal).
     $(document).on(
-      'mousedown',
-      '.lty-add-to-cart-lucky-dip-button, .lty-lucky-dip-button',
+      'change input',
+      '.nera-lucky-dip-inline .qty, .nera-lucky-dip-regenerate .qty',
       function () {
-        luckyDipPending = true;
         clearLuckyDipInlineError();
       }
     );
 
-    // Clear error when quantity changes.
-    $(document).on('change input', '.nera-lucky-dip-inline .qty', function () {
-      clearLuckyDipInlineError();
-    });
-
-    // Clear pending flag on success modal (no alertable error fired).
+    // Clear pending flag on success / regenerate modal (no alertable error fired).
     if ($.modal && $.modal.OPEN) {
       $(document).on($.modal.OPEN, function (event, modal) {
-        if (modal && modal.$elm && modal.$elm.hasClass('nera-lucky-dip-popup')) {
-          luckyDipPending = false;
-          clearLuckyDipInlineError();
+        if (
+          !modal ||
+          !modal.$elm ||
+          !(
+            modal.$elm.hasClass('nera-lucky-dip-popup') ||
+            modal.$elm.hasClass('nera-lucky-dip-regenerate')
+          )
+        ) {
+          return;
         }
+
+        luckyDipPending = false;
+        clearLuckyDipInlineError();
       });
     }
   }

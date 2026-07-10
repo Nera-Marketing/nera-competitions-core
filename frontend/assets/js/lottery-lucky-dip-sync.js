@@ -166,6 +166,26 @@
   }
 
   /**
+   * Whether the opened modal is a Lucky Dip success state (tickets already in cart).
+   *
+   * Method 1 uses .nera-lucky-dip-popup. Method 2 reuses .nera-lucky-dip-regenerate
+   * for both preview and success — only the success step includes .lty-view-cart.
+   *
+   * @param {jQuery} $elm
+   * @return {boolean}
+   */
+  function isLuckyDipSuccessModal($elm) {
+    if ($elm.hasClass('nera-lucky-dip-popup')) {
+      return true;
+    }
+
+    return (
+      $elm.hasClass('nera-lucky-dip-regenerate') &&
+      $elm.find('.lty-view-cart').length > 0
+    );
+  }
+
+  /**
    * Bind to jquery-modal open event for Nera Lucky Dip success popup.
    */
   function init() {
@@ -174,7 +194,7 @@
     }
 
     $(document).on($.modal.OPEN, function (event, modal) {
-      if (!modal || !modal.$elm || !modal.$elm.hasClass('nera-lucky-dip-popup')) {
+      if (!modal || !modal.$elm || !isLuckyDipSuccessModal(modal.$elm)) {
         return;
       }
 
