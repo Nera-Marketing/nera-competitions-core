@@ -16,49 +16,63 @@
      * @param {string} key
      */
     removeItem: function (key) {
-      if (!confirm('Are you sure you want to remove this item?')) return;
+      // Custom HTML confirm dialog (native confirm() is unreliable in mobile WebViews).
+      // Falls back to native confirm only if Alpine is unavailable.
+      const ask = window.Alpine
+        ? Alpine.store('dialog').confirm({
+            title: 'Remove item?',
+            message: 'Are you sure you want to remove this item from your cart?',
+            confirmText: 'Remove',
+            cancelText: 'Cancel',
+            variant: 'danger',
+          })
+        : Promise.resolve(window.confirm('Are you sure you want to remove this item?'));
 
-      // Standard removal URL usually available in render
-      // But since we want AJAX, we can use the wc_cart_remove_item endpoint or ?remove_item=key query
-      // Safest: Use the remove link href if available, prevent default, and fetch it.
-      // We didn't render standard remove link, so let's construct it or use form.
+      ask.then(confirmed => {
+        if (!confirmed) return;
 
-      const url = `?remove_item=${key}&_wpnonce=${document.querySelector('#woocommerce-cart-nonce').value}`;
+        // Standard removal URL usually available in render
+        // But since we want AJAX, we can use the wc_cart_remove_item endpoint or ?remove_item=key query
+        // Safest: Use the remove link href if available, prevent default, and fetch it.
+        // We didn't render standard remove link, so let's construct it or use form.
 
-      const itemRow = document.getElementById(`cart-item-${key}`);
-      if (itemRow) {
-        itemRow.style.transform = 'translateX(100px)';
-        itemRow.style.opacity = '0';
-      }
+        const url = `?remove_item=${key}&_wpnonce=${document.querySelector('#woocommerce-cart-nonce').value}`;
 
-      fetch(url)
-        .then(response => response.text())
-        .then(html => {
-          // Parse and replace like update
-          const parser = new DOMParser();
-          const doc = parser.parseFromString(html, 'text/html');
-          const newForm = doc.querySelector('.woocommerce-cart-form');
-          const emptyCart = doc.querySelector('.nera-cart-empty-state'); // if cart became empty
+        const itemRow = document.getElementById(`cart-item-${key}`);
+        if (itemRow) {
+          itemRow.style.transform = 'translateX(100px)';
+          itemRow.style.opacity = '0';
+        }
 
-          const container = document.querySelector('.woocommerce-cart-form').parentNode;
+        fetch(url)
+          .then(response => response.text())
+          .then(html => {
+            // Parse and replace like update
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
+            const newForm = doc.querySelector('.woocommerce-cart-form');
+            const emptyCart = doc.querySelector('.nera-cart-empty-state'); // if cart became empty
 
-          if (emptyCart) {
-            // Cart is now empty
-            document.querySelector('.woocommerce-cart-form').remove();
-            // Inject message
-            // Best to reload or just put the HTML
-            location.reload();
-            return;
-          }
+            const container = document.querySelector('.woocommerce-cart-form').parentNode;
 
-          if (newForm) {
-            document.querySelector('.woocommerce-cart-form').innerHTML = newForm.innerHTML;
-          }
+            if (emptyCart) {
+              // Cart is now empty
+              document.querySelector('.woocommerce-cart-form').remove();
+              // Inject message
+              // Best to reload or just put the HTML
+              location.reload();
+              return;
+            }
 
-          jQuery(document.body).trigger('wc_fragment_refresh');
-          if (window.Alpine) Alpine.store('toast').info('Item removed');
-        })
-        .catch(err => location.reload()); // Fallback
+            if (newForm) {
+              document.querySelector('.woocommerce-cart-form').innerHTML = newForm.innerHTML;
+            }
+
+            jQuery(document.body).trigger('wc_fragment_refresh');
+            if (window.Alpine) Alpine.store('toast').info('Item removed');
+          })
+          .catch(err => location.reload()); // Fallback
+      });
     },
   };
 

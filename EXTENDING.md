@@ -132,6 +132,31 @@ Parent templates add `.ncs-*` classes to the components child themes most often 
 | `.ncs-progress__fill--muted` | Muted fill (closed prizes) | `closed-prize-card.php` |
 | `.ncs-countdown` | Countdown timer root | `template-parts/single-product/countdown-timer.php` |
 | `.ncs-site-footer` | Site footer strip | `template-parts/footer.php` |
+| `.ncs-dialog` | Confirm/alert dialog root (overlay) | `footer.php` |
+| `.ncs-dialog--danger` | Danger-variant modifier (destructive confirm) | same |
+| `.ncs-dialog--alert` | Alert-mode modifier (single OK button, no cancel) | same |
+| `.ncs-dialog__backdrop` | Dimmed backdrop behind the panel | same |
+| `.ncs-dialog__panel` | Dialog card/panel | same |
+| `.ncs-dialog__title` | Dialog heading row | same |
+| `.ncs-dialog__icon` | Leading title icon | same |
+| `.ncs-dialog__message` | Body text / message (rendered as HTML) | same |
+| `.ncs-dialog__actions` | Footer button bar | same |
+| `.ncs-dialog__cancel` | Cancel button (confirm mode only) | same |
+| `.ncs-dialog__confirm` | Confirm / OK button | same |
+| `.ncs-toast-region` | Toast stack container (fixed, top-right) | `footer.php` |
+| `.ncs-toast` | Single toast item | same |
+| `.ncs-toast--success` / `--error` / `--warning` / `--info` | Toast type modifiers | same |
+| `.ncs-toast__icon` | Toast leading icon | same |
+| `.ncs-toast__content` | Toast text wrapper | same |
+| `.ncs-toast__message` | Toast message text | same |
+| `.ncs-toast__close` | Toast close button | same |
+
+> `.ncs-dialog*` / `.ncs-toast*` are **hook-only** (no `--ncs-*` knob block in § 7).
+> Colors come from semantic-token utilities (`bg-surface`, `bg-primary`, `bg-danger`,
+> `text-success`, …) so they already follow a child's `@theme`. Target the hooks with a
+> body-scoped selector for structural/per-state overrides — e.g.
+> `body .ncs-dialog__confirm { border-radius: 9999px }`,
+> `body .ncs-toast--error { border-color: var(--color-danger) }`.
 
 ### Hooks not yet in parent templates
 
