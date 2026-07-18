@@ -114,6 +114,7 @@ if command -v rsync >/dev/null 2>&1; then
     --exclude='.git' \
     --exclude='frontend/node_modules' \
     --exclude='lty-result-screens/node_modules' \
+    --exclude='starters' \
     --exclude='release.sh' \
     --exclude='.DS_Store' \
     --exclude='*.bak' \
@@ -126,6 +127,7 @@ else
   cp -a "$THEME_DIR"/. "$WORK_DIR"/
   rm -rf "$WORK_DIR/.git" 2>/dev/null || true
   rm -rf "$WORK_DIR/frontend/node_modules" "$WORK_DIR/lty-result-screens/node_modules" 2>/dev/null || true
+  rm -rf "$WORK_DIR/starters" 2>/dev/null || true
   rm -f "$WORK_DIR/release.sh" "$WORK_DIR/.DS_Store" 2>/dev/null || true
   rm -f "$WORK_DIR/.env" "$WORK_DIR/.env.local" 2>/dev/null || true
   rm -f "$WORK_DIR/${THEME_SLUG}"-*.zip 2>/dev/null || true
