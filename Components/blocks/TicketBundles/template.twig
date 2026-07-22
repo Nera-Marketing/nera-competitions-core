@@ -1,0 +1,51 @@
+{#
+  TicketBundles — view data contract (authoritative source: index.php get_data() PHPDoc)
+  Child themes may override this view; data is provided by the parent's get_data().
+  key                     type     req/opt   note
+  enabled                 bool     required  false → render nothing
+  with_quantity_selector  bool     required  combined vs exclusive mode
+  heading                 string   required  section heading
+  show_discount_tag       bool     required  whether badges are shown
+  base_price              float    required  product unit price
+  buttons                 list     required  pack rules
+  i18n                    array    required  select_pack
+#}
+{% if enabled and buttons|length > 0 %}
+<div
+  class="ncs-ticket-bundles mb-4"
+  data-ticket-bundles
+  data-with-quantity="{{ with_quantity_selector ? 'true' : 'false' }}"
+  data-base-price="{{ base_price }}"
+>
+  {% if heading %}
+    <h3 class="ncs-ticket-bundles__heading text-sm font-semibold text-text-secondary mb-2">
+      {{ heading|raw }}
+    </h3>
+  {% endif %}
+
+  <ul class="ncs-ticket-bundles__list list-none m-0 p-0 flex flex-col gap-2" role="list">
+    {% for button in buttons %}
+      <li class="m-0 p-0">
+        <button
+          type="button"
+          class="ncs-ticket-bundles__button relative w-full text-left px-4 py-3 rounded-xl border-2 border-gray-200 bg-surface text-text-primary font-semibold transition-colors hover:border-primary hover:bg-primary/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
+          data-bundle-id="{{ button.id }}"
+          data-ticket-quantity="{{ button.quantity }}"
+          data-per-ticket-amount="{{ button.per_ticket_amount }}"
+          aria-pressed="false"
+        >
+          <span class="ncs-ticket-bundles__label block pr-16">{{ button.label_html|raw }}</span>
+          {% if show_discount_tag and button.badge_html %}
+            <span class="ncs-ticket-bundles__badge absolute top-1/2 -translate-y-1/2 right-2 inline-flex items-center px-2 py-0.5 rounded-md bg-primary/10 text-primary text-xs font-bold">
+              {{ button.badge_html|raw }}
+            </span>
+          {% endif %}
+        </button>
+      </li>
+    {% endfor %}
+  </ul>
+
+  <input type="hidden" name="lty_predefined_button_id" value="" data-bundle-id-input class="lty-predefined-button-id" />
+  <input type="hidden" name="lty_per_ticket_amount" value="" data-per-ticket-amount-input class="lty-per-ticket-amount" />
+</div>
+{% endif %}
