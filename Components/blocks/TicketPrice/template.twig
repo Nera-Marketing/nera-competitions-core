@@ -3,31 +3,18 @@
   Child themes may override this view; data is provided by the parent's get_data().
   key         type    req/opt   default   note
   price_html  string  required  —         wc_price() output; derived from $args['price'] (default 0)
-  base_price  float   required  —         numeric unit price for live updates
-  i18n        array   required  —         each, total
 #}
 {# TicketPrice atom #}
+{# Variables: price_html (pre-escaped WC price HTML, rendered with |raw) #}
 
-<div
-  class="ncs-ticket-price flex flex-col gap-2 mb-4"
-  data-ticket-price
-  data-base-price="{{ base_price }}"
->
-  <div class="flex items-center justify-between">
-    <span class="text-sm font-semibold text-text-primary">
-      {{ i18n.label }}
+<div class="flex items-center justify-between mb-4">
+  <span class="text-sm font-semibold text-text-primary">
+    Ticket Price
+  </span>
+  <span class="inline-flex items-center gap-1 bg-primary/10 text-primary font-bold text-sm px-3 py-1 rounded-full">
+    {{ price_html|raw }}
+    <span class="font-normal text-primary/70">
+      each
     </span>
-    <span class="inline-flex items-center gap-1 bg-primary/10 text-primary font-bold text-sm px-3 py-1 rounded-full">
-      <span data-ticket-price-unit>{{ price_html|raw }}</span>
-      <span class="font-normal text-primary/70" data-ticket-price-each>
-        {{ i18n.each }}
-      </span>
-    </span>
-  </div>
-  <div class="ncs-ticket-price__total flex items-center justify-between" data-ticket-price-total-row hidden>
-    <span class="text-sm font-medium text-text-secondary" data-ticket-price-total-label>
-      {{ i18n.total }}
-    </span>
-    <span class="text-lg font-bold text-primary tabular-nums" data-ticket-price-total></span>
-  </div>
+  </span>
 </div>

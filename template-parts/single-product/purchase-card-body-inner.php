@@ -1,7 +1,7 @@
 <?php
 /**
  * Purchase Card — Body Inner partial
- * Renders: TicketPrice + TicketBundles + QuantitySelector + Alpine form + Enter By Post + TrustBadges
+ * Renders: TicketPrice + QuantitySelector + Alpine form + Enter By Post + TrustBadges
  * Used by both section=body (details_first layout) and section=full (default layout).
  * Skips entirely when product is sold out.
  *
@@ -38,38 +38,6 @@ $product_id = $product->get_id();
 if ($is_sold_out) {
   return;
 }
-
-$bundles_on = !$is_manual_ticket
-  && method_exists($product, 'is_predefined_button_enabled')
-  && method_exists($product, 'can_display_predefined_buttons')
-  && $product->is_predefined_button_enabled()
-  && $product->can_display_predefined_buttons();
-
-$bundles_with_qty = $bundles_on
-  && method_exists($product, 'can_display_predefined_with_quantity_selector')
-  && $product->can_display_predefined_with_quantity_selector();
-
-$bundles_exclusive = $bundles_on && !$bundles_with_qty;
-
-$qty_min = (int) ($lottery_data['minPerOrder'] ?? 1);
-$qty_max = (int) ($lottery_data['maxPerOrder'] ?: $remaining);
-if ($qty_max < 1) {
-  $qty_max = max($qty_min, 1);
-}
-
-$bundle_select_message = get_option(
-  'lty_settings_predefined_buttons_alert_error_message',
-  __('Please select an option', 'nera-competitions')
-);
-if (!is_string($bundle_select_message) || $bundle_select_message === '') {
-  $bundle_select_message = __('Please select a ticket pack', 'nera-competitions');
-}
-
-$currency_symbol   = get_woocommerce_currency_symbol();
-$price_decimals    = wc_get_price_decimals();
-$currency_position = get_option('woocommerce_currency_pos', 'left');
-$thousand_sep      = wc_get_price_thousand_separator();
-$decimal_sep       = wc_get_price_decimal_separator();
 ?>
 
 <!-- Ticket Price & Quantity -->
@@ -79,78 +47,12 @@ $decimal_sep       = wc_get_price_decimal_separator();
     <?php do_action('woocommerce_before_add_to_cart_button'); ?>
   <?php else:
     $quantity_layout = nera_get_quantity_selector_layout($product_id);
-    if ($bundles_on && function_exists('nera_render_component')) {
-      nera_render_component('TicketBundles', ['product' => $product]);
-    }
-    if (!$bundles_exclusive && function_exists('nera_render_component')) {
-      $qty_args = [
-        'min'    => $qty_min,
-        'max'    => $qty_max,
-        'layout' => $quantity_layout,
-      ];
-
-      // LFW "Display Discount Tag for Range Slider" → markers on Nera slider layout.
-      if (
-        $quantity_layout === 'slider'
-        && method_exists($product, 'is_predefined_button_enabled')
-        && method_exists($product, 'can_display_range_slider_predefined_buttons_discount_tag')
-        && $product->is_predefined_button_enabled()
-        && $product->can_display_range_slider_predefined_buttons_discount_tag()
-        && method_exists($product, 'get_predefined_buttons_rule')
-      ) {
-        $range_label = method_exists($product, 'get_lty_range_slider_predefined_discount_label')
-          ? (string) $product->get_lty_range_slider_predefined_discount_label()
-          : '';
-        if ($range_label !== '') {
-          $markers = [];
-          $span = max(1, $qty_max - $qty_min);
-          foreach ($product->get_predefined_buttons_rule() as $button_id => $button_data) {
-            if (
-              method_exists($product, 'is_valid_to_display_predefined_button')
-              && !$product->is_valid_to_display_predefined_button($button_id)
-            ) {
-              continue;
-            }
-            $marker_qty = method_exists($product, 'get_predefined_buttons_ticket_quantity')
-              ? (int) $product->get_predefined_buttons_ticket_quantity($button_id)
-              : 0;
-            if ($marker_qty < 1 || $marker_qty < $qty_min || $marker_qty > $qty_max) {
-              continue;
-            }
-            $label_html = method_exists($product, 'get_range_slider_predefined_discount_label')
-              ? $product->get_range_slider_predefined_discount_label($button_id, $marker_qty)
-              : '';
-            if ($label_html === '') {
-              continue;
-            }
-            $markers[] = [
-              'qty'        => $marker_qty,
-              'label_html' => $label_html,
-              'percent'    => round(($marker_qty - $qty_min) / $span * 100, 2),
-            ];
-          }
-          if (!empty($markers)) {
-            $qty_args['discount_markers'] = $markers;
-          }
-        }
-      }
-
-      nera_render_component('QuantitySelector', $qty_args);
-    } elseif ($bundles_exclusive) {
-      // Exclusive packs: qty is locked to the selected pack; keep a hidden input for AJAX.
-      ?>
-      <input
-        type="hidden"
-        name="quantity"
-        value="<?php echo esc_attr($qty_min); ?>"
-        min="<?php echo esc_attr($qty_min); ?>"
-        max="<?php echo esc_attr($qty_max); ?>"
-        data-quantity-input
-        data-quantity-exclusive
-      />
-      <?php
-    }
     ?>
+    <?php if (function_exists('nera_render_component')) { nera_render_component('QuantitySelector', [
+      'min'    => $lottery_data['minPerOrder'] ?? 1,
+      'max'    => $lottery_data['maxPerOrder'] ?: $remaining,
+      'layout' => $quantity_layout,
+    ]); } ?>
   <?php endif; ?>
 </div>
 
@@ -164,7 +66,6 @@ $decimal_sep       = wc_get_price_decimal_separator();
           selectedAnswer: config.selectedAnswer,
           isSubmitting: false,
           quantity: 1,
-          _syncingFromBundle: false,
 
           parseTicketCount(val) {
             if (!val || !val.trim()) return 0;
@@ -177,204 +78,6 @@ $decimal_sep       = wc_get_price_decimal_separator();
               // Not JSON — split by pipe or comma
             }
             return val.split(/[|,]/).filter((s) => s.trim().length > 0).length;
-          },
-
-          formatMoney(amount) {
-            const n = Number(amount);
-            const fixed = (Number.isFinite(n) ? n : 0).toFixed(config.priceDecimals);
-            const parts = fixed.split('.');
-            parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, config.thousandSep);
-            const number = config.priceDecimals > 0
-              ? parts[0] + config.decimalSep + parts[1]
-              : parts[0];
-            const symbol = config.currencySymbol || '';
-            switch (config.currencyPosition) {
-              case 'left_space':
-                return symbol + ' ' + number;
-              case 'right':
-                return number + symbol;
-              case 'right_space':
-                return number + ' ' + symbol;
-              case 'left':
-              default:
-                return symbol + number;
-            }
-          },
-
-          getQtyInput() {
-            return document.querySelector('[data-quantity-input]');
-          },
-
-          getBundleRoot() {
-            return document.querySelector('[data-ticket-bundles]');
-          },
-
-          getSelectedBundleButton() {
-            const root = this.getBundleRoot();
-            return root ? root.querySelector('.ncs-ticket-bundles__button--selected') : null;
-          },
-
-          setQuantityValue(qty) {
-            const qtyInput = this.getQtyInput();
-            if (!qtyInput) {
-              return;
-            }
-            const value = String(qty);
-            qtyInput.value = value;
-            const hidden = document.querySelector('[data-quantity-hidden]');
-            if (hidden) {
-              hidden.value = value;
-            }
-            // Drive QuantitySelector UI when present (buttons / slider layout).
-            qtyInput.dispatchEvent(new Event('input', { bubbles: true }));
-            this.quantity = value;
-          },
-
-          clearBundleSelection() {
-            const root = this.getBundleRoot();
-            if (!root) {
-              return;
-            }
-            root.querySelectorAll('.ncs-ticket-bundles__button').forEach((btn) => {
-              btn.classList.remove('ncs-ticket-bundles__button--selected');
-              btn.setAttribute('aria-pressed', 'false');
-            });
-            const idInput = root.querySelector('[data-bundle-id-input]');
-            const amountInput = root.querySelector('[data-per-ticket-amount-input]');
-            if (idInput) {
-              idInput.value = '';
-            }
-            if (amountInput) {
-              amountInput.value = '';
-            }
-          },
-
-          applyBundleSelection(btn, options = {}) {
-            const root = this.getBundleRoot();
-            if (!root || !btn) {
-              return;
-            }
-            const skipQty = options.skipQty === true;
-            const id = btn.dataset.bundleId || '';
-            const qty = parseInt(btn.dataset.ticketQuantity, 10) || 1;
-            const perTicket = btn.dataset.perTicketAmount || '';
-
-            root.querySelectorAll('.ncs-ticket-bundles__button').forEach((el) => {
-              const selected = el === btn;
-              el.classList.toggle('ncs-ticket-bundles__button--selected', selected);
-              el.setAttribute('aria-pressed', selected ? 'true' : 'false');
-            });
-
-            const idInput = root.querySelector('[data-bundle-id-input]');
-            const amountInput = root.querySelector('[data-per-ticket-amount-input]');
-            if (idInput) {
-              idInput.value = id;
-            }
-            if (amountInput) {
-              amountInput.value = perTicket;
-            }
-
-            if (!skipQty) {
-              this._syncingFromBundle = true;
-              this.setQuantityValue(qty);
-              this._syncingFromBundle = false;
-            }
-
-            this.updateTicketPrice();
-          },
-
-          selectBundle(btn) {
-            if (!btn) {
-              return;
-            }
-            const alreadySelected = btn.classList.contains('ncs-ticket-bundles__button--selected');
-            // Combined mode: allow toggle off. Exclusive: keep a pack selected (re-click keeps it).
-            if (alreadySelected && !config.bundlesExclusive) {
-              this.clearBundleSelection();
-              this.updateTicketPrice();
-              return;
-            }
-            this.applyBundleSelection(btn);
-          },
-
-          syncBundleFromQuantity(qty) {
-            if (this._syncingFromBundle || !config.bundlesEnabled || config.bundlesExclusive) {
-              return;
-            }
-            const root = this.getBundleRoot();
-            if (!root) {
-              return;
-            }
-            const match = root.querySelector('[data-ticket-quantity="' + String(qty) + '"]');
-            if (match) {
-              this.applyBundleSelection(match, { skipQty: true });
-            } else {
-              this.clearBundleSelection();
-              this.updateTicketPrice();
-            }
-          },
-
-          getUnitPrice() {
-            const selected = this.getSelectedBundleButton();
-            if (selected && selected.dataset.perTicketAmount) {
-              const packPrice = parseFloat(selected.dataset.perTicketAmount);
-              if (Number.isFinite(packPrice)) {
-                return packPrice;
-              }
-            }
-            return Number(config.basePrice) || 0;
-          },
-
-          updateTicketPrice() {
-            const priceRoot = document.querySelector('[data-ticket-price]');
-            if (!priceRoot) {
-              return;
-            }
-            const qtyInput = this.getQtyInput();
-            const qty = qtyInput ? (parseInt(qtyInput.value, 10) || 1) : 1;
-            const unit = this.getUnitPrice();
-            const total = unit * qty;
-
-            const unitEl = priceRoot.querySelector('[data-ticket-price-unit]');
-            if (unitEl) {
-              unitEl.textContent = this.formatMoney(unit);
-            }
-
-            const totalRow = priceRoot.querySelector('[data-ticket-price-total-row]');
-            const totalEl = priceRoot.querySelector('[data-ticket-price-total]');
-            if (totalRow && totalEl) {
-              if (qty > 1 || this.getSelectedBundleButton()) {
-                totalEl.textContent = this.formatMoney(total);
-                totalRow.hidden = false;
-              } else {
-                totalRow.hidden = true;
-              }
-            }
-          },
-
-          initBundles() {
-            if (!config.bundlesEnabled) {
-              return;
-            }
-            const root = this.getBundleRoot();
-            if (!root) {
-              return;
-            }
-
-            root.querySelectorAll('[data-bundle-id]').forEach((btn) => {
-              btn.addEventListener('click', () => this.selectBundle(btn));
-            });
-
-            if (!config.bundlesExclusive) {
-              document.addEventListener('nera:quantity:change', (e) => {
-                const qty = e && e.detail ? e.detail.quantity : null;
-                if (qty == null) {
-                  return;
-                }
-                this.quantity = qty;
-                this.syncBundleFromQuantity(qty);
-              });
-            }
           },
 
           init() {
@@ -397,16 +100,10 @@ $decimal_sep       = wc_get_price_decimal_separator();
               });
             } else {
               // Sync external quantity inputs (auto-assign mode)
-              const qtyInput = this.getQtyInput();
+              const qtyInput = document.querySelector('[data-quantity-input]');
               if (qtyInput) {
                 this.quantity = qtyInput.value;
-                qtyInput.addEventListener('change', (e) => {
-                  this.quantity = e.target.value;
-                  if (!config.bundlesExclusive) {
-                    this.syncBundleFromQuantity(parseInt(e.target.value, 10) || 0);
-                  }
-                  this.updateTicketPrice();
-                });
+                qtyInput.addEventListener('change', (e) => this.quantity = e.target.value);
 
                 const observer = new MutationObserver(() => {
                   this.quantity = qtyInput.value;
@@ -415,9 +112,6 @@ $decimal_sep       = wc_get_price_decimal_separator();
                   attributes: true
                 });
               }
-
-              this.initBundles();
-              this.updateTicketPrice();
             }
           },
 
@@ -475,14 +169,6 @@ $decimal_sep       = wc_get_price_decimal_separator();
               }
             }
 
-            if (config.bundlesExclusive) {
-              const idInput = document.querySelector('[data-bundle-id-input]');
-              if (!idInput || !idInput.value) {
-                Alpine.store('toast').error(config.i18n.selectPack);
-                return;
-              }
-            }
-
             if (config.hasQa && !this.selectedAnswer) {
               Alpine.store('toast').error(config.i18n.selectAnswer);
               return;
@@ -502,17 +188,7 @@ $decimal_sep       = wc_get_price_decimal_separator();
                 ajaxData.append('lty_lottery_ticket_numbers', ticketNumbers);
                 ajaxData.append('quantity', ticketQty);
               } else {
-                const qtyInput = this.getQtyInput();
-                ajaxData.append('quantity', qtyInput ? qtyInput.value : '1');
-
-                const bundleIdInput = document.querySelector('[data-bundle-id-input]');
-                const perTicketInput = document.querySelector('[data-per-ticket-amount-input]');
-                if (bundleIdInput && bundleIdInput.value !== '') {
-                  ajaxData.append('lty_predefined_button_id', bundleIdInput.value);
-                }
-                if (perTicketInput && perTicketInput.value !== '') {
-                  ajaxData.append('lty_per_ticket_amount', perTicketInput.value);
-                }
+                ajaxData.append('quantity', document.querySelector('[data-quantity-input]').value);
               }
 
               if (config.hasQa) {
@@ -571,30 +247,21 @@ $decimal_sep       = wc_get_price_decimal_separator();
     productId: '<?php echo esc_js($product_id); ?>',
     hasQa: <?php echo $has_qa && $qa_can_display ? 'true' : 'false'; ?>,
     isManualTicket: <?php echo $is_manual_ticket ? 'true' : 'false'; ?>,
-    bundlesEnabled: <?php echo $bundles_on ? 'true' : 'false'; ?>,
-    bundlesExclusive: <?php echo $bundles_exclusive ? 'true' : 'false'; ?>,
-    basePrice: <?php echo esc_js((float) $price); ?>,
-    currencySymbol: '<?php echo esc_js($currency_symbol); ?>',
-    currencyPosition: '<?php echo esc_js($currency_position); ?>',
-    priceDecimals: <?php echo (int) $price_decimals; ?>,
-    thousandSep: '<?php echo esc_js($thousand_sep); ?>',
-    decimalSep: '<?php echo esc_js($decimal_sep); ?>',
     ajaxUrl: '<?php echo admin_url('admin-ajax.php'); ?>',
     cartUrl: '<?php echo wc_get_cart_url(); ?>',
     i18n: {
-          selectTickets: '<?php echo esc_js(__('Please select at least one ticket', 'nera-competitions')); ?>',
-          selectAnswer: '<?php echo esc_js(__(
+          selectTickets: '<?php _e('Please select at least one ticket', 'nera-competitions'); ?>',
+          selectAnswer: '<?php _e(
             'Please select an answer to the question',
             'nera-competitions',
-          )); ?>',
-          selectPack: '<?php echo esc_js($bundle_select_message); ?>',
-          error: '<?php echo esc_js(__('Could not add to cart', 'nera-competitions')); ?>',
+          ); ?>',
+          error: '<?php _e('Could not add to cart', 'nera-competitions'); ?>',
           success: '<?php echo esc_js(get_field('add_to_cart_success_message', 'option') ?: __('Tickets added to cart!', 'nera-competitions')); ?>',
-          viewCart: '<?php echo esc_js(__('View Cart', 'nera-competitions')); ?>',
-          generalError: '<?php echo esc_js(__(
+          viewCart: '<?php _e('View Cart', 'nera-competitions'); ?>',
+          generalError: '<?php _e(
             'An error occurred. Please try again.',
             'nera-competitions',
-          )); ?>'
+          ); ?>'
     }
   })">
     <form class="cart" @submit.prevent="submitForm"

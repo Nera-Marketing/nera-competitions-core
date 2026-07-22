@@ -132,17 +132,6 @@ Parent templates add `.ncs-*` classes to the components child themes most often 
 | `.ncs-progress__fill--muted` | Muted fill (closed prizes) | `closed-prize-card.php` |
 | `.ncs-countdown` | Countdown timer root | `template-parts/single-product/countdown-timer.php` |
 | `.ncs-site-footer` | Site footer strip | `template-parts/footer.php` |
-| `.ncs-ticket-bundles` | Purchase-card LFW ticket packs root | `Components/blocks/TicketBundles/template.twig` |
-| `.ncs-ticket-bundles__heading` | Packs section heading | same |
-| `.ncs-ticket-bundles__list` | Pack button list | same |
-| `.ncs-ticket-bundles__button` | Individual pack button | same |
-| `.ncs-ticket-bundles__button--selected` | Selected pack state | same |
-| `.ncs-ticket-bundles__label` | Pack label (LFW shortcodes) | same |
-| `.ncs-ticket-bundles__badge` | Discount badge on pack | same |
-| `.ncs-ticket-price` | Purchase-card unit/total price root | `Components/blocks/TicketPrice/template.twig` |
-| `.ncs-quantity-slider` | Purchase-card quantity slider root | `Components/blocks/QuantitySelector/template.twig` |
-| `.ncs-quantity-slider__live-discount` | Fixed pack discount chip beside ticket count | same |
-| `.ncs-quantity-slider__live-discount--visible` | Live chip visible when qty matches a pack | same |
 
 ### Hooks not yet in parent templates
 
