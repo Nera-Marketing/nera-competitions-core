@@ -55,6 +55,17 @@ if ($is_lottery) {
     ? $product->get_max_purchase_quantity()
     : 100;
 
+  // LFW can return empty max — cast so Alpine x-data never gets `max:  ` (invalid JS).
+  $min_per_order = max(1, (int) $min_per_order);
+  $max_per_order = (int) $max_per_order;
+  if ($max_per_order < 1) {
+    $stock_qty = $product->get_stock_quantity();
+    $max_per_order = $stock_qty !== null && (int) $stock_qty > 0 ? (int) $stock_qty : 9999;
+  }
+  if ($max_per_order < $min_per_order) {
+    $max_per_order = $min_per_order;
+  }
+
   // Allow editing if: not manual ticket, allows quantity selector, and min != max
   $can_edit_qty =
     !$is_manual_ticket && $can_display_with_selector && $min_per_order !== $max_per_order;
