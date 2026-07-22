@@ -27,9 +27,38 @@
     const display = root.querySelector('[data-quantity-display]');
     const displayTrigger = root.querySelector('[data-quantity-display-trigger]');
     const editInput = root.querySelector('[data-quantity-edit]');
+    const discountMarkers = root.querySelectorAll('[data-quantity-discount]');
+    const liveDiscount = root.querySelector('[data-quantity-discount-live]');
 
     const getMin = () => parseInt(quantityInput.min, 10) || 1;
     const getMax = () => parseInt(quantityInput.max, 10) || 999;
+
+    /**
+     * Sync the fixed live discount chip from hidden pack marker data (no track ticks).
+     * @param {number} value
+     */
+    function syncDiscountMarkers(value) {
+      if (!liveDiscount) {
+        return;
+      }
+
+      let activeLabel = '';
+      discountMarkers.forEach((marker) => {
+        if (parseInt(marker.dataset.ticketQuantity, 10) === value) {
+          activeLabel = marker.dataset.label || '';
+        }
+      });
+
+      if (activeLabel) {
+        liveDiscount.innerHTML = activeLabel;
+        liveDiscount.hidden = false;
+        liveDiscount.classList.add('ncs-quantity-slider__live-discount--visible');
+      } else {
+        liveDiscount.innerHTML = '';
+        liveDiscount.hidden = true;
+        liveDiscount.classList.remove('ncs-quantity-slider__live-discount--visible');
+      }
+    }
 
     /**
      * @param {number|string} newValue
@@ -53,6 +82,7 @@
         if (plusBtn) {
           plusBtn.disabled = value >= max;
         }
+        syncDiscountMarkers(value);
         return;
       }
 
@@ -77,6 +107,8 @@
       if (plusBtn) {
         plusBtn.disabled = value >= max;
       }
+
+      syncDiscountMarkers(value);
 
       if (!fromEvent) {
         quantityInput.dispatchEvent(new Event('change', { bubbles: true }));
