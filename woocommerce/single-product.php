@@ -239,15 +239,17 @@ $purchase_card_args = [
 
     <?php do_action('nera_before_related_competitions', $product); ?>
 
-    <!-- Related Competitions Section -->
+    <!-- Related Competitions Section (Upsells hoisted to front, then auto-related) -->
     <?php
-    $related_ids = nera_get_related_lottery_products($product_id, 4);
+    $merged_related = nera_get_merged_related_ids($product_id, 4);
+    $related_ids = $merged_related['ids'];
     if (!empty($related_ids)): ?>
       <section class="p-6 lg:p-8 bg-surface border-t border-gray-100 rounded-2xl">
         <div>
           <?php get_template_part('template-parts/single-product/related-competitions', null, [
             'product' => $product,
             'related_ids' => $related_ids,
+            'upsell_ids' => $merged_related['upsell_ids'],
           ]); ?>
         </div>
       </section>

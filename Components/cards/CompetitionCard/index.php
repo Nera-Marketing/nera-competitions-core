@@ -16,6 +16,7 @@ if (!defined('ABSPATH')) exit;
  *   badge_text: string,                                     // required, default '' — urgency badge label; empty = no badge
  *   badge_class: string,                                    // required — Tailwind gradient classes for the badge background
  *   is_urgent: bool,                                        // required — adds animate-pulse to badge
+ *   highlight_badge: string,                                // required, default '' — promo highlight label (top-right, e.g. upsell/cross-sell "Recommended"); empty = no badge
  *   max_tickets: int,                                       // required — total ticket capacity (0 = unlimited/unknown)
  *   progress: int,                                          // required — sold percentage 0-100
  *   primary_category: \WP_Term|null,                        // required — first product_cat term; null when uncategorised
@@ -147,6 +148,9 @@ function get_data(array $args = []): array
         'badge_text'       => $badge_text,
         'badge_class'      => $badge_class,
         'is_urgent'        => $is_urgent,
+        'highlight_badge'  => isset($args['highlight_badge']) && is_string($args['highlight_badge'])
+            ? $args['highlight_badge']
+            : '',
         'max_tickets'      => $max_tickets,
         'progress'         => $progress,
         'primary_category' => !empty($product_categories) ? $product_categories[0] : null,

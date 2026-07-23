@@ -982,6 +982,126 @@ function nera_get_related_lottery_products($product_id, $limit = 4)
 }
 
 /**
+ * Filter a set of product IDs down to competitions eligible for a listing strip.
+ *
+ * Applies the same visibility rules the related-competitions strip uses — published,
+ * `lottery` type, not sold out, not ended/not-yet-started (nera_active_lottery_meta_query)
+ * — while preserving the given order. Shared by upsells (product page) and cross-sells
+ * (cart) so a hand-picked Linked Product is never advertised when it can't be entered.
+ *
+ * @param int[] $ids   Candidate product IDs, in the order they should appear.
+ * @param int   $limit Maximum IDs to return.
+ * @return int[] Eligible IDs, order preserved, capped at $limit.
+ */
+function nera_filter_eligible_competition_ids($ids, $limit = 4)
+{
+  $ids = array_values(array_filter(array_map('intval', (array) $ids)));
+  if (empty($ids)) {
+    return [];
+  }
+
+  $sold_out_ids = function_exists('nera_sold_out_lottery_ids') ? nera_sold_out_lottery_ids() : [];
+  $active_meta  = function_exists('nera_active_lottery_meta_query') ? nera_active_lottery_meta_query() : [];
+
+  $query = new WP_Query([
+    'post_type'      => 'product',
+    'post_status'    => 'publish',
+    'post__in'       => $ids,
+    'post__not_in'   => $sold_out_ids,
+    'posts_per_page' => $limit,
+    'orderby'        => 'post__in',
+    'fields'         => 'ids',
+    'no_found_rows'  => true,
+    'tax_query'      => [
+      [
+        'taxonomy' => 'product_type',
+        'field'    => 'slug',
+        'terms'    => 'lottery',
+      ],
+    ],
+    'meta_query'     => $active_meta,
+  ]);
+
+  return array_map('intval', $query->posts);
+}
+
+/**
+ * Merged product-page "related" strip: eligible WooCommerce Linked Products → Upsells
+ * hoisted to the front (badged), then the existing related output, deduped, capped.
+ *
+ * @param int $product_id Current product ID.
+ * @param int $limit      Total cards to show.
+ * @return array{ids:int[], upsell_ids:int[]} Ordered IDs and which of them are upsells.
+ */
+function nera_get_merged_related_ids($product_id, $limit = 4)
+{
+  $product = wc_get_product($product_id);
+  $upsell_ids = $product ? nera_filter_eligible_competition_ids($product->get_upsell_ids(), $limit) : [];
+
+  $ids = $upsell_ids;
+
+  if (count($ids) < $limit && function_exists('nera_get_related_lottery_products')) {
+    foreach (nera_get_related_lottery_products($product_id, $limit) as $related_id) {
+      $related_id = (int) $related_id;
+      if (!in_array($related_id, $ids, true)) {
+        $ids[] = $related_id;
+      }
+      if (count($ids) >= $limit) {
+        break;
+      }
+    }
+  }
+
+  $ids = array_slice($ids, 0, $limit);
+
+  return [
+    'ids'        => $ids,
+    'upsell_ids' => array_values(array_intersect($upsell_ids, $ids)),
+  ];
+}
+
+/**
+ * Eligible cart cross-sell competitions (aggregated across the cart), capped.
+ *
+ * @param int $limit
+ * @return int[]
+ */
+function nera_get_cart_crosssell_ids($limit = 4)
+{
+  if (!function_exists('WC') || !WC()->cart) {
+    return [];
+  }
+
+  return nera_filter_eligible_competition_ids(WC()->cart->get_cross_sells(), $limit);
+}
+
+/**
+ * Render the cart cross-sell section beneath the cart.
+ *
+ * Hooked to the custom cart template's `woocommerce_after_cart` action so no cart
+ * template edit is needed. Mirrors the product-page strip: same CompetitionCard,
+ * 4-up grid, each card carrying the "Recommended" highlight badge.
+ */
+function nera_render_cart_crosssells()
+{
+  $crosssell_ids = nera_get_cart_crosssell_ids(4);
+  if (empty($crosssell_ids)) {
+    return;
+  }
+
+  $title = apply_filters(
+    'nera_cart_crosssell_title',
+    __('Add More Chances to Win', 'nera-competitions'),
+  );
+
+  get_template_part('template-parts/cart/cross-sells', null, [
+    'crosssell_ids' => $crosssell_ids,
+    'title'         => $title,
+  ]);
+}
+add_action('woocommerce_after_cart', 'nera_render_cart_crosssells', 10);
+
+/**
  * Remove default WooCommerce actions for lottery products
  */
 function nera_remove_default_wc_actions()

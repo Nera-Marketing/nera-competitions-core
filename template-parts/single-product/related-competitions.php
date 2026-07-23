@@ -14,6 +14,7 @@ if (!defined('ABSPATH')) {
 
 $product = isset($args['product']) ? $args['product'] : null;
 $related_ids = isset($args['related_ids']) ? $args['related_ids'] : [];
+$upsell_ids = isset($args['upsell_ids']) ? array_map('intval', (array) $args['upsell_ids']) : [];
 
 if (!$product || empty($related_ids)) {
   return;
@@ -48,10 +49,13 @@ if (empty($section_title)) {
         continue;
       }
 
-      // Use the existing product card template
+      // Use the existing product card template. Upsell picks carry the highlight badge.
       get_template_part('template-parts/product-listing/product-card', null, [
         'product' => $related_product,
         'cta_mode' => 'link',
+        'highlight_badge' => in_array((int) $related_id, $upsell_ids, true)
+          ? __('Recommended', 'nera-competitions')
+          : '',
       ]);
     } ?>
   </div>
