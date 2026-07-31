@@ -24,7 +24,7 @@ if (!defined('ABSPATH')) exit;
  *   cat_accent: string,                                     // required — hex for primary category (alias of accent_color when primary exists)
  *   show_countdown: bool,                                   // required — renders Alpine countdown widget in card footer
  *   end_timestamp_ms: int,                                  // required, default 0 — Unix ms for Alpine countdown x-data
- *   data_attrs: array{price:string,end_date:string,posted_date:string,popularity:string,categories:string}, // required — JS filter data attributes
+ *   data_attrs: array{price:string,end_date:string,posted_date:string,popularity:string,categories:string,menu_order:string,featured:string}, // required — JS filter data attributes
  *   x_show?: string|null,                                   // optional, default null — Alpine x-show expression for filter hiding
  *   extra_attributes?: string|null,                         // optional, default null — raw HTML attributes injected onto <article>
  *   sold_tickets: int,                                      // required — tickets purchased; used in buy_tickets variant label
@@ -135,6 +135,8 @@ function get_data(array $args = []): array
         'posted_date' => (string) get_the_date('U', $product_id),
         'popularity'  => (string) ($product->get_meta('total_sales') ?: '0'),
         'categories'  => wp_json_encode($category_slugs),
+        'menu_order'  => (string) (int) get_post_field('menu_order', $product_id),
+        'featured'    => ($product->get_featured() ? '1' : '0'),
     ];
 
     return [

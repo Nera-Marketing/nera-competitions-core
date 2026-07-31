@@ -23,7 +23,7 @@
     category: '',
     price: '',
     status: '',
-    sort: 'ending-soon',
+    sort: 'default',
   };
   let currentPage = 1;
   let isLoading = false;
@@ -95,7 +95,7 @@
       category: '',
       price: '',
       status: '',
-      sort: 'ending-soon',
+      sort: 'default',
     };
     currentPage = 1;
 
@@ -124,7 +124,7 @@
       currentFilters.category ||
       currentFilters.price ||
       currentFilters.status ||
-      currentFilters.sort !== 'ending-soon';
+      currentFilters.sort !== 'default';
 
     if (hasActiveFilters) {
       clearFiltersBtn.classList.remove('hidden');

@@ -82,6 +82,7 @@ $categories = get_terms([
       <div class="relative">
         <select name="sort" data-filter="sort"
           class="appearance-none bg-background-light border border-gray-200 rounded-xl px-4 py-2.5 pr-10 text-sm font-medium text-text-primary cursor-pointer hover:border-primary focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none transition-all">
+          <option value="default"><?php _e('Default', 'nera-competitions'); ?></option>
           <option value="ending-soon"><?php _e('Ending Soon', 'nera-competitions'); ?></option>
           <option value="newest"><?php _e('Newest First', 'nera-competitions'); ?></option>
           <option value="price-low"><?php _e('Price: Low to High', 'nera-competitions'); ?></option>

@@ -33,8 +33,11 @@ GITHUB_REMOTE="git@github.com-nera:${GITHUB_REPO}.git"
 # github.com-nera = SSH Host alias only (same as plugin release.sh). gh uses GH_HOST=github.com (HTTPS).
 
 PID="$$"
-_RELEASE_TMP="${TMPDIR:-/tmp}"
-_RELEASE_TMP="${_RELEASE_TMP%/}"
+# Portable temp base. Git Bash/MSYS often maps bash `/tmp` and rsync's `/tmp` to
+# different Windows folders, so a release copy into TMPDIR=/tmp can look empty
+# to later steps. Prefer a theme-local temp that both tools agree on.
+_RELEASE_TMP="${THEME_DIR}/.release-tmp"
+mkdir -p "$_RELEASE_TMP"
 WORK_DIR="${_RELEASE_TMP}/${THEME_SLUG}-release-${PID}"
 STAGE_ZIP_PARENT="${_RELEASE_TMP}/${THEME_SLUG}-zipparent-${PID}"
 
@@ -52,6 +55,7 @@ msys_win_path() {
 
 cleanup() {
   rm -rf "$WORK_DIR" "$STAGE_ZIP_PARENT" 2>/dev/null || true
+  rmdir "$_RELEASE_TMP" 2>/dev/null || true
 }
 trap cleanup EXIT
 
@@ -112,6 +116,7 @@ echo "▶ Copying theme files..."
 if command -v rsync >/dev/null 2>&1; then
   rsync -a \
     --exclude='.git' \
+    --exclude='.release-tmp' \
     --exclude='frontend/node_modules' \
     --exclude='lty-result-screens/node_modules' \
     --exclude='release.sh' \
@@ -124,7 +129,8 @@ if command -v rsync >/dev/null 2>&1; then
     "$THEME_DIR/" "$WORK_DIR/"
 else
   cp -a "$THEME_DIR"/. "$WORK_DIR"/
-  rm -rf "$WORK_DIR/.git" 2>/dev/null || true
+  # Only strip .git from the *temp* work tree (zip contents). Never touch THEME_DIR/.git.
+  rm -rf "$WORK_DIR/.git" "$WORK_DIR/.release-tmp" 2>/dev/null || true
   rm -rf "$WORK_DIR/frontend/node_modules" "$WORK_DIR/lty-result-screens/node_modules" 2>/dev/null || true
   rm -f "$WORK_DIR/release.sh" "$WORK_DIR/.DS_Store" 2>/dev/null || true
   rm -f "$WORK_DIR/.env" "$WORK_DIR/.env.local" 2>/dev/null || true
@@ -265,15 +271,31 @@ else
 fi
 
 git add -A
+# Never commit the release zip or local temp (belt-and-suspenders with .gitignore).
+git rm -f --cached "${THEME_SLUG}-${VERSION}.zip" 2>/dev/null || true
+git rm -rf --cached .release-tmp 2>/dev/null || true
 if git diff --staged --quiet; then
   echo "▶ No staged changes after sync — skipping commit (tree already matches release)."
 else
   git commit -m "Release $TAG" -q
 fi
 
+# Keep THEME_DIR/.git intact — release never deletes the working repo.
+if [ ! -d "$THEME_DIR/.git" ]; then
+  echo "ERROR: Theme .git missing after sync — aborting push."
+  exit 1
+fi
+
 PUSH_BRANCH="${RELEASE_GIT_BRANCH:-main}"
 echo "▶ Pushing ${PUSH_BRANCH} to origin..."
-git push origin "$PUSH_BRANCH"
+# Prefer HTTPS via gh when available (avoids wrong SSH identity on Windows).
+if command -v gh >/dev/null 2>&1 && gh auth token >/dev/null 2>&1; then
+  TOKEN="$(gh auth token)"
+  git push "https://x-access-token:${TOKEN}@github.com/${GITHUB_REPO}.git" "$PUSH_BRANCH"
+  git fetch "https://x-access-token:${TOKEN}@github.com/${GITHUB_REPO}.git" "${PUSH_BRANCH}:refs/remotes/origin/${PUSH_BRANCH}" || true
+else
+  git push origin "$PUSH_BRANCH"
+fi
 
 if git rev-parse "$TAG" >/dev/null 2>&1; then
   git tag -d "$TAG" 2>/dev/null || true
@@ -281,7 +303,12 @@ fi
 git tag -a "$TAG" -m "Release $TAG" 2>/dev/null || git tag "$TAG"
 
 echo "▶ Pushing tag $TAG..."
-git push origin "refs/tags/${TAG}" --force
+if command -v gh >/dev/null 2>&1 && gh auth token >/dev/null 2>&1; then
+  TOKEN="$(gh auth token)"
+  git push "https://x-access-token:${TOKEN}@github.com/${GITHUB_REPO}.git" "refs/tags/${TAG}" --force
+else
+  git push origin "refs/tags/${TAG}" --force
+fi
 
 # ── 6. GitHub Release (gh) ─────────────────────────────────────────────────────
 GH_CMD=""

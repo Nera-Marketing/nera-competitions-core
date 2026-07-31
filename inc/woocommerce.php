@@ -945,10 +945,10 @@ function nera_get_related_lottery_products($product_id, $limit = 4)
     $args['tax_query']['relation'] = 'AND';
   }
 
-  // Order by ending soon
-  $args['meta_key'] = '_lty_end_date_gmt';
-  $args['orderby'] = 'meta_value';
-  $args['order'] = 'ASC';
+  // Order by catalog order (menu_order → date)
+  $args = function_exists('nera_wp_query_args_with_catalog_order')
+    ? nera_wp_query_args_with_catalog_order($args)
+    : array_merge($args, ['orderby' => 'date', 'order' => 'DESC']);
 
   $query = new WP_Query($args);
   $related_ids = $query->posts;
@@ -968,11 +968,11 @@ function nera_get_related_lottery_products($product_id, $limit = 4)
         ],
       ],
       'fields' => 'ids',
-      'meta_key' => '_lty_end_date_gmt',
-      'orderby' => 'meta_value',
-      'order' => 'ASC',
       'meta_query' => $active_meta,
     ];
+    $fallback_args = function_exists('nera_wp_query_args_with_catalog_order')
+      ? nera_wp_query_args_with_catalog_order($fallback_args)
+      : array_merge($fallback_args, ['orderby' => 'date', 'order' => 'DESC']);
 
     $fallback_query = new WP_Query($fallback_args);
     $related_ids = $fallback_query->posts;
@@ -985,13 +985,13 @@ function nera_get_related_lottery_products($product_id, $limit = 4)
  * Filter a set of product IDs down to competitions eligible for a listing strip.
  *
  * Applies the same visibility rules the related-competitions strip uses — published,
- * `lottery` type, not sold out, not ended/not-yet-started (nera_active_lottery_meta_query)
- * — while preserving the given order. Shared by upsells (product page) and cross-sells
- * (cart) so a hand-picked Linked Product is never advertised when it can't be entered.
+ * `lottery` type, not sold out, not ended/not-yet-started (nera_active_lottery_meta_query).
+ * Eligible IDs are re-sorted by catalog order (menu_order → date), then capped.
+ * Shared by upsells (product page) and cross-sells (cart).
  *
- * @param int[] $ids   Candidate product IDs, in the order they should appear.
+ * @param int[] $ids   Candidate product IDs.
  * @param int   $limit Maximum IDs to return.
- * @return int[] Eligible IDs, order preserved, capped at $limit.
+ * @return int[] Eligible IDs in catalog order, capped at $limit.
  */
 function nera_filter_eligible_competition_ids($ids, $limit = 4)
 {
@@ -1008,7 +1008,7 @@ function nera_filter_eligible_competition_ids($ids, $limit = 4)
     'post_status'    => 'publish',
     'post__in'       => $ids,
     'post__not_in'   => $sold_out_ids,
-    'posts_per_page' => $limit,
+    'posts_per_page' => count($ids),
     'orderby'        => 'post__in',
     'fields'         => 'ids',
     'no_found_rows'  => true,
@@ -1022,7 +1022,12 @@ function nera_filter_eligible_competition_ids($ids, $limit = 4)
     'meta_query'     => $active_meta,
   ]);
 
-  return array_map('intval', $query->posts);
+  $eligible = array_map('intval', $query->posts);
+  if (function_exists('nera_sort_competition_ids_by_catalog_order')) {
+    $eligible = nera_sort_competition_ids_by_catalog_order($eligible);
+  }
+
+  return array_slice($eligible, 0, $limit);
 }
 
 /**

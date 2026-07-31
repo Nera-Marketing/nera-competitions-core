@@ -72,13 +72,10 @@ function get_data(array $args = []): array
         }
     }
 
-    $query = new \WP_Query([
+    $query_args = [
         'post_type'      => 'product',
         'posts_per_page' => 9,
         'post_status'    => 'publish',
-        'orderby'        => 'meta_value',
-        'meta_key'       => '_lty_end_date_gmt',
-        'order'          => 'ASC',
         'tax_query'      => [
             ['taxonomy' => 'product_type', 'field' => 'slug', 'terms' => 'lottery'],
         ],
@@ -86,7 +83,14 @@ function get_data(array $args = []): array
             ? nera_active_lottery_meta_query()
             : [],
         'post__not_in'   => function_exists('nera_sold_out_lottery_ids') ? nera_sold_out_lottery_ids() : [],
-    ]);
+    ];
+    if (function_exists('nera_wp_query_args_with_catalog_order')) {
+        $query_args = nera_wp_query_args_with_catalog_order($query_args);
+    } else {
+        $query_args['orderby'] = 'date';
+        $query_args['order']   = 'DESC';
+    }
+    $query = new \WP_Query($query_args);
 
     $cards = [];
     if ($query->have_posts()) {

@@ -20,7 +20,7 @@
   cat_accent        string                                                                   required  —         hex alias of accent_color
   show_countdown    bool                                                                     required  —         renders Alpine countdown in footer
   end_timestamp_ms  int                                                                      required  0         Unix ms for Alpine countdown
-  data_attrs        array{price,end_date,posted_date,popularity,categories:string}           required  —         JS filter data-* values
+  data_attrs        array{price,end_date,posted_date,popularity,categories,menu_order,featured:string} required  —         JS filter data-* values
   x_show            string|null                                                              optional  null      Alpine x-show expression
   extra_attributes  string|null                                                              optional  null      raw HTML attrs on <article>
   sold_tickets      int                                                                      required  —         tickets purchased; used in buy_tickets label
@@ -37,6 +37,8 @@
   data-end-date="{{ data_attrs.end_date }}"
   data-posted-date="{{ data_attrs.posted_date }}"
   data-popularity="{{ data_attrs.popularity }}"
+  data-menu-order="{{ data_attrs.menu_order }}"
+  data-featured="{{ data_attrs.featured }}"
   data-categories="{{ data_attrs.categories|e('html_attr') }}"
   {% if extra_attributes %}{{ extra_attributes|raw }}{% endif %}
   {% if x_show %}x-show="{{ x_show }}"{% endif %}

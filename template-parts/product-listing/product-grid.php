@@ -16,7 +16,7 @@ if (!defined('ABSPATH')) {
 // Products per page
 $per_page = 12;
 
-// Query lottery products
+// Query lottery products (catalog order)
 $competitions_args = [
   'post_type' => 'product',
   'posts_per_page' => $per_page,
@@ -29,10 +29,10 @@ $competitions_args = [
       'terms' => 'lottery',
     ],
   ],
-  'meta_key' => '_lty_end_date_gmt',
-  'orderby' => 'meta_value',
-  'order' => 'ASC',
 ];
+$competitions_args = function_exists('nera_wp_query_args_with_catalog_order')
+  ? nera_wp_query_args_with_catalog_order($competitions_args)
+  : array_merge($competitions_args, ['orderby' => 'date', 'order' => 'DESC']);
 
 $competitions = new WP_Query($competitions_args);
 
@@ -43,9 +43,10 @@ if (!$competitions->have_posts()) {
     'posts_per_page' => $per_page,
     'post_status' => 'publish',
     'paged' => 1,
-    'orderby' => 'date',
-    'order' => 'DESC',
   ];
+  $competitions_args = function_exists('nera_wp_query_args_with_catalog_order')
+    ? nera_wp_query_args_with_catalog_order($competitions_args)
+    : array_merge($competitions_args, ['orderby' => 'date', 'order' => 'DESC']);
   $competitions = new WP_Query($competitions_args);
 }
 

@@ -15,3 +15,4 @@ lty-result-screens/node_modules/
 
 # Release zip (next to release.sh)
 /nera-competitions-standard-*.zip
+.release-tmp/

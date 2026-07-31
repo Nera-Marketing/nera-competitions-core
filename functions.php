@@ -3,7 +3,7 @@
  * Nera Competitions Standard Theme
  *
  * @package Nera_Competitions
- * @version 1.3.11
+ * @version 1.3.12
  */
 
 use YahnisElsts\PluginUpdateChecker\v5p5\Vcs\GitHubApi;
@@ -19,7 +19,7 @@ require_once __DIR__ . '/inc/env-loader.php';
 require_once __DIR__ . '/inc/upgrade-temp-backup-helper.php';
 
 // Define theme constants (template directory = parent theme; child-safe when used as a parent)
-define('NERA_VERSION', '1.3.11');
+define('NERA_VERSION', '1.3.12');
 define('NERA_DIR', get_template_directory());
 define('NERA_URI', get_template_directory_uri());
 define('NERA_FRONTEND_DIST_DIR', NERA_DIR . '/frontend/dist');
@@ -1052,6 +1052,10 @@ require_once get_template_directory() . '/inc/acf/shop-listing/acf-shop-listing.
 // Shop listing helpers (grid, card layout, aspect ratio)
 require_once get_template_directory() . '/inc/helpers/shop-listing.php';
 
+// Catalog order helpers (Featured → menu_order → date) + admin Order column / notice
+require_once get_template_directory() . '/inc/helpers/catalog-order.php';
+require_once get_template_directory() . '/inc/catalog-order.php';
+
 // ACF Postal Entry Fields
 require_once get_template_directory() . '/inc/acf/postal-entry/acf-postal-entry.php';
 
@@ -1372,18 +1376,19 @@ function nera_advanced_filter_competitions_wp_query_args(array $url_category_slu
     ];
   }
 
-  return [
+  $args = [
     'post_type' => 'product',
     'posts_per_page' => $filter_posts_per_page,
     'paged' => $paged,
     'post_status' => 'publish',
     'tax_query' => $filter_tax_query,
-    'meta_key' => '_lty_end_date_gmt',
-    'orderby' => 'meta_value',
-    'order' => 'ASC',
     'meta_query' => function_exists('nera_active_lottery_meta_query') ? nera_active_lottery_meta_query() : [],
     'post__not_in' => function_exists('nera_sold_out_lottery_ids') ? nera_sold_out_lottery_ids() : [],
   ];
+
+  return function_exists('nera_wp_query_args_with_catalog_order')
+    ? nera_wp_query_args_with_catalog_order($args)
+    : array_merge($args, ['orderby' => 'date', 'order' => 'DESC']);
 }
 
 /**
@@ -1668,7 +1673,7 @@ function nera_ajax_filter_products()
   $category = isset($_POST['category']) ? sanitize_text_field($_POST['category']) : '';
   $price = isset($_POST['price']) ? sanitize_text_field($_POST['price']) : '';
   $status = isset($_POST['status']) ? sanitize_text_field($_POST['status']) : '';
-  $sort = isset($_POST['sort']) ? sanitize_text_field($_POST['sort']) : 'ending-soon';
+  $sort = isset($_POST['sort']) ? sanitize_text_field($_POST['sort']) : 'default';
   $page = isset($_POST['page']) ? absint($_POST['page']) : 1;
   $per_page = isset($_POST['per_page']) ? absint($_POST['per_page']) : 12;
 
@@ -1771,37 +1776,10 @@ function nera_ajax_filter_products()
     }
   }
 
-  // Sorting
-  switch ($sort) {
-    case 'ending-soon':
-      $args['meta_key'] = '_lty_end_date_gmt';
-      $args['orderby'] = 'meta_value';
-      $args['order'] = 'ASC';
-      break;
-
-    case 'newest':
-      $args['orderby'] = 'date';
-      $args['order'] = 'DESC';
-      break;
-
-    case 'price-low':
-      $args['meta_key'] = '_price';
-      $args['orderby'] = 'meta_value_num';
-      $args['order'] = 'ASC';
-      break;
-
-    case 'price-high':
-      $args['meta_key'] = '_price';
-      $args['orderby'] = 'meta_value_num';
-      $args['order'] = 'DESC';
-      break;
-
-    case 'popularity':
-      $args['meta_key'] = 'total_sales';
-      $args['orderby'] = 'meta_value_num';
-      $args['order'] = 'DESC';
-      break;
-  }
+  // Sorting: primary visitor key, then catalog layers (menu_order → date)
+  $args = function_exists('nera_wp_query_args_with_layered_sort')
+    ? nera_wp_query_args_with_layered_sort($args, $sort)
+    : array_merge($args, ['orderby' => 'date', 'order' => 'DESC']);
 
   $query = new WP_Query($args);
 

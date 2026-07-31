@@ -71,7 +71,7 @@ if (function_exists('is_shop') && is_shop() && function_exists('wc_get_page_id')
     Alpine.data('advancedFilterSection', () => ({
       selectedCategories: <?php echo wp_json_encode($url_category_slugs); ?>,
       priceRange: '',
-      sortBy: 'ending-soon',
+      sortBy: 'default',
       categoryDropdownOpen: false,
       categorySearchTerm: '',
       categoryNames: <?php echo wp_json_encode($cat_names); ?>,
@@ -280,7 +280,7 @@ if (function_exists('is_shop') && is_shop() && function_exists('wc_get_page_id')
       },
 
       hasActiveFilters() {
-        return this.selectedCategories.length > 0 || this.priceRange !== '' || this.sortBy !== 'ending-soon';
+        return this.selectedCategories.length > 0 || this.priceRange !== '' || this.sortBy !== 'default';
       },
 
       hasMatchingCards() {
@@ -300,9 +300,18 @@ if (function_exists('is_shop') && is_shop() && function_exists('wc_get_page_id')
       clearFilters() {
         this.selectedCategories = [];
         this.priceRange = '';
-        this.sortBy = 'ending-soon';
+        this.sortBy = 'default';
         this.categorySearchTerm = '';
         this.$nextTick(() => this.sortGrid());
+      },
+
+      catalogCmp(a, b) {
+        const fa = Number(a.dataset.featured) || 0;
+        const fb = Number(b.dataset.featured) || 0;
+        if (fb !== fa) return fb - fa;
+        const mo = (Number(a.dataset.menuOrder) || 0) - (Number(b.dataset.menuOrder) || 0);
+        if (mo !== 0) return mo;
+        return (Number(b.dataset.postedDate) || 0) - (Number(a.dataset.postedDate) || 0);
       },
 
       sortGrid() {
@@ -311,13 +320,28 @@ if (function_exists('is_shop') && is_shop() && function_exists('wc_get_page_id')
         const sentinel = document.getElementById('advanced-filter-grid-append-sentinel');
         let cards = Array.from(grid.querySelectorAll('[data-price]'));
         cards.sort((a, b) => {
+          let primary = 0;
           switch (this.sortBy) {
-            case 'price-low': return parseFloat(a.dataset.price) - parseFloat(b.dataset.price);
-            case 'price-high': return parseFloat(b.dataset.price) - parseFloat(a.dataset.price);
-            case 'newest': return Number(b.dataset.postedDate) - Number(a.dataset.postedDate);
-            case 'popularity': return Number(b.dataset.popularity) - Number(a.dataset.popularity);
-            default: return Number(a.dataset.endDate) - Number(b.dataset.endDate);
+            case 'price-low':
+              primary = parseFloat(a.dataset.price) - parseFloat(b.dataset.price);
+              break;
+            case 'price-high':
+              primary = parseFloat(b.dataset.price) - parseFloat(a.dataset.price);
+              break;
+            case 'newest':
+              primary = Number(b.dataset.postedDate) - Number(a.dataset.postedDate);
+              break;
+            case 'popularity':
+              primary = Number(b.dataset.popularity) - Number(a.dataset.popularity);
+              break;
+            case 'ending-soon':
+              primary = Number(a.dataset.endDate) - Number(b.dataset.endDate);
+              break;
+            default:
+              return this.catalogCmp(a, b);
           }
+          if (primary !== 0) return primary;
+          return this.catalogCmp(a, b);
         });
         cards.forEach(c => {
           if (sentinel) {
@@ -363,7 +387,7 @@ if (function_exists('is_shop') && is_shop() && function_exists('wc_get_page_id')
                 x-transition:leave="transition ease-in duration-150"
                 x-transition:leave-start="opacity-100 scale-100"
                 x-transition:leave-end="opacity-0 scale-50"
-                x-text="selectedCategories.length + (priceRange !== '' ? 1 : 0) + (sortBy !== 'ending-soon' ? 1 : 0)"
+                x-text="selectedCategories.length + (priceRange !== '' ? 1 : 0) + (sortBy !== 'default' ? 1 : 0)"
                 class="inline-flex items-center justify-center w-5 h-5 rounded-full bg-primary text-white text-[0.6rem] font-bold leading-none">
           </span>
         </div>
@@ -510,6 +534,7 @@ if (function_exists('is_shop') && is_shop() && function_exists('wc_get_page_id')
                    hover:border-primary
                    focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none
                    transition-colors duration-300 w-full md:w-auto">
+            <option value="default"><?php _e('Default', 'nera-competitions'); ?></option>
             <option value="ending-soon"><?php _e('Ending Soon', 'nera-competitions'); ?></option>
             <option value="newest"><?php _e('Newest First', 'nera-competitions'); ?></option>
             <option value="price-low"><?php _e('Price: Low to High', 'nera-competitions'); ?></option>
@@ -601,8 +626,8 @@ if (function_exists('is_shop') && is_shop() && function_exists('wc_get_page_id')
         </template>
 
         <!-- Sort pill (only when not default) -->
-        <template x-if="sortBy !== 'ending-soon'">
-          <button type="button" @click="sortBy = 'ending-soon'; $nextTick(() => sortGrid())"
+        <template x-if="sortBy !== 'default'">
+          <button type="button" @click="sortBy = 'default'; $nextTick(() => sortGrid())"
                   x-transition:enter="transition ease-out duration-200"
                   x-transition:enter-start="opacity-0 scale-90"
                   x-transition:enter-end="opacity-100 scale-100"
@@ -611,7 +636,7 @@ if (function_exists('is_shop') && is_shop() && function_exists('wc_get_page_id')
                          bg-primary/10 text-primary border border-primary/20
                          hover:bg-primary/15 hover:-translate-y-px
                          transition-all duration-150">
-            <span x-text="sortBy === 'newest' ? 'Newest' : sortBy === 'price-low' ? 'Price ↑' : sortBy === 'price-high' ? 'Price ↓' : 'Popular'"></span>
+            <span x-text="sortBy === 'ending-soon' ? 'Ending Soon' : sortBy === 'newest' ? 'Newest' : sortBy === 'price-low' ? 'Price ↑' : sortBy === 'price-high' ? 'Price ↓' : 'Popular'"></span>
             <svg class="w-2.5 h-2.5 opacity-70" viewBox="0 0 24 24" fill="none"
                  stroke="currentColor" stroke-width="3.5" stroke-linecap="round">
               <path d="M18 6L6 18M6 6l12 12"/>

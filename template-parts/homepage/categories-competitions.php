@@ -23,7 +23,7 @@ $categories = get_terms([
 
 $show_view_all = isset($args['show_view_all']) ? $args['show_view_all'] : true;
 
-// Query competitions - 9 products for 3×3 grid
+// Query competitions - 9 products for 3×3 grid (catalog order)
 $categories_competitions_args = [
   'post_type' => 'product',
   'posts_per_page' => 9,
@@ -35,11 +35,11 @@ $categories_competitions_args = [
       'terms' => 'lottery',
     ],
   ],
-  'meta_key' => '_lty_end_date_gmt',
-  'orderby' => 'meta_value',
-  'order' => 'ASC',
   'meta_query' => function_exists('nera_active_lottery_meta_query') ? nera_active_lottery_meta_query() : [],
 ];
+$categories_competitions_args = function_exists('nera_wp_query_args_with_catalog_order')
+  ? nera_wp_query_args_with_catalog_order($categories_competitions_args)
+  : array_merge($categories_competitions_args, ['orderby' => 'date', 'order' => 'DESC']);
 
 $competitions = new WP_Query($categories_competitions_args);
 

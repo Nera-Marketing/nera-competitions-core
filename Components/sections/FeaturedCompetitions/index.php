@@ -24,9 +24,6 @@ function get_data(array $args = []): array
         'post_type'      => 'product',
         'posts_per_page' => 6,
         'post_status'    => 'publish',
-        'orderby'        => 'meta_value',
-        'meta_key'       => '_lty_end_date_gmt',
-        'order'          => 'ASC',
         'tax_query'      => [
             ['taxonomy' => 'product_type', 'field' => 'slug', 'terms' => 'lottery'],
         ],
@@ -35,6 +32,12 @@ function get_data(array $args = []): array
             : [],
         'post__not_in'   => function_exists('nera_sold_out_lottery_ids') ? nera_sold_out_lottery_ids() : [],
     ];
+    if (function_exists('nera_wp_query_args_with_catalog_order')) {
+        $query_args = nera_wp_query_args_with_catalog_order($query_args);
+    } else {
+        $query_args['orderby'] = 'date';
+        $query_args['order']   = 'DESC';
+    }
     $query = new \WP_Query($query_args);
 
     $cards = [];
@@ -45,13 +48,15 @@ function get_data(array $args = []): array
         }
         wp_reset_postdata();
     } else {
-        $fallback = new \WP_Query([
+        $fallback_args = [
             'post_type'      => 'product',
             'posts_per_page' => 6,
             'post_status'    => 'publish',
-            'orderby'        => 'date',
-            'order'          => 'DESC',
-        ]);
+        ];
+        $fallback_args = function_exists('nera_wp_query_args_with_catalog_order')
+            ? nera_wp_query_args_with_catalog_order($fallback_args)
+            : array_merge($fallback_args, ['orderby' => 'date', 'order' => 'DESC']);
+        $fallback = new \WP_Query($fallback_args);
         if ($fallback->have_posts()) {
             while ($fallback->have_posts()) {
                 $fallback->the_post();
