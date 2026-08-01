@@ -122,7 +122,12 @@ $won_count = function_exists('nera_get_closed_lottery_won_instant_prize_count')
       <?php endif; ?>
 
       <!-- Progress bar (always 100% for closed) -->
-      <?php if ($max_tickets > 0): ?>
+      <?php
+      $show_tickets_progress = function_exists('nera_show_tickets_progress')
+        ? nera_show_tickets_progress($product_id)
+        : true;
+      ?>
+      <?php if ($show_tickets_progress && $max_tickets > 0): ?>
         <div class="space-y-1.5 sm:space-y-2">
           <div class="flex justify-between items-center gap-2 text-[11px] sm:text-xs font-bold">
             <span class="text-text-secondary">

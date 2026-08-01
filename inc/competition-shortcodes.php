@@ -167,6 +167,11 @@ function nera_shortcode_competition_progress()
   }
 
   $product_id = $product->get_id();
+
+  if (function_exists('nera_show_tickets_progress') && !nera_show_tickets_progress($product_id)) {
+    return '';
+  }
+
   $max_tickets = get_post_meta($product_id, '_lty_maximum_tickets', true);
 
   if (!$max_tickets) {

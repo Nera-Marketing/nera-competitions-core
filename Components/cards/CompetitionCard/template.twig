@@ -19,6 +19,7 @@
   other_cats        list<WP_Term>                                                            required  []        extra category terms for "+N" tooltip
   cat_accent        string                                                                   required  —         hex alias of accent_color
   show_countdown    bool                                                                     required  —         renders Alpine countdown in footer
+  show_progress     bool                                                                     required  —         Tickets Sold label + progress bar
   end_timestamp_ms  int                                                                      required  0         Unix ms for Alpine countdown
   data_attrs        array{price,end_date,posted_date,popularity,categories,menu_order,featured:string} required  —         JS filter data-* values
   x_show            string|null                                                              optional  null      Alpine x-show expression
@@ -161,6 +162,7 @@
       </h3>
 
       <!-- Progress Section -->
+      {% if show_progress %}
       <div class="space-y-2 sm:space-y-3 mb-auto">
         <div class="flex justify-between items-center gap-2">
           {% if button_variant == 'buy_tickets' %}
@@ -189,6 +191,7 @@
           </div>
         </div>
       </div>
+      {% endif %}
 
       <!-- Footer: Countdown & CTA -->
       <div

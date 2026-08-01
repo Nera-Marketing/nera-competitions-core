@@ -29,14 +29,19 @@ $seam_pb        = $args['seam_pb'] ?? '';
 if (!$product) {
   return;
 }
+
+$show_tickets_progress = function_exists('nera_show_tickets_progress')
+  ? nera_show_tickets_progress($product->get_id())
+  : true;
 ?>
 
 <?php if ($is_sold_out): ?>
 
-  <div class="p-6 pb-4">
+  <div class="p-6 <?php echo $show_tickets_progress ? 'pb-4' : 'pb-6 ' . esc_attr($seam_pb); ?>">
     <?php if (function_exists('nera_render_component')) { nera_render_component('ProductTitle', ['name' => $product->get_name(), 'is_sold_out' => true]); } ?>
   </div>
 
+  <?php if ($show_tickets_progress): ?>
   <div class="px-6 pb-6 <?php echo esc_attr($seam_pb); ?>">
     <?php if (function_exists('nera_render_component')) { nera_render_component('TicketsProgress', [
       'sold'         => $sold_tickets,
@@ -46,6 +51,7 @@ if (!$product) {
       'is_low_stock' => $is_low_stock,
     ]); } ?>
   </div>
+  <?php endif; ?>
 
 <?php else: ?>
 
@@ -53,7 +59,7 @@ if (!$product) {
     <?php if (function_exists('nera_render_component')) { nera_render_component('ProductTitle', ['name' => $product->get_name(), 'is_sold_out' => false]); } ?>
   </div>
 
-  <div class="px-6 pb-6">
+  <div class="px-6 pb-6<?php echo $show_tickets_progress ? '' : ' ' . esc_attr($seam_pb); ?>">
     <?php
     $countdown_date_for_js = '';
     if (method_exists($product, 'get_countdown_timer_enddate')) {
@@ -67,6 +73,7 @@ if (!$product) {
     ]); } ?>
   </div>
 
+  <?php if ($show_tickets_progress): ?>
   <div class="px-6 pb-6 <?php echo esc_attr($seam_pb); ?>">
     <?php if (function_exists('nera_render_component')) { nera_render_component('TicketsProgress', [
       'sold'         => $sold_tickets,
@@ -76,5 +83,6 @@ if (!$product) {
       'is_low_stock' => $is_low_stock,
     ]); } ?>
   </div>
+  <?php endif; ?>
 
 <?php endif; ?>

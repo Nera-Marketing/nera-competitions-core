@@ -186,7 +186,12 @@ if (!$competitions->have_posts()) {
 
               <div class="space-y-3">
                 <!-- Progress Label -->
-                <?php if ($max_tickets): ?>
+                <?php
+                $show_tickets_progress = function_exists('nera_show_tickets_progress')
+                  ? nera_show_tickets_progress($product_id)
+                  : true;
+                ?>
+                <?php if ($show_tickets_progress && $max_tickets): ?>
                   <div class="flex justify-between items-center text-xs font-bold">
                     <span class="text-text-secondary uppercase tracking-tighter">
                       <?php _e('Tickets Sold', 'nera-competitions'); ?>
@@ -253,6 +258,12 @@ if (!$competitions->have_posts()) {
                 'nera-competitions',
               ); ?></h3>
               <div class="space-y-3">
+                <?php
+                $show_placeholder_progress = function_exists('nera_show_tickets_progress')
+                  ? nera_show_tickets_progress()
+                  : true;
+                ?>
+                <?php if ($show_placeholder_progress): ?>
                 <div class="flex justify-between items-center text-xs font-bold">
                   <span class="text-text-secondary uppercase tracking-tighter">Tickets Sold</span>
                   <span class="text-primary">0%</span>
@@ -262,6 +273,7 @@ if (!$competitions->have_posts()) {
                     style="width: 0%;"
                     data-progress="0"></div>
                 </div>
+                <?php endif; ?>
                 <div class="flex items-center justify-between pt-4">
                   <span class="text-xs text-text-secondary"><?php _e(
                     'Coming soon',
