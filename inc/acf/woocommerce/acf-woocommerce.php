@@ -97,6 +97,17 @@ if (function_exists('acf_add_local_field_group')) {
       'ui_off_text' => 'Hidden',
     ],
     [
+      'key' => 'field_wc_show_tickets_progress',
+      'label' => 'Show Tickets Sold / Progress Bar',
+      'name' => 'show_tickets_progress',
+      'type' => 'true_false',
+      'instructions' => 'Site-wide default for the Tickets Sold label and progress bar on competition cards and the purchase card. Products can override under Competition Settings.',
+      'default_value' => 1,
+      'ui' => 1,
+      'ui_on_text' => 'Visible',
+      'ui_off_text' => 'Hidden',
+    ],
+    [
       'key' => 'field_wc_single_left_col_span',
       'label' => 'Single product — left column span (of 12)',
       'name' => 'single_left_col_span',

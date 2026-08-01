@@ -97,6 +97,40 @@ function nera_show_entry_list_tab(?int $product_id = null): bool
 }
 
 /**
+ * Whether to show the Tickets Sold label and progress bar.
+ *
+ * Resolves Theme Settings → WooCommerce (`show_tickets_progress`) as the
+ * site-wide default, with an optional per-product Competition Settings override
+ * (`inherit` | `show` | `hide`).
+ *
+ * @param int|null $product_id Product post ID.
+ * @return bool
+ */
+function nera_show_tickets_progress(?int $product_id = null): bool
+{
+  $global = true;
+  if (function_exists('get_field')) {
+    $global_value = get_field('show_tickets_progress', 'option');
+    $global = $global_value === null ? true : (bool) $global_value;
+  }
+
+  if (!$product_id || !function_exists('get_field')) {
+    return $global;
+  }
+
+  $override = get_field('show_tickets_progress', $product_id);
+
+  if ($override === 'show') {
+    return true;
+  }
+  if ($override === 'hide') {
+    return false;
+  }
+
+  return $global;
+}
+
+/**
  * Resolve the single-product two-column grid spans (12-column grid).
  *
  * Reads global Theme Settings → WooCommerce options. Each span is clamped to

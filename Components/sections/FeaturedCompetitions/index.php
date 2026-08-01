@@ -13,6 +13,7 @@ if (!defined('ABSPATH')) exit;
  *     button_variant: string, // always 'compact'
  *   }>,
  *   has_cards: bool,     // required — true when cards is non-empty
+ *   show_progress: bool, // required — site-wide Tickets Sold / progress for placeholder cards
  * }
  */
 function get_data(array $args = []): array
@@ -67,9 +68,12 @@ function get_data(array $args = []): array
     }
 
     return [
-        'title'     => $title,
-        'subtitle'  => $subtitle,
-        'cards'     => $cards,
-        'has_cards' => !empty($cards),
+        'title'         => $title,
+        'subtitle'      => $subtitle,
+        'cards'         => $cards,
+        'has_cards'     => !empty($cards),
+        'show_progress' => function_exists('nera_show_tickets_progress')
+            ? nera_show_tickets_progress()
+            : true,
     ];
 }

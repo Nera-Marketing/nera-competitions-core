@@ -147,6 +147,12 @@ if (!$cta_label) {
         </div>
       <?php endif; ?>
 
+      <?php
+      $show_tickets_progress = function_exists('nera_show_tickets_progress')
+        ? nera_show_tickets_progress($product_id)
+        : true;
+      ?>
+      <?php if ($show_tickets_progress): ?>
       <div class="space-y-1.5 sm:space-y-2">
         <div class="flex justify-between items-center gap-2 text-[11px] sm:text-xs font-bold">
           <span class="text-text-secondary">
@@ -161,6 +167,7 @@ if (!$cta_label) {
             data-progress="<?php echo esc_attr($progress); ?>"></div>
         </div>
       </div>
+      <?php endif; ?>
 
       <div class="pt-1 sm:pt-2">
         <a

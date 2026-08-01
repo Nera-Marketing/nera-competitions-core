@@ -23,6 +23,7 @@ if (!defined('ABSPATH')) exit;
  *   other_cats: list<\WP_Term>,                             // required, default [] — remaining category terms for "+N" tooltip
  *   cat_accent: string,                                     // required — hex for primary category (alias of accent_color when primary exists)
  *   show_countdown: bool,                                   // required — renders Alpine countdown widget in card footer
+ *   show_progress: bool,                                    // required — Tickets Sold label + progress bar; Theme Settings / product override
  *   end_timestamp_ms: int,                                  // required, default 0 — Unix ms for Alpine countdown x-data
  *   data_attrs: array{price:string,end_date:string,posted_date:string,popularity:string,categories:string,menu_order:string,featured:string}, // required — JS filter data attributes
  *   x_show?: string|null,                                   // optional, default null — Alpine x-show expression for filter hiding
@@ -159,6 +160,11 @@ function get_data(array $args = []): array
         'other_cats'       => $other_cats,
         'cat_accent'       => $category_colors[$primary_category] ?? $base_accent_color,
         'show_countdown'   => $end_date_gmt && !$countdown_expired,
+        'show_progress'    => array_key_exists('show_progress', $args)
+            ? (bool) $args['show_progress']
+            : (function_exists('nera_show_tickets_progress')
+                ? nera_show_tickets_progress($product_id)
+                : true),
         'end_timestamp_ms' => $end_timestamp_ms,
         'data_attrs'       => $data_attrs,
         'x_show'           => $args['x_show'] ?? null,

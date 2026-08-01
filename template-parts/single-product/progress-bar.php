@@ -28,6 +28,10 @@ if (!$max_tickets) {
   return;
 }
 
+if (function_exists('nera_show_tickets_progress') && !nera_show_tickets_progress($product->get_id())) {
+  return;
+}
+
 $is_almost_sold_out = $progress >= 90;
 $is_low_stock = $remaining <= 50 && $remaining > 0;
 ?>
