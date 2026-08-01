@@ -21,6 +21,11 @@ Nera Competitions Standard is built for competition and lottery sites: product t
 
 == Changelog ==
 
+= 1.3.13 =
+* Added: Site-wide **Show Tickets Sold / Progress Bar** toggle under Theme Settings → WooCommerce (default Visible).
+* Added: Per-product Competition Settings override — inherit / show / hide.
+* Added: `nera_show_tickets_progress()` resolver; hides Tickets Sold + progress on competition cards, purchase card, featured placeholders, entry-list/closed-prize cards, and `[competition_progress]`.
+
 = 1.3.0 =
 * Added: Heading Style system — Theme Settings → Headings sets a site-wide default heading font + accent colour; per-section two-tone overrides with custom Google Font loading (`inc/heading-style.php`, `inc/helpers/heading-style.php`, `inc/acf/heading-style/`).
 * Added: Single-product details-first mobile purchase card — site-wide + per-product layout option; purchase card split into header/body partials; unified rounded mobile card (`template-parts/single-product/purchase-card*.php`, `frontend/src/sections/single-product-unified-mobile.css`).
