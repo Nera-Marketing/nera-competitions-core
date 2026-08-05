@@ -1037,6 +1037,10 @@ require_once get_template_directory() . '/inc/helpers/heading-style.php';
 require_once get_template_directory() . '/inc/acf/heading-style/acf-heading-style.php';
 require_once get_template_directory() . '/inc/heading-style.php';
 
+// Spin To Win — client-editable wheel colours (segments, rim, bulb, pointer, base)
+require_once get_template_directory() . '/inc/acf/spin-wheel-colors/acf-spin-wheel-colors.php';
+require_once get_template_directory() . '/inc/spin-wheel-colors.php';
+
 // ACF Product Listing Fields
 require_once get_template_directory() . '/inc/acf/product-listing/acf-product-listing.php';
 
