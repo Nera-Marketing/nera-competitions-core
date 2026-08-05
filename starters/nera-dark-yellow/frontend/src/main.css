@@ -1,0 +1,71 @@
+/**
+ * Nera Dark Yellow — Vite / Tailwind v4 entry.
+ *
+ * Optional build path. Parent utilities already ship from the core theme;
+ * this @theme block regenerates tokens for any child-only classes and can
+ * replace assets/css/brand.css when you run `yarn build`.
+ *
+ * Keep token values aligned with ../assets/css/brand.css.
+ */
+
+@import 'tailwindcss';
+
+@source "../../**/*.php";
+@source "../../Components/**/*.twig";
+@source "../assets/**/*.js";
+
+@theme {
+  /* Brand */
+  --color-primary: #f5c518;
+  --color-primary-dark: #d4a017;
+  --color-on-primary: #0b0b0f;
+  --color-accent: #ffd60a;
+  --color-accent-dark: #e6c200;
+  --color-secondary: #1a1608;
+  --color-primary-gradient-end: #ff9f1c;
+  --color-primary-gradient-end-light: #ffd60a;
+
+  /* Canvas & surfaces */
+  --color-background-light: #0b0b0f;
+  --color-background-dark: #050507;
+  --color-surface: #16161c;
+
+  /* Text */
+  --color-text-primary: #f7f7f5;
+  --color-text-secondary: #a8a29e;
+
+  /* Status */
+  --color-success: #34d399;
+  --color-danger: #f87171;
+  --color-warning: #fbbf24;
+  --color-info: #60a5fa;
+
+  --color-success-bg: #064e3b;
+  --color-success-border: #059669;
+  --color-success-text: #a7f3d0;
+  --color-danger-bg: #7f1d1d;
+  --color-danger-border: #dc2626;
+  --color-danger-text: #fecaca;
+  --color-warning-bg: #78350f;
+  --color-warning-border: #d97706;
+  --color-warning-text: #fde68a;
+  --color-info-bg: #1e3a5f;
+  --color-info-border: #3b82f6;
+  --color-info-text: #bfdbfe;
+
+  /* Neutral scale (dark shell) */
+  --color-gray-50: #121218;
+  --color-gray-100: #1c1c22;
+  --color-gray-200: #2a2a32;
+  --color-gray-300: #3a3a44;
+  --color-gray-400: #6b6b76;
+  --color-gray-500: #8e8e99;
+  --color-gray-600: #a8a8b3;
+  --color-gray-700: #c4c4cc;
+  --color-gray-800: #e0e0e5;
+  --color-gray-900: #f5f5f7;
+
+  /* Typography */
+  --font-heading: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-body: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}

@@ -1,0 +1,183 @@
+/**
+ * Nera Dark Yellow — component knob overrides (.ncs-*).
+ *
+ * Per EXTENDING.md §7: set --ncs-* knobs; no !important.
+ * Loaded after brand.css (enqueue priority 100 / dependency chain).
+ */
+
+/* -------------------------------------------------------------------------
+   Hero
+   ------------------------------------------------------------------------- */
+.ncs-hero {
+  --ncs-hero-bg: linear-gradient(
+    to bottom right,
+    var(--color-background-light),
+    var(--color-surface),
+    var(--color-secondary)
+  );
+  --ncs-hero-text: var(--color-text-primary);
+  --ncs-hero-text-secondary: var(--color-text-secondary);
+  --ncs-hero-eyebrow: var(--color-primary);
+  --ncs-hero-cta-bg: var(--color-primary);
+  --ncs-hero-cta-text: var(--color-on-primary);
+  --ncs-hero-cta-bg-hover: var(--color-primary-dark);
+}
+
+/* HomepageHero Timber component (class on section root) */
+.nera-homepage-hero,
+section[data-component='HomepageHero'] {
+  --ncs-hero-bg: linear-gradient(
+    to bottom right,
+    var(--color-background-light),
+    var(--color-surface),
+    var(--color-secondary)
+  );
+}
+
+/* -------------------------------------------------------------------------
+   Competition / product cards
+   ------------------------------------------------------------------------- */
+.ncs-product-card {
+  --ncs-product-card-bg: var(--color-surface);
+  --ncs-product-card-border: var(--color-gray-200);
+  --ncs-product-card-border-hover: var(--color-primary);
+  --ncs-product-card-title: var(--color-text-primary);
+  --ncs-product-card-price: var(--color-primary);
+  --ncs-product-card-media-bg: var(--color-gray-100);
+  --ncs-product-card-progress-track: var(--color-gray-200);
+  --ncs-product-card-progress-accent: var(--color-primary);
+}
+
+/* -------------------------------------------------------------------------
+   Progress bars
+   ------------------------------------------------------------------------- */
+.ncs-progress {
+  --ncs-progress-track: var(--color-gray-200);
+  --ncs-progress-fill: var(--color-primary);
+  --ncs-progress-fill-urgent: var(--color-danger);
+  --ncs-progress-text: var(--color-text-secondary);
+}
+
+/* -------------------------------------------------------------------------
+   Countdown
+   ------------------------------------------------------------------------- */
+.ncs-countdown {
+  --ncs-countdown-cell-bg: var(--color-gray-100);
+  --ncs-countdown-cell-bg-urgent: color-mix(
+    in srgb,
+    var(--color-danger) 18%,
+    var(--color-gray-100)
+  );
+  --ncs-countdown-value: var(--color-text-primary);
+  --ncs-countdown-value-urgent: var(--color-danger);
+  --ncs-countdown-label: var(--color-text-secondary);
+}
+
+/* -------------------------------------------------------------------------
+   Cart / checkout
+   ------------------------------------------------------------------------- */
+.ncs-cart-item {
+  --ncs-cart-item-bg: var(--color-surface);
+  --ncs-cart-item-border: var(--color-gray-200);
+  --ncs-cart-item-border-hover: color-mix(
+    in srgb,
+    var(--color-primary) 35%,
+    var(--color-gray-200)
+  );
+  --ncs-cart-item-title: var(--color-text-primary);
+  --ncs-cart-item-text-secondary: var(--color-text-secondary);
+  --ncs-cart-item-price: var(--color-primary);
+}
+
+.ncs-payment-method {
+  --ncs-payment-method-bg: var(--color-surface);
+  --ncs-payment-method-bg-hover: var(--color-gray-100);
+  --ncs-payment-method-bg-active: var(--color-gray-100);
+  --ncs-payment-method-bg-box: var(--color-gray-50);
+  --ncs-payment-method-border: var(--color-gray-200);
+  --ncs-payment-method-border-hover: var(--color-gray-300);
+  --ncs-payment-method-border-active: var(--color-primary);
+}
+
+.ncs-wallet-balance {
+  --ncs-wallet-balance-bg: color-mix(in srgb, var(--color-primary) 12%, transparent);
+  --ncs-wallet-balance-bg-end: var(--color-secondary);
+  --ncs-wallet-balance-border: color-mix(in srgb, var(--color-primary) 35%, transparent);
+  --ncs-wallet-balance-text: var(--color-text-primary);
+  --ncs-wallet-balance-text-secondary: var(--color-text-secondary);
+}
+
+/* -------------------------------------------------------------------------
+   My Account
+   ------------------------------------------------------------------------- */
+.ncs-dashboard-welcome {
+  --ncs-dashboard-welcome-bg: linear-gradient(
+    135deg,
+    var(--color-primary),
+    var(--color-primary-dark)
+  );
+  --ncs-dashboard-welcome-text: var(--color-on-primary);
+  --ncs-dashboard-welcome-shadow: 0 20px 25px -5px color-mix(in srgb, var(--color-primary) 35%, transparent);
+}
+
+.ncs-stat-card {
+  --ncs-stat-card-bg: var(--color-surface);
+  --ncs-stat-card-border: var(--color-gray-200);
+  --ncs-stat-card-value: var(--color-text-primary);
+  --ncs-stat-card-label: var(--color-text-secondary);
+  --ncs-stat-card-icon-bg: linear-gradient(
+    to bottom right,
+    var(--color-primary),
+    var(--color-primary-dark)
+  );
+}
+
+/* -------------------------------------------------------------------------
+   Footer
+   ------------------------------------------------------------------------- */
+.ncs-site-footer {
+  --ncs-footer-bg: var(--color-surface);
+  --ncs-footer-border-top: var(--color-gray-200);
+  --ncs-footer-text: var(--color-text-secondary);
+  --ncs-footer-heading: var(--color-text-primary);
+  --ncs-footer-link: var(--color-text-secondary);
+  --ncs-footer-link-hover: var(--color-primary);
+}
+
+/* -------------------------------------------------------------------------
+   Scoped polish (non-knob) — body-class specificity, no !important
+   ------------------------------------------------------------------------- */
+
+/* Header bar sits on surface; keep border visible on dark */
+body #site-header {
+  border-color: var(--color-gray-200);
+}
+
+/*
+ * Parent CTAs use text-white on bg-gradient-primary. On yellow that fails
+ * contrast — force on-primary (near-black). Specificity 0-2-1 beats text-white.
+ */
+body .bg-gradient-primary.text-white,
+body a.bg-gradient-primary.text-white,
+body .ncs-hero__cta .bg-gradient-primary {
+  color: var(--color-on-primary);
+}
+
+/* Winner chip avatar monogram on yellow gradient */
+body .ncs-hero .bg-gradient-primary.text-white {
+  color: var(--color-on-primary);
+}
+
+/* Promo banner — parent hardcodes #1a1a4e; restyle for dark shell */
+body .promo-banner {
+  background-color: #121218;
+}
+
+body .promo-banner .absolute.inset-0 .bg-gradient-to-r {
+  background-image: linear-gradient(
+    to right,
+    rgb(11 11 15 / 0.95),
+    rgb(11 11 15 / 0.9),
+    rgb(11 11 15 / 0.8)
+  );
+}

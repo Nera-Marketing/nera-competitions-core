@@ -198,6 +198,8 @@ When replacing legacy raw utilities in parent templates, use this table:
 
 ## 6. Child theme quick-start
 
+**Starter (dark + yellow):** see [`starters/nera-dark-yellow/`](starters/nera-dark-yellow/) — copy that folder into `wp-content/themes/nera-dark-yellow` and activate. It ships token overrides (`brand.css`), component knobs (`child-tokens.css`), and category-color filters.
+
 ### Minimal setup
 
 ```css
