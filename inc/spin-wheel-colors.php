@@ -31,13 +31,16 @@ function nera_print_spin_wheel_color_vars()
     }
 
     $map = [
-        'spin_wheel_segment_a_color' => '--stw-wheel-segment-a',
-        'spin_wheel_segment_b_color' => '--stw-wheel-segment-b',
-        'spin_wheel_rim_color'       => '--stw-wheel-rim',
-        'spin_wheel_bulb_color'      => '--stw-wheel-bulb',
-        'spin_wheel_pointer_color'   => '--stw-wheel-pointer',
-        'spin_wheel_base_color'      => '--stw-wheel-base',
-        'spin_wheel_label_color'     => '--stw-wheel-label',
+        'spin_wheel_segment_a_color'     => '--stw-wheel-segment-a',
+        'spin_wheel_segment_b_color'     => '--stw-wheel-segment-b',
+        'spin_wheel_rim_color'           => '--stw-wheel-rim',
+        'spin_wheel_bulb_color'          => '--stw-wheel-bulb',
+        'spin_wheel_bulb_mid_color'      => '--stw-wheel-bulb-mid',
+        'spin_wheel_bulb_hot_color'      => '--stw-wheel-bulb-hot',
+        'spin_wheel_bulb_specular_color' => '--stw-wheel-bulb-specular',
+        'spin_wheel_pointer_color'       => '--stw-wheel-pointer',
+        'spin_wheel_base_color'          => '--stw-wheel-base',
+        'spin_wheel_label_color'         => '--stw-wheel-label',
     ];
 
     $css = '';
