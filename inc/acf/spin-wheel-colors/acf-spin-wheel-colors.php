@@ -286,12 +286,12 @@ function nera_spin_wheel_colors_live_preview()
                 <circle cx="50" cy="50" r="46" fill="none" stroke="var(--sw-ring)" stroke-width="1.5" />
                 <!-- Sample prize labels — colour controlled by the "Wheel Text Colour" field. -->
                 <g fill="var(--sw-label)" font-family="sans-serif" font-size="2.8" font-weight="700" text-anchor="middle">
-                    <text x="82.00" y="50.00" transform="rotate(0 82.00 50.00)">PRIZE</text>
-                    <text x="66.00" y="77.71" transform="rotate(60 66.00 77.71)">PRIZE</text>
-                    <text x="34.00" y="77.71" transform="rotate(-60 34.00 77.71)">PRIZE</text>
-                    <text x="18.00" y="50.00" transform="rotate(0 18.00 50.00)">PRIZE</text>
-                    <text x="34.00" y="22.29" transform="rotate(60 34.00 22.29)">PRIZE</text>
-                    <text x="66.00" y="22.29" transform="rotate(-60 66.00 22.29)">PRIZE</text>
+                    <text x="82.00" y="50.00" transform="rotate(0 82.00 50.00)">Prize</text>
+                    <text x="66.00" y="77.71" transform="rotate(60 66.00 77.71)">Prize</text>
+                    <text x="34.00" y="77.71" transform="rotate(-60 34.00 77.71)">Prize</text>
+                    <text x="18.00" y="50.00" transform="rotate(0 18.00 50.00)">Prize</text>
+                    <text x="34.00" y="22.29" transform="rotate(60 34.00 22.29)">Prize</text>
+                    <text x="66.00" y="22.29" transform="rotate(-60 66.00 22.29)">Prize</text>
                 </g>
                 <?php
                 // Multi-layer rim bulbs — mirrors plugin WheelChrome.jsx layers
