@@ -2,9 +2,10 @@
 /**
  * Basket Hold — choose-your-own Ticket cart timer (ADR 0009).
  *
- * Reuses Lottery for WooCommerce’s Reserve Ticket Number. WooCommerce owns the
- * minutes setting; LTY options are filtered to match. Cart/checkout show a live
- * countdown; on expiry a toast fires and that cart line is removed.
+ * Reuses Lottery for WooCommerce’s Reserve Ticket Number. Theme Settings → “WooCommerce”
+ * owns the minutes setting (ACF; see inc/acf/theme-settings/acf-theme-settings.php);
+ * LTY options are filtered to match. Cart/checkout show a live countdown; on expiry a
+ * toast fires and that cart line is removed.
  *
  * @package Nera_Competitions
  */
@@ -13,8 +14,14 @@ if (!defined('ABSPATH')) {
   exit();
 }
 
-/** Option key for Basket Hold duration in minutes. */
+/**
+ * Legacy option key, from when this was a WooCommerce → Settings → General field.
+ * Still read as a fallback so a duration set before the move survives it (ADR 0009).
+ */
 const NERA_BASKET_HOLD_MINUTES_OPTION = 'nera_basket_hold_minutes';
+
+/** Option key written by the ACF field in the Theme Settings → WooCommerce group. */
+const NERA_BASKET_HOLD_MINUTES_ACF_OPTION = 'options_nera_basket_hold_minutes';
 
 /**
  * Configured Basket Hold duration in minutes (0–30).
@@ -22,13 +29,27 @@ const NERA_BASKET_HOLD_MINUTES_OPTION = 'nera_basket_hold_minutes';
  * 0 disables Basket Hold entirely (no LTY reserve, no countdown, no auto-remove).
  * Default when unset: 5.
  *
+ * Resolves ACF row → legacy Woo option → 5. Deliberately reads the raw option rather than
+ * get_field(): this runs from the `pre_option_lty_settings_*` filters below, which can fire
+ * before ACF has booted, and ACF returns no `default_value` for an options page that has
+ * never been saved — which would silently read as 0 and disable Basket Hold store-wide.
+ * The raw read is also what separates "never saved" (null) from a deliberate 0.
+ *
  * @return int
  */
 function nera_basket_hold_minutes()
 {
-  $mins = (int) get_option(NERA_BASKET_HOLD_MINUTES_OPTION, 5);
+  $stored = get_option(NERA_BASKET_HOLD_MINUTES_ACF_OPTION, null);
 
-  return max(0, min(30, $mins));
+  if (null === $stored || '' === $stored) {
+    $stored = get_option(NERA_BASKET_HOLD_MINUTES_OPTION, null);
+  }
+
+  if (null === $stored || '' === $stored) {
+    $stored = 5;
+  }
+
+  return max(0, min(30, (int) $stored));
 }
 
 /**
@@ -70,56 +91,6 @@ add_filter(
   'pre_option_lty_settings_reserve_ticket_time_in_min',
   'nera_basket_hold_filter_lty_minutes',
 );
-
-/**
- * Add Basket Hold as a global section on WooCommerce → Settings → General.
- *
- * Not a per-product field. Duration applies store-wide; only Competitions with
- * Ticket Generation Type = “User Chooses the Ticket” are held in the cart.
- * Set to 0 to turn Basket Hold off.
- *
- * @param array $settings General settings fields.
- * @return array
- */
-function nera_basket_hold_general_settings($settings)
-{
-  $section = [
-    [
-      'title' => __('Basket Hold', 'nera-competitions'),
-      'type' => 'title',
-      'desc' => __(
-        'Global timer for choose-your-own ticket numbers reserved in the cart. Only applies to Competitions where Ticket Generation Type is “User Chooses the Ticket”. Automatic ticket Competitions are not timed. Set minutes to 0 to disable Basket Hold.',
-        'nera-competitions',
-      ),
-      'id' => 'nera_basket_hold_options',
-    ],
-    [
-      'title' => __('Basket Hold (minutes)', 'nera-competitions'),
-      'desc' => __(
-        'How long picked ticket numbers stay reserved before that cart line is removed (1–30). Set to 0 to disable. Default 5.',
-        'nera-competitions',
-      ),
-      'id' => NERA_BASKET_HOLD_MINUTES_OPTION,
-      'type' => 'number',
-      'custom_attributes' => [
-        'min' => 0,
-        'max' => 30,
-        'step' => 1,
-      ],
-      'css' => 'width: 80px;',
-      'default' => '5',
-      'autoload' => true,
-      'desc_tip' => true,
-    ],
-    [
-      'type' => 'sectionend',
-      'id' => 'nera_basket_hold_options',
-    ],
-  ];
-
-  return array_merge($settings, $section);
-}
-add_filter('woocommerce_general_settings', 'nera_basket_hold_general_settings');
 
 /**
  * Unix expiry timestamp for a cart line’s Basket Hold, or 0 if not held.

@@ -26,8 +26,8 @@
  * This is display-layer only: the address is gone from the DOM but still present in
  * the raw HTML response. It is a clarity measure, not a data-minimisation control.
  *
- * WooCommerce → Settings → General → “Giveaway admin privacy” owns the Yes/No.
- * Child themes can still force-show with:
+ * Theme Settings → “WooCommerce” owns the Yes/No (ACF; see
+ * inc/acf/theme-settings/acf-theme-settings.php). Child themes can still force-show with:
  *
  *     add_filter('nera_hide_giveaway_ticket_emails', '__return_false');
  *
@@ -40,19 +40,35 @@ if (!defined('ABSPATH')) {
   exit();
 }
 
-/** Option key: Woo checkbox 'yes' = show emails on Giveaway → View lists. */
+/**
+ * Legacy option key ('yes'/'no'), from when this was a WooCommerce → Settings → General
+ * checkbox. Still read as a fallback so a choice made before the move survives it.
+ */
 const NERA_SHOW_GIVEAWAY_BUYER_EMAILS_OPTION = 'nera_show_giveaway_buyer_emails';
+
+/** Option key written by the ACF field in the Theme Settings → WooCommerce group ('1'/'0'). */
+const NERA_SHOW_GIVEAWAY_BUYER_EMAILS_ACF_OPTION = 'options_nera_show_giveaway_buyer_emails';
 
 /**
  * Whether buyer emails should appear beside usernames on Giveaway → View lists.
  *
- * Driven by WooCommerce → Settings → General → Show buyer emails on Giveaway lists.
+ * Driven by Theme Settings → WooCommerce → Show buyer emails on Giveaway lists.
  * Default: no (hidden).
+ *
+ * Resolves ACF row → legacy Woo option → false. Reads the raw option rather than
+ * get_field() so "never saved" is distinguishable from an explicit off, matching the
+ * pattern the CashFlow toggle already uses (inc/woocommerce.php).
  *
  * @return bool
  */
 function nera_show_giveaway_buyer_emails()
 {
+  $stored = get_option(NERA_SHOW_GIVEAWAY_BUYER_EMAILS_ACF_OPTION, null);
+
+  if (null !== $stored && '' !== $stored) {
+    return (bool) (int) $stored;
+  }
+
   return 'yes' === get_option(NERA_SHOW_GIVEAWAY_BUYER_EMAILS_OPTION, 'no');
 }
 
@@ -65,47 +81,6 @@ function nera_hide_giveaway_buyer_emails()
 {
   return !nera_show_giveaway_buyer_emails();
 }
-
-/**
- * Add Giveaway admin privacy section immediately after other General settings
- * (Basket Hold registers earlier, so this section appears below it).
- *
- * @param array $settings General settings fields.
- * @return array
- */
-function nera_giveaway_email_visibility_general_settings($settings)
-{
-  $section = [
-    [
-      'title' => __('Giveaway admin privacy', 'nera-competitions'),
-      'type' => 'title',
-      'desc' => __(
-        'Controls whether buyer email addresses appear beside usernames on the Giveaway → View screen (Tickets, Winners, and Instant Win Prizes). Does not change Export CSV, order links, or the billing-name tooltip.',
-        'nera-competitions',
-      ),
-      'id' => 'nera_giveaway_admin_privacy_options',
-    ],
-    [
-      'title' => __('Show buyer emails on Giveaway lists', 'nera-competitions'),
-      'desc' => __(
-        'Yes = show email next to the username. No = hide it (default).',
-        'nera-competitions',
-      ),
-      'id' => NERA_SHOW_GIVEAWAY_BUYER_EMAILS_OPTION,
-      'type' => 'checkbox',
-      'default' => 'no',
-      'autoload' => true,
-      'desc_tip' => true,
-    ],
-    [
-      'type' => 'sectionend',
-      'id' => 'nera_giveaway_admin_privacy_options',
-    ],
-  ];
-
-  return array_merge($settings, $section);
-}
-add_filter('woocommerce_general_settings', 'nera_giveaway_email_visibility_general_settings');
 
 /**
  * Is the current request the lottery plugin's single-giveaway view screen?
