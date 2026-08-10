@@ -24,9 +24,18 @@ if (!defined('ABSPATH')) {
     <?php if (WC()->cart->needs_payment()): ?>
       <ul class="wc_payment_methods payment_methods methods">
         <?php
+        get_template_part('template-parts/checkout/wallet-payment-disabled');
+
         $available_gateways = WC()->payment_gateways->get_available_payment_gateways();
         if (!empty($available_gateways)):
           foreach ($available_gateways as $gateway):
+            if (
+              'wallet' === $gateway->id &&
+              function_exists('nera_wallet_show_disabled_full_wallet') &&
+              nera_wallet_show_disabled_full_wallet()
+            ) {
+              continue;
+            }
             wc_get_template('checkout/payment-method.php', ['gateway' => $gateway]);
           endforeach;
         else:
@@ -49,8 +58,18 @@ if (!defined('ABSPATH')) {
           echo '</li>';
         endif;
         ?>
+        <?php
+        // Same slots as woocommerce/checkout/payment.php — first paint matches fragment.
+        get_template_part('template-parts/checkout/wallet-partial-payment', null, [
+          'slot' => 'option',
+        ]);
+        ?>
       </ul>
     <?php endif; ?>
+
+    <?php get_template_part('template-parts/checkout/wallet-partial-payment', null, [
+      'slot' => 'notice',
+    ]); ?>
   </div>
 
   <div class="pt-6">

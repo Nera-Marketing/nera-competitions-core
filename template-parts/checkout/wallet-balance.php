@@ -38,8 +38,12 @@ if (function_exists('is_wallet_rechargeable_cart') && is_wallet_rechargeable_car
   return;
 }
 
-// Get cart total for comparison
-$cart_total = (float) WC()->cart->total;
+// Basket Total for comparison — NOT WC()->cart->total, which already has any Wallet
+// Contribution fee subtracted. Using it here reported the remainder short by the whole
+// contribution (£20 basket, £5 credit showed "pay £10" instead of £15). See docs/adr/0001.
+$cart_total = function_exists('nera_wallet_basket_total')
+  ? nera_wallet_basket_total()
+  : (float) WC()->cart->total;
 $can_pay_full = $balance >= $cart_total;
 $wallet_partial_enabled = 'on' === woo_wallet()->settings_api->get_option(
   'is_enable_partial_payment',
@@ -171,62 +175,3 @@ $wallet_partial_enabled = 'on' === woo_wallet()->settings_api->get_option(
   </div>
 
 </div>
-
-<?php
-// Add inline script to highlight wallet payment option
-?>
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-  // Wait for payment methods to load
-  setTimeout(function() {
-    const walletPaymentInput = document.querySelector('input[value="wallet"]');
-    if (walletPaymentInput) {
-      const paymentBox = walletPaymentInput.closest('li');
-      if (paymentBox) {
-        // Add visual emphasis to wallet payment option
-        paymentBox.classList.add('nera-wallet-payment-highlighted');
-        
-        // Optionally auto-select if can pay full amount
-        <?php if ($can_pay_full): ?>
-        walletPaymentInput.checked = true;
-        walletPaymentInput.dispatchEvent(new Event('change', { bubbles: true }));
-        <?php endif; ?>
-      }
-    }
-  }, 500);
-});
-</script>
-
-<style>
-/* Inline styles for wallet payment highlight */
-.nera-wallet-payment-highlighted {
-  position: relative;
-  background: linear-gradient(135deg, rgba(99, 102, 241, 0.03) 0%, rgba(79, 70, 229, 0.05) 100%) !important;
-  border: 2px solid rgba(99, 102, 241, 0.2) !important;
-  border-radius: 12px !important;
-  padding: 16px !important;
-  transition: all 0.3s ease !important;
-}
-
-.nera-wallet-payment-highlighted:hover {
-  border-color: rgba(99, 102, 241, 0.4) !important;
-  box-shadow: 0 4px 6px -1px rgba(99, 102, 241, 0.1) !important;
-}
-
-.nera-wallet-payment-highlighted::before {
-  content: '⭐';
-  position: absolute;
-  top: -8px;
-  right: -8px;
-  background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
-  color: white;
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 12px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-</style>

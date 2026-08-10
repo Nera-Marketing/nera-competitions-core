@@ -1,0 +1,29 @@
+/**
+ * Basket Hold countdown chip (cart + checkout).
+ *
+ * Uses the warning semantic triplet so light and dark child themes both keep
+ * readable contrast. Do not use amber-* Tailwind utilities here: on dark
+ * canvases cart copy inherits --color-text-primary (#fff) while amber-50 stays
+ * pale, which washes the label out.
+ */
+
+.nera-basket-hold {
+  --nera-basket-hold-bg: var(--color-warning-bg, #ffedd5);
+  --nera-basket-hold-border: var(--color-warning-border, #fdba74);
+  --nera-basket-hold-text: var(--color-warning-text, #9a3412);
+
+  background-color: var(--nera-basket-hold-bg);
+  border: 1px solid var(--nera-basket-hold-border);
+  color: var(--nera-basket-hold-text);
+}
+
+.nera-basket-hold__icon {
+  color: inherit;
+  font-variation-settings: 'FILL' 1;
+  line-height: 1;
+}
+
+.nera-basket-hold__label,
+.nera-basket-hold__time {
+  color: inherit;
+}

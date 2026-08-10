@@ -1,6 +1,6 @@
 <?php
 /**
- * Giveaway view screen (wp-admin) — show usernames without email addresses.
+ * Giveaway view screen (wp-admin) — optional hide of buyer emails beside usernames.
  *
  * On Giveaway → View (`?page=lty_lottery&lty_action=view&product_id=…`) Lottery for
  * WooCommerce prints `username (email@example.com)` in three separate places:
@@ -13,9 +13,9 @@
  * inline view markup with no hook, and the underlying `get_user_email()` reads meta
  * that abstract-lty-post.php:197 bulk-loads via `get_post_meta( $id )` (no key), so
  * there is no per-key `get_post_metadata` interception point either. The addresses
- * are therefore removed on the client.
+ * are therefore removed on the client when Giveaway Buyer Email Visibility is off.
  *
- * Deliberately left alone:
+ * Deliberately left alone (even when emails are hidden in the cells):
  *   - The `Billing name:` tooltip on the tickets cell — admins need it to tie a
  *     ticket back to a real person when reconciling a draw or a disputed order.
  *   - Export CSV (its own `lty_user_email` column) and the per-row order links.
@@ -26,17 +26,86 @@
  * This is display-layer only: the address is gone from the DOM but still present in
  * the raw HTML response. It is a clarity measure, not a data-minimisation control.
  *
- * Child themes can switch it off entirely:
+ * WooCommerce → Settings → General → “Giveaway admin privacy” owns the Yes/No.
+ * Child themes can still force-show with:
  *
  *     add_filter('nera_hide_giveaway_ticket_emails', '__return_false');
  *
  * @package Nera_Competitions
+ * @see docs/adr/0010-giveaway-buyer-email-visibility.md
  */
 
 // Exit if accessed directly
 if (!defined('ABSPATH')) {
   exit();
 }
+
+/** Option key: Woo checkbox 'yes' = show emails on Giveaway → View lists. */
+const NERA_SHOW_GIVEAWAY_BUYER_EMAILS_OPTION = 'nera_show_giveaway_buyer_emails';
+
+/**
+ * Whether buyer emails should appear beside usernames on Giveaway → View lists.
+ *
+ * Driven by WooCommerce → Settings → General → Show buyer emails on Giveaway lists.
+ * Default: no (hidden).
+ *
+ * @return bool
+ */
+function nera_show_giveaway_buyer_emails()
+{
+  return 'yes' === get_option(NERA_SHOW_GIVEAWAY_BUYER_EMAILS_OPTION, 'no');
+}
+
+/**
+ * Whether the client redaction script should run (inverse of show setting).
+ *
+ * @return bool
+ */
+function nera_hide_giveaway_buyer_emails()
+{
+  return !nera_show_giveaway_buyer_emails();
+}
+
+/**
+ * Add Giveaway admin privacy section immediately after other General settings
+ * (Basket Hold registers earlier, so this section appears below it).
+ *
+ * @param array $settings General settings fields.
+ * @return array
+ */
+function nera_giveaway_email_visibility_general_settings($settings)
+{
+  $section = [
+    [
+      'title' => __('Giveaway admin privacy', 'nera-competitions'),
+      'type' => 'title',
+      'desc' => __(
+        'Controls whether buyer email addresses appear beside usernames on the Giveaway → View screen (Tickets, Winners, and Instant Win Prizes). Does not change Export CSV, order links, or the billing-name tooltip.',
+        'nera-competitions',
+      ),
+      'id' => 'nera_giveaway_admin_privacy_options',
+    ],
+    [
+      'title' => __('Show buyer emails on Giveaway lists', 'nera-competitions'),
+      'desc' => __(
+        'Yes = show email next to the username. No = hide it (default).',
+        'nera-competitions',
+      ),
+      'id' => NERA_SHOW_GIVEAWAY_BUYER_EMAILS_OPTION,
+      'type' => 'checkbox',
+      'default' => 'no',
+      'autoload' => true,
+      'desc_tip' => true,
+    ],
+    [
+      'type' => 'sectionend',
+      'id' => 'nera_giveaway_admin_privacy_options',
+    ],
+  ];
+
+  return array_merge($settings, $section);
+}
+add_filter('woocommerce_general_settings', 'nera_giveaway_email_visibility_general_settings');
 
 /**
  * Is the current request the lottery plugin's single-giveaway view screen?
@@ -81,10 +150,13 @@ function nera_enqueue_giveaway_ticket_privacy($hook_suffix)
   /**
    * Whether to hide buyer email addresses on the giveaway view screen.
    *
+   * Default follows Giveaway Buyer Email Visibility (Woo setting). Return false to
+   * force-show (e.g. child theme).
+   *
    * @since 1.2.8
-   * @param bool $hide Defaults to true.
+   * @param bool $hide True when emails should be redacted in the User Name cells.
    */
-  if (!apply_filters('nera_hide_giveaway_ticket_emails', true)) {
+  if (!apply_filters('nera_hide_giveaway_ticket_emails', nera_hide_giveaway_buyer_emails())) {
     return;
   }
 

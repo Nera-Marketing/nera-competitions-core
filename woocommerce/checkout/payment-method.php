@@ -18,6 +18,17 @@ if ($gateway->id === 'wallet') {
 } elseif ($gateway->id === 'cod') {
   $gateway_icon_name = 'local_shipping';
 }
+
+// "Part wallet, part card" is a second radio sharing this gateway's name and value (see
+// docs/adr/0003). While it is the active choice, this row must render UNchecked — two
+// checked radios in one group would otherwise leave the browser to pick, and the plain card
+// row would briefly look selected.
+$nera_split_active =
+  function_exists('nera_wallet_partial_state') &&
+  'cashflows_card' === $gateway->id &&
+  nera_wallet_partial_state()['contribution'] > 0;
+
+$nera_chosen = $gateway->chosen && !$nera_split_active;
 ?>
 <li class="ncs-payment-method wc_payment_method payment_method_<?php echo esc_attr($gateway->id); ?>">
   <div class="flex items-center gap-3">
@@ -27,7 +38,7 @@ if ($gateway->id === 'wallet') {
       class="input-radio"
       name="payment_method"
       value="<?php echo esc_attr($gateway->id); ?>"
-      <?php checked($gateway->chosen, true); ?>
+      <?php checked($nera_chosen, true); ?>
       data-order_button_text="<?php echo esc_attr($gateway->order_button_text); ?>"
     />
 

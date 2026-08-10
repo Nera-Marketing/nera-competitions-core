@@ -3,7 +3,7 @@
  * Nera Competitions Standard Theme
  *
  * @package Nera_Competitions
- * @version 1.3.14
+ * @version 1.3.15
  */
 
 use YahnisElsts\PluginUpdateChecker\v5p5\Vcs\GitHubApi;
@@ -19,7 +19,7 @@ require_once __DIR__ . '/inc/env-loader.php';
 require_once __DIR__ . '/inc/upgrade-temp-backup-helper.php';
 
 // Define theme constants (template directory = parent theme; child-safe when used as a parent)
-define('NERA_VERSION', '1.3.14');
+define('NERA_VERSION', '1.3.15');
 define('NERA_DIR', get_template_directory());
 define('NERA_URI', get_template_directory_uri());
 define('NERA_FRONTEND_DIST_DIR', NERA_DIR . '/frontend/dist');
@@ -707,6 +707,16 @@ function nera_enqueue_scripts()
       NERA_VERSION,
       true,
     );
+
+    // Wallet Partial Payment controls (ADR 0004/0005). jQuery only for `updated_checkout`
+    // flash restore; amount commit is script-only with no edit-time AJAX.
+    wp_enqueue_script(
+      'nera-wallet-partial-payment',
+      NERA_ASSETS_URI . '/js/wallet-partial-payment.js',
+      ['jquery'],
+      NERA_VERSION,
+      true,
+    );
   }
 
   // 5. Winners page Alpine component (must load before Alpine.js initializes)
@@ -1098,6 +1108,10 @@ if (class_exists('WooCommerce')) {
   require_once NERA_DIR . '/inc/woocommerce.php';
   require_once NERA_DIR . '/inc/instant-win-prizes-section.php';
   require_once NERA_DIR . '/inc/spin-to-win-prizes-section.php';
+  // Wallet Partial Payment — buyer-chosen Wallet Contribution at checkout (ADR 0001–0008).
+  require_once NERA_DIR . '/inc/wallet-partial-payment.php';
+  // Basket Hold — choose-your-own Ticket cart timer (ADR 0009).
+  require_once NERA_DIR . '/inc/basket-hold.php';
 }
 
 // REST API for instant wins lazy loading
@@ -1113,6 +1127,11 @@ if (class_exists('WooCommerce') && function_exists('lty_is_lottery_product')) {
 // Giveaway plugin customizations
 if (class_exists('WooCommerce_Lottery')) {
   require_once NERA_DIR . '/inc/giveaway-custom.php';
+}
+
+// Giveaway → View (wp-admin): hide buyer emails in Tickets / Winners / Instant Win tables.
+if (is_admin()) {
+  require_once NERA_DIR . '/inc/admin-giveaway-ticket-privacy.php';
 }
 
 // Lottery for WooCommerce — thank-you page result overlays (instant win / prize draw)

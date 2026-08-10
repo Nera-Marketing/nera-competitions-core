@@ -1230,6 +1230,16 @@ body h6 {
   color: var(--ncs-cart-item-text-secondary);
 }
 
+/*
+ * Basket Hold chip — warning triplet (see assets/css/basket-hold.css).
+ * Knobs live here so child themes can retoken; live styles enqueue with the feature.
+ */
+.nera-basket-hold {
+  --nera-basket-hold-bg: var(--color-warning-bg);
+  --nera-basket-hold-border: var(--color-warning-border);
+  --nera-basket-hold-text: var(--color-warning-text);
+}
+
 /* .ncs-payment-method knobs — consumed by the .wc_payment_method rules above */
 .ncs-payment-method {
   --ncs-payment-method-bg: var(--color-surface);

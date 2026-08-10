@@ -21,8 +21,20 @@ if (!wp_doing_ajax()) {
 ); ?>">
   <?php if (WC()->cart && WC()->cart->needs_payment()): ?>
     <ul class="wc_payment_methods payment_methods methods">
-      <?php if (!empty($available_gateways)) {
+      <?php
+      // Disabled Full Wallet Payment when not selectable but should remain visible (ADR 0007/0008).
+      get_template_part('template-parts/checkout/wallet-payment-disabled');
+
+      if (!empty($available_gateways)) {
         foreach ($available_gateways as $gateway) {
+          // Avoid a duplicate wallet row when the disabled radio is already shown.
+          if (
+            'wallet' === $gateway->id &&
+            function_exists('nera_wallet_show_disabled_full_wallet') &&
+            nera_wallet_show_disabled_full_wallet()
+          ) {
+            continue;
+          }
           wc_get_template('checkout/payment-method.php', ['gateway' => $gateway]);
         }
       } else {
@@ -43,9 +55,25 @@ if (!wp_doing_ajax()) {
           'notice',
         );
         echo '</li>';
-      } ?>
+      }
+      ?>
+
+      <?php
+      // "Part wallet, part card" — selectable or disabled; hidden when Partial Payment is off.
+      // Inside this fragment so it survives update_checkout replacement.
+      get_template_part('template-parts/checkout/wallet-partial-payment', null, [
+        'slot' => 'option',
+      ]);
+      ?>
     </ul>
   <?php endif; ?>
+
+  <?php
+  // Forced Auto Deduct notice only (ADR 0007).
+  get_template_part('template-parts/checkout/wallet-partial-payment', null, [
+    'slot' => 'notice',
+  ]);
+  ?>
 </div>
 <?php if (!wp_doing_ajax()) {
   do_action('woocommerce_review_order_after_payment');

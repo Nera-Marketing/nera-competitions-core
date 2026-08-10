@@ -116,6 +116,9 @@ $answers = isset($cart_item['lty_lottery']['answers']) ? $cart_item['lty_lottery
             ); ?> <?php echo esc_html($answers); ?></span>
           <?php endif; ?>
         </div>
+        <?php echo function_exists('nera_basket_hold_countdown_html')
+          ? nera_basket_hold_countdown_html($cart_item_key, $cart_item)
+          : ''; ?>
       </div>
     </div>
     <div class="flex items-center justify-between gap-2">
@@ -199,6 +202,9 @@ $answers = isset($cart_item['lty_lottery']['answers']) ? $cart_item['lty_lottery
               $answers,
             ); ?></div>
           <?php endif; ?>
+          <?php echo function_exists('nera_basket_hold_countdown_html')
+            ? nera_basket_hold_countdown_html($cart_item_key, $cart_item)
+            : ''; ?>
         </div>
         <button type="button" class="md:ml-auto p-2 text-gray-400 hover:text-danger hover:bg-danger-bg rounded-lg transition-all" aria-label="<?php esc_attr_e(
           'Remove item',

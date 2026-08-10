@@ -45,7 +45,9 @@ if (!defined('ABSPATH')) {
       $thumbnail = $_product->get_image([56, 56], ['class' => 'w-full h-full object-cover']);
       ?>
 
-      <div class="flex gap-3 items-start">
+      <div class="flex gap-3 items-start" data-cart-item-key="<?php echo esc_attr(
+        $cart_item_key,
+      ); ?>">
         <div class="w-14 h-14 rounded-lg overflow-hidden bg-gray-50 flex-shrink-0 border border-gray-100">
           <?php echo $thumbnail; ?>
         </div>
@@ -53,6 +55,9 @@ if (!defined('ABSPATH')) {
           <h4 class="font-semibold text-sm text-text-primary leading-tight mb-1 line-clamp-2">
             <?php echo wp_kses_post($product_name); ?>
           </h4>
+          <?php echo function_exists('nera_basket_hold_countdown_html')
+            ? nera_basket_hold_countdown_html($cart_item_key, $cart_item)
+            : ''; ?>
           <div class="flex justify-between items-center">
             <span class="text-xs text-text-secondary">
               <?php // Show ticket count for lottery products
