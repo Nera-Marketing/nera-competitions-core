@@ -32,8 +32,9 @@ if (
   return;
 }
 
-/** The card gateway that collects the remainder. */
-$nera_card_gateway = 'cashflows_card';
+/** The card gateway that collects the remainder. Guaranteed available — a missing card
+ * gateway resolves to a state handled by the early return above. */
+$nera_card_gateway = nera_wallet_card_gateway_id();
 
 if ('option' === $nera_slot):
 

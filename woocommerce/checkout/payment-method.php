@@ -25,7 +25,8 @@ if ($gateway->id === 'wallet') {
 // row would briefly look selected.
 $nera_split_active =
   function_exists('nera_wallet_partial_state') &&
-  'cashflows_card' === $gateway->id &&
+  function_exists('nera_wallet_card_gateway_id') &&
+  nera_wallet_card_gateway_id() === $gateway->id &&
   nera_wallet_partial_state()['contribution'] > 0;
 
 $nera_chosen = $gateway->chosen && !$nera_split_active;

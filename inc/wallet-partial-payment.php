@@ -28,6 +28,10 @@
  *   < basket  on        on        forced          Auto Deduct + disabled Full Wallet
  *   < basket  on        off       blocked         Full Wallet + Partial both disabled
  *
+ * `Partial` above means the setting AND a Card gateway to collect the remainder. With no Card
+ * gateway available the `on` rows are unreachable and the matrix reads as if the setting were
+ * off — Full Wallet Payment alone when the balance covers the basket, nothing otherwise.
+ *
  * @package Nera_Competitions
  */
 
@@ -110,6 +114,60 @@ function nera_wallet_requested_contribution()
 }
 
 /**
+ * The gateway id that collects the Card leg of a Partial Payment.
+ *
+ * Single source of truth: the split radio posts this value (docs/adr/0003), the card row
+ * suppresses its own `checked` against it, and the precondition below tests it.
+ *
+ * @return string
+ */
+function nera_wallet_card_gateway_id()
+{
+  return (string) apply_filters('nera_wallet_card_gateway_id', 'cashflows_card');
+}
+
+/**
+ * Is there a Card gateway to hand the remainder to?
+ *
+ * A Partial Payment is a Wallet Contribution *plus a Card payment for the rest*, so with no
+ * Card gateway the option cannot exist — see nera_wallet_partial_state().
+ *
+ * Deliberately NOT `get_available_payment_gateways()`. That sweeps every gateway calling
+ * `is_available()`, and TeraWallet's wallet gateway answers that with
+ * `is_enable_wallet_partial_payment()`, which fires the filter we hook in
+ * nera_wallet_filter_partial_payment_enabled() — straight back into
+ * nera_wallet_partial_state() and round again, unbounded (WooCommerce rebuilds that list on
+ * every call rather than memoising it). `payment_gateways()` returns the registry without
+ * asking anything whether it is available, and the Cashflows gateway does not override
+ * `is_available()` at all (iccf_abstract), so asking it directly cannot re-enter the wallet.
+ *
+ * The trade-off: a late `woocommerce_available_payment_gateways` filter removing Cashflows is
+ * invisible here. Running that filter is precisely what re-enters the wallet gateway.
+ *
+ * @return bool
+ */
+function nera_wallet_card_gateway_available()
+{
+  static $available = null;
+
+  if (null !== $available) {
+    return $available;
+  }
+
+  if (!function_exists('WC') || !is_object(WC()) || !is_object(WC()->payment_gateways())) {
+    // Gateways are not registered yet — answer without memoising a premature `false`.
+    return false;
+  }
+
+  $gateways = WC()->payment_gateways()->payment_gateways();
+  $card_id = nera_wallet_card_gateway_id();
+
+  $available = isset($gateways[$card_id]) && $gateways[$card_id]->is_available();
+
+  return $available;
+}
+
+/**
  * Resolve which row of the behaviour matrix applies to this request.
  *
  * @return array{
@@ -149,6 +207,13 @@ function nera_wallet_partial_state()
       '_wallet_settings_general',
       'on',
     );
+
+  // No Card gateway, no Partial Payment — there is nothing to collect the remainder, and the
+  // split radio would post a `payment_method` that does not exist (ADR 0008). Folding it into
+  // the setting collapses to the same `full_only` / `card_only` rows the setting-off path
+  // already uses, so every consumer of this state — both templates, the TeraWallet gate, the
+  // clamp, and the Place order commit — drops Partial Payment together and in silence.
+  $partial_enabled = $partial_enabled && nera_wallet_card_gateway_available();
 
   $auto_deduct =
     $partial_enabled &&
