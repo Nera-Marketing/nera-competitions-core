@@ -172,6 +172,50 @@ if (function_exists('acf_add_local_field_group')) {
         'id' => '',
       ],
     ],
+
+    // ── Store behaviour ────────────────────────────────────────────────────
+    // Moved here from WooCommerce → Settings → General (ADR 0009 / 0010). Never read these
+    // directly — nera_basket_hold_minutes() and nera_show_giveaway_buyer_emails() own the
+    // resolution, including the fallback to the pre-move option rows. Each field carries its
+    // own full context because this group is a mixed bag and its title explains neither.
+    [
+      'key' => 'field_nera_basket_hold_minutes',
+      'label' => 'Basket Hold (minutes)',
+      'name' => 'nera_basket_hold_minutes',
+      'type' => 'number',
+      'instructions' =>
+        'How long picked ticket numbers stay reserved in the cart before that line is removed (1–30). Only applies to Competitions where Ticket Generation Type is “User Chooses the Ticket” — automatic ticket Competitions are not timed. Set to 0 to disable Basket Hold entirely: no reserve, no countdown, no auto-remove. Default 5.',
+      'required' => 0,
+      'min' => 0,
+      'max' => 30,
+      'step' => 1,
+      'default_value' => 5,
+      'placeholder' => '5',
+      'append' => '',
+      'wrapper' => [
+        'width' => '',
+        'class' => 'nera-acf-field--compact-minutes',
+        'id' => '',
+      ],
+    ],
+    [
+      'key' => 'field_nera_show_giveaway_buyer_emails',
+      'label' => 'Show buyer emails on Giveaway lists',
+      'name' => 'nera_show_giveaway_buyer_emails',
+      'type' => 'true_false',
+      'instructions' =>
+        'Whether buyer email addresses appear beside usernames on the Giveaway → View screen (Tickets, Winners, and Instant Win Prizes). Show = the email appears next to the username. Hide = it is removed from those lists (default). Does not change Export CSV, order links, or the billing-name tooltip.',
+      'required' => 0,
+      'ui' => 1,
+      'ui_on_text' => 'Show',
+      'ui_off_text' => 'Hide',
+      'default_value' => 0,
+      'wrapper' => [
+        'width' => '',
+        'class' => 'nera-acf-field--toggle',
+        'id' => '',
+      ],
+    ],
   ];
 
   if (class_exists('Nera_STW_ACF_Copy_Settings')) {

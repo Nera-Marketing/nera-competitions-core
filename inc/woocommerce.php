@@ -3157,3 +3157,40 @@ function nera_winners_dynamic_get_page_dataset($page, $filter = 'all', $allowed 
     'filter'     => $filter,
   ];
 }
+
+/**
+ * ============================================
+ * Theme Settings → WooCommerce field tweaks
+ * ============================================
+ *
+ * Small square Basket Hold number input (no ACF append chip). The wrapper classes this
+ * targets are declared on the fields in inc/acf/woocommerce/acf-woocommerce.php — keep the
+ * two in step if either is renamed.
+ *
+ * @param string $hook_suffix Current admin page hook.
+ * @return void
+ */
+function nera_theme_settings_woocommerce_admin_css($hook_suffix)
+{
+    // Options pages vary by menu depth; the query arg is the stable gate.
+    $page = isset($_GET['page']) ? sanitize_key(wp_unslash($_GET['page'])) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+    if ('acf-options-woocommerce' !== $page) {
+        return;
+    }
+
+    wp_register_style('nera-theme-settings-woocommerce', false, [], null);
+    wp_enqueue_style('nera-theme-settings-woocommerce');
+    wp_add_inline_style(
+        'nera-theme-settings-woocommerce',
+        '.acf-field.nera-acf-field--compact-minutes .acf-input-wrap{'
+        . 'width:auto;'
+        . 'max-width:5rem;'
+        . '}'
+        . '.acf-field.nera-acf-field--compact-minutes .acf-input-wrap input[type="number"]{'
+        . 'width:5rem !important;'
+        . 'max-width:5rem !important;'
+        . 'border-radius:0 !important;'
+        . '}'
+    );
+}
+add_action('admin_enqueue_scripts', 'nera_theme_settings_woocommerce_admin_css');

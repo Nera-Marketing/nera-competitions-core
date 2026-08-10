@@ -2,8 +2,9 @@
 /**
  * Basket Hold — choose-your-own Ticket cart timer (ADR 0009).
  *
- * Reuses Lottery for WooCommerce’s Reserve Ticket Number. Theme Settings → “WooCommerce”
- * owns the minutes setting (ACF; see inc/acf/theme-settings/acf-theme-settings.php);
+ * Reuses Lottery for WooCommerce’s Reserve Ticket Number. Theme Settings → WooCommerce →
+ * “WooCommerce Settings” owns the minutes setting (ACF; see
+ * inc/acf/woocommerce/acf-woocommerce.php);
  * LTY options are filtered to match. Cart/checkout show a live countdown; on expiry a
  * toast fires and that cart line is removed.
  *
@@ -20,7 +21,7 @@ if (!defined('ABSPATH')) {
  */
 const NERA_BASKET_HOLD_MINUTES_OPTION = 'nera_basket_hold_minutes';
 
-/** Option key written by the ACF field in the Theme Settings → WooCommerce group. */
+/** Option key written by the ACF field on Theme Settings → WooCommerce. */
 const NERA_BASKET_HOLD_MINUTES_ACF_OPTION = 'options_nera_basket_hold_minutes';
 
 /**

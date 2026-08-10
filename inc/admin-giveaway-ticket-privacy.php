@@ -26,8 +26,8 @@
  * This is display-layer only: the address is gone from the DOM but still present in
  * the raw HTML response. It is a clarity measure, not a data-minimisation control.
  *
- * Theme Settings → “WooCommerce” owns the Yes/No (ACF; see
- * inc/acf/theme-settings/acf-theme-settings.php). Child themes can still force-show with:
+ * Theme Settings → WooCommerce → “WooCommerce Settings” owns the Yes/No (ACF; see
+ * inc/acf/woocommerce/acf-woocommerce.php). Child themes can still force-show with:
  *
  *     add_filter('nera_hide_giveaway_ticket_emails', '__return_false');
  *
@@ -52,7 +52,7 @@ const NERA_SHOW_GIVEAWAY_BUYER_EMAILS_ACF_OPTION = 'options_nera_show_giveaway_b
 /**
  * Whether buyer emails should appear beside usernames on Giveaway → View lists.
  *
- * Driven by Theme Settings → WooCommerce → Show buyer emails on Giveaway lists.
+ * Driven by Theme Settings → WooCommerce → “Show buyer emails on Giveaway lists”.
  * Default: no (hidden).
  *
  * Resolves ACF row → legacy Woo option → false. Reads the raw option rather than
