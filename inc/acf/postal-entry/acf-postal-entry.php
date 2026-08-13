@@ -35,6 +35,23 @@ if (function_exists('acf_add_local_field_group')) {
     'key' => 'group_neracompetitions_postal_entry',
     'title' => 'Postal Entry Settings',
     'fields' => [
+      // Link Text (purchase card CTA)
+      [
+        'key' => 'field_postal_entry_link_text',
+        'label' => 'Link Text',
+        'name' => 'postal_entry_link_text',
+        'type' => 'text',
+        'instructions' =>
+          'Text for the postal entry link under the Add to Cart button on single product pages.',
+        'required' => 0,
+        'default_value' => 'ENTER BY POST',
+        'placeholder' => 'ENTER BY POST',
+        'wrapper' => [
+          'width' => '',
+          'class' => '',
+          'id' => '',
+        ],
+      ],
       // Instruction Text
       [
         'key' => 'field_postal_instruction_text',

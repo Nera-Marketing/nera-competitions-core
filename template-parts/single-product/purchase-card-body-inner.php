@@ -627,12 +627,20 @@ $decimal_sep       = wc_get_price_decimal_separator();
 </div>
 
 <!-- Enter By Post Section -->
+<?php
+$postal_entry_link_text = function_exists('get_field')
+  ? get_field('postal_entry_link_text', 'option')
+  : '';
+if (!$postal_entry_link_text) {
+  $postal_entry_link_text = __('ENTER BY POST', 'nera-competitions');
+}
+?>
 <div class="px-6 pb-6" x-data>
   <div class="border-t border-gray-200">
     <p class="text-center text-sm text-text-secondary pt-6">
       <?php _e('Or', 'nera-competitions'); ?>
       <button type="button" @click="$store.postDialog.show = true" class="text-primary font-semibold hover:text-primary-dark transition-colors">
-        <?php _e('ENTER BY POST', 'nera-competitions'); ?>
+        <?php echo esc_html($postal_entry_link_text); ?>
       </button>
     </p>
   </div>
