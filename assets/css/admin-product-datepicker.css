@@ -1,0 +1,7 @@
+/**
+ * Product-edit: keep Lottery date/datetime picker above metabox chrome.
+ */
+body.wp-admin #ui-datepicker-div,
+body.wp-admin .ui-datepicker {
+  z-index: 100000 !important;
+}

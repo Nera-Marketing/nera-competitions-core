@@ -3,7 +3,7 @@
  * Nera Competitions Standard Theme
  *
  * @package Nera_Competitions
- * @version 1.3.21
+ * @version 1.3.22
  */
 
 use YahnisElsts\PluginUpdateChecker\v5p5\Vcs\GitHubApi;
@@ -19,7 +19,7 @@ require_once __DIR__ . '/inc/env-loader.php';
 require_once __DIR__ . '/inc/upgrade-temp-backup-helper.php';
 
 // Define theme constants (template directory = parent theme; child-safe when used as a parent)
-define('NERA_VERSION', '1.3.21');
+define('NERA_VERSION', '1.3.22');
 define('NERA_DIR', get_template_directory());
 define('NERA_URI', get_template_directory_uri());
 define('NERA_FRONTEND_DIST_DIR', NERA_DIR . '/frontend/dist');
@@ -2367,3 +2367,44 @@ add_action('admin_enqueue_scripts', function ($hook) {
         true
     );
 });
+
+// Product edit: fix Lottery Start/End (and other) datepicker position
+add_action('admin_enqueue_scripts', function ($hook) {
+    if (!in_array($hook, ['post.php', 'post-new.php'], true)) {
+        return;
+    }
+    $screen = function_exists('get_current_screen') ? get_current_screen() : null;
+    if (!$screen || $screen->post_type !== 'product') {
+        return;
+    }
+
+    $css = get_template_directory() . '/assets/css/admin-product-datepicker.css';
+    $js  = get_template_directory() . '/assets/js/admin-product-datepicker-fix.js';
+    if (file_exists($css)) {
+        wp_enqueue_style(
+            'nera-admin-product-datepicker',
+            get_template_directory_uri() . '/assets/css/admin-product-datepicker.css',
+            [],
+            (string) filemtime($css)
+        );
+    }
+    if (!file_exists($js)) {
+        return;
+    }
+
+    $deps = ['jquery', 'jquery-ui-datepicker'];
+    if (wp_script_is('lty-enhanced', 'registered') || wp_script_is('lty-enhanced', 'enqueued')) {
+        $deps[] = 'lty-enhanced';
+    }
+    if (wp_script_is('jquery-ui-timpicker-addon', 'registered') || wp_script_is('jquery-ui-timpicker-addon', 'enqueued')) {
+        $deps[] = 'jquery-ui-timpicker-addon';
+    }
+
+    wp_enqueue_script(
+        'nera-admin-product-datepicker-fix',
+        get_template_directory_uri() . '/assets/js/admin-product-datepicker-fix.js',
+        $deps,
+        (string) filemtime($js),
+        true
+    );
+}, 30);
