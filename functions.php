@@ -170,24 +170,94 @@ if (!defined('NERA_CSTD_DISABLE_GITHUB_UPDATES') || !NERA_CSTD_DISABLE_GITHUB_UP
 }
 
 /**
+ * Sanitize the attribution page URL slug.
+ *
+ * @param mixed $value Raw slug value.
+ * @return string Non-empty sanitized slug.
+ */
+function nera_sanitize_attribution_slug($value)
+{
+  $slug = sanitize_title(trim((string) $value, '/'));
+  if ($slug === '') {
+    return NERA_ATTRIBUTION_ROUTE_SLUG;
+  }
+
+  return $slug;
+}
+
+/**
+ * Public URL slug for the attribution page (ACF option, with default fallback).
+ *
+ * @return string
+ */
+function nera_get_attribution_route_slug()
+{
+  return nera_sanitize_attribution_slug(get_option('options_attr_page_slug', ''));
+}
+
+/**
+ * Absolute URL of the attribution page.
+ *
+ * @return string
+ */
+function nera_get_attribution_page_url()
+{
+  return home_url(user_trailingslashit(nera_get_attribution_route_slug()));
+}
+
+/**
+ * Old attribution slugs that should 301 to the current URL.
+ *
+ * @return string[]
+ */
+function nera_get_attribution_redirect_slugs()
+{
+  $current = nera_get_attribution_route_slug();
+  $slugs = [];
+
+  foreach ([get_option('nera_attribution_previous_slug', ''), NERA_ATTRIBUTION_ROUTE_SLUG] as $candidate) {
+    $candidate = sanitize_title(trim((string) $candidate, '/'));
+    if ($candidate === '' || $candidate === $current) {
+      continue;
+    }
+    $slugs[$candidate] = $candidate;
+  }
+
+  return array_values($slugs);
+}
+
+/**
  * Register virtual public route for the attribution PR page.
  */
 function nera_register_attribution_route()
 {
+  $slug = nera_get_attribution_route_slug();
   add_rewrite_rule(
-    '^' . NERA_ATTRIBUTION_ROUTE_SLUG . '/?$',
+    '^' . preg_quote($slug, '#') . '/?$',
     'index.php?nera_attribution=1',
     'top',
   );
+
+  foreach (nera_get_attribution_redirect_slugs() as $old_slug) {
+    add_rewrite_rule(
+      '^' . preg_quote($old_slug, '#') . '/?$',
+      'index.php?nera_attribution_redirect=1',
+      'top',
+    );
+  }
 }
 add_action('init', 'nera_register_attribution_route');
 
 /**
- * Register query var used by attribution virtual route.
+ * Register query vars used by attribution virtual route.
+ *
+ * @param string[] $vars Query vars.
+ * @return string[]
  */
 function nera_register_attribution_query_var($vars)
 {
   $vars[] = 'nera_attribution';
+  $vars[] = 'nera_attribution_redirect';
   return $vars;
 }
 add_filter('query_vars', 'nera_register_attribution_query_var');
@@ -217,6 +287,56 @@ function nera_maybe_flush_attribution_rewrites()
   update_option($flush_flag, 1, true);
 }
 add_action('init', 'nera_maybe_flush_attribution_rewrites', 20);
+
+/**
+ * Flush attribution rewrites when the page slug is changed in ACF.
+ *
+ * @param mixed $post_id ACF save target.
+ */
+function nera_flush_attribution_rewrites_on_acf_save($post_id)
+{
+  if ($post_id !== 'options') {
+    return;
+  }
+
+  if (!defined('NERA_ATTRIBUTION_OPTIONS_SLUG')) {
+    return;
+  }
+
+  $page = isset($_REQUEST['page']) ? sanitize_key(wp_unslash($_REQUEST['page'])) : '';
+  if ($page !== NERA_ATTRIBUTION_OPTIONS_SLUG) {
+    return;
+  }
+
+  $new_slug = nera_get_attribution_route_slug();
+  $active_slug = nera_sanitize_attribution_slug(
+    get_option('nera_attribution_active_rewrite_slug', NERA_ATTRIBUTION_ROUTE_SLUG)
+  );
+
+  if ($new_slug === $active_slug) {
+    return;
+  }
+
+  update_option('nera_attribution_previous_slug', $active_slug, false);
+  update_option('nera_attribution_active_rewrite_slug', $new_slug, false);
+  nera_register_attribution_route();
+  flush_rewrite_rules(false);
+}
+add_action('acf/save_post', 'nera_flush_attribution_rewrites_on_acf_save', 20);
+
+/**
+ * 301 old attribution URLs to the current slug.
+ */
+function nera_maybe_redirect_old_attribution_slug()
+{
+  if ((int) get_query_var('nera_attribution_redirect') !== 1) {
+    return;
+  }
+
+  wp_safe_redirect(nera_get_attribution_page_url(), 301);
+  exit;
+}
+add_action('template_redirect', 'nera_maybe_redirect_old_attribution_slug', 1);
 
 /**
  * Ensure Spin To Win rewrite exists on first theme load after plugin install.

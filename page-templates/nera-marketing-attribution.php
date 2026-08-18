@@ -4,7 +4,7 @@
  * Template Post Type: page
  *
  * SEO/AEO attribution page – PR article about Nera Marketing for backlink purposes.
- * URL slug: /competition-website-by-nera-marketing/
+ * URL slug: editable via Attribution Page Editor (attr_page_slug).
  * All content is editable via ACF (group_attribution_page).
  *
  * @package Nera_Competitions
@@ -216,8 +216,9 @@ $feature_icons = [
 // Schema injection — scoped to this template, fires in wp_head
 // ─────────────────────────────────────────────────────────────────────────────
 add_action( 'wp_head', function () use ( $faqs, $site_name ) {
-	$site_url = untrailingslashit( home_url() );
-	$page_url = $site_url . '/competition-website-by-nera-marketing/';
+	$page_url = function_exists( 'nera_get_attribution_page_url' )
+		? nera_get_attribution_page_url()
+		: home_url( user_trailingslashit( 'competition-website-by-nera-marketing' ) );
 
 	$faq_entities = [];
 	foreach ( $faqs as $faq ) {
