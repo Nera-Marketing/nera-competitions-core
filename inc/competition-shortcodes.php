@@ -55,13 +55,15 @@ function nera_shortcode_competition_badge()
   // Determine status badge
   $badge_text = '';
   $badge_class = 'bg-danger';
+  $suppress_capacity = function_exists('nera_suppress_ticket_capacity_ui')
+    && nera_suppress_ticket_capacity_ui((int) $product_id);
   if ($max_tickets && $remaining <= 0) {
     $badge_text = __('Sold Out', 'nera-competitions');
-  } elseif ($remaining > 0 && $remaining <= 50) {
+  } elseif (!$suppress_capacity && $remaining > 0 && $remaining <= 50) {
     $badge_text = sprintf(__('Last %d Tickets', 'nera-competitions'), $remaining);
   } elseif ($days_left <= 1 && ($days_left > 0 || $hours_left > 0)) {
     $badge_text = __('Ending Soon', 'nera-competitions');
-  } elseif ($progress >= 90) {
+  } elseif (!$suppress_capacity && $progress >= 90) {
     $badge_text = __('Almost Gone', 'nera-competitions');
     $badge_class = 'bg-warning';
   }
@@ -168,7 +170,14 @@ function nera_shortcode_competition_progress()
 
   $product_id = $product->get_id();
 
-  if (function_exists('nera_show_tickets_progress') && !nera_show_tickets_progress($product_id)) {
+  $show_counter = function_exists('nera_show_tickets_counter')
+    ? nera_show_tickets_counter($product_id)
+    : true;
+  $show_bar = function_exists('nera_show_tickets_bar')
+    ? nera_show_tickets_bar($product_id)
+    : true;
+
+  if (!$show_counter && !$show_bar) {
     return '';
   }
 
@@ -187,20 +196,30 @@ function nera_shortcode_competition_progress()
   ob_start();
   ?>
   <div class="space-y-3">
+    <?php if ($show_counter || $show_bar): ?>
     <div class="flex justify-between items-center text-xs font-bold">
+      <?php if ($show_counter): ?>
       <span class="text-text-secondary uppercase tracking-tighter">
         <?php _e('Tickets Sold', 'nera-competitions'); ?>
       </span>
+      <?php else: ?>
+      <span></span>
+      <?php endif; ?>
+      <?php if ($show_bar): ?>
       <span class="text-primary">
         <?php echo esc_html($progress); ?>%
       </span>
+      <?php endif; ?>
     </div>
+    <?php endif; ?>
 
+    <?php if ($show_bar): ?>
     <div class="ncs-progress__track relative h-[14px] w-full rounded-full overflow-hidden shadow-inner">
       <div class="ncs-progress__fill h-full rounded-full transition-all duration-1000 ease-out"
         style="width: 0%;"
         data-progress="<?php echo esc_attr($progress); ?>"></div>
     </div>
+    <?php endif; ?>
   </div>
   <?php return ob_get_clean();
 }

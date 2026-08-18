@@ -101,16 +101,19 @@ function get_data(array $args = []): array
     $badge_class = 'bg-gradient-to-r from-danger to-danger-text';
     $is_urgent   = !empty($countdown_parts['urgent']);
 
+    $suppress_capacity = function_exists('\\nera_suppress_ticket_capacity_ui')
+        && \nera_suppress_ticket_capacity_ui($product_id);
+
     if ($max_tickets && $remaining <= 0) {
         $badge_text = __('Sold Out', 'nera-competitions');
         $is_urgent  = true;
-    } elseif ($remaining > 0 && $remaining <= 50) {
+    } elseif (!$suppress_capacity && $remaining > 0 && $remaining <= 50) {
         $badge_text = sprintf(__('Last %d Tickets', 'nera-competitions'), $remaining);
         $is_urgent  = true;
     } elseif ($days_left <= 1 && ($days_left > 0 || $hours_left > 0)) {
         $badge_text = __('Ending Soon', 'nera-competitions');
         $is_urgent  = true;
-    } elseif ($progress >= 90) {
+    } elseif (!$suppress_capacity && $progress >= 90) {
         $badge_text  = __('Almost Gone', 'nera-competitions');
         $badge_class = 'bg-gradient-to-r from-warning to-warning';
     }
@@ -160,6 +163,16 @@ function get_data(array $args = []): array
         'other_cats'       => $other_cats,
         'cat_accent'       => $category_colors[$primary_category] ?? $base_accent_color,
         'show_countdown'   => $end_date_gmt && !$countdown_expired,
+        'show_counter'     => array_key_exists('show_counter', $args)
+            ? (bool) $args['show_counter']
+            : (function_exists('nera_show_tickets_counter')
+                ? nera_show_tickets_counter($product_id)
+                : true),
+        'show_bar'         => array_key_exists('show_bar', $args)
+            ? (bool) $args['show_bar']
+            : (function_exists('nera_show_tickets_bar')
+                ? nera_show_tickets_bar($product_id)
+                : true),
         'show_progress'    => array_key_exists('show_progress', $args)
             ? (bool) $args['show_progress']
             : (function_exists('nera_show_tickets_progress')

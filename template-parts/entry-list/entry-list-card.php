@@ -148,24 +148,37 @@ if (!$cta_label) {
       <?php endif; ?>
 
       <?php
-      $show_tickets_progress = function_exists('nera_show_tickets_progress')
-        ? nera_show_tickets_progress($product_id)
+      $show_tickets_counter = function_exists('nera_show_tickets_counter')
+        ? nera_show_tickets_counter($product_id)
+        : true;
+      $show_tickets_bar = function_exists('nera_show_tickets_bar')
+        ? nera_show_tickets_bar($product_id)
         : true;
       ?>
-      <?php if ($show_tickets_progress): ?>
+      <?php if ($show_tickets_counter || $show_tickets_bar): ?>
       <div class="space-y-1.5 sm:space-y-2">
+        <?php if ($show_tickets_counter || $show_tickets_bar): ?>
         <div class="flex justify-between items-center gap-2 text-[11px] sm:text-xs font-bold">
+          <?php if ($show_tickets_counter): ?>
           <span class="text-text-secondary">
             <?php echo esc_html($sold_tickets); ?>/<?php echo esc_html($max_tickets); ?>
             <?php esc_html_e('sold', 'nera-competitions'); ?>
           </span>
+          <?php else: ?>
+          <span></span>
+          <?php endif; ?>
+          <?php if ($show_tickets_bar): ?>
           <span class="text-primary"><?php echo esc_html($progress); ?>%</span>
+          <?php endif; ?>
         </div>
+        <?php endif; ?>
+        <?php if ($show_tickets_bar): ?>
         <div class="ncs-progress__track relative h-[14px] w-full rounded-full overflow-hidden shadow-inner">
           <div class="ncs-progress__fill h-full rounded-full transition-all duration-1000 ease-out"
             style="width: 0%;"
             data-progress="<?php echo esc_attr($progress); ?>"></div>
         </div>
+        <?php endif; ?>
       </div>
       <?php endif; ?>
 

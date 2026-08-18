@@ -97,37 +97,295 @@ function nera_show_entry_list_tab(?int $product_id = null): bool
 }
 
 /**
- * Whether to show the Tickets Sold label and progress bar.
+ * Normalise ACF taxonomy values to product_cat term IDs.
  *
- * Resolves Theme Settings → WooCommerce (`show_tickets_progress`) as the
- * site-wide default, with an optional per-product Competition Settings override
- * (`inherit` | `show` | `hide`).
+ * @param mixed $raw Field value (ids, WP_Term objects, or a single value).
+ * @return list<int>
+ */
+function nera_normalize_product_cat_ids($raw): array
+{
+  if ($raw === null || $raw === false || $raw === '') {
+    return [];
+  }
+  if (!is_array($raw)) {
+    $raw = [$raw];
+  }
+
+  $ids = [];
+  foreach ($raw as $item) {
+    if ($item instanceof WP_Term) {
+      $ids[] = (int) $item->term_id;
+    } elseif (is_numeric($item)) {
+      $ids[] = (int) $item;
+    }
+  }
+
+  $ids = array_values(array_unique(array_filter($ids)));
+
+  return $ids;
+}
+
+/**
+ * Whether a product_cat term used to match the legacy Monthly Category rule.
+ *
+ * Used only to migrate the old switcher onto Hide-progress Categories.
+ *
+ * @param mixed $term WP_Term or similar object with name/slug.
+ * @return bool
+ */
+function nera_term_is_monthly_category($term): bool
+{
+  if (!is_object($term) || !isset($term->name, $term->slug)) {
+    return false;
+  }
+
+  foreach ([(string) $term->name, (string) $term->slug] as $haystack) {
+    if (function_exists('mb_stripos')) {
+      if (mb_stripos($haystack, 'monthly') !== false) {
+        return true;
+      }
+    } elseif (stripos($haystack, 'monthly') !== false) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+/**
+ * One-time: if the old Monthly switcher was On, select matching categories.
+ *
+ * Empty Hide-progress Category list after migration means hide none.
+ *
+ * @return void
+ */
+function nera_maybe_migrate_hide_progress_categories(): void
+{
+  if (get_option('nera_hide_progress_categories_migrated')) {
+    return;
+  }
+  if (!function_exists('get_field') || !function_exists('update_field')) {
+    return;
+  }
+
+  $existing = nera_normalize_product_cat_ids(get_field('hide_tickets_progress_categories', 'option'));
+  if (!empty($existing)) {
+    update_option('nera_hide_progress_categories_migrated', '1', true);
+    return;
+  }
+
+  $ids = [];
+  if ((bool) get_field('hide_monthly_tickets_progress', 'option')) {
+    $terms = get_terms([
+      'taxonomy' => 'product_cat',
+      'hide_empty' => false,
+    ]);
+    if (!is_wp_error($terms) && is_array($terms)) {
+      foreach ($terms as $term) {
+        if (nera_term_is_monthly_category($term)) {
+          $ids[] = (int) $term->term_id;
+        }
+      }
+    }
+  }
+
+  update_field('hide_tickets_progress_categories', $ids, 'option');
+  update_option('nera_hide_progress_categories_migrated', '1', true);
+}
+
+add_action('init', 'nera_maybe_migrate_hide_progress_categories', 20);
+
+/**
+ * Theme Settings → WooCommerce: Hide-progress Category term IDs.
+ *
+ * Empty list = hide none.
+ *
+ * @return list<int>
+ */
+function nera_hide_progress_category_term_ids(): array
+{
+  nera_maybe_migrate_hide_progress_categories();
+
+  if (!function_exists('get_field')) {
+    return [];
+  }
+
+  return nera_normalize_product_cat_ids(get_field('hide_tickets_progress_categories', 'option'));
+}
+
+/**
+ * Whether a product is in a Hide-progress Category (any selected product_cat).
+ *
+ * @param int $product_id Product post ID.
+ * @return bool
+ */
+function nera_product_in_hide_progress_category(int $product_id): bool
+{
+  if ($product_id < 1) {
+    return false;
+  }
+
+  $selected = nera_hide_progress_category_term_ids();
+  if (empty($selected)) {
+    return false;
+  }
+
+  $terms = get_the_terms($product_id, 'product_cat');
+  if (empty($terms) || is_wp_error($terms)) {
+    return false;
+  }
+
+  foreach ($terms as $term) {
+    if (in_array((int) $term->term_id, $selected, true)) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+/**
+ * Theme Settings → WooCommerce Tickets Counter / Progress Bar toggles.
+ *
+ * An unset Tickets Counter option follows Show Progress Bar so existing sites
+ * keep both visible.
+ *
+ * @return array{counter:bool,bar:bool}
+ */
+function nera_tickets_sold_ui_globals(): array
+{
+  $bar_global = true;
+  $counter_global = true;
+
+  if (function_exists('get_field')) {
+    $bar_value = get_field('show_tickets_progress', 'option');
+    $bar_global = $bar_value === null ? true : (bool) $bar_value;
+
+    $counter_value = get_field('show_tickets_counter', 'option');
+    $counter_global = $counter_value === null ? $bar_global : (bool) $counter_value;
+  }
+
+  return ['counter' => $counter_global, 'bar' => $bar_global];
+}
+
+/**
+ * Whether to suppress Remaining Tickets Hints for this product.
+ *
+ * True when the product is in a Hide-progress Category and at least one of
+ * Show Tickets Counter / Show Progress Bar is Hidden. Visible on both shows
+ * hints again, including on selected categories.
+ *
+ * @param int|null $product_id Product post ID.
+ * @return bool
+ */
+function nera_suppress_ticket_capacity_ui(?int $product_id): bool
+{
+  if (!$product_id) {
+    return false;
+  }
+
+  if (!nera_product_in_hide_progress_category($product_id)) {
+    return false;
+  }
+
+  $globals = nera_tickets_sold_ui_globals();
+
+  return !$globals['counter'] || !$globals['bar'];
+}
+
+/**
+ * @deprecated Use nera_suppress_ticket_capacity_ui().
+ * @param int|null $product_id Product post ID.
+ * @return bool
+ */
+function nera_suppress_monthly_ticket_capacity_ui(?int $product_id): bool
+{
+  return nera_suppress_ticket_capacity_ui($product_id);
+}
+
+/**
+ * Tickets Counter and Progress Bar visibility for a product.
+ *
+ * The two Theme Settings toggles are what to hide. Hide-progress Categories
+ * are where: empty list = every product; a selected list = only those
+ * products (others always show). Visible shows selected categories again.
+ * A product Competition Settings override of show/hide applies to both,
+ * except product “show” cannot unhide a Hide-progress Category while a
+ * toggle is Hidden.
+ *
+ * @param int|null $product_id Product post ID.
+ * @return array{counter:bool,bar:bool}
+ */
+function nera_tickets_sold_ui(?int $product_id = null): array
+{
+  $globals = nera_tickets_sold_ui_globals();
+  $scoped = nera_hide_progress_category_term_ids() !== [];
+  $in_hide_cat = $product_id && nera_product_in_hide_progress_category($product_id);
+
+  $override = null;
+  if ($product_id && function_exists('get_field')) {
+    $override = get_field('show_tickets_progress', $product_id);
+  }
+
+  if ($scoped && $in_hide_cat) {
+    if ($override === 'hide') {
+      return ['counter' => false, 'bar' => false];
+    }
+
+    return $globals;
+  }
+
+  if ($override === 'show') {
+    return ['counter' => true, 'bar' => true];
+  }
+  if ($override === 'hide') {
+    return ['counter' => false, 'bar' => false];
+  }
+
+  if ($scoped) {
+    return ['counter' => true, 'bar' => true];
+  }
+
+  return $globals;
+}
+
+/**
+ * Whether to show the Tickets Counter (sold-count line).
+ *
+ * @param int|null $product_id Product post ID.
+ * @return bool
+ */
+function nera_show_tickets_counter(?int $product_id = null): bool
+{
+  return nera_tickets_sold_ui($product_id)['counter'];
+}
+
+/**
+ * Whether to show the Progress Bar (track and percentage).
+ *
+ * @param int|null $product_id Product post ID.
+ * @return bool
+ */
+function nera_show_tickets_bar(?int $product_id = null): bool
+{
+  return nera_tickets_sold_ui($product_id)['bar'];
+}
+
+/**
+ * Whether either the Tickets Counter or the Progress Bar should render.
+ *
+ * Theme Settings toggles are what to hide; Hide-progress Categories are where.
+ * Empty list = every product. Selected list + Hidden = those products only.
+ * Selected list + Visible = show again, including selected categories.
  *
  * @param int|null $product_id Product post ID.
  * @return bool
  */
 function nera_show_tickets_progress(?int $product_id = null): bool
 {
-  $global = true;
-  if (function_exists('get_field')) {
-    $global_value = get_field('show_tickets_progress', 'option');
-    $global = $global_value === null ? true : (bool) $global_value;
-  }
+  $ui = nera_tickets_sold_ui($product_id);
 
-  if (!$product_id || !function_exists('get_field')) {
-    return $global;
-  }
-
-  $override = get_field('show_tickets_progress', $product_id);
-
-  if ($override === 'show') {
-    return true;
-  }
-  if ($override === 'hide') {
-    return false;
-  }
-
-  return $global;
+  return $ui['counter'] || $ui['bar'];
 }
 
 /**

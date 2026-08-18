@@ -75,5 +75,11 @@ function get_data(array $args = []): array
         'show_progress' => function_exists('nera_show_tickets_progress')
             ? nera_show_tickets_progress()
             : true,
+        'show_counter'  => function_exists('nera_show_tickets_counter')
+            ? nera_show_tickets_counter()
+            : true,
+        'show_bar'      => function_exists('nera_show_tickets_bar')
+            ? nera_show_tickets_bar()
+            : true,
     ];
 }

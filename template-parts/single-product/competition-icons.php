@@ -47,7 +47,9 @@ $end_date_gmt = get_post_meta($product_id, '_lty_end_date_gmt', true);
 $icons = [];
 
 // Tickets Available
-if ($show_tickets && $remaining > 0) {
+$suppress_capacity = function_exists('nera_suppress_ticket_capacity_ui')
+  && nera_suppress_ticket_capacity_ui((int) $product_id);
+if ($show_tickets && $remaining > 0 && !$suppress_capacity) {
   $icons[] = [
     'icon' => 'confirmation_number',
     'label' => __('Available', 'nera-competitions'),

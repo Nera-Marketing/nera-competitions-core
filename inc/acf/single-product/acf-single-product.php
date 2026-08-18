@@ -423,10 +423,10 @@ if (function_exists('acf_add_local_field_group')) {
       ],
       [
         'key' => 'field_sp_show_tickets_progress',
-        'label' => 'Show Tickets Sold / Progress Bar (override)',
+        'label' => 'Show Tickets Counter / Progress Bar (override)',
         'name' => 'show_tickets_progress',
         'type' => 'select',
-        'instructions' => 'Optional override for this product. Use site default to follow Theme Settings → WooCommerce.',
+        'instructions' => 'Optional override for this product. Applies to both the Tickets Counter and the Progress Bar. Use site default to follow Theme Settings. “Show” cannot unhide this product when it is in a Hide-progress Category and a Theme Settings toggle is Hidden.',
         'choices' => [
           'inherit' => 'Use site default (Theme Settings → WooCommerce)',
           'show' => 'Visible',

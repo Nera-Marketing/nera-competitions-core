@@ -33,6 +33,12 @@ if (!$product) {
 $show_tickets_progress = function_exists('nera_show_tickets_progress')
   ? nera_show_tickets_progress($product->get_id())
   : true;
+$show_tickets_counter = function_exists('nera_show_tickets_counter')
+  ? nera_show_tickets_counter($product->get_id())
+  : true;
+$show_tickets_bar = function_exists('nera_show_tickets_bar')
+  ? nera_show_tickets_bar($product->get_id())
+  : true;
 ?>
 
 <?php if ($is_sold_out): ?>
@@ -49,6 +55,8 @@ $show_tickets_progress = function_exists('nera_show_tickets_progress')
       'progress'     => $progress,
       'remaining'    => $remaining,
       'is_low_stock' => $is_low_stock,
+      'show_counter' => $show_tickets_counter,
+      'show_bar'     => $show_tickets_bar,
     ]); } ?>
   </div>
   <?php endif; ?>
@@ -81,6 +89,8 @@ $show_tickets_progress = function_exists('nera_show_tickets_progress')
       'progress'     => $progress,
       'remaining'    => $remaining,
       'is_low_stock' => $is_low_stock,
+      'show_counter' => $show_tickets_counter,
+      'show_bar'     => $show_tickets_bar,
     ]); } ?>
   </div>
   <?php endif; ?>

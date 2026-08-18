@@ -123,24 +123,35 @@ $won_count = function_exists('nera_get_closed_lottery_won_instant_prize_count')
 
       <!-- Progress bar (always 100% for closed) -->
       <?php
-      $show_tickets_progress = function_exists('nera_show_tickets_progress')
-        ? nera_show_tickets_progress($product_id)
+      $show_tickets_counter = function_exists('nera_show_tickets_counter')
+        ? nera_show_tickets_counter($product_id)
+        : true;
+      $show_tickets_bar = function_exists('nera_show_tickets_bar')
+        ? nera_show_tickets_bar($product_id)
         : true;
       ?>
-      <?php if ($show_tickets_progress && $max_tickets > 0): ?>
+      <?php if (($show_tickets_counter || $show_tickets_bar) && $max_tickets > 0): ?>
         <div class="space-y-1.5 sm:space-y-2">
           <div class="flex justify-between items-center gap-2 text-[11px] sm:text-xs font-bold">
+            <?php if ($show_tickets_counter): ?>
             <span class="text-text-secondary">
               <?php echo esc_html($sold_tickets); ?>/<?php echo esc_html($max_tickets); ?>
               <?php esc_html_e('sold', 'nera-competitions'); ?>
             </span>
+            <?php else: ?>
+            <span></span>
+            <?php endif; ?>
+            <?php if ($show_tickets_bar): ?>
             <span class="text-text-secondary"><?php echo esc_html($progress); ?>%</span>
+            <?php endif; ?>
           </div>
+          <?php if ($show_tickets_bar): ?>
           <div class="ncs-progress__track relative h-[14px] w-full rounded-full overflow-hidden shadow-inner">
             <div class="ncs-progress__fill ncs-progress__fill--muted h-full rounded-full transition-all duration-1000 ease-out"
               style="width: 0%;"
               data-progress="<?php echo esc_attr($progress); ?>"></div>
           </div>
+          <?php endif; ?>
         </div>
       <?php endif; ?>
 

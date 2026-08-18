@@ -13,6 +13,8 @@ if (!defined('ABSPATH')) {
  *   progress: int,            // required, default 0 — percentage 0-100 for the progress bar width
  *   remaining: int,           // required, default 0 — raw remaining count (not consumed by twig directly)
  *   is_low_stock: bool,       // required, default false — shows "Selling fast" warning row
+ *   show_counter: bool,       // required — Tickets Counter (label + X / Y)
+ *   show_bar: bool,           // required — Progress Bar track and percentage
  *   sold_formatted: string,   // required — number_format of sold; shown in "X / Y" label
  *   max_formatted: string,    // required — number_format of max; shown in "X / Y" label
  *   remaining_formatted: string, // required — number_format of remaining; shown in low-stock warning
@@ -31,6 +33,8 @@ function get_data(array $args = []): array
         'progress'           => $progress,
         'remaining'          => $remaining,
         'is_low_stock'       => (bool) ($args['is_low_stock'] ?? false),
+        'show_counter'       => array_key_exists('show_counter', $args) ? (bool) $args['show_counter'] : true,
+        'show_bar'           => array_key_exists('show_bar', $args) ? (bool) $args['show_bar'] : true,
         'sold_formatted'     => number_format($sold),
         'max_formatted'      => number_format($max),
         'remaining_formatted' => number_format($remaining),

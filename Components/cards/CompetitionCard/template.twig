@@ -162,11 +162,12 @@
       </h3>
 
       <!-- Progress Section -->
-      {% if show_progress %}
+      {% if show_counter or show_bar %}
       <div class="space-y-2 sm:space-y-3 mb-auto">
+        {% if show_counter or show_bar %}
         <div class="flex justify-between items-center gap-2">
+          {% if show_counter %}
           {% if button_variant == 'buy_tickets' %}
-            <!-- buy_tickets: "X/Y sold" label, only when max_tickets is set -->
             {% if max_tickets %}
               <span class="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-text-secondary shrink-0">
                 {{ sold_tickets }}/{{ max_tickets }} sold
@@ -179,17 +180,25 @@
               Tickets Sold
             </span>
           {% endif %}
+          {% else %}
+            <span></span>
+          {% endif %}
+          {% if show_bar %}
           <span class="text-xs sm:text-sm font-black tabular-nums shrink-0" style="color: {{ accent_color }};">
             {{ progress|default(0) }}%
           </span>
+          {% endif %}
         </div>
+        {% endif %}
 
+        {% if show_bar %}
         <div class="ncs-product-card__progress-track ncs-progress__track relative h-[14px] w-full rounded-full overflow-hidden shadow-inner">
           <div class="ncs-product-card__progress-fill ncs-progress__fill h-full rounded-full transition-all duration-1000 ease-out"
             style="width: 0%; --ncs-product-card-progress-accent: {{ accent_color }};"
             data-progress="{{ progress|default(0) }}">
           </div>
         </div>
+        {% endif %}
       </div>
       {% endif %}
 

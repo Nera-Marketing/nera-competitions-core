@@ -86,11 +86,16 @@ if (!defined('ABSPATH')) {
         </template>
 
         <div class="grid grid-cols-2 gap-2.5 sm:gap-4" x-show="modalPayload && modalPayload.summary">
-          <div class="min-w-0 rounded-xl border border-gray-100 bg-secondary/40 p-3 sm:p-4">
-            <p class="text-xs font-semibold uppercase tracking-wide text-text-secondary"><?php esc_html_e('Tickets sold', 'nera-competitions'); ?></p>
+          <div
+            class="min-w-0 rounded-xl border border-gray-100 bg-secondary/40 p-3 sm:p-4"
+            x-show="modalPayload && modalPayload.summary && (modalPayload.summary.show_tickets_counter !== false || modalPayload.summary.show_tickets_bar !== false) && modalPayload.summary.show_tickets_progress !== false"
+          >
+            <p class="text-xs font-semibold uppercase tracking-wide text-text-secondary" x-show="modalPayload && modalPayload.summary && modalPayload.summary.show_tickets_counter !== false"><?php esc_html_e('Tickets sold', 'nera-competitions'); ?></p>
             <p class="mt-1 text-base font-bold text-text-primary sm:text-lg">
+              <span x-show="modalPayload && modalPayload.summary && modalPayload.summary.show_tickets_counter !== false">
               <span x-text="modalPayload && modalPayload.summary ? modalPayload.summary.sold : 0"></span>/<span x-text="modalPayload && modalPayload.summary ? modalPayload.summary.max_tickets : 0"></span>
-              <span class="text-xs font-semibold text-primary sm:text-sm">(<span x-text="modalPayload && modalPayload.summary ? modalPayload.summary.progress : 0"></span>%)</span>
+              </span>
+              <span class="text-xs font-semibold text-primary sm:text-sm" x-show="modalPayload && modalPayload.summary && modalPayload.summary.show_tickets_bar !== false">(<span x-text="modalPayload && modalPayload.summary ? modalPayload.summary.progress : 0"></span>%)</span>
             </p>
           </div>
           <div class="min-w-0 rounded-xl border border-gray-100 bg-secondary/40 p-3 sm:p-4">

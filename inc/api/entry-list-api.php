@@ -241,6 +241,15 @@ class Nera_Entry_List_API
       'sold' => $sold,
       'max_tickets' => $max,
       'progress' => $progress,
+      'show_tickets_progress' => function_exists('nera_show_tickets_progress')
+        ? nera_show_tickets_progress($product_id)
+        : true,
+      'show_tickets_counter' => function_exists('nera_show_tickets_counter')
+        ? nera_show_tickets_counter($product_id)
+        : true,
+      'show_tickets_bar' => function_exists('nera_show_tickets_bar')
+        ? nera_show_tickets_bar($product_id)
+        : true,
       'draw_date' => $draw,
       'countdown_timestamp_ms' => $countdown_ms,
       'pdf_download_url' => $pdf_url,
