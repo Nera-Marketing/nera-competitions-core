@@ -37,6 +37,17 @@ function nera_register_attribution_fields() {
 		'title'                 => __( 'Attribution Page Content', 'nera-competitions' ),
 		'fields'                => [
 
+			[
+				'key'           => 'field_attr_page_slug',
+				'label'         => __( 'Page URL slug', 'nera-competitions' ),
+				'name'          => 'attr_page_slug',
+				'type'          => 'text',
+				'instructions'  => __( 'Public URL path for this page — letters, numbers, and hyphens only, with no slashes. Example: competition-website-by-nera-marketing becomes yoursite.com/competition-website-by-nera-marketing/. Changing this redirects the previous URL to the new one.', 'nera-competitions' ),
+				'default_value' => defined( 'NERA_ATTRIBUTION_ROUTE_SLUG' ) ? NERA_ATTRIBUTION_ROUTE_SLUG : 'competition-website-by-nera-marketing',
+				'placeholder'   => 'competition-website-by-nera-marketing',
+				'prepend'       => '/',
+			],
+
 			// ── TAB: HERO ────────────────────────────────────────────────────
 			[
 				'key'       => 'field_attr_tab_hero',
@@ -586,6 +597,21 @@ function nera_register_attribution_fields() {
 	] );
 }
 add_action( 'acf/init', 'nera_register_attribution_fields' );
+
+/**
+ * Keep the attribution page slug URL-safe on save.
+ *
+ * @param mixed $value Raw field value.
+ * @return string
+ */
+function nera_sanitize_attr_page_slug_field( $value ) {
+	if ( ! function_exists( 'nera_sanitize_attribution_slug' ) ) {
+		return $value;
+	}
+
+	return nera_sanitize_attribution_slug( $value );
+}
+add_filter( 'acf/update_value/name=attr_page_slug', 'nera_sanitize_attr_page_slug_field' );
 
 /**
  * Hide attribution editor from the admin sidebar.
