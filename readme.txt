@@ -4,7 +4,7 @@ Tags: competition, giveaway, lottery, woocommerce
 Requires at least: 6.0
 Tested up to: 6.8
 Requires PHP: 8.1
-Stable tag: 1.3.24
+Stable tag: 1.3.25
 License: GPLv2 or later.
 
 Premium competition and giveaway theme for WooCommerce, with Tailwind-powered front-end assets.
@@ -20,6 +20,9 @@ Nera Competitions Standard is built for competition and lottery sites: product t
 3. Run `yarn build` or `npm run build` in `frontend/` and `lty-result-screens/` after pulling updates that change assets.
 
 == Changelog ==
+
+= 1.3.25 =
+* Updated: Attribution page hero, document title, and WebPage schema now say **Raffle Website by Nera Marketing** (Organization/Service schema and default slug unchanged).
 
 = 1.3.24 =
 * Added: Attribution Page Editor **Page URL slug** field to change the public path of the Nera Marketing attribution page (default `competition-website-by-nera-marketing`); previous slug 301s to the new URL.
