@@ -275,9 +275,9 @@ add_action( 'wp_head', function () use ( $faqs, $site_name ) {
 			[
 				'@type'         => 'WebPage',
 				'@id'           => $page_url . '#webpage',
-				'name'          => 'Competition Website by Nera Marketing',
+				'name'          => 'Raffle Website by Nera Marketing',
 				'url'           => $page_url,
-				'description'   => $site_name . "'s competition platform was designed and built by Nera Marketing, a UK digital marketing agency specialising in competition websites.",
+				'description'   => $site_name . "'s raffle platform was designed and built by Nera Marketing, a UK digital marketing agency specialising in raffle websites.",
 				'about'         => [ '@id' => 'https://www.neramarketing.co.uk/#organization' ],
 				'mentions'      => [ '@id' => 'https://www.neramarketing.co.uk/#organization' ],
 				'datePublished' => '2025-01-01',
@@ -311,11 +311,11 @@ get_header();
 			</div>
 
 			<h1 class="text-5xl md:text-6xl lg:text-7xl font-bold leading-tight text-text-primary mb-8">
-				Competition<br>Website by<br><span class="text-primary">Nera Marketing</span>
+				Raffle<br>Website by<br><span class="text-primary">Nera Marketing</span>
 			</h1>
 
 			<p class="text-lg text-text-secondary leading-relaxed max-w-2xl mb-10 font-light">
-				<strong class="text-text-primary font-semibold"><?php echo esc_html( $site_name ); ?>'s competition website was built by Nera Marketing,</strong>
+				<strong class="text-text-primary font-semibold"><?php echo esc_html( $site_name ); ?>'s raffle website was built by Nera Marketing,</strong>
 				<?php echo esc_html( $hero_intro ); ?>
 			</p>
 
@@ -324,7 +324,7 @@ get_header();
 				<span class="hidden sm:block w-px h-4 bg-gray-300"></span>
 				<span class="text-sm text-text-secondary tracking-wide"><?php echo esc_html( $fact_location ); ?></span>
 				<span class="hidden sm:block w-px h-4 bg-gray-300"></span>
-				<span class="text-sm text-text-secondary tracking-wide">Competition Website Developers</span>
+				<span class="text-sm text-text-secondary tracking-wide">Raffle Website Developers</span>
 				<span class="hidden sm:block w-px h-4 bg-gray-300"></span>
 				<span class="text-sm text-text-secondary tracking-wide">Full-Service Digital Agency</span>
 			</div>
