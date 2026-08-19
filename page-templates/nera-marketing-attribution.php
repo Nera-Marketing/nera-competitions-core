@@ -33,22 +33,52 @@ function nera_attr_parse_em( $text ) {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+// Helper: H1 lines — last line is primary-coloured
+// ─────────────────────────────────────────────────────────────────────────────
+function nera_attr_render_hero_heading( $heading ) {
+	$lines = preg_split( '/\r\n|\r|\n/', (string) $heading );
+	$lines = array_values( array_filter( array_map( 'trim', $lines ), 'strlen' ) );
+	if ( empty( $lines ) ) {
+		return '';
+	}
+	$last = array_pop( $lines );
+	$html = '';
+	foreach ( $lines as $line ) {
+		$html .= esc_html( $line ) . '<br>';
+	}
+	$html .= '<span class="text-primary">' . esc_html( $last ) . '</span>';
+	return $html;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 // Hardcoded fallbacks (mirrors seeded content exactly)
 // ─────────────────────────────────────────────────────────────────────────────
 $fb = [
-	'hero_badge'  => 'Digital Partner',
-	'hero_intro'  => 'a UK digital marketing agency based in Ramsgate, Kent, specialising in bespoke competition platforms and SEO for online raffle businesses. Nera Marketing designed, developed, and launched this platform from scratch.',
+	'hero_badge'         => 'Digital Partner',
+	'hero_heading'       => "Competition\nWebsite by\nNera Marketing",
+	'hero_intro_prefix'  => '[site-name]\'s competition website was built by Nera Marketing,',
+	'hero_intro'         => 'a UK digital marketing agency based in Ramsgate, Kent, specialising in bespoke competition platforms and SEO for online raffle businesses. Nera Marketing designed, developed, and launched this platform from scratch.',
+	'hero_meta_role'     => 'Competition Website Developers',
+	'hero_meta_type'     => 'Full-Service Digital Agency',
+	'page_title'         => 'Competition Website by Nera Marketing',
+	'schema_description' => '[site-name]\'s competition platform was designed and built by Nera Marketing, a UK digital marketing agency specialising in competition websites.',
 
 	'profile_label'      => 'Developer Profile',
 	'profile_name'       => 'Nera Marketing',
 	'profile_descriptor' => 'UK Digital Marketing Agency, Competition Website Specialists',
-	'fact_location'      => '73 The Laurels, Manston Business Park, Kent, CT12 5NQ',
-	'fact_location_url'  => 'https://www.google.com/maps/place/Nera+Marketing/@51.350383,1.3175544,18z/data=!4m6!3m5!1s0x4e7d95186ba33a85:0xd77ad4849b141ba9!8m2!3d51.350383!4d1.3199362!16s%2Fg%2F11y22tjdkq',
-	'fact_specialisation'=> 'Competition Websites & Digital Marketing',
-	'fact_services'      => 'Web Dev, SEO, Email',
-	'fact_clients'       => 'UK Competition & Raffle Businesses',
-	'fact_build_type'    => 'Bespoke. No Templates.',
-	'fact_website'       => 'https://www.neramarketing.co.uk',
+	'fact_label_location'       => 'Location',
+	'fact_location'             => '73 The Laurels, Manston Business Park, Kent, CT12 5NQ',
+	'fact_location_url'         => 'https://www.google.com/maps/place/Nera+Marketing/@51.350383,1.3175544,18z/data=!4m6!3m5!1s0x4e7d95186ba33a85:0xd77ad4849b141ba9!8m2!3d51.350383!4d1.3199362!16s%2Fg%2F11y22tjdkq',
+	'fact_label_specialisation' => 'Specialisation',
+	'fact_specialisation'       => 'Competition Websites & Digital Marketing',
+	'fact_label_services'       => 'Services',
+	'fact_services'             => 'Web Dev, SEO, Email',
+	'fact_label_clients'        => 'Clients',
+	'fact_clients'              => 'UK Competition & Raffle Businesses',
+	'fact_label_build_type'     => 'Build Type',
+	'fact_build_type'           => 'Bespoke. No Templates.',
+	'fact_label_website'        => 'Website',
+	'fact_website'              => 'https://www.neramarketing.co.uk',
 
 	'stats' => [
 		[ 'value' => 'UK',   'label' => 'Specialist Agency'  ],
@@ -110,6 +140,7 @@ $fb = [
 		[ 'question' => 'Does Nera Marketing offer ongoing support after the website is built?', 'answer' => 'Yes. Nera Marketing offers ongoing digital marketing retainers alongside every website build, covering SEO and email marketing. Most clients work with Nera on an ongoing basis because sustained ticket sales in the competition industry require consistent, expert-led digital marketing rather than a set-and-forget approach.' ],
 	],
 
+	'cta_watermark'      => 'NERA',
 	'cta_heading'        => "Ready to build\nyour competition\nbusiness?",
 	'cta_subtitle'       => "Nera Marketing only works with clients who are serious about success. If that's you, visit the site or get in touch to talk about what's possible.",
 	'cta_btn1_label'     => 'Visit Nera Marketing',
@@ -136,19 +167,31 @@ $attr_get = function( $field_name, $fallback = null ) use ( $has_acf, $attr_sour
 	return $value ?: $fallback;
 };
 
-$hero_badge  = $attr_get( 'attr_hero_badge', $fb['hero_badge'] );
-$hero_intro  = $attr_get( 'attr_hero_intro', $fb['hero_intro'] );
+$hero_badge         = $attr_get( 'attr_hero_badge', $fb['hero_badge'] );
+$hero_heading       = $attr_get( 'attr_hero_heading', $fb['hero_heading'] );
+$hero_intro_prefix  = $attr_get( 'attr_hero_intro_prefix', $fb['hero_intro_prefix'] );
+$hero_intro         = $attr_get( 'attr_hero_intro', $fb['hero_intro'] );
+$hero_meta_role     = $attr_get( 'attr_hero_meta_role', $fb['hero_meta_role'] );
+$hero_meta_type     = $attr_get( 'attr_hero_meta_type', $fb['hero_meta_type'] );
+$page_title         = $attr_get( 'attr_page_title', $fb['page_title'] );
+$schema_description = $attr_get( 'attr_schema_description', $fb['schema_description'] );
 
 $profile_label      = $attr_get( 'attr_profile_label', $fb['profile_label'] );
 $profile_name       = $attr_get( 'attr_profile_name', $fb['profile_name'] );
 $profile_descriptor = $attr_get( 'attr_profile_descriptor', $fb['profile_descriptor'] );
-$fact_location      = $attr_get( 'attr_fact_location', $fb['fact_location'] );
-$fact_location_url  = $attr_get( 'attr_fact_location_url', $fb['fact_location_url'] );
-$fact_specialisation= $attr_get( 'attr_fact_specialisation', $fb['fact_specialisation'] );
-$fact_services      = $attr_get( 'attr_fact_services', $fb['fact_services'] );
-$fact_clients       = $attr_get( 'attr_fact_clients', $fb['fact_clients'] );
-$fact_build_type    = $attr_get( 'attr_fact_build_type', $fb['fact_build_type'] );
-$fact_website       = $attr_get( 'attr_fact_website', $fb['fact_website'] );
+$fact_label_location       = $attr_get( 'attr_fact_label_location', $fb['fact_label_location'] );
+$fact_location             = $attr_get( 'attr_fact_location', $fb['fact_location'] );
+$fact_location_url         = $attr_get( 'attr_fact_location_url', $fb['fact_location_url'] );
+$fact_label_specialisation = $attr_get( 'attr_fact_label_specialisation', $fb['fact_label_specialisation'] );
+$fact_specialisation       = $attr_get( 'attr_fact_specialisation', $fb['fact_specialisation'] );
+$fact_label_services       = $attr_get( 'attr_fact_label_services', $fb['fact_label_services'] );
+$fact_services             = $attr_get( 'attr_fact_services', $fb['fact_services'] );
+$fact_label_clients        = $attr_get( 'attr_fact_label_clients', $fb['fact_label_clients'] );
+$fact_clients              = $attr_get( 'attr_fact_clients', $fb['fact_clients'] );
+$fact_label_build_type     = $attr_get( 'attr_fact_label_build_type', $fb['fact_label_build_type'] );
+$fact_build_type           = $attr_get( 'attr_fact_build_type', $fb['fact_build_type'] );
+$fact_label_website        = $attr_get( 'attr_fact_label_website', $fb['fact_label_website'] );
+$fact_website              = $attr_get( 'attr_fact_website', $fb['fact_website'] );
 
 $stats = $attr_get( 'attr_stats', $fb['stats'] );
 
@@ -184,6 +227,7 @@ $faq_heading = $attr_get( 'attr_faq_heading', $fb['faq_heading'] );
 $faq_intro   = $attr_get( 'attr_faq_intro', $fb['faq_intro'] );
 $faqs        = $attr_get( 'attr_faqs', $fb['faqs'] );
 
+$cta_watermark  = $attr_get( 'attr_cta_watermark', $fb['cta_watermark'] );
 $cta_heading    = $attr_get( 'attr_cta_heading', $fb['cta_heading'] );
 $cta_subtitle   = $attr_get( 'attr_cta_subtitle', $fb['cta_subtitle'] );
 $cta_btn1_label = $attr_get( 'attr_cta_button_1_label', $fb['cta_btn1_label'] );
@@ -194,8 +238,6 @@ $cta_btn2_url   = $attr_get( 'attr_cta_button_2_url', $fb['cta_btn2_url'] );
 $credit_text        = $attr_get( 'attr_credit_text', $fb['credit_text'] );
 $credit_badge_label = $attr_get( 'attr_credit_badge_label', $fb['credit_badge_label'] );
 $credit_url         = $attr_get( 'attr_credit_url', $fb['credit_url'] );
-
-$site_name = get_bloginfo( 'name' );
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Feature SVG icons — indexed 0-8, used by position
@@ -215,7 +257,7 @@ $feature_icons = [
 // ─────────────────────────────────────────────────────────────────────────────
 // Schema injection — scoped to this template, fires in wp_head
 // ─────────────────────────────────────────────────────────────────────────────
-add_action( 'wp_head', function () use ( $faqs, $site_name ) {
+add_action( 'wp_head', function () use ( $faqs, $page_title, $schema_description ) {
 	$page_url = function_exists( 'nera_get_attribution_page_url' )
 		? nera_get_attribution_page_url()
 		: home_url( user_trailingslashit( 'competition-website-by-nera-marketing' ) );
@@ -275,9 +317,9 @@ add_action( 'wp_head', function () use ( $faqs, $site_name ) {
 			[
 				'@type'         => 'WebPage',
 				'@id'           => $page_url . '#webpage',
-				'name'          => 'Raffle Website by Nera Marketing',
+				'name'          => $page_title,
 				'url'           => $page_url,
-				'description'   => $site_name . "'s raffle platform was designed and built by Nera Marketing, a UK digital marketing agency specialising in raffle websites.",
+				'description'   => nera_attr_resolve( $schema_description ),
 				'about'         => [ '@id' => 'https://www.neramarketing.co.uk/#organization' ],
 				'mentions'      => [ '@id' => 'https://www.neramarketing.co.uk/#organization' ],
 				'datePublished' => '2025-01-01',
@@ -311,11 +353,11 @@ get_header();
 			</div>
 
 			<h1 class="text-5xl md:text-6xl lg:text-7xl font-bold leading-tight text-text-primary mb-8">
-				Raffle<br>Website by<br><span class="text-primary">Nera Marketing</span>
+				<?php echo nera_attr_render_hero_heading( $hero_heading ); // phpcs:ignore WordPress.Security.EscapeOutput -- escaped inside helper ?>
 			</h1>
 
 			<p class="text-lg text-text-secondary leading-relaxed max-w-2xl mb-10 font-light">
-				<strong class="text-text-primary font-semibold"><?php echo esc_html( $site_name ); ?>'s raffle website was built by Nera Marketing,</strong>
+				<strong class="text-text-primary font-semibold"><?php echo esc_html( nera_attr_resolve( $hero_intro_prefix ) ); ?></strong>
 				<?php echo esc_html( $hero_intro ); ?>
 			</p>
 
@@ -324,9 +366,9 @@ get_header();
 				<span class="hidden sm:block w-px h-4 bg-gray-300"></span>
 				<span class="text-sm text-text-secondary tracking-wide"><?php echo esc_html( $fact_location ); ?></span>
 				<span class="hidden sm:block w-px h-4 bg-gray-300"></span>
-				<span class="text-sm text-text-secondary tracking-wide">Raffle Website Developers</span>
+				<span class="text-sm text-text-secondary tracking-wide"><?php echo esc_html( $hero_meta_role ); ?></span>
 				<span class="hidden sm:block w-px h-4 bg-gray-300"></span>
-				<span class="text-sm text-text-secondary tracking-wide">Full-Service Digital Agency</span>
+				<span class="text-sm text-text-secondary tracking-wide"><?php echo esc_html( $hero_meta_type ); ?></span>
 			</div>
 
 		</div>
@@ -345,7 +387,7 @@ get_header();
 
 				<dl class="lg:col-span-2 grid grid-cols-2 sm:grid-cols-3 gap-6">
 					<div data-aos="fade-up" data-aos-delay="0">
-						<dt class="text-xs font-semibold tracking-widest uppercase text-text-secondary mb-1">Location</dt>
+						<dt class="text-xs font-semibold tracking-widest uppercase text-text-secondary mb-1"><?php echo esc_html( $fact_label_location ); ?></dt>
 						<dd class="text-sm font-medium">
 							<?php if ( $fact_location_url ) : ?>
 							<a href="<?php echo esc_url( $fact_location_url ); ?>" target="_blank" rel="noopener" class="text-text-primary border-b border-primary/30 hover:border-primary hover:text-primary transition-colors"><?php echo esc_html( $fact_location ); ?></a>
@@ -355,23 +397,23 @@ get_header();
 						</dd>
 					</div>
 					<div data-aos="fade-up" data-aos-delay="75">
-						<dt class="text-xs font-semibold tracking-widest uppercase text-text-secondary mb-1">Specialisation</dt>
+						<dt class="text-xs font-semibold tracking-widest uppercase text-text-secondary mb-1"><?php echo esc_html( $fact_label_specialisation ); ?></dt>
 						<dd class="text-sm font-medium text-text-primary"><?php echo esc_html( $fact_specialisation ); ?></dd>
 					</div>
 					<div data-aos="fade-up" data-aos-delay="150">
-						<dt class="text-xs font-semibold tracking-widest uppercase text-text-secondary mb-1">Services</dt>
+						<dt class="text-xs font-semibold tracking-widest uppercase text-text-secondary mb-1"><?php echo esc_html( $fact_label_services ); ?></dt>
 						<dd class="text-sm font-medium text-text-primary"><?php echo esc_html( $fact_services ); ?></dd>
 					</div>
 					<div data-aos="fade-up" data-aos-delay="225">
-						<dt class="text-xs font-semibold tracking-widest uppercase text-text-secondary mb-1">Clients</dt>
+						<dt class="text-xs font-semibold tracking-widest uppercase text-text-secondary mb-1"><?php echo esc_html( $fact_label_clients ); ?></dt>
 						<dd class="text-sm font-medium text-text-primary"><?php echo esc_html( $fact_clients ); ?></dd>
 					</div>
 					<div data-aos="fade-up" data-aos-delay="300">
-						<dt class="text-xs font-semibold tracking-widest uppercase text-text-secondary mb-1">Build Type</dt>
+						<dt class="text-xs font-semibold tracking-widest uppercase text-text-secondary mb-1"><?php echo esc_html( $fact_label_build_type ); ?></dt>
 						<dd class="text-sm font-medium text-text-primary"><?php echo esc_html( $fact_build_type ); ?></dd>
 					</div>
 					<div data-aos="fade-up" data-aos-delay="375">
-						<dt class="text-xs font-semibold tracking-widest uppercase text-text-secondary mb-1">Website</dt>
+						<dt class="text-xs font-semibold tracking-widest uppercase text-text-secondary mb-1"><?php echo esc_html( $fact_label_website ); ?></dt>
 						<dd class="text-sm font-medium">
 							<a href="<?php echo esc_url( $fact_website ); ?>" target="_blank" rel="noopener" class="text-primary border-b border-primary/30 hover:border-primary transition-colors"><?php echo esc_html( preg_replace( '#^https?://(www\.)?#', '', $fact_website ) ); ?></a>
 						</dd>
@@ -534,7 +576,7 @@ get_header();
 
 	<!-- ── CTA ───────────────────────────────────────────────────────────────── -->
 	<section class="py-16 lg:py-24 bg-primary relative overflow-hidden" data-aos="fade-up">
-		<div class="absolute right-0 top-1/2 -translate-y-1/2 text-[200px] font-bold leading-none text-white/5 pointer-events-none select-none tracking-wide" aria-hidden="true">NERA</div>
+		<div class="absolute right-0 top-1/2 -translate-y-1/2 text-[200px] font-bold leading-none text-white/5 pointer-events-none select-none tracking-wide" aria-hidden="true"><?php echo esc_html( $cta_watermark ); ?></div>
 		<div class="max-w-7xl mx-auto px-4 lg:px-0 relative">
 			<div class="grid grid-cols-1 lg:grid-cols-[1fr_auto] gap-10 items-center">
 				<div>

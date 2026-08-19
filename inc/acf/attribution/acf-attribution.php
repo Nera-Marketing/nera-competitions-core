@@ -65,13 +65,52 @@ function nera_register_attribution_fields() {
 				'placeholder'   => 'Digital Partner',
 			],
 			[
+				'key'           => 'field_attr_hero_heading',
+				'label'         => __( 'Heading', 'nera-competitions' ),
+				'name'          => 'attr_hero_heading',
+				'type'          => 'textarea',
+				'instructions'  => __( 'Visual H1. One phrase per line. The last line is shown in the primary colour.', 'nera-competitions' ),
+				'rows'          => 3,
+				'default_value' => "Competition\nWebsite by\nNera Marketing",
+			],
+			[
+				'key'           => 'field_attr_hero_intro_prefix',
+				'label'         => __( 'Intro Prefix', 'nera-competitions' ),
+				'name'          => 'attr_hero_intro_prefix',
+				'type'          => 'text',
+				'instructions'  => __( 'Bold sentence before the intro paragraph. Use [site-name] for the site name.', 'nera-competitions' ),
+				'default_value' => '[site-name]\'s competition website was built by Nera Marketing,',
+			],
+			[
 				'key'           => 'field_attr_hero_intro',
-				'label'         => __( 'Intro Paragraph (after site name)', 'nera-competitions' ),
+				'label'         => __( 'Intro Paragraph', 'nera-competitions' ),
 				'name'          => 'attr_hero_intro',
 				'type'          => 'textarea',
-				'instructions'  => __( 'Text that follows "[Site Name]\'s competition website was built by Nera Marketing," in the hero. Plain text only.', 'nera-competitions' ),
+				'instructions'  => __( 'Text that follows the intro prefix. Plain text only.', 'nera-competitions' ),
 				'rows'          => 3,
 				'default_value' => 'a UK digital marketing agency based in Ramsgate, Kent, specialising in bespoke competition platforms and SEO for online raffle businesses. Nera Marketing designed, developed, and launched this platform from scratch.',
+			],
+			[
+				'key'           => 'field_attr_hero_meta_role',
+				'label'         => __( 'Meta Line: Role', 'nera-competitions' ),
+				'name'          => 'attr_hero_meta_role',
+				'type'          => 'text',
+				'default_value' => 'Competition Website Developers',
+			],
+			[
+				'key'           => 'field_attr_hero_meta_type',
+				'label'         => __( 'Meta Line: Type', 'nera-competitions' ),
+				'name'          => 'attr_hero_meta_type',
+				'type'          => 'text',
+				'default_value' => 'Full-Service Digital Agency',
+			],
+			[
+				'key'           => 'field_attr_page_title',
+				'label'         => __( 'Page Title', 'nera-competitions' ),
+				'name'          => 'attr_page_title',
+				'type'          => 'text',
+				'instructions'  => __( 'Browser tab title and WebPage schema name.', 'nera-competitions' ),
+				'default_value' => 'Competition Website by Nera Marketing',
 			],
 
 			// ── TAB: DEVELOPER PROFILE ────────────────────────────────────────
@@ -103,6 +142,13 @@ function nera_register_attribution_fields() {
 				'default_value' => 'UK Digital Marketing Agency, Competition Website Specialists',
 			],
 			[
+				'key'           => 'field_attr_fact_label_location',
+				'label'         => __( 'Label: Location', 'nera-competitions' ),
+				'name'          => 'attr_fact_label_location',
+				'type'          => 'text',
+				'default_value' => 'Location',
+			],
+			[
 				'key'           => 'field_attr_fact_location',
 				'label'         => __( 'Fact: Location', 'nera-competitions' ),
 				'name'          => 'attr_fact_location',
@@ -118,11 +164,25 @@ function nera_register_attribution_fields() {
 				'default_value' => 'https://www.google.com/maps/place/Nera+Marketing/@51.350383,1.3175544,18z/data=!4m6!3m5!1s0x4e7d95186ba33a85:0xd77ad4849b141ba9!8m2!3d51.350383!4d1.3199362!16s%2Fg%2F11y22tjdkq',
 			],
 			[
+				'key'           => 'field_attr_fact_label_specialisation',
+				'label'         => __( 'Label: Specialisation', 'nera-competitions' ),
+				'name'          => 'attr_fact_label_specialisation',
+				'type'          => 'text',
+				'default_value' => 'Specialisation',
+			],
+			[
 				'key'           => 'field_attr_fact_specialisation',
 				'label'         => __( 'Fact: Specialisation', 'nera-competitions' ),
 				'name'          => 'attr_fact_specialisation',
 				'type'          => 'text',
 				'default_value' => 'Competition Websites & Digital Marketing',
+			],
+			[
+				'key'           => 'field_attr_fact_label_services',
+				'label'         => __( 'Label: Services', 'nera-competitions' ),
+				'name'          => 'attr_fact_label_services',
+				'type'          => 'text',
+				'default_value' => 'Services',
 			],
 			[
 				'key'           => 'field_attr_fact_services',
@@ -132,6 +192,13 @@ function nera_register_attribution_fields() {
 				'default_value' => 'Web Dev, SEO, Email',
 			],
 			[
+				'key'           => 'field_attr_fact_label_clients',
+				'label'         => __( 'Label: Clients', 'nera-competitions' ),
+				'name'          => 'attr_fact_label_clients',
+				'type'          => 'text',
+				'default_value' => 'Clients',
+			],
+			[
 				'key'           => 'field_attr_fact_clients',
 				'label'         => __( 'Fact: Clients', 'nera-competitions' ),
 				'name'          => 'attr_fact_clients',
@@ -139,11 +206,25 @@ function nera_register_attribution_fields() {
 				'default_value' => 'UK Competition & Raffle Businesses',
 			],
 			[
+				'key'           => 'field_attr_fact_label_build_type',
+				'label'         => __( 'Label: Build Type', 'nera-competitions' ),
+				'name'          => 'attr_fact_label_build_type',
+				'type'          => 'text',
+				'default_value' => 'Build Type',
+			],
+			[
 				'key'           => 'field_attr_fact_build_type',
 				'label'         => __( 'Fact: Build Type', 'nera-competitions' ),
 				'name'          => 'attr_fact_build_type',
 				'type'          => 'text',
 				'default_value' => 'Bespoke. No Templates.',
+			],
+			[
+				'key'           => 'field_attr_fact_label_website',
+				'label'         => __( 'Label: Website', 'nera-competitions' ),
+				'name'          => 'attr_fact_label_website',
+				'type'          => 'text',
+				'default_value' => 'Website',
 			],
 			[
 				'key'           => 'field_attr_fact_website',
@@ -500,6 +581,14 @@ function nera_register_attribution_fields() {
 				'placement' => 'top',
 			],
 			[
+				'key'           => 'field_attr_cta_watermark',
+				'label'         => __( 'Watermark Text', 'nera-competitions' ),
+				'name'          => 'attr_cta_watermark',
+				'type'          => 'text',
+				'instructions'  => __( 'Large decorative word behind the CTA heading.', 'nera-competitions' ),
+				'default_value' => 'NERA',
+			],
+			[
 				'key'           => 'field_attr_cta_heading',
 				'label'         => __( 'Heading', 'nera-competitions' ),
 				'name'          => 'attr_cta_heading',
@@ -574,6 +663,23 @@ function nera_register_attribution_fields() {
 				'name'          => 'attr_credit_url',
 				'type'          => 'url',
 				'default_value' => 'https://www.neramarketing.co.uk',
+			],
+
+			// ── TAB: SCHEMA ──────────────────────────────────────────────────
+			[
+				'key'       => 'field_attr_tab_schema',
+				'label'     => __( 'Schema', 'nera-competitions' ),
+				'type'      => 'tab',
+				'placement' => 'top',
+			],
+			[
+				'key'           => 'field_attr_schema_description',
+				'label'         => __( 'WebPage Description', 'nera-competitions' ),
+				'name'          => 'attr_schema_description',
+				'type'          => 'textarea',
+				'instructions'  => __( 'JSON-LD WebPage schema description. Use [site-name] for the site name. Organization and Service schema are unchanged.', 'nera-competitions' ),
+				'rows'          => 3,
+				'default_value' => '[site-name]\'s competition platform was designed and built by Nera Marketing, a UK digital marketing agency specialising in competition websites.',
 			],
 
 		],
