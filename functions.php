@@ -531,7 +531,7 @@ function nera_attribution_document_title($title)
     return $title;
   }
 
-  return __('Competition Website by Nera Marketing', 'nera-competitions');
+  return __('Raffle Website by Nera Marketing', 'nera-competitions');
 }
 add_filter('pre_get_document_title', 'nera_attribution_document_title');
 
