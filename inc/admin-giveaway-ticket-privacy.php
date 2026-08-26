@@ -6,6 +6,8 @@
  * WooCommerce prints `username (email@example.com)` in three separate places:
  *
  *   1. Giveaway Tickets   — inc/admin/menu/wp-list-table/class-lty-lottery-ticket-list-table.php:470
+ *      (rendered as a `<th>`, not a `<td>` — it is that table's primary column; see the
+ *      note on the inline CSS below before touching the selectors)
  *   2. Giveaway Winners   — inc/admin/menu/views/html-lottery-winner-details.php:33
  *   3. Instant Win Prizes — inc/admin/menu/wp-list-table/class-lty-lottery-instant-winners-list-table.php:797
  *
@@ -154,8 +156,17 @@ function nera_enqueue_giveaway_ticket_privacy($hook_suffix)
   // keeps the table from reflowing when the addresses go.
   wp_add_inline_style(
     'wp-admin',
-    // Giveaway Tickets + Instant Win Prizes both use the `user_details` column.
-    'html.nera-redacting-ticket-emails td.column-user_details,'
+    // Giveaway Tickets + Instant Win Prizes both use the `user_details` column, but not
+    // the same tag. WP_List_Table renders whichever column is *primary* as
+    // `<th scope="row">` instead of `<td>` (single_row_columns() in
+    // wp-admin/includes/class-wp-list-table.php). A table that does not override
+    // get_default_primary_column_name() gets its first non-`cb` column as primary, and
+    // neither lottery table does: Tickets lists `user_details` first, so there the cell
+    // is a `<th>`; Instant Win Prizes lists `id` first, so there it stays a `<td>`.
+    // Matching the class without a tag covers both and keeps working if the plugin
+    // reorders its columns. Scoped to `tbody` because `thead`/`tfoot` carry the same
+    // class on the "User Name" heading, which must stay visible.
+    'html.nera-redacting-ticket-emails tbody .column-user_details,'
     // Giveaway Winners has no class on the cell and its only other hook is the
     // translated `data-title`, so it is targeted positionally. `user_name` is always
     // the 2nd column of that table (`id`, `user_name`, …), with or without `answer`.

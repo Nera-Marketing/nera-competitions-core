@@ -7,13 +7,13 @@
  * Three cell shapes are produced by Lottery for WooCommerce, handled by structure
  * rather than by any translated string:
  *
- *   Giveaway Tickets    <td class="… column-user_details">
+ *   Giveaway Tickets    <th class="… column-user_details" scope="row">
  *                         <div class="tips" data-tip="Billing name: Tom Oakey">
  *                           oakey1993 (oakey1993@example.co.uk)
  *                       — name and address share one text node; the `data-tip`
  *                         attribute is untouched, so the tooltip is preserved.
  *
- *   Instant Win Prizes  <td class="… column-user_details">
+ *   Instant Win Prizes  <td class="… column-user_details">   (a <td> here, see CELL_SELECTOR)
  *                         <span class="lty-instant-winner-name">oakey1993</span>
  *                         <br>(oakey1993@example.co.uk)
  *                       — address is its own text node; the <br> that introduced it
@@ -32,9 +32,15 @@
   var GUARD_CLASS = 'nera-redacting-ticket-emails';
 
   /* Cells whose text may contain an address. `column-user_details` covers both the
-     Giveaway Tickets and Instant Win Prizes tables; the winners table has no class. */
+     Giveaway Tickets and Instant Win Prizes tables; the winners table has no class.
+
+     Matched on the class alone, with no tag: WP_List_Table renders a table's *primary*
+     column as `<th scope="row">` rather than `<td>`, and the primary column defaults to
+     the first non-`cb` column. Giveaway Tickets lists `user_details` first (so it is a
+     `<th>`), Instant Win Prizes lists `id` first (so it is a `<td>`). Scoped to `tbody`
+     because the `thead`/`tfoot` heading cells carry the same class and must stay put. */
   var CELL_SELECTOR = [
-    'td.column-user_details',
+    'tbody .column-user_details',
     '#lty-view-winner-log tbody td:nth-child(2)',
   ].join(', ');
 
