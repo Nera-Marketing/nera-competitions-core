@@ -3,7 +3,7 @@
  * Nera Competitions Standard Theme
  *
  * @package Nera_Competitions
- * @version 1.3.27
+ * @version 1.3.28
  */
 
 use YahnisElsts\PluginUpdateChecker\v5p5\Vcs\GitHubApi;
@@ -19,7 +19,7 @@ require_once __DIR__ . '/inc/env-loader.php';
 require_once __DIR__ . '/inc/upgrade-temp-backup-helper.php';
 
 // Define theme constants (template directory = parent theme; child-safe when used as a parent)
-define('NERA_VERSION', '1.3.27');
+define('NERA_VERSION', '1.3.28');
 define('NERA_DIR', get_template_directory());
 define('NERA_URI', get_template_directory_uri());
 define('NERA_FRONTEND_DIST_DIR', NERA_DIR . '/frontend/dist');
@@ -1252,6 +1252,12 @@ if (class_exists('WooCommerce') && function_exists('lty_is_lottery_product')) {
 // Giveaway plugin customizations
 if (class_exists('WooCommerce_Lottery')) {
   require_once NERA_DIR . '/inc/giveaway-custom.php';
+}
+
+// Ticket bundles priced as threshold tiers (Lottery for WooCommerce prices them on an
+// exact quantity match only, so 30 tickets got no bundle discount at all).
+if (class_exists('WooCommerce')) {
+  require_once NERA_DIR . '/inc/lty-bundle-tier-pricing.php';
 }
 
 // Giveaway → View (wp-admin): hide buyer emails in Tickets / Winners / Instant Win tables.
