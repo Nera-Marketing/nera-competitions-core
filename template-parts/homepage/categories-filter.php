@@ -91,6 +91,9 @@ if (function_exists('is_shop') && is_shop() && function_exists('wc_get_page_id')
       _categoryFetchSeq: 0,
 
       init() {
+        // Capture the server's ordering for the first page before anything can
+        // reorder the grid; every later page is stamped as it is appended.
+        this.$nextTick(() => this.stampServerOrder());
         this.$watch('sortBy', () => this.sortGrid());
         window.addEventListener('popstate', () => this.applyUrlToCategories());
         this.syncUrl();
@@ -305,18 +308,65 @@ if (function_exists('is_shop') && is_shop() && function_exists('wc_get_page_id')
         this.$nextTick(() => this.sortGrid());
       },
 
+      /*
+       * Stamp each card with the position the server gave it, once, in DOM order.
+       * Appended pages arrive already ordered and land at the end, so assigning
+       * indexes to whatever is not yet stamped preserves the server's ordering even
+       * after the grid has been client-sorted.
+       *
+       * This is what catalogCmp falls back to. The server orders by
+       * Featured -> menu_order -> post_date in SQL (see inc/catalog-order.php), so
+       * that fallback IS the catalog order — it just does not need the card to carry
+       * data-featured / data-menu-order to reproduce it.
+       */
+      _serverOrderSeq: 0,
+
+      stampServerOrder() {
+        const grid = document.getElementById('advanced-filter-grid');
+        if (!grid) return;
+        grid.querySelectorAll('[data-price]').forEach(card => {
+          if (card.dataset.serverOrder === undefined) {
+            card.dataset.serverOrder = String(this._serverOrderSeq++);
+          }
+        });
+      },
+
+      /* A card can only be catalog-compared if it carries both keys. A child theme
+         overriding the card view may ship an older copy that omits them; when that
+         happens every card ties on 0 and the grid silently collapses to post date,
+         which is not a failure anyone sees until the order is already wrong. */
+      hasCatalogAttrs(el) {
+        return el.dataset.featured !== undefined && el.dataset.menuOrder !== undefined;
+      },
+
+      serverCmp(a, b) {
+        return (Number(a.dataset.serverOrder) || 0) - (Number(b.dataset.serverOrder) || 0);
+      },
+
       catalogCmp(a, b) {
+        // Missing keys: defer to the order the server already sorted, rather than
+        // pretending both cards are unfeatured with menu_order 0.
+        if (!this.hasCatalogAttrs(a) || !this.hasCatalogAttrs(b)) {
+          return this.serverCmp(a, b);
+        }
         const fa = Number(a.dataset.featured) || 0;
         const fb = Number(b.dataset.featured) || 0;
         if (fb !== fa) return fb - fa;
         const mo = (Number(a.dataset.menuOrder) || 0) - (Number(b.dataset.menuOrder) || 0);
         if (mo !== 0) return mo;
-        return (Number(b.dataset.postedDate) || 0) - (Number(a.dataset.postedDate) || 0);
+        const pd = (Number(b.dataset.postedDate) || 0) - (Number(a.dataset.postedDate) || 0);
+        if (pd !== 0) return pd;
+        // Equal on every catalog key — keep the server's tie-break so the grid does
+        // not reshuffle those cards on every re-sort.
+        return this.serverCmp(a, b);
       },
 
       sortGrid() {
         let grid = document.getElementById('advanced-filter-grid');
         if (!grid) return;
+        // Anything not yet stamped is in server order right now (initial render, or a
+        // freshly appended page), so record it before we reorder anything.
+        this.stampServerOrder();
         const sentinel = document.getElementById('advanced-filter-grid-append-sentinel');
         let cards = Array.from(grid.querySelectorAll('[data-price]'));
         cards.sort((a, b) => {
