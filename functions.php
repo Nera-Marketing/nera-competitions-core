@@ -3,7 +3,7 @@
  * Nera Competitions Standard Theme
  *
  * @package Nera_Competitions
- * @version 1.3.29
+ * @version 1.3.30
  */
 
 use YahnisElsts\PluginUpdateChecker\v5p5\Vcs\GitHubApi;
@@ -19,7 +19,7 @@ require_once __DIR__ . '/inc/env-loader.php';
 require_once __DIR__ . '/inc/upgrade-temp-backup-helper.php';
 
 // Define theme constants (template directory = parent theme; child-safe when used as a parent)
-define('NERA_VERSION', '1.3.29');
+define('NERA_VERSION', '1.3.30');
 define('NERA_DIR', get_template_directory());
 define('NERA_URI', get_template_directory_uri());
 define('NERA_FRONTEND_DIST_DIR', NERA_DIR . '/frontend/dist');
@@ -1258,6 +1258,25 @@ if (class_exists('WooCommerce_Lottery')) {
 // exact quantity match only, so 30 tickets got no bundle discount at all).
 if (class_exists('WooCommerce')) {
   require_once NERA_DIR . '/inc/lty-bundle-tier-pricing.php';
+}
+
+// Complete lottery orders once tickets are confirmed. WooCommerce leaves them on
+// "Processing" forever because lottery products are not downloadable, and nothing
+// downstream ever promotes them.
+if (class_exists('WooCommerce') && function_exists('lty_is_lottery_product')) {
+  require_once NERA_DIR . '/inc/auto-complete-lottery-orders.php';
+
+  // One-off migration engine for orders fulfilled before the above existed.
+  // Must load after it — it reuses nera_complete_lottery_order(). Runs nothing
+  // on its own; driven by hand from the Tools page below.
+  require_once NERA_DIR . '/inc/backfill-complete-lottery-orders.php';
+
+  // Tools → Nera Orders Status Migration. Only exists while the site opts in
+  // via wp-config.php, so the page cannot linger and confuse people once the
+  // migration has been run.
+  if (is_admin() && defined('NERA_ORDERS_STATUS_MIGRATION') && NERA_ORDERS_STATUS_MIGRATION) {
+    require_once NERA_DIR . '/inc/admin-orders-status-migration.php';
+  }
 }
 
 // Giveaway → View (wp-admin): hide buyer emails in Tickets / Winners / Instant Win tables.
