@@ -62,7 +62,16 @@ if ($nera_show_qa) {
   $nera_root_class .= ' nera-lucky-dip-popup--with-qa';
 }
 ?>
-<div class="<?php echo esc_attr($nera_root_class); ?>" data-nera-lucky-dip-state="added">
+<div class="<?php echo esc_attr($nera_root_class); ?>" data-nera-lucky-dip-state="added"
+  <?php
+  /*
+   * Marks this popup as one that asks a question. lottery-lucky-dip-qa.js only
+   * guards buttons inside an element carrying this, so without it Add More here
+   * bypassed the gate entirely — and posted whatever the bridge input happened
+   * to hold rather than the answer on screen.
+   */
+  ?>
+  <?php if ($nera_show_qa) : ?>data-nera-qa-popup<?php endif; ?>>
   <?php if ($nera_show_qa) : ?>
     <?php
     /*
@@ -95,7 +104,7 @@ if ($nera_show_qa) {
 
   <div class="nera-lucky-dip-regenerate__layout">
     <?php if ($nera_show_qa) : ?>
-      <div class="nera-lucky-dip-regenerate__qa" data-nera-qa-column>
+      <div class="nera-lucky-dip-regenerate__qa" data-nera-qa-column data-nera-qa-frozen="yes">
         <?php if (function_exists('nera_render_component')) {
           nera_render_component('SkillQuestionAnswer', [
             'question_text'  => $nera_qa['question_text'],
@@ -116,6 +125,24 @@ if ($nera_show_qa) {
         ?>
         <p class="nera-lucky-dip-regenerate__qa-message nera-lucky-dip-inline__error"
           data-nera-qa-message hidden role="alert" aria-live="polite"></p>
+
+      <?php
+      /*
+       * After a successful add the answer is committed to the cart and cannot be
+       * changed from here — LFW stores it on the cart item, and editing the
+       * radios would only desynchronise what is shown from what was bought.
+       * The column is frozen, showing the answer that passed, and the Answer
+       * button stays in place disabled so the step does not appear to vanish.
+       */
+      ?>
+        <button
+          type="button"
+          class="nera-lucky-dip-popup__btn nera-lucky-dip-popup__btn--primary nera-lucky-dip-regenerate__answer"
+          disabled
+          aria-disabled="true">
+          <span class="material-symbols-outlined" aria-hidden="true">check_circle</span>
+          <?php esc_html_e('Answered', 'nera-competitions'); ?>
+        </button>
       </div>
     <?php endif; ?>
 

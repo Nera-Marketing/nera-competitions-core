@@ -3559,12 +3559,21 @@ function nera_lucky_dip_question_data($product): array
     return $empty;
   }
 
+  /*
+   * The answer that is actually committed is the one on the LAST matching cart
+   * item, not the first. Adding more tickets appends items, so stopping at the
+   * first match showed whatever was answered earliest — which is how a popup
+   * came back displaying a previously rejected answer instead of the one that
+   * had just passed.
+   */
   $cart_answer_id = '';
   if (function_exists('WC') && WC()->cart) {
     foreach (WC()->cart->get_cart() as $cart_item) {
       if (isset($cart_item['product_id']) && (int) $cart_item['product_id'] === (int) $product->get_id()) {
-        $cart_answer_id = (string) ($cart_item['lty_lottery']['answers'] ?? '');
-        break;
+        $answer = (string) ($cart_item['lty_lottery']['answers'] ?? '');
+        if ('' !== $answer) {
+          $cart_answer_id = $answer;
+        }
       }
     }
   }

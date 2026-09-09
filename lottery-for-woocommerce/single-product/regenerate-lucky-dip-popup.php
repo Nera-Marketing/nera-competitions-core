@@ -42,6 +42,7 @@ $nera_can_regenerate = 'regenerate' === $action && !$nera_rerouted;
 // is answered nothing can be added, so a live quantity field would invite the
 // customer to set a number that has nothing to apply to.
 $nera_qty_locked = $nera_rerouted && 'regenerate' === $action;
+$nera_qa_frozen = $nera_has_qa && 'add_to_cart' === $action;
 
 // Warning shown above the quantity label while the question still gates this
 // step. The two methods gate different buttons, so they say different things:
@@ -101,7 +102,8 @@ if ($nera_has_qa) {
        * and what keeps the page behind the popup in sync.
        */
       ?>
-      <div class="nera-lucky-dip-regenerate__qa" data-nera-qa-column>
+      <div class="nera-lucky-dip-regenerate__qa" data-nera-qa-column
+        <?php if ($nera_qa_frozen) : ?>data-nera-qa-frozen="yes"<?php endif; ?>>
         <?php if (function_exists('nera_render_component')) {
           nera_render_component('SkillQuestionAnswer', [
             'question_text'  => $nera_qa['question_text'],
@@ -123,6 +125,26 @@ if ($nera_has_qa) {
         ?>
         <p class="nera-lucky-dip-regenerate__qa-message nera-lucky-dip-inline__error"
           data-nera-qa-message hidden role="alert" aria-live="polite"></p>
+
+        <?php if ($nera_is_direct && $nera_qa_frozen) : ?>
+      <?php
+      /*
+       * After a successful add the answer is committed to the cart and cannot be
+       * changed from here — LFW stores it on the cart item, and editing the
+       * radios would only desynchronise what is shown from what was bought.
+       * The column is frozen, showing the answer that passed, and the Answer
+       * button stays in place disabled so the step does not appear to vanish.
+       */
+      ?>
+          <button
+            type="button"
+            class="nera-lucky-dip-popup__btn nera-lucky-dip-popup__btn--primary nera-lucky-dip-regenerate__answer"
+            disabled
+            aria-disabled="true">
+            <span class="material-symbols-outlined" aria-hidden="true">check_circle</span>
+            <?php esc_html_e('Answered', 'nera-competitions'); ?>
+          </button>
+        <?php endif; ?>
 
         <?php if ($nera_is_direct && 'regenerate' === $action) : ?>
           <button

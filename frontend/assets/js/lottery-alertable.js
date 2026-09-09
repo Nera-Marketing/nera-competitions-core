@@ -16,8 +16,11 @@
   // Slot under the question itself. Answer errors are about the answer, so they
   // belong beside it rather than under the quantity field in the other column.
   var QA_ERROR_SELECTOR = '[data-nera-qa-message]';
+  // Add More was missing here, so its errors were never routed inline — the
+  // plugin's own alertable modal opened instead, underneath the Lucky Dip
+  // popup, and the customer saw the add silently fail with no explanation.
   var LUCKY_DIP_ACTION_SELECTOR =
-    '.lty-add-to-cart-lucky-dip-button, .lty-lucky-dip-button, .lty-regenerate-lucky-dip-button, .lty-regenerate-lucky-dip-add-to-cart-button';
+    '.lty-add-to-cart-lucky-dip-button, .lty-lucky-dip-button, .lty-regenerate-lucky-dip-button, .lty-regenerate-lucky-dip-add-to-cart-button, .lty-add-more-lucky-tip';
   var luckyDipPending = false;
 
   /**

@@ -29,7 +29,10 @@
 (function () {
   'use strict';
 
-  var TRIGGER_SELECTOR = '.lty-regenerate-lucky-dip-add-to-cart-button, .lty-add-to-cart-lucky-dip-button';
+  // Every button that can put Lucky Dip tickets in the cart. Add More was
+  // missing here, so it was the one route that reached the plugin ungated.
+  var TRIGGER_SELECTOR =
+    '.lty-regenerate-lucky-dip-add-to-cart-button, .lty-add-to-cart-lucky-dip-button, .lty-add-more-lucky-tip';
 
   /**
    * The one canonical answer holder. See purchase-card-body-inner.php.
@@ -89,6 +92,12 @@
   function selectOption(option) {
     var column = option.closest('[data-nera-qa-column]');
     if (!column) {
+      return;
+    }
+
+    // Once the answer is in the cart it cannot be changed from here, so the
+    // column is frozen and shows what was committed.
+    if ('yes' === column.getAttribute('data-nera-qa-frozen')) {
       return;
     }
 
@@ -153,7 +162,36 @@
         return;
       }
 
-      if (hasAnswer()) {
+      /*
+       * Re-read the answer from the popup and write it to the bridge before the
+       * plugin reads it.
+       *
+       * The bridge is written when an option is clicked, but it lives on the
+       * product page while the option lives in a popup, and several things can
+       * repaint the page in between — cart-fragment refreshes replace that part
+       * of the DOM after every add, and Alpine re-initialises whatever replaces
+       * it from server-rendered state. Any of those puts the previously
+       * committed answer back. That is how a wrong answer chosen after a
+       * successful add still reached the cart as the earlier correct one, and
+       * why it passed server validation.
+       *
+       * Taking the value from what the customer can actually see, at the moment
+       * they act on it, removes the whole class of staleness rather than one
+       * path through it.
+       */
+      var selected = popup.querySelector('[data-nera-qa-option][data-nera-qa-selected="yes"]');
+      var answerId = selected ? selected.getAttribute('data-nera-qa-option') : '';
+
+      if (answerId) {
+        document.querySelectorAll('[data-nera-qa-bridge]').forEach(function (el) {
+          el.value = answerId;
+        });
+
+        return;
+      }
+
+      // The popup asks a question and nothing is chosen in it.
+      if (hasAnswer() && !popup.querySelector('[data-nera-qa-option]')) {
         return;
       }
 

@@ -1503,3 +1503,33 @@ body.nera-ticket-dialog-open {
   min-width: 140px;
   margin: 0;
 }
+
+/* ── Answer committed: column is read-only ────────────────────────── */
+/*
+ * After a successful add the answer lives on the cart item. Editing the radios
+ * could only desynchronise what is displayed from what was bought, so the
+ * column becomes a record rather than an input: no pointer affordance, no
+ * hover, and the committed answer stays visibly selected.
+ */
+.nera-lucky-dip-regenerate__qa[data-nera-qa-frozen='yes'] [data-nera-qa-option] {
+  cursor: default;
+}
+
+.nera-lucky-dip-regenerate__qa[data-nera-qa-frozen='yes'] [data-nera-qa-option] > div {
+  border-color: #e2e8f0;
+  background: #f8fafc;
+}
+
+.nera-lucky-dip-regenerate__qa[data-nera-qa-frozen='yes'] [data-nera-qa-option] span {
+  color: #94a3b8;
+}
+
+/* The committed one keeps full contrast so it reads as the answer given. */
+.nera-lucky-dip-regenerate__qa[data-nera-qa-frozen='yes'] [data-nera-qa-option][data-nera-qa-selected='yes'] > div {
+  border-color: var(--color-primary, #1313ec);
+  background: var(--color-surface, #fff);
+}
+
+.nera-lucky-dip-regenerate__qa[data-nera-qa-frozen='yes'] [data-nera-qa-option][data-nera-qa-selected='yes'] span {
+  color: var(--color-text-primary, #0f172a);
+}
