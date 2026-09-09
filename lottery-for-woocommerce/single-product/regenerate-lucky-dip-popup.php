@@ -37,6 +37,22 @@ $nera_is_direct = function_exists('nera_lucky_dip_is_direct_method')
 // exactly as before.
 $nera_rerouted = $nera_has_qa && $nera_is_direct;
 $nera_can_regenerate = 'regenerate' === $action && !$nera_rerouted;
+
+// Quantity is locked in lockstep with Add More Lucky Dip: before the question
+// is answered nothing can be added, so a live quantity field would invite the
+// customer to set a number that has nothing to apply to.
+$nera_qty_locked = $nera_rerouted && 'regenerate' === $action;
+
+// Warning shown above the quantity label while the question still gates this
+// step. The two methods gate different buttons, so they say different things:
+// "add directly" has a disabled Add More, "only display" has an Add to Cart
+// stopped by validation. Resolved once here rather than repeated per branch.
+$nera_gate_note = '';
+if ('regenerate' === $action && $nera_has_qa) {
+  $nera_gate_note = $nera_is_direct
+    ? __('Answer the question first — then you can add more tickets.', 'nera-competitions')
+    : __('Answer the question first — then you can add to cart.', 'nera-competitions');
+}
 $nera_root_class = 'lty-regenerate-ticket-lucky-dip-popup-wrapper lty-lottery-ticket-lucky-dip-container nera-lucky-dip-regenerate';
 if ($nera_has_qa) {
   $nera_root_class .= ' nera-lucky-dip-regenerate--with-qa';
@@ -96,9 +112,17 @@ if ($nera_has_qa) {
           ]);
         } ?>
 
-        <p class="nera-lucky-dip-regenerate__qa-error" data-nera-qa-error hidden role="alert" aria-live="polite">
-          <?php esc_html_e('Please select an answer before adding these tickets to your cart.', 'nera-competitions'); ?>
-        </p>
+
+        <?php
+        /*
+         * Where the plugin's answer errors land — "you selected an incorrect
+         * answer" belongs under the question it is about, not under the
+         * quantity field in the other column. Carries the plugin's own error
+         * class as well so lottery-alertable.js clears it with the rest.
+         */
+        ?>
+        <p class="nera-lucky-dip-regenerate__qa-message nera-lucky-dip-inline__error"
+          data-nera-qa-message hidden role="alert" aria-live="polite"></p>
 
         <?php if ($nera_is_direct && 'regenerate' === $action) : ?>
           <button
@@ -122,38 +146,6 @@ if ($nera_has_qa) {
     <?php endif; ?>
 
     <div class="nera-lucky-dip-regenerate__main">
-      <div class="nera-lucky-dip-regenerate__quantity">
-        <label class="nera-lucky-dip-regenerate__qty-label">
-          <?php echo wp_kses_post(lty_get_single_product_lucky_dip_quantity_label()); ?>
-        </label>
-        <div class="nera-lucky-dip-regenerate__qty-row">
-          <div class="nera-lucky-dip-inline__qty">
-            <?php woocommerce_quantity_input($quantity_args, $product); ?>
-          </div>
-          <?php if ('add_to_cart' === $action && !$nera_rerouted) : ?>
-            <?php
-            /*
-             * Hidden for rerouted "add directly" products. This button carries
-             * lty_get_lucky_dip_button_classes(), which our own filter has
-             * rewritten to lty-regenerate-lucky-dip-button — so it would reopen
-             * the pre-answer popup and hand the customer a re-roll their
-             * configured method never offered. The quantity field stays, since
-             * Add More Lucky Dip reads it.
-             */
-            ?>
-            <button
-              type="button"
-              title="<?php echo esc_attr(lty_lucky_dip_question_answer_hover_message($product)); ?>"
-              value="<?php echo esc_attr($product->get_id()); ?>"
-              class="nera-lucky-dip-inline__btn nera-lucky-dip-regenerate__generate <?php echo esc_attr(implode(' ', lty_get_lucky_dip_button_classes($product))); ?>">
-              <span class="material-symbols-outlined" aria-hidden="true">shuffle</span>
-              <?php echo wp_kses_post(lty_get_single_product_generate_lucky_dip_button_label()); ?>
-            </button>
-          <?php endif; ?>
-        </div>
-        <p class="nera-lucky-dip-inline__error" hidden role="alert" aria-live="polite"></p>
-      </div>
-
       <?php
       /*
        * One home for the ticket list, whichever step this is. It used to be
@@ -176,6 +168,111 @@ if ($nera_has_qa) {
       </div>
       <?php endif; ?>
 
+      <?php
+      /*
+       * Quantity sits directly above the button that consumes it. At the top of
+       * the column it read as a stray field with no obvious effect; next to
+       * "Add More Lucky Dip" it reads as "how many to take next".
+       */
+      ?>
+      <div class="nera-lucky-dip-regenerate__quantity<?php echo $nera_qty_locked ? ' nera-lucky-dip-regenerate__quantity--locked' : ''; ?>">
+        <?php if ('' !== $nera_gate_note) : ?>
+          <p class="nera-lucky-dip-regenerate__gate-note">
+            <span class="material-symbols-outlined" aria-hidden="true">lock</span>
+            <?php echo esc_html($nera_gate_note); ?>
+          </p>
+        <?php endif; ?>
+
+        <label class="nera-lucky-dip-regenerate__qty-label">
+          <?php echo wp_kses_post(lty_get_single_product_lucky_dip_quantity_label()); ?>
+        </label>
+        <div class="nera-lucky-dip-regenerate__qty-row">
+          <?php if ($nera_qty_locked) : ?>
+            <?php
+            /*
+             * woocommerce_quantity_input() accepts `readonly` but not
+             * `disabled`, and readonly still takes focus and looks editable. A
+             * disabled fieldset disables every control inside it natively —
+             * pointer, keyboard and assistive tech alike — without rewriting
+             * the plugin's markup. Rendered only when locked so products
+             * without a question keep their original DOM.
+             */
+            ?>
+            <fieldset class="nera-lucky-dip-regenerate__qty-lock" disabled>
+              <div class="nera-lucky-dip-inline__qty">
+                <?php woocommerce_quantity_input($quantity_args, $product); ?>
+              </div>
+            </fieldset>
+          <?php else : ?>
+            <div class="nera-lucky-dip-inline__qty">
+              <?php woocommerce_quantity_input($quantity_args, $product); ?>
+            </div>
+          <?php endif; ?>
+          <?php if ('add_to_cart' === $action && !$nera_rerouted) : ?>
+            <?php
+            /*
+             * Hidden for rerouted "add directly" products. This button carries
+             * lty_get_lucky_dip_button_classes(), which our own filter has
+             * rewritten to lty-regenerate-lucky-dip-button — so it would reopen
+             * the pre-answer popup and hand the customer a re-roll their
+             * configured method never offered. The quantity field stays, since
+             * Add More Lucky Dip reads it.
+             */
+            ?>
+            <button
+              type="button"
+              title="<?php echo esc_attr(lty_lucky_dip_question_answer_hover_message($product)); ?>"
+              value="<?php echo esc_attr($product->get_id()); ?>"
+              class="nera-lucky-dip-inline__btn nera-lucky-dip-regenerate__generate <?php echo esc_attr(implode(' ', lty_get_lucky_dip_button_classes($product))); ?>">
+              <span class="material-symbols-outlined" aria-hidden="true">shuffle</span>
+              <?php echo wp_kses_post(lty_get_single_product_generate_lucky_dip_button_label()); ?>
+            </button>
+          <?php endif; ?>
+
+          <?php if ($nera_rerouted) : ?>
+            <?php
+            /*
+             * Add More shares the quantity row with the field it consumes, the
+             * same shape the Generate button uses above. Before the question is
+             * answered it is disabled in lockstep with that field — a disabled
+             * <button> emits no click, so LFW's delegated handler cannot fire.
+             * After the answer it is live; LFW re-renders the whole popup on a
+             * successful add, so "enabling" happens by re-render.
+             */
+            ?>
+            <?php if ('regenerate' === $action) : ?>
+              <button
+                type="button"
+                class="nera-lucky-dip-popup__btn nera-lucky-dip-popup__btn--secondary nera-lucky-dip-regenerate__add-more lty-add-more-lucky-tip"
+                disabled
+                aria-disabled="true"
+                title="<?php esc_attr_e('Answer the question first', 'nera-competitions'); ?>">
+                <span class="material-symbols-outlined" aria-hidden="true">casino</span>
+                <?php echo wp_kses_post(lty_get_single_product_add_more_lucky_dip_button_label()); ?>
+              </button>
+            <?php else : ?>
+              <a href="#" class="nera-lucky-dip-popup__btn nera-lucky-dip-popup__btn--secondary nera-lucky-dip-regenerate__add-more lty-add-more-lucky-tip">
+                <span class="material-symbols-outlined" aria-hidden="true">casino</span>
+                <?php echo wp_kses_post(lty_get_single_product_add_more_lucky_dip_button_label()); ?>
+              </a>
+            <?php endif; ?>
+          <?php endif; ?>
+
+          <?php if ($nera_can_regenerate) : ?>
+            <?php /* Same row as the field it re-rolls, matching Generate and Add More. */ ?>
+            <button
+              type="button"
+              title="<?php echo esc_attr(lty_lucky_dip_question_answer_hover_message($product)); ?>"
+              value="<?php echo esc_attr($product->get_id()); ?>"
+              class="nera-lucky-dip-popup__btn nera-lucky-dip-popup__btn--secondary nera-lucky-dip-regenerate__add-more lty-regenerate-lucky-dip-button">
+              <span class="material-symbols-outlined" aria-hidden="true">refresh</span>
+              <?php echo wp_kses_post(lty_get_single_product_regenerate_lucky_dip_button_label()); ?>
+            </button>
+          <?php endif; ?>
+        </div>
+        <p class="nera-lucky-dip-inline__error" hidden role="alert" aria-live="polite"></p>
+      </div>
+
       <div class="nera-lucky-dip-regenerate__actions">
         <?php if ('add_to_cart' === $action) : ?>
           <?php if (!$nera_has_qa) : ?>
@@ -186,21 +283,6 @@ if ($nera_has_qa) {
               <?php endforeach; ?>
             </div>
           <?php endif; ?>
-          <?php if ($nera_rerouted) : ?>
-            <?php
-            /*
-             * The tickets are in the cart and the answer is stored, so more can
-             * now be taken straight to the cart. This is the enabled twin of the
-             * disabled button in the pre-answer popup: LFW replaces the whole
-             * popup after a successful add, so "enabling" happens by re-render
-             * rather than by toggling an attribute.
-             */
-            ?>
-            <a href="#" class="nera-lucky-dip-popup__btn nera-lucky-dip-popup__btn--secondary lty-add-more-lucky-tip">
-              <span class="material-symbols-outlined" aria-hidden="true">casino</span>
-              <?php echo wp_kses_post(lty_get_single_product_add_more_lucky_dip_button_label()); ?>
-            </a>
-          <?php endif; ?>
           <a href="<?php echo esc_url(wc_get_cart_url()); ?>" class="nera-lucky-dip-popup__btn nera-lucky-dip-popup__btn--primary lty-view-cart">
             <span class="material-symbols-outlined" aria-hidden="true">shopping_cart</span>
             <?php echo wp_kses_post(lty_get_single_product_lucky_dip_view_cart_button_label()); ?>
@@ -208,41 +290,7 @@ if ($nera_has_qa) {
         <?php endif; ?>
 
         <?php if ('regenerate' === $action) : ?>
-          <?php if ($nera_can_regenerate) : ?>
-            <button
-              type="button"
-              title="<?php echo esc_attr(lty_lucky_dip_question_answer_hover_message($product)); ?>"
-              value="<?php echo esc_attr($product->get_id()); ?>"
-              class="nera-lucky-dip-popup__btn nera-lucky-dip-popup__btn--secondary lty-regenerate-lucky-dip-button">
-              <span class="material-symbols-outlined" aria-hidden="true">refresh</span>
-              <?php echo wp_kses_post(lty_get_single_product_regenerate_lucky_dip_button_label()); ?>
-            </button>
-          <?php endif; ?>
-
           <?php if ($nera_rerouted) : ?>
-            <?php
-            /*
-             * Nothing is in the cart yet — the tickets above were generated but
-             * held back until the question is answered. Adding more before that
-             * would carry the same missing-answer defect this whole change
-             * exists to fix, so the button is disabled until the Answer button
-             * in the question column has done its work. A disabled <button>
-             * emits no click, so LFW's delegated handler cannot fire either.
-             */
-            ?>
-            <p class="nera-lucky-dip-regenerate__gate-note">
-              <span class="material-symbols-outlined" aria-hidden="true">lock</span>
-              <?php esc_html_e('Answer the question first — then you can add more tickets.', 'nera-competitions'); ?>
-            </p>
-            <button
-              type="button"
-              class="nera-lucky-dip-popup__btn nera-lucky-dip-popup__btn--secondary lty-add-more-lucky-tip"
-              disabled
-              aria-disabled="true"
-              title="<?php esc_attr_e('Answer the question first', 'nera-competitions'); ?>">
-              <span class="material-symbols-outlined" aria-hidden="true">casino</span>
-              <?php echo wp_kses_post(lty_get_single_product_add_more_lucky_dip_button_label()); ?>
-            </button>
             <a href="<?php echo esc_url(wc_get_cart_url()); ?>" class="nera-lucky-dip-popup__btn nera-lucky-dip-popup__btn--primary lty-view-cart">
               <span class="material-symbols-outlined" aria-hidden="true">shopping_cart</span>
               <?php echo wp_kses_post(lty_get_single_product_lucky_dip_view_cart_button_label()); ?>

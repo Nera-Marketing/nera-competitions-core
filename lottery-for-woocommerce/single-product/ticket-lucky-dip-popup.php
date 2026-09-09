@@ -43,23 +43,55 @@ $nera_show_qa = !empty($nera_qa['can_display'])
   && function_exists('nera_lucky_dip_is_direct_method')
   && nera_lucky_dip_is_direct_method($nera_product);
 
+/*
+ * Add More Lucky Dip reads a quantity, but this popup never showed the field —
+ * so it vanished the moment the tickets were added and reappeared if you went
+ * back, which read as the form losing state. LFW's own change handler keeps
+ * every .lty-lucky-dip-quantity in step, including the hidden one below, so a
+ * visible field here simply works.
+ */
+$nera_qty_args = ($nera_show_qa && function_exists('lty_get_lucky_dip_quantity_input_arguments'))
+  ? lty_get_lucky_dip_quantity_input_arguments($nera_product)
+  : [];
+if ($nera_qty_args) {
+  $nera_qty_args['input_value'] = max(1, (int) $quantity);
+}
+
 $nera_root_class = 'lty-ticket-lucky-dip-popup-wrapper lty-lottery-ticket-lucky-dip-container nera-lucky-dip-popup';
 if ($nera_show_qa) {
   $nera_root_class .= ' nera-lucky-dip-popup--with-qa';
 }
 ?>
 <div class="<?php echo esc_attr($nera_root_class); ?>" data-nera-lucky-dip-state="added">
-  <div class="nera-lucky-dip-popup__header">
-    <div class="nera-lucky-dip-popup__icon-wrap" aria-hidden="true">
-      <span class="material-symbols-outlined">check_circle</span>
+  <?php if ($nera_show_qa) : ?>
+    <?php
+    /*
+     * Same compact header as the pre-add popup. The tall centred "Added to
+     * Cart" block made the two steps look like different dialogs, and the
+     * message is redundant now that adding to the cart raises a toast.
+     */
+    ?>
+    <div class="nera-lucky-dip-regenerate__header">
+      <div class="nera-lucky-dip-regenerate__icon-wrap" aria-hidden="true">
+        <span class="material-symbols-outlined">casino</span>
+      </div>
+      <h3 class="nera-lucky-dip-regenerate__title">
+        <?php echo wp_kses_post(lty_get_single_product_lucky_dip_title_label()); ?>
+      </h3>
     </div>
-    <h3 class="nera-lucky-dip-popup__title">
-      <?php esc_html_e('Added to Cart', 'nera-competitions'); ?>
-    </h3>
-    <p class="nera-lucky-dip-popup__subtitle">
-      <?php esc_html_e('Your lucky dip ticket(s) are ready', 'nera-competitions'); ?>
-    </p>
-  </div>
+  <?php else : ?>
+    <div class="nera-lucky-dip-popup__header">
+      <div class="nera-lucky-dip-popup__icon-wrap" aria-hidden="true">
+        <span class="material-symbols-outlined">check_circle</span>
+      </div>
+      <h3 class="nera-lucky-dip-popup__title">
+        <?php esc_html_e('Added to Cart', 'nera-competitions'); ?>
+      </h3>
+      <p class="nera-lucky-dip-popup__subtitle">
+        <?php esc_html_e('Your lucky dip ticket(s) are ready', 'nera-competitions'); ?>
+      </p>
+    </div>
+  <?php endif; ?>
 
   <div class="nera-lucky-dip-regenerate__layout">
     <?php if ($nera_show_qa) : ?>
@@ -73,6 +105,17 @@ if ($nera_show_qa) {
             'interactive'    => false,
           ]);
         } ?>
+
+        <?php
+        /*
+         * Where the plugin's answer errors land — "you selected an incorrect
+         * answer" belongs under the question it is about, not under the
+         * quantity field in the other column. Carries the plugin's own error
+         * class as well so lottery-alertable.js clears it with the rest.
+         */
+        ?>
+        <p class="nera-lucky-dip-regenerate__qa-message nera-lucky-dip-inline__error"
+          data-nera-qa-message hidden role="alert" aria-live="polite"></p>
       </div>
     <?php endif; ?>
 
@@ -99,11 +142,32 @@ if ($nera_show_qa) {
         </div>
       </div>
 
+      <?php if ($nera_qty_args) : ?>
+        <div class="nera-lucky-dip-regenerate__quantity">
+          <label class="nera-lucky-dip-regenerate__qty-label">
+            <?php echo wp_kses_post(lty_get_single_product_lucky_dip_quantity_label()); ?>
+          </label>
+          <div class="nera-lucky-dip-regenerate__qty-row">
+            <div class="nera-lucky-dip-inline__qty">
+              <?php woocommerce_quantity_input($nera_qty_args, $nera_product); ?>
+            </div>
+            <?php /* Shares the row with the field it consumes, as in the pre-add popup. */ ?>
+            <a href="#" class="nera-lucky-dip-popup__btn nera-lucky-dip-popup__btn--secondary nera-lucky-dip-regenerate__add-more lty-add-more-lucky-tip">
+              <span class="material-symbols-outlined" aria-hidden="true">casino</span>
+              <?php echo wp_kses_post(lty_get_single_product_add_more_lucky_dip_button_label()); ?>
+            </a>
+          </div>
+        </div>
+      <?php endif; ?>
+
       <div class="nera-lucky-dip-popup__actions">
-        <a href="#" class="nera-lucky-dip-popup__btn nera-lucky-dip-popup__btn--secondary lty-add-more-lucky-tip">
-          <span class="material-symbols-outlined" aria-hidden="true">casino</span>
-          <?php echo wp_kses_post(lty_get_single_product_add_more_lucky_dip_button_label()); ?>
-        </a>
+        <?php if (!$nera_qty_args) : ?>
+          <?php /* No quantity row on the original one-column popup, so it keeps Add More here. */ ?>
+          <a href="#" class="nera-lucky-dip-popup__btn nera-lucky-dip-popup__btn--secondary lty-add-more-lucky-tip">
+            <span class="material-symbols-outlined" aria-hidden="true">casino</span>
+            <?php echo wp_kses_post(lty_get_single_product_add_more_lucky_dip_button_label()); ?>
+          </a>
+        <?php endif; ?>
         <a href="<?php echo esc_url(wc_get_cart_url()); ?>" class="nera-lucky-dip-popup__btn nera-lucky-dip-popup__btn--primary lty-view-cart">
           <span class="material-symbols-outlined" aria-hidden="true">shopping_cart</span>
           <?php echo wp_kses_post(lty_get_single_product_lucky_dip_view_cart_button_label()); ?>

@@ -13,6 +13,9 @@
   var MODAL_CLASS = 'nera-lottery-alert';
   var OVERLAY_CLASS = 'nera-lottery-alert-overlay';
   var ERROR_SELECTOR = '.nera-lucky-dip-inline__error';
+  // Slot under the question itself. Answer errors are about the answer, so they
+  // belong beside it rather than under the quantity field in the other column.
+  var QA_ERROR_SELECTOR = '[data-nera-qa-message]';
   var LUCKY_DIP_ACTION_SELECTOR =
     '.lty-add-to-cart-lucky-dip-button, .lty-lucky-dip-button, .lty-regenerate-lucky-dip-button, .lty-regenerate-lucky-dip-add-to-cart-button';
   var luckyDipPending = false;
@@ -37,6 +40,11 @@
    * @return {jQuery}
    */
   function getLuckyDipErrorTarget() {
+    var $qa = $('.jquery-modal ' + QA_ERROR_SELECTOR).first();
+    if ($qa.length) {
+      return $qa;
+    }
+
     var $inModal = $(
       '.jquery-modal .nera-lucky-dip-regenerate ' + ERROR_SELECTOR
     ).first();

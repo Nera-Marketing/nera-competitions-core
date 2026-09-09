@@ -21,7 +21,17 @@ if (!defined('ABSPATH')) {
 <?php wp_footer(); ?>
 
 <!-- Toast Notifications Container (AlpineJS) -->
-<div x-data class="fixed top-20 right-6 z-[9999] flex flex-col gap-3 max-w-[420px] pointer-events-none">
+<?php
+/*
+ * `nera-toast-layer` is a styling hook, not a utility. z-[9999] is fine against
+ * ordinary page content, but the Lucky Dip modal stack on product pages runs at
+ * 1000000–1000002 (see lottery-plugin.css), so a toast raised from inside a
+ * modal rendered underneath its own overlay. The override lives beside the
+ * stack that outranked it rather than as another arbitrary Tailwind value,
+ * because it has to win against `!important` rules there.
+ */
+?>
+<div x-data class="nera-toast-layer fixed top-20 right-6 z-[9999] flex flex-col gap-3 max-w-[420px] pointer-events-none">
   <template x-for="toast in $store.toast.items" :key="toast.id">
     <div x-show="toast.isVisible"
       x-transition:enter="transition-all transform ease-[cubic-bezier(0.21,1.02,0.73,1)] duration-300"

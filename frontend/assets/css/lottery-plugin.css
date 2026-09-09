@@ -535,6 +535,13 @@ body.nera-ticket-dialog-open {
    Lucky Dip UI — inline controls, jquery-modal popups, z-index fix
    ========================================================================== */
 
+/* Toasts must clear the whole modal stack below, or a message raised from
+   inside a Lucky Dip popup renders behind its own overlay. Hook class added in
+   footer.php; !important because the blocker rules below use it too. */
+.nera-toast-layer {
+  z-index: 1000010 !important;
+}
+
 /* Above ticket dialog (z-index: 999990) */
 .jquery-modal,
 .jquery-modal.blocker {
@@ -548,7 +555,10 @@ body.nera-ticket-dialog-open {
 .jquery-modal .lty-regenerate-ticket-lucky-dip-popup-wrapper.modal {
   padding: 0;
   border-radius: 20px;
-  overflow: visible;
+  /* Clip to the radius. The primary button carries a coloured glow, and with
+     the footer sitting flush against the bottom edge that glow escaped the
+     rounded corner and painted a blue band across the page below the popup. */
+  overflow: hidden;
   max-width: 420px;
   width: calc(100% - 32px);
   box-shadow: 0 20px 80px rgba(0, 0, 0, 0.22);
@@ -1191,16 +1201,18 @@ body.nera-ticket-dialog-open {
 .nera-lucky-dip-regenerate--with-qa .nera-lucky-dip-regenerate__quantity,
 .nera-lucky-dip-regenerate--with-qa .nera-lucky-dip-regenerate__tickets-section,
 .nera-lucky-dip-regenerate--with-qa .nera-lucky-dip-regenerate__actions,
+.nera-lucky-dip-popup--with-qa .nera-lucky-dip-regenerate__quantity,
+.nera-lucky-dip-popup--with-qa .nera-lucky-dip-regenerate__tickets-section,
 .nera-lucky-dip-popup--with-qa .nera-lucky-dip-popup__body,
 .nera-lucky-dip-popup--with-qa .nera-lucky-dip-popup__actions {
   padding-left: 0;
   padding-right: 0;
 }
 
-.nera-lucky-dip-regenerate--with-qa .nera-lucky-dip-regenerate__quantity {
-  padding-top: 0;
-}
-
+/* The ticket list opens the column now, so it is the one that must not add
+   padding above the column's own. Quantity keeps its 16px top padding as the
+   gap between the list and the button it belongs to. */
+.nera-lucky-dip-regenerate--with-qa .nera-lucky-dip-regenerate__tickets-section,
 .nera-lucky-dip-popup--with-qa .nera-lucky-dip-popup__body {
   padding-top: 0;
 }
@@ -1246,19 +1258,27 @@ body.nera-ticket-dialog-open {
   margin-bottom: 0;
 }
 
-.nera-lucky-dip-regenerate__qa-error {
-  margin: 12px 0 0;
-  padding: 10px 12px;
-  border-radius: 10px;
-  background: color-mix(in srgb, var(--color-danger, #dc2626) 8%, white);
-  color: var(--color-danger, #dc2626);
-  font-size: 0.8125rem;
-  font-weight: 600;
-  line-height: 1.4;
+/* Unanswered state. There is no sentence of validation copy any more: the
+   note above the button already asks for an answer, so a third block of text
+   after the click added reading without adding information. Colouring the
+   options points at what needs attention instead. */
+.nera-lucky-dip-regenerate__qa[data-nera-qa-invalid='yes'] [data-nera-qa-option] > div {
+  border-color: var(--color-danger, #dc2626);
+  background: color-mix(in srgb, var(--color-danger, #dc2626) 4%, white);
 }
 
-.nera-lucky-dip-regenerate__qa-error[hidden] {
-  display: none !important;
+.nera-lucky-dip-regenerate__qa[data-nera-qa-invalid='yes'] [data-nera-qa-option] > div > div:first-child {
+  border-color: var(--color-danger, #dc2626);
+}
+
+.nera-lucky-dip-regenerate__qa[data-nera-qa-invalid='yes'] [data-nera-qa-option] span {
+  color: var(--color-danger, #dc2626);
+}
+
+/* Once an option is picked, its own selected styling wins over the red. */
+.nera-lucky-dip-regenerate__qa[data-nera-qa-invalid='yes'] [data-nera-qa-option][data-nera-qa-selected='yes'] > div {
+  border-color: var(--color-primary, #1313ec);
+  background: var(--color-surface, #fff);
 }
 
 /* Selected state, standing in for the Alpine :class bindings the page
@@ -1302,12 +1322,26 @@ body.nera-ticket-dialog-open {
   align-content: flex-start;
 }
 
-/* One ticket is the headline, not a list item — give it room to be read. */
+/* The single-ticket hero treatment (oversized centred chip) belongs to the
+   old one-column success popup. In the two-column shell it made the chip after
+   adding look nothing like the same chip before adding, so the two steps read
+   as different screens. Chips stay identical across both. */
 .nera-lucky-dip-popup--with-qa .lty-lucky-dip-tickets.nera-lucky-dip-popup__tickets--single {
-  max-height: none;
-  overflow: visible;
-  justify-content: center;
-  padding: 18px 12px;
+  justify-content: flex-start;
+  padding: 12px;
+}
+
+.nera-lucky-dip-popup--with-qa .nera-lucky-dip-popup__tickets--single .nera-lucky-dip-popup__ticket-chip {
+  min-width: 52px;
+  padding: 8px 12px;
+  font-size: 0.875rem;
+  border-radius: 10px;
+  letter-spacing: normal;
+}
+
+/* Match the 12px the pre-add popup leaves under its ticket list. */
+.nera-lucky-dip-popup--with-qa .nera-lucky-dip-popup__body {
+  padding-bottom: 12px;
 }
 
 @media (max-width: 767px) {
@@ -1374,4 +1408,98 @@ body.nera-ticket-dialog-open {
   font-size: 16px !important;
   line-height: 1.45;
   color: #94a3b8;
+}
+
+/* ── Footer buttons: no coloured glow inside a popup ──────────────── */
+/*
+ * The glow reads well on a page where the button floats over content. Pressed
+ * against a popup's bottom edge it just smears the corner, so it comes off
+ * here — the button already reads as primary from its fill.
+ */
+.nera-lucky-dip-popup__actions .nera-lucky-dip-popup__btn--primary,
+.nera-lucky-dip-regenerate__actions .nera-lucky-dip-popup__btn--primary,
+.nera-lucky-dip-regenerate__qa .nera-lucky-dip-popup__btn--primary {
+  box-shadow: none;
+}
+
+.nera-lucky-dip-popup__actions .nera-lucky-dip-popup__btn--primary:hover,
+.nera-lucky-dip-regenerate__actions .nera-lucky-dip-popup__btn--primary:hover,
+.nera-lucky-dip-regenerate__qa .nera-lucky-dip-popup__btn--primary:hover {
+  box-shadow: none;
+}
+
+/* ── Quantity locked with Add More Lucky Dip ──────────────────────── */
+/*
+ * Matches the disabled button beneath it: muted colour, dashed border,
+ * not-allowed cursor. The fieldset itself is only a disabling device and
+ * must contribute no box of its own.
+ */
+
+.nera-lucky-dip-regenerate__qty-lock {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  min-width: 0;
+}
+
+.nera-lucky-dip-regenerate__quantity--locked .nera-lucky-dip-regenerate__qty-label {
+  color: #94a3b8;
+}
+
+.nera-lucky-dip-regenerate__quantity--locked .nera-lucky-dip-inline__qty input[type='number'],
+.nera-lucky-dip-regenerate__quantity--locked .nera-lucky-dip-inline__qty input[type='text'] {
+  background: #f8fafc;
+  color: #94a3b8;
+  border-style: dashed;
+  border-color: #cbd5e1;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* Kill the focus ring the field would otherwise still paint on click. */
+.nera-lucky-dip-regenerate__quantity--locked .nera-lucky-dip-inline__qty input:focus {
+  outline: none;
+  border-color: #cbd5e1;
+  box-shadow: none;
+}
+
+/* ── Answer verdict message ───────────────────────────────────────── */
+/*
+ * Carries the plugin's .nera-lucky-dip-inline__error class for the sake of
+ * lottery-alertable.js, which clears every element with it — so these rules
+ * have to win over that class's own styling.
+ */
+.nera-lucky-dip-regenerate__qa-message {
+  margin: 12px 0 0 !important;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--color-danger, #dc2626) 6%, white);
+  border: 1px solid color-mix(in srgb, var(--color-danger, #dc2626) 22%, transparent);
+  color: var(--color-danger, #dc2626);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  line-height: 1.45;
+}
+
+.nera-lucky-dip-regenerate__qa-message[hidden] {
+  display: none !important;
+}
+
+/* An empty slot must take no space even if something unhides it. */
+.nera-lucky-dip-regenerate__qa-message:empty {
+  display: none !important;
+}
+
+/* ── Quantity row: field plus its own action button ───────────────── */
+/*
+ * Re-generate and Add More sit beside the quantity field they consume rather
+ * than stacked below with the primary action — the shape the Generate button
+ * already used. Colours are untouched: these stay secondary, the full-width
+ * button below stays primary.
+ */
+.nera-lucky-dip-regenerate__add-more {
+  flex: 1;
+  width: auto;
+  min-width: 140px;
+  margin: 0;
 }

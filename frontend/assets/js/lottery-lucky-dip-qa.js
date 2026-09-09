@@ -53,20 +53,25 @@
   }
 
   /**
-   * Reveal the inline error inside the popup's question column.
+   * Mark the question as unanswered so the options themselves turn red.
+   *
+   * Replaces a sentence of validation copy under the list. The warning above
+   * the button already says an answer is required, so repeating it after the
+   * click only added a third block of text to read — colouring the thing that
+   * needs attention points straight at it instead.
    *
    * @param {HTMLElement} popup
    */
   function showError(popup) {
-    var error = popup.querySelector('[data-nera-qa-error]');
-    if (!error) {
+    var column = popup.querySelector('[data-nera-qa-column]');
+    if (!column) {
       return;
     }
 
-    error.hidden = false;
+    column.setAttribute('data-nera-qa-invalid', 'yes');
 
-    if (typeof error.scrollIntoView === 'function') {
-      error.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    if (typeof column.scrollIntoView === 'function') {
+      column.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
     }
   }
 
@@ -102,9 +107,13 @@
       el.value = answerId;
     });
 
-    var error = column.querySelector('[data-nera-qa-error]');
-    if (error) {
-      error.hidden = true;
+    column.removeAttribute('data-nera-qa-invalid');
+
+    // A new choice makes any previous verdict on the old one stale.
+    var message = column.querySelector('[data-nera-qa-message]');
+    if (message) {
+      message.textContent = '';
+      message.hidden = true;
     }
 
     window.dispatchEvent(
@@ -158,4 +167,42 @@
   // Note: the add-to-cart sound is NOT fired from here. lottery-lucky-dip-sync.js
   // already emits `nera:cart:updated` when a success popup opens, which
   // cart-sound.js listens for. Emitting it here as well made it play twice.
+
+  /**
+   * Show the same corner toast a normal add-to-cart shows.
+   *
+   * Lucky Dip adds through the plugin's own AJAX, which never reached the
+   * theme's Alpine toast store — so the sound played but nothing was said.
+   * Rather than hook the request, this listens to the event
+   * lottery-lucky-dip-sync.js already fires once a success popup opens, which
+   * is the one moment we know the cart actually changed.
+   *
+   * Filtered on `source === 'lucky-dip'`: the product page's own submitForm
+   * fires the same event and raises its own toast, so an unfiltered listener
+   * would double up on every ordinary add-to-cart.
+   */
+  document.addEventListener('nera:cart:updated', function (event) {
+    var detail = event.detail || {};
+    if ('lucky-dip' !== detail.source) {
+      return;
+    }
+
+    if (!window.Alpine || !window.Alpine.store || !window.Alpine.store('toast')) {
+      return;
+    }
+
+    var tickets = Array.isArray(detail.tickets) ? detail.tickets : [];
+    var count = tickets.length;
+    var message = count
+      ? count + (1 === count ? ' ticket added to cart' : ' tickets added to cart')
+      : 'Tickets added to cart';
+
+    window.Alpine.store('toast').success(message, {
+      label: 'View Cart',
+      callback: function () {
+        var link = document.querySelector('.lty-view-cart');
+        window.location.href = link ? link.getAttribute('href') : '/cart/';
+      },
+    });
+  });
 })();
