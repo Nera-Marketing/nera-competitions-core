@@ -1122,3 +1122,256 @@ body.nera-ticket-dialog-open {
   }
 }
 
+/* ════════════════════════════════════════════════════════════════════
+   Lucky Dip — two-column skill-question variant
+
+   Applies only to popups that ask a skill question. Products without one
+   keep the single-column popup exactly as it was.
+
+   The two columns are a pair, not a stack side by side: they share a top
+   edge, share a bottom edge, and their action buttons sit on the same
+   line. That only holds if each column is its own flex column with the
+   body allowed to absorb the slack — otherwise the shorter side floats
+   its buttons halfway up and the divider stops short of the footer.
+   ════════════════════════════════════════════════════════════════════ */
+
+.jquery-modal .modal.nera-lucky-dip-regenerate--with-qa,
+.jquery-modal .lty-regenerate-ticket-lucky-dip-popup-wrapper.nera-lucky-dip-regenerate--with-qa.modal,
+.jquery-modal .modal.nera-lucky-dip-popup--with-qa,
+.jquery-modal .lty-ticket-lucky-dip-popup-wrapper.nera-lucky-dip-popup--with-qa.modal {
+  max-width: 800px;
+}
+
+/* ── Grid ─────────────────────────────────────────────────────────── */
+
+.nera-lucky-dip-regenerate--with-qa .nera-lucky-dip-regenerate__layout,
+.nera-lucky-dip-popup--with-qa .nera-lucky-dip-regenerate__layout {
+  display: grid;
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 768px) {
+  .nera-lucky-dip-regenerate--with-qa .nera-lucky-dip-regenerate__layout,
+  .nera-lucky-dip-popup--with-qa .nera-lucky-dip-regenerate__layout {
+    /* Equal halves. minmax(0,·) stops a long ticket row from widening its
+       own column and knocking the divider off centre. */
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+
+  .nera-lucky-dip-regenerate--with-qa .nera-lucky-dip-regenerate__qa,
+  .nera-lucky-dip-popup--with-qa .nera-lucky-dip-regenerate__qa {
+    border-right: 1px solid #f1f5f9;
+    border-bottom: 0;
+  }
+}
+
+/* ── Columns ──────────────────────────────────────────────────────── */
+
+.nera-lucky-dip-regenerate--with-qa .nera-lucky-dip-regenerate__qa,
+.nera-lucky-dip-regenerate--with-qa .nera-lucky-dip-regenerate__main,
+.nera-lucky-dip-popup--with-qa .nera-lucky-dip-regenerate__qa,
+.nera-lucky-dip-popup--with-qa .nera-lucky-dip-regenerate__main {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  /* One padding value for both columns is what puts their first line of
+     text on the same baseline. */
+  padding: 22px 24px 24px;
+  /* The success popup centres its header; the columns below are reading
+     content and must not inherit that. */
+  text-align: left;
+}
+
+.nera-lucky-dip-regenerate--with-qa .nera-lucky-dip-regenerate__qa {
+  border-bottom: 1px solid #f1f5f9;
+}
+
+/* Inner blocks give up their own gutters — the column owns horizontal
+   spacing now, so both sides line up on the same inner edges. */
+.nera-lucky-dip-regenerate--with-qa .nera-lucky-dip-regenerate__quantity,
+.nera-lucky-dip-regenerate--with-qa .nera-lucky-dip-regenerate__tickets-section,
+.nera-lucky-dip-regenerate--with-qa .nera-lucky-dip-regenerate__actions,
+.nera-lucky-dip-popup--with-qa .nera-lucky-dip-popup__body,
+.nera-lucky-dip-popup--with-qa .nera-lucky-dip-popup__actions {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.nera-lucky-dip-regenerate--with-qa .nera-lucky-dip-regenerate__quantity {
+  padding-top: 0;
+}
+
+.nera-lucky-dip-popup--with-qa .nera-lucky-dip-popup__body {
+  padding-top: 0;
+}
+
+/* ── Shared bottom edge ───────────────────────────────────────────── */
+/* The body of each column takes the leftover height so the buttons land
+   on the same line no matter which side has more content. */
+
+.nera-lucky-dip-regenerate--with-qa .nera-lucky-dip-regenerate__qa .skill-challenge-wrapper,
+.nera-lucky-dip-popup--with-qa .nera-lucky-dip-regenerate__qa .skill-challenge-wrapper {
+  flex: 1 1 auto;
+}
+
+.nera-lucky-dip-regenerate--with-qa .nera-lucky-dip-regenerate__tickets-section,
+.nera-lucky-dip-popup--with-qa .nera-lucky-dip-popup__body {
+  flex: 1 1 auto;
+}
+
+.nera-lucky-dip-regenerate--with-qa .nera-lucky-dip-regenerate__actions,
+.nera-lucky-dip-popup--with-qa .nera-lucky-dip-popup__actions {
+  margin-top: auto;
+  padding-bottom: 0;
+}
+
+.nera-lucky-dip-regenerate__answer {
+  width: 100%;
+  margin-top: 14px;
+}
+
+/* ── Question column ──────────────────────────────────────────────── */
+/* The component ships page-level chrome — its own card, border and
+   bottom margin. Inside a popup column that reads as a box within a box,
+   so it is flattened back to plain content. */
+
+.nera-lucky-dip-regenerate__qa .skill-challenge-wrapper {
+  margin-bottom: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+
+.nera-lucky-dip-regenerate__qa .nera-contest-qa-container {
+  margin-bottom: 0;
+}
+
+.nera-lucky-dip-regenerate__qa-error {
+  margin: 12px 0 0;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--color-danger, #dc2626) 8%, white);
+  color: var(--color-danger, #dc2626);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.nera-lucky-dip-regenerate__qa-error[hidden] {
+  display: none !important;
+}
+
+/* Selected state, standing in for the Alpine :class bindings the page
+   version uses — the popup renders the question Alpine-free. */
+.nera-lucky-dip-regenerate__qa [data-nera-qa-option][data-nera-qa-selected='yes'] > div {
+  border-color: var(--color-primary, #1313ec);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--color-primary, #1313ec) 20%, transparent);
+}
+
+.nera-lucky-dip-regenerate__qa [data-nera-qa-option][data-nera-qa-selected='yes'] > div > div:first-child {
+  border-color: var(--color-primary, #1313ec);
+  background: var(--color-primary, #1313ec);
+}
+
+.nera-lucky-dip-regenerate__qa [data-nera-qa-option][data-nera-qa-selected='yes'] > div > div:first-child > div {
+  opacity: 1;
+}
+
+.nera-lucky-dip-regenerate__qa [data-nera-qa-option][data-nera-qa-selected='yes'] span {
+  color: var(--color-text-primary, #0f172a);
+}
+
+/* ── Ticket list ──────────────────────────────────────────────────── */
+/* The plugin pins this to height:150px with overflow-y:scroll, so a
+   single ticket sat in a tall grey box with a permanent scrollbar. Size
+   it to its contents instead and only scroll once there is enough to
+   scroll. */
+
+.nera-lucky-dip-regenerate--with-qa .lty-regenerate-lucky-dip-tickets,
+.nera-lucky-dip-popup--with-qa .lty-lucky-dip-tickets {
+  height: auto;
+  min-height: 0;
+  max-height: 168px;
+  overflow-y: auto;
+  margin: 0;
+  padding: 12px;
+  border: 1px solid #eef2f7;
+  border-radius: 12px;
+  background: #fbfcfe;
+  justify-content: flex-start;
+  align-content: flex-start;
+}
+
+/* One ticket is the headline, not a list item — give it room to be read. */
+.nera-lucky-dip-popup--with-qa .lty-lucky-dip-tickets.nera-lucky-dip-popup__tickets--single {
+  max-height: none;
+  overflow: visible;
+  justify-content: center;
+  padding: 18px 12px;
+}
+
+@media (max-width: 767px) {
+  .nera-lucky-dip-regenerate--with-qa .nera-lucky-dip-regenerate__qa,
+  .nera-lucky-dip-popup--with-qa .nera-lucky-dip-regenerate__qa {
+    padding-bottom: 20px;
+  }
+
+  .nera-lucky-dip-regenerate--with-qa .nera-lucky-dip-regenerate__main,
+  .nera-lucky-dip-popup--with-qa .nera-lucky-dip-regenerate__main {
+    padding-top: 20px;
+  }
+}
+
+/* ── Disabled action buttons ──────────────────────────────────────── */
+/*
+ * There was no disabled state at all: the secondary variant is already a
+ * pale grey card, so a disabled button looked identical to a live one and
+ * people kept clicking it. Three signals, not one — colour drops, the
+ * border goes dashed to read as "not yet", and the cursor confirms it.
+ */
+
+.nera-lucky-dip-popup__btn:disabled,
+.nera-lucky-dip-popup__btn[disabled],
+.nera-lucky-dip-popup__btn[aria-disabled='true'] {
+  background: #f8fafc;
+  color: #94a3b8 !important;
+  border: 1px dashed #cbd5e1;
+  box-shadow: none;
+  cursor: not-allowed;
+  opacity: 1; /* colour carries the state; opacity alone reads as "loading" */
+}
+
+.nera-lucky-dip-popup__btn:disabled .material-symbols-outlined,
+.nera-lucky-dip-popup__btn[disabled] .material-symbols-outlined,
+.nera-lucky-dip-popup__btn[aria-disabled='true'] .material-symbols-outlined {
+  color: #cbd5e1;
+}
+
+/* Hover must not animate or lighten a button that cannot be pressed. */
+.nera-lucky-dip-popup__btn:disabled:hover,
+.nera-lucky-dip-popup__btn[disabled]:hover,
+.nera-lucky-dip-popup__btn[aria-disabled='true']:hover {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+  transform: none;
+  box-shadow: none;
+}
+
+/* ── "Why is this locked?" note ───────────────────────────────────── */
+
+.nera-lucky-dip-regenerate__gate-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  margin: 0 0 10px;
+  color: var(--color-text-secondary, #64748b);
+  font-size: 0.8125rem;
+  line-height: 1.45;
+}
+
+.nera-lucky-dip-regenerate__gate-note .material-symbols-outlined {
+  flex: 0 0 auto;
+  font-size: 16px !important;
+  line-height: 1.45;
+  color: #94a3b8;
+}

@@ -175,6 +175,15 @@
    * @return {boolean}
    */
   function isLuckyDipSuccessModal($elm) {
+    // Templates now declare which state they are in. Presence of a View Cart
+    // button used to imply "already added", but the pre-answer popup carries
+    // one too, which made this fire the added-to-cart sound before anything had
+    // been added.
+    var state = $elm.attr('data-nera-lucky-dip-state');
+    if (state) {
+      return 'added' === state;
+    }
+
     if ($elm.hasClass('nera-lucky-dip-popup')) {
       return true;
     }

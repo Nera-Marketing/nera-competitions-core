@@ -596,7 +596,9 @@ $decimal_sep       = wc_get_price_decimal_separator();
             'nera-competitions',
           )); ?>'
     }
-  })">
+  })"
+    <?php /* The Lucky Dip popup answers on the customer's behalf; mirror it back so they are not asked twice. */ ?>
+    @nera-qa-answer-selected.window="selectedAnswer = $event.detail.answerId">
     <form class="cart" @submit.prevent="submitForm"
       action="<?php echo esc_url(
         apply_filters('woocommerce_add_to_cart_form_action', $product->get_permalink()),
@@ -610,6 +612,45 @@ $decimal_sep       = wc_get_price_decimal_separator();
           'cart_answer_id' => $cart_answer_id,
           'qa_can_display' => $qa_can_display,
         ]); } ?>
+
+        <?php if ($qa_can_display): ?>
+          <?php
+          /*
+           * Bridge to Lottery for WooCommerce's Lucky Dip.
+           *
+           * LFW reads the chosen answer with exactly one global selector:
+           *
+           *   answer: $('.lty-question-answer-id').val()
+           *
+           * (assets/js/frontend/frontend.js — lucky_dip_action and
+           * trigger_regenerate_lucky_dip_add_to_cart), and validates against
+           * `.lty-lottery-question-answer-container`. This theme replaced LFW's
+           * question-answer.php with the SkillQuestionAnswer component, whose
+           * markup has neither — so Lucky Dip posted an empty `answer`,
+           * prepare_answer() skipped it, and the order arrived with no answer
+           * and its tickets cancelled. Silently, because the missing container
+           * also disabled LFW's own validation.
+           *
+           * This element restores that contract. It is the ONE canonical holder
+           * of the answer id: LFW's selector is global and takes the first
+           * match, so a second copy inside the Lucky Dip popup would make the
+           * value depend on DOM order. The popup writes here instead, which is
+           * also what keeps the product page in sync after answering there.
+           *
+           * data-force stays "no" on purpose: "yes" makes LFW raise a
+           * $.alertable dialog over the inline error in the popup's Q&A column.
+           * Validation is owned by the theme — see lottery-lucky-dip-qa.js.
+           */
+          ?>
+          <div class="lty-lottery-question-answer-container nera-qa-bridge" data-force="no" hidden aria-hidden="true">
+            <input
+              type="hidden"
+              class="lty-question-answer-id"
+              data-nera-qa-bridge
+              value="<?php echo esc_attr($cart_answer_id); ?>"
+              x-effect="$el.value = selectedAnswer" />
+          </div>
+        <?php endif; ?>
       <?php endif; ?>
 
       <?php if (!$is_manual_ticket): ?>

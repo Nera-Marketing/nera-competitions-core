@@ -3,7 +3,7 @@
  * Nera Competitions Standard Theme
  *
  * @package Nera_Competitions
- * @version 1.3.30
+ * @version 1.3.31
  */
 
 use YahnisElsts\PluginUpdateChecker\v5p5\Vcs\GitHubApi;
@@ -19,7 +19,7 @@ require_once __DIR__ . '/inc/env-loader.php';
 require_once __DIR__ . '/inc/upgrade-temp-backup-helper.php';
 
 // Define theme constants (template directory = parent theme; child-safe when used as a parent)
-define('NERA_VERSION', '1.3.30');
+define('NERA_VERSION', '1.3.31');
 define('NERA_DIR', get_template_directory());
 define('NERA_URI', get_template_directory_uri());
 define('NERA_FRONTEND_DIST_DIR', NERA_DIR . '/frontend/dist');
@@ -711,6 +711,20 @@ add_action('wp_enqueue_scripts', function () {
         $js_uri . 'lottery-alertable.js',
         ['jquery', 'jquery-alertable', 'lty-frontend'],
         filemtime($alertable_file),
+        true
+      );
+    }
+
+    // Gates Lucky Dip add-to-cart on the skill question being answered. Loaded
+    // before lty-frontend so its capture-phase listener is registered by the
+    // time the plugin's delegated handlers can fire.
+    $qa_gate_file = $js_dir . 'lottery-lucky-dip-qa.js';
+    if (file_exists($qa_gate_file)) {
+      wp_enqueue_script(
+        'nera-lottery-lucky-dip-qa',
+        $js_uri . 'lottery-lucky-dip-qa.js',
+        ['jquery', 'lty-frontend'],
+        filemtime($qa_gate_file),
         true
       );
     }

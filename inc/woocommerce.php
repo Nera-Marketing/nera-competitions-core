@@ -3452,3 +3452,155 @@ function nera_theme_settings_woocommerce_admin_css($hook_suffix)
     );
 }
 add_action('admin_enqueue_scripts', 'nera_theme_settings_woocommerce_admin_css');
+
+/**
+ * Whether this product's Lucky Dip must collect a skill answer before adding to cart.
+ *
+ * @param mixed $product Product object.
+ * @return bool
+ */
+function nera_lucky_dip_requires_answer($product): bool
+{
+  if (!is_object($product) || !method_exists($product, 'is_valid_question_answer')) {
+    return false;
+  }
+
+  if (!function_exists('lty_is_lottery_product') || !lty_is_lottery_product($product)) {
+    return false;
+  }
+
+  return (bool) $product->is_valid_question_answer();
+}
+
+/**
+ * Whether this product is configured to add Lucky Dip tickets straight to the cart.
+ *
+ * LFW encodes the setting as a string: '2' is "Only Display the Tickets",
+ * anything else is "Display & Add the Tickets to the Cart Directly".
+ *
+ * @param mixed $product Product object.
+ * @return bool
+ */
+function nera_lucky_dip_is_direct_method($product): bool
+{
+  if (!is_object($product) || !method_exists($product, 'get_lty_lucky_dip_method_type')) {
+    return false;
+  }
+
+  return '2' !== (string) $product->get_lty_lucky_dip_method_type();
+}
+
+/**
+ * Route "add directly" Lucky Dip through the preview popup when a skill answer is needed.
+ *
+ * LFW picks the Lucky Dip flow purely from the button's class:
+ *
+ *   lty-add-to-cart-lucky-dip-button  → lty_process_lucky_dip, adds immediately
+ *   lty-regenerate-lucky-dip-button   → lty_process_regenerate_lucky_dip, shows a popup first
+ *
+ * "Add directly" has no popup before the cart, so there is nowhere to ask the
+ * skill question — the customer never answers, and the order arrives with its
+ * tickets cancelled. Swapping the class sends it down the flow that already
+ * has a popup, where the question can be asked and validated. Both methods
+ * then share one popup, differing only in whether re-generating is offered.
+ *
+ * Only for products that actually ask a question. Everything else keeps its
+ * configured behaviour untouched.
+ *
+ * @param array $classes Button classes.
+ * @param mixed $product Product object.
+ * @return array
+ */
+function nera_lucky_dip_force_answer_flow($classes, $product): array
+{
+  $classes = (array) $classes;
+
+  if (!nera_lucky_dip_requires_answer($product) || !nera_lucky_dip_is_direct_method($product)) {
+    return $classes;
+  }
+
+  $classes = array_values(array_diff($classes, ['lty-add-to-cart-lucky-dip-button']));
+
+  if (!in_array('lty-regenerate-lucky-dip-button', $classes, true)) {
+    $classes[] = 'lty-regenerate-lucky-dip-button';
+  }
+
+  return $classes;
+}
+add_filter('lty_single_product_lucky_dip_button_classes', 'nera_lucky_dip_force_answer_flow', 10, 2);
+
+/**
+ * Skill-question data for a lottery product, resolved once for every surface.
+ *
+ * The product page (woocommerce/single-product/competitions.php) and the Lucky
+ * Dip popup both need the same question, the same answers and the same
+ * already-chosen answer. Resolving it in one place keeps the popup from
+ * offering a different question than the page behind it.
+ *
+ * @param mixed $product Product object.
+ * @return array{can_display:bool,question_text:string,answers:array,cart_answer_id:string}
+ */
+function nera_lucky_dip_question_data($product): array
+{
+  $empty = ['can_display' => false, 'question_text' => '', 'answers' => [], 'cart_answer_id' => ''];
+
+  if (!nera_lucky_dip_requires_answer($product) || !method_exists($product, 'get_question_answers')) {
+    return $empty;
+  }
+
+  $started = !method_exists($product, 'is_started') || $product->is_started();
+  $closed = method_exists($product, 'is_closed') && $product->is_closed();
+  if (!$started || $closed) {
+    return $empty;
+  }
+
+  $questions = (array) $product->get_question_answers();
+  if (empty($questions[0]['answers'])) {
+    return $empty;
+  }
+
+  $cart_answer_id = '';
+  if (function_exists('WC') && WC()->cart) {
+    foreach (WC()->cart->get_cart() as $cart_item) {
+      if (isset($cart_item['product_id']) && (int) $cart_item['product_id'] === (int) $product->get_id()) {
+        $cart_answer_id = (string) ($cart_item['lty_lottery']['answers'] ?? '');
+        break;
+      }
+    }
+  }
+
+  return [
+    'can_display' => true,
+    'question_text' => (string) ($questions[0]['question'] ?? ''),
+    'answers' => (array) $questions[0]['answers'],
+    'cart_answer_id' => $cart_answer_id,
+  ];
+}
+
+/**
+ * Resolve the product a Lucky Dip template is rendering for.
+ *
+ * LFW passes `$product` to some of its Lucky Dip templates and not others —
+ * ticket-lucky-dip-popup.php receives only the ticket numbers and quantity. The
+ * request that rendered it always carries the product id, and its nonce was
+ * verified before the template ran, so falling back to it is safe.
+ *
+ * @param mixed $candidate Product already in scope, if any.
+ * @return mixed Product object or null.
+ */
+function nera_lucky_dip_resolve_product($candidate = null)
+{
+  if (is_object($candidate) && method_exists($candidate, 'get_id')) {
+    return $candidate;
+  }
+
+  global $product;
+  if (is_object($product) && method_exists($product, 'get_id')) {
+    return $product;
+  }
+
+  // phpcs:ignore WordPress.Security.NonceVerification.Missing -- verified by the calling AJAX handler.
+  $product_id = isset($_POST['product_id']) ? absint(wp_unslash($_POST['product_id'])) : 0;
+
+  return $product_id ? wc_get_product($product_id) : null;
+}
