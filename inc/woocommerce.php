@@ -3613,3 +3613,35 @@ function nera_lucky_dip_resolve_product($candidate = null)
 
   return $product_id ? wc_get_product($product_id) : null;
 }
+
+/**
+ * The note shown above the quantity field in a Lucky Dip popup.
+ *
+ * Both popup templates render this line, and it must never disappear between
+ * steps — a note that vanishes after adding to the cart reads as the rule
+ * having lapsed. Only the wording changes: before answering it explains what
+ * is blocked, afterwards it explains why the question can no longer be edited.
+ *
+ * Resolved here so the two templates cannot drift apart on the copy.
+ *
+ * @param mixed $product   Product object.
+ * @param bool  $committed Whether the answer is already on a cart item.
+ * @return string Empty when the product asks no question.
+ */
+function nera_lucky_dip_gate_note($product, bool $committed): string
+{
+  if (!nera_lucky_dip_requires_answer($product)) {
+    return '';
+  }
+
+  if ($committed) {
+    return __(
+      'Your answer is locked for this competition — it applies to every ticket you add.',
+      'nera-competitions'
+    );
+  }
+
+  return nera_lucky_dip_is_direct_method($product)
+    ? __('Answer the question first — then you can add more tickets.', 'nera-competitions')
+    : __('Answer the question first — then you can add to cart.', 'nera-competitions');
+}

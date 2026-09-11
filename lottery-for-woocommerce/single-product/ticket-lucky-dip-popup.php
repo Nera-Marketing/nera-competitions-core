@@ -171,6 +171,18 @@ if ($nera_show_qa) {
 
       <?php if ($nera_qty_args) : ?>
         <div class="nera-lucky-dip-regenerate__quantity">
+          <?php
+          $nera_gate_note = function_exists('nera_lucky_dip_gate_note')
+            ? nera_lucky_dip_gate_note($nera_product, true)
+            : '';
+          ?>
+          <?php if ('' !== $nera_gate_note) : ?>
+            <p class="nera-lucky-dip-regenerate__gate-note">
+              <span class="material-symbols-outlined" aria-hidden="true">lock</span>
+              <?php echo esc_html($nera_gate_note); ?>
+            </p>
+          <?php endif; ?>
+
           <label class="nera-lucky-dip-regenerate__qty-label">
             <?php echo wp_kses_post(lty_get_single_product_lucky_dip_quantity_label()); ?>
           </label>

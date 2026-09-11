@@ -25,6 +25,7 @@
         this.initCouponUpdates();
         this.initCouponRemoval();
         this.initTermsGuard();
+        this.initPaypalTermsGuard();
       },
 
       /**
@@ -161,7 +162,7 @@
         });
 
         // Reset on error
-        $body.on('checkout_error', function () {
+        $body.on('checkout_error', function (event, errorMessage) {
           self.processing = false;
           self.setButtonProcessing(false);
 
@@ -172,6 +173,14 @@
           if (firstError) {
             firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
           }
+
+          // Both the normal Place Order submit and the PayPal Smart Button's own
+          // early validation fire this same event with the notice HTML as $2 — neither
+          // touches #terms itself (it isn't part of any AJAX-refreshed fragment), so
+          // without this the checkbox never shows an error state to match.
+          var mentionsTerms =
+            typeof errorMessage === 'string' && /terms and conditions/i.test(errorMessage);
+          self.setTermsInvalid(mentionsTerms);
         });
 
         // Re-init payment UI after checkout update
@@ -302,6 +311,96 @@
 
         this.termsAccepted = !isTermsRequired || termsCheckbox.checked;
         this.updatePlaceOrderAvailability();
+        this.updatePaypalGuard();
+
+        // Ticking the box clears its own error state immediately, same as the email
+        // field's border-danger toggling on blur — don't wait for another submit attempt.
+        if (this.termsAccepted) {
+          this.setTermsInvalid(false);
+        }
+      },
+
+      /**
+       * PayPal's Smart Button is a paypal.com iframe — it can't take a real `disabled`
+       * attribute like #place_order. Fake the same disabled-until-terms-accepted
+       * behaviour with a transparent, click-blocking overlay stacked on top of it (dimmed
+       * to match #place_order:disabled's look), which is removed once terms are accepted so
+       * clicks reach the real button underneath.
+       *
+       * The button itself is injected asynchronously by the PayPal JS SDK, so this polls
+       * briefly until it exists, and again after every checkout update in case the SDK
+       * re-renders its container.
+       */
+      initPaypalTermsGuard() {
+        var self = this;
+        var attempts = 0;
+
+        function trySetup() {
+          var btn = document.getElementById('ppc-button-ppcp-gateway');
+          if (!btn) {
+            if (attempts++ < 40) setTimeout(trySetup, 250);
+            return;
+          }
+
+          self._ppcpGuardBtn = btn;
+
+          if (!btn.dataset.ncsGuarded) {
+            btn.dataset.ncsGuarded = '1';
+
+            var wrapper = btn.parentElement || btn;
+            wrapper.classList.add('relative');
+
+            var overlay = document.createElement('div');
+            overlay.className = 'ncs-ppcp-guard-overlay';
+            overlay.setAttribute('aria-hidden', 'true');
+            wrapper.appendChild(overlay);
+
+            self._ppcpGuardOverlay = overlay;
+          }
+
+          self.updatePaypalGuard();
+        }
+
+        trySetup();
+
+        if (typeof jQuery !== 'undefined') {
+          jQuery(document.body).on('updated_checkout', function () {
+            attempts = 0;
+            trySetup();
+          });
+        }
+      },
+
+      /**
+       * Sync the PayPal button overlay/dim state with the current terms acceptance.
+       */
+      updatePaypalGuard() {
+        if (!this._ppcpGuardBtn || !this._ppcpGuardOverlay) return;
+
+        var blocked = !this.termsAccepted;
+        this._ppcpGuardBtn.classList.toggle('ncs-ppcp-guard-dim', blocked);
+        this._ppcpGuardOverlay.style.pointerEvents = blocked ? 'auto' : 'none';
+      },
+
+      /**
+       * Toggle the same "invalid field" treatment other checkout inputs use
+       * (border-danger) on the terms checkbox, since it sits outside any
+       * WooCommerce-rendered field group that would normally get it for free.
+       */
+      setTermsInvalid(isInvalid) {
+        var termsCheckbox = this.$el.querySelector('#terms');
+        if (!termsCheckbox) return;
+
+        var wrapper = termsCheckbox.closest('.woocommerce-terms-and-conditions-wrapper') || termsCheckbox;
+        // border-danger mirrors the other invalid fields' convention, but native (non
+        // appearance:none) checkboxes largely ignore border-color visually in Chromium —
+        // ring-danger is what actually shows up around the box itself.
+        termsCheckbox.classList.toggle('border-danger', isInvalid);
+        termsCheckbox.classList.toggle('ring-2', isInvalid);
+        termsCheckbox.classList.toggle('ring-danger', isInvalid);
+        termsCheckbox.classList.toggle('ring-offset-1', isInvalid);
+        wrapper.classList.toggle('ncs-terms-invalid', isInvalid);
+        termsCheckbox.setAttribute('aria-invalid', isInvalid ? 'true' : 'false');
       },
 
       /**

@@ -17,6 +17,13 @@ if (!defined('ABSPATH')) {
     <?php esc_html_e('Payment Method', 'nera-competitions'); ?>
   </h2>
 
+  <?php
+  // Some gateways (e.g. PayPal Payments' Smart Buttons) render their main checkout button via
+  // this hook, expecting it right after the #payment gateway list — same spot WooCommerce core's
+  // own checkout/payment.php template fires it. This custom template built its own gateway loop
+  // instead of calling woocommerce_checkout_payment(), which is why it was missing.
+  do_action('woocommerce_review_order_before_payment');
+  ?>
   <div id="payment" class="woocommerce-checkout-payment" role="radiogroup" aria-label="<?php esc_attr_e(
     'Payment Methods',
     'nera-competitions',
@@ -72,6 +79,8 @@ if (!defined('ABSPATH')) {
     ]); ?>
   </div>
 
+  <?php do_action('woocommerce_review_order_after_payment'); ?>
+
   <div class="pt-6">
     <div class="flex flex-col gap-5">
       <!-- Terms & Conditions -->
@@ -109,7 +118,14 @@ if (!defined('ABSPATH')) {
 
       <!-- Place Order Button -->
       <div class="w-full shrink-0">
-        <?php echo apply_filters(
+        <?php
+        // Gateways that inject a payment button beside the standard submit button (e.g. PayPal
+        // Payments' Smart Buttons) hook into these two core actions to render their container.
+        // Without them the gateway's JS still hides/disables #place_order but never gets a place
+        // to render its own button, leaving checkout with nothing clickable.
+        do_action('woocommerce_review_order_before_submit');
+
+        echo apply_filters(
           'woocommerce_order_button_html',
           '<button type="submit"
         class="nera-place-order-btn btn-checkout relative overflow-hidden !w-full"
@@ -126,7 +142,10 @@ if (!defined('ABSPATH')) {
             esc_html__('Place order', 'woocommerce') .
             '</span>
       </button>',
-        ); ?>
+        );
+
+        do_action('woocommerce_review_order_after_submit');
+        ?>
       </div>
     </div>
     <?php wp_nonce_field('woocommerce-process_checkout', 'woocommerce-process-checkout-nonce'); ?>

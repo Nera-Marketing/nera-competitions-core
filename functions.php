@@ -3,7 +3,7 @@
  * Nera Competitions Standard Theme
  *
  * @package Nera_Competitions
- * @version 1.3.33
+ * @version 1.3.34
  */
 
 use YahnisElsts\PluginUpdateChecker\v5p5\Vcs\GitHubApi;
@@ -19,7 +19,7 @@ require_once __DIR__ . '/inc/env-loader.php';
 require_once __DIR__ . '/inc/upgrade-temp-backup-helper.php';
 
 // Define theme constants (template directory = parent theme; child-safe when used as a parent)
-define('NERA_VERSION', '1.3.33');
+define('NERA_VERSION', '1.3.34');
 define('NERA_DIR', get_template_directory());
 define('NERA_URI', get_template_directory_uri());
 define('NERA_FRONTEND_DIST_DIR', NERA_DIR . '/frontend/dist');
@@ -1251,6 +1251,8 @@ if (class_exists('WooCommerce')) {
   require_once NERA_DIR . '/inc/wallet-partial-payment.php';
   // Basket Hold — choose-your-own Ticket cart timer (ADR 0009).
   require_once NERA_DIR . '/inc/basket-hold.php';
+  // PayPal Smart Button position + styling on checkout (ADR 0003, ADR 0004).
+  require_once NERA_DIR . '/inc/paypal-payments.php';
 }
 
 // REST API for instant wins lazy loading

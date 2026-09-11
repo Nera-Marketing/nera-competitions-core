@@ -44,16 +44,11 @@ $nera_can_regenerate = 'regenerate' === $action && !$nera_rerouted;
 $nera_qty_locked = $nera_rerouted && 'regenerate' === $action;
 $nera_qa_frozen = $nera_has_qa && 'add_to_cart' === $action;
 
-// Warning shown above the quantity label while the question still gates this
-// step. The two methods gate different buttons, so they say different things:
-// "add directly" has a disabled Add More, "only display" has an Add to Cart
-// stopped by validation. Resolved once here rather than repeated per branch.
-$nera_gate_note = '';
-if ('regenerate' === $action && $nera_has_qa) {
-  $nera_gate_note = $nera_is_direct
-    ? __('Answer the question first — then you can add more tickets.', 'nera-competitions')
-    : __('Answer the question first — then you can add to cart.', 'nera-competitions');
-}
+// Shown above the quantity label on every step — see nera_lucky_dip_gate_note()
+// for why it must not disappear once the answer is committed.
+$nera_gate_note = ($nera_has_qa && function_exists('nera_lucky_dip_gate_note'))
+  ? nera_lucky_dip_gate_note($product, $nera_qa_frozen)
+  : '';
 $nera_root_class = 'lty-regenerate-ticket-lucky-dip-popup-wrapper lty-lottery-ticket-lucky-dip-container nera-lucky-dip-regenerate';
 if ($nera_has_qa) {
   $nera_root_class .= ' nera-lucky-dip-regenerate--with-qa';

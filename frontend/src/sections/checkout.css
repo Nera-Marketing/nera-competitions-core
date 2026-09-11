@@ -114,6 +114,26 @@ button:focus-visible {
     @apply w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary cursor-pointer;
   }
 
+  /* Terms checkbox error state — mirrors .form-row.woocommerce-invalid above. It sits
+     outside any WooCommerce-rendered field group (both the normal submit and the PayPal
+     Smart Button's own validation reject it independently of that), so it needs its own
+     rule instead of inheriting one. */
+  .woocommerce-terms-and-conditions-wrapper.ncs-terms-invalid label {
+    @apply text-danger;
+  }
+
+  /* PayPal Smart Button "disabled until terms accepted" state. The button itself is a
+     paypal.com iframe and can't take a real `disabled` attribute, so a transparent
+     click-blocking overlay sits on top (toggled via inline pointer-events in JS) while the
+     button underneath is dimmed to match #place_order:disabled's look. */
+  #ppc-button-ppcp-gateway.ncs-ppcp-guard-dim {
+    @apply opacity-60;
+  }
+
+  .ncs-ppcp-guard-overlay {
+    @apply absolute inset-0 z-10 cursor-not-allowed;
+  }
+
   /* Select2 within checkout */
   .select2-container {
     .select2-selection--single {
