@@ -321,65 +321,130 @@
       },
 
       /**
-       * PayPal's Smart Button is a paypal.com iframe — it can't take a real `disabled`
-       * attribute like #place_order. Fake the same disabled-until-terms-accepted
-       * behaviour with a transparent, click-blocking overlay stacked on top of it (dimmed
-       * to match #place_order:disabled's look), which is removed once terms are accepted so
-       * clicks reach the real button underneath.
+       * Disable the PayPal Smart Button until the terms checkbox is ticked, and
+       * re-enable it the moment it is.
        *
-       * The button itself is injected asynchronously by the PayPal JS SDK, so this polls
-       * briefly until it exists, and again after every checkout update in case the SDK
-       * re-renders its container.
+       * WHY THE THEME HAS TO DO THIS
+       * The plugin owns a disabled state for this button, but the classic checkout
+       * bootstrap decides it with `shouldRender() && !button.is_disabled` — the terms
+       * checkbox is not part of that test. So #place_order went disabled while PayPal
+       * stayed live beside it, which is the one button that skips the form submit
+       * entirely and hands off to paypal.com.
+       *
+       * HOW
+       * The button is a cross-origin paypal.com iframe: no `disabled` attribute, and no
+       * click of ours to intercept. The plugin's own gateway.css already solves this for
+       * its internal use —
+       *     .ppcp-disabled { cursor: not-allowed; filter: grayscale(100%) }
+       *     .ppcp-disabled * { pointer-events: none }
+       * — so we drive that class instead of stacking an overlay on top. pointer-events
+       * on the ancestor stops the iframe receiving clicks at all, with none of the
+       * z-index guesswork an overlay needs against a third-party iframe.
+       *
+       * It is our own class, `ncs-ppcp-blocked`, that carries those rules (with
+       * !important, to beat the inline pointer-events the plugin sets) rather than
+       * `ppcp-disabled` itself. The plugin reads `ppcp-disabled` as "I disabled this":
+       * setting it ourselves would have its ButtonsDisabler call actions.enable() and
+       * strip the class again on its next evaluation, leaving the two of us fighting
+       * over one attribute. Ours is a class it never looks at.
        */
       initPaypalTermsGuard() {
         var self = this;
-        var attempts = 0;
 
-        function trySetup() {
-          var btn = document.getElementById('ppc-button-ppcp-gateway');
-          if (!btn) {
-            if (attempts++ < 40) setTimeout(trySetup, 250);
-            return;
+        /**
+         * The plugin localizes the exact wrapper selector it renders into, so read it
+         * from there rather than hard-coding an ID that moves between SDK versions
+         * (ppcp-sdk-v6 renders #ppc-button-ppcp-gateway-v6, for one).
+         */
+        function wrapperSelector() {
+          var data = window.PayPalCommerceGateway;
+          var selector = data && data.button ? data.button.wrapper : '';
+
+          return typeof selector === 'string' && selector !== ''
+            ? selector
+            : '#ppc-button-ppcp-gateway';
+        }
+
+        function findContainer() {
+          var btn = document.querySelector(wrapperSelector());
+          if (!btn) return null;
+
+          // .ppc-button-wrapper also holds Pay Later messaging and the funding-source
+          // buttons, so guarding it covers every clickable the SDK renders.
+          return btn.closest('.ppc-button-wrapper') || btn;
+        }
+
+        function sync() {
+          var container = findContainer();
+          if (!container) return;
+
+          if (!container.dataset.ncsGuarded) {
+            container.dataset.ncsGuarded = '1';
+
+            // Descendants have pointer-events: none while blocked, so the click lands
+            // here — say why instead of doing nothing.
+            container.addEventListener('click', function (event) {
+              if (self.termsAccepted) return;
+
+              event.preventDefault();
+              event.stopPropagation();
+              self.setTermsInvalid(true);
+
+              var termsCheckbox = self.$el.querySelector('#terms');
+              if (termsCheckbox && typeof termsCheckbox.scrollIntoView === 'function') {
+                termsCheckbox.scrollIntoView({ block: 'center', behavior: 'smooth' });
+              }
+            });
           }
 
-          self._ppcpGuardBtn = btn;
-
-          if (!btn.dataset.ncsGuarded) {
-            btn.dataset.ncsGuarded = '1';
-
-            var wrapper = btn.parentElement || btn;
-            wrapper.classList.add('relative');
-
-            var overlay = document.createElement('div');
-            overlay.className = 'ncs-ppcp-guard-overlay';
-            overlay.setAttribute('aria-hidden', 'true');
-            wrapper.appendChild(overlay);
-
-            self._ppcpGuardOverlay = overlay;
-          }
-
+          self._ppcpGuardEl = container;
           self.updatePaypalGuard();
         }
 
-        trySetup();
+        sync();
 
         if (typeof jQuery !== 'undefined') {
-          jQuery(document.body).on('updated_checkout', function () {
-            attempts = 0;
-            trySetup();
-          });
+          // updated_checkout replaces the review-order fragment this button sits in, so
+          // the guarded node is gone and a fresh one needs picking up.
+          jQuery(document.body).on('updated_checkout', sync);
+
+          // The SDK renders asynchronously and re-renders on its own schedule, so take
+          // the plugin's own "buttons exist / buttons changed" signals rather than
+          // guessing at a delay.
+          jQuery(document).on(
+            'ppcp-smart-buttons-init ppcp-paypal-loaded ppcp-enabled ppcp-shown ppcp_buttons_enabled_changed',
+            sync,
+          );
+        }
+
+        // Last line of defence for a button that appears without any of the above (a
+        // funding-source re-render, a gateway switch). Cheap: it only reads one selector
+        // and returns unless an unguarded container showed up.
+        if (typeof MutationObserver !== 'undefined') {
+          var pending = false;
+          new MutationObserver(function () {
+            if (pending) return;
+            pending = true;
+            setTimeout(function () {
+              pending = false;
+              var container = findContainer();
+              if (container && container !== self._ppcpGuardEl) sync();
+            }, 100);
+          }).observe(document.body, { childList: true, subtree: true });
         }
       },
 
       /**
-       * Sync the PayPal button overlay/dim state with the current terms acceptance.
+       * Sync the PayPal button's disabled state with the current terms acceptance.
        */
       updatePaypalGuard() {
-        if (!this._ppcpGuardBtn || !this._ppcpGuardOverlay) return;
+        var container = this._ppcpGuardEl;
+        if (!container) return;
 
         var blocked = !this.termsAccepted;
-        this._ppcpGuardBtn.classList.toggle('ncs-ppcp-guard-dim', blocked);
-        this._ppcpGuardOverlay.style.pointerEvents = blocked ? 'auto' : 'none';
+
+        container.classList.toggle('ncs-ppcp-blocked', blocked);
+        container.setAttribute('aria-disabled', blocked ? 'true' : 'false');
       },
 
       /**

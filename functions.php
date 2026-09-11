@@ -3,7 +3,7 @@
  * Nera Competitions Standard Theme
  *
  * @package Nera_Competitions
- * @version 1.3.34
+ * @version 1.3.35
  */
 
 use YahnisElsts\PluginUpdateChecker\v5p5\Vcs\GitHubApi;
@@ -19,7 +19,7 @@ require_once __DIR__ . '/inc/env-loader.php';
 require_once __DIR__ . '/inc/upgrade-temp-backup-helper.php';
 
 // Define theme constants (template directory = parent theme; child-safe when used as a parent)
-define('NERA_VERSION', '1.3.34');
+define('NERA_VERSION', '1.3.35');
 define('NERA_DIR', get_template_directory());
 define('NERA_URI', get_template_directory_uri());
 define('NERA_FRONTEND_DIST_DIR', NERA_DIR . '/frontend/dist');
@@ -877,6 +877,18 @@ function nera_enqueue_scripts()
   if (is_product()) {
     $alpine_component_deps[] = 'nera-alpine-product-gallery';
   }
+  if (is_checkout() && !is_order_received_page()) {
+    // nera-checkout defines window.neraCheckout(), which the checkout form's
+    // x-data="neraCheckout()" evaluates the instant Alpine boots. It was enqueued
+    // earlier in this function (step 4) but never listed here, so nothing forced it
+    // ahead of Alpine in the actual print order — the two have equal claim with no
+    // declared relationship, so anything that shifts the surrounding enqueue timing
+    // (another plugin's own wp_enqueue_scripts callback, here nera-age-shield-plugin)
+    // can print Alpine first. Alpine then evaluates neraCheckout() before it exists,
+    // throws, and the whole checkout component — terms guard, PayPal button guard,
+    // Place Order state — never initializes, with no error visible to a shopper.
+    $alpine_component_deps[] = 'nera-checkout';
+  }
 
   wp_enqueue_script(
     'alpinejs-collapse',
@@ -1217,6 +1229,9 @@ require_once get_template_directory() . '/inc/acf/woocommerce/acf-woocommerce.ph
 
 // ACF CashFlow Info (CashFlows card payment method copy)
 require_once get_template_directory() . '/inc/acf/woocommerce/acf-cashflow-info.php';
+
+// ACF PayPal Info (PayPal payment method copy; self-gated on the gateway being active)
+require_once get_template_directory() . '/inc/acf/woocommerce/acf-paypal-info.php';
 
 // Legal Placeholders for T&C and Privacy Policy
 require_once get_template_directory() . '/inc/legal-placeholders.php';

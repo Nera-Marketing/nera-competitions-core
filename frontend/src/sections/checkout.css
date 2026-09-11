@@ -122,16 +122,21 @@ button:focus-visible {
     @apply text-danger;
   }
 
-  /* PayPal Smart Button "disabled until terms accepted" state. The button itself is a
-     paypal.com iframe and can't take a real `disabled` attribute, so a transparent
-     click-blocking overlay sits on top (toggled via inline pointer-events in JS) while the
-     button underneath is dimmed to match #place_order:disabled's look. */
-  #ppc-button-ppcp-gateway.ncs-ppcp-guard-dim {
-    @apply opacity-60;
+  /* PayPal Smart Button "disabled until terms accepted" state (see initPaypalTermsGuard).
+     The button is a cross-origin paypal.com iframe, so there is no `disabled` attribute
+     and no click of ours to intercept — killing pointer-events on the ancestor is what
+     actually stops it. Deliberately the same shape as the plugin's own .ppcp-disabled
+     rules, but under a class of ours: the plugin treats .ppcp-disabled as its own state
+     and would strip it back off. !important beats the inline pointer-events it sets on
+     the wrapper's children. grayscale + opacity because opacity alone did not read as
+     disabled next to a full-colour PayPal button. */
+  .ncs-ppcp-blocked {
+    @apply cursor-not-allowed opacity-60;
+    filter: grayscale(100%);
   }
 
-  .ncs-ppcp-guard-overlay {
-    @apply absolute inset-0 z-10 cursor-not-allowed;
+  .ncs-ppcp-blocked * {
+    pointer-events: none !important;
   }
 
   /* Select2 within checkout */
