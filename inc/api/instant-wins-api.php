@@ -407,8 +407,14 @@ class Nera_Instant_Wins_API
       $name = $details_text;
     }
 
-    // Sanitize name (only public display name, never email/address)
-    $name = self::sanitize_winner_name($name);
+    // Hide (default): public username, shortened to "First L." when it is a full name.
+    // Show: First Name + Last Name from the user, then the order billing name.
+    if (nera_show_instant_win_winner_fullname()) {
+      $full_name = self::winner_first_last_name($instant_winner);
+      $name = $full_name !== '' ? $full_name : self::sanitize_winner_name($name);
+    } else {
+      $name = self::sanitize_winner_name($name);
+    }
 
     // Get ticket number
     $ticket_number = $instant_winner->get_formatted_ticket_number();
@@ -446,6 +452,42 @@ class Nera_Instant_Wins_API
     }
 
     return $name;
+  }
+
+  /**
+   * First Name and Last Name for a won instant-win log.
+   *
+   * Prefers the WordPress user profile, then the order billing name.
+   * Empty string means the caller should keep the username.
+   *
+   * @param object $instant_winner Instant winner log.
+   * @return string
+   */
+  private static function winner_first_last_name($instant_winner)
+  {
+    $user_id = method_exists($instant_winner, 'get_user_id') ? (int) $instant_winner->get_user_id() : 0;
+    if ($user_id > 0) {
+      $full = trim(
+        (string) get_user_meta($user_id, 'first_name', true) .
+          ' ' .
+          (string) get_user_meta($user_id, 'last_name', true),
+      );
+      if ($full !== '') {
+        return sanitize_text_field($full);
+      }
+    }
+
+    if (method_exists($instant_winner, 'get_order')) {
+      $order = $instant_winner->get_order();
+      if (is_object($order) && method_exists($order, 'get_billing_first_name')) {
+        $full = trim($order->get_billing_first_name() . ' ' . $order->get_billing_last_name());
+        if ($full !== '') {
+          return sanitize_text_field($full);
+        }
+      }
+    }
+
+    return '';
   }
 
   /**
@@ -536,7 +578,9 @@ class Nera_Instant_Wins_API
    */
   private static function get_cache_key($product_id)
   {
-    return 'nera_instant_wins_cache_' . $product_id;
+    $name_mode = nera_show_instant_win_winner_fullname() ? 'full' : 'user';
+
+    return 'nera_instant_wins_cache_' . $product_id . '_' . $name_mode;
   }
 
   /**
@@ -547,7 +591,9 @@ class Nera_Instant_Wins_API
    */
   public static function clear_cache($product_id)
   {
-    delete_transient(self::get_cache_key($product_id));
+    delete_transient('nera_instant_wins_cache_' . $product_id);
+    delete_transient('nera_instant_wins_cache_' . $product_id . '_user');
+    delete_transient('nera_instant_wins_cache_' . $product_id . '_full');
   }
 }
 
@@ -589,6 +635,25 @@ add_action(
   10,
   1,
 );
+
+/**
+ * Whether Instant Win prize cards show First Name + Last Name.
+ *
+ * Theme Settings → WooCommerce → “Show Instant Win Prize Winner Fullname”.
+ * Default: hide (username).
+ *
+ * @return bool
+ */
+function nera_show_instant_win_winner_fullname()
+{
+  $stored = get_option('options_nera_show_instant_win_winner_fullname', null);
+
+  if (null === $stored || '' === $stored) {
+    return false;
+  }
+
+  return (bool) (int) $stored;
+}
 
 /**
  * Helper function to clear instant wins cache

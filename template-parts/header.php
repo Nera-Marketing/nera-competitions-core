@@ -79,16 +79,16 @@ $cta_secondary_logged_in_url = function_exists('wc_get_account_endpoint_url') ? 
         } else {
           // Fallback menu if no menu is assigned
           ?>
-          <a href="#competitions" class="text-text-secondary hover:text-primary font-medium transition-colors">
+          <a href="<?php echo esc_url( home_url( '/all-competitions/' ) ); ?>" class="text-text-secondary hover:text-primary font-medium transition-colors">
             <?php _e('Competitions', 'nera-competitions'); ?>
           </a>
-          <a href="#testimonials" class="text-text-secondary hover:text-primary font-medium transition-colors">
+          <a href="#stories" class="text-text-secondary hover:text-primary font-medium transition-colors">
             <?php _e('Testimonials', 'nera-competitions'); ?>
           </a>
           <a href="#faq" class="text-text-secondary hover:text-primary font-medium transition-colors">
             <?php _e('FAQs', 'nera-competitions'); ?>
           </a>
-          <a href="#how-it-works" class="text-text-secondary hover:text-primary font-medium transition-colors">
+          <a href="<?php echo esc_url( home_url( '/how-it-works/' ) ); ?>" class="text-text-secondary hover:text-primary font-medium transition-colors">
             <?php _e('How It Works', 'nera-competitions'); ?>
           </a>
         <?php } ?>
@@ -205,16 +205,16 @@ $cta_secondary_logged_in_url = function_exists('wc_get_account_endpoint_url') ? 
       } else {
         // Fallback menu if no menu is assigned
         ?>
-        <a href="#competitions" class="block text-text-secondary hover:text-primary font-medium py-2 transition-colors">
+        <a href="<?php echo esc_url( home_url( '/all-competitions/' ) ); ?>" class="block text-text-secondary hover:text-primary font-medium py-2 transition-colors">
           <?php _e('Competitions', 'nera-competitions'); ?>
         </a>
-        <a href="#testimonials" class="block text-text-secondary hover:text-primary font-medium py-2 transition-colors">
+        <a href="#stories" class="block text-text-secondary hover:text-primary font-medium py-2 transition-colors">
           <?php _e('Testimonials', 'nera-competitions'); ?>
         </a>
         <a href="#faq" class="block text-text-secondary hover:text-primary font-medium py-2 transition-colors">
           <?php _e('FAQs', 'nera-competitions'); ?>
         </a>
-        <a href="#how-it-works" class="block text-text-secondary hover:text-primary font-medium py-2 transition-colors">
+        <a href="<?php echo esc_url( home_url( '/how-it-works/' ) ); ?>" class="block text-text-secondary hover:text-primary font-medium py-2 transition-colors">
           <?php _e('How It Works', 'nera-competitions'); ?>
         </a>
       <?php } ?>

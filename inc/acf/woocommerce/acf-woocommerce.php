@@ -249,6 +249,24 @@ if (function_exists('acf_add_local_field_group')) {
         'id' => '',
       ],
     ],
+    [
+      'key' => 'field_nera_show_instant_win_winner_fullname',
+      'label' => 'Show Instant Win Prize Winner Fullname',
+      'name' => 'nera_show_instant_win_winner_fullname',
+      'type' => 'true_false',
+      'instructions' =>
+        'What name appears on the public Instant Win prize winner cards (the “Won by” tiles). Show = the winner’s First Name and Last Name. Hide = the username, as today (default).',
+      'required' => 0,
+      'ui' => 1,
+      'ui_on_text' => 'Show',
+      'ui_off_text' => 'Hide',
+      'default_value' => 0,
+      'wrapper' => [
+        'width' => '',
+        'class' => 'nera-acf-field--toggle',
+        'id' => '',
+      ],
+    ],
   ];
 
   if (class_exists('Nera_STW_ACF_Copy_Settings')) {
