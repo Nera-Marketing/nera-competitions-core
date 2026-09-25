@@ -156,6 +156,19 @@ if (function_exists('acf_add_local_field_group')) {
         'instructions' => 'Optional video URL (YouTube or Vimeo) to display in the gallery.',
         'placeholder' => 'https://www.youtube.com/watch?v=...',
       ],
+      [
+        'key' => 'field_sp_gallery_video_file',
+        'label' => 'Video Files',
+        'name' => 'gallery_video_file',
+        'type' => 'gallery',
+        'instructions' =>
+          'Optional videos from the Media Library. Each file is its own gallery slide, shown together with Video URL when that is set too.',
+        'return_format' => 'array',
+        'preview_size' => 'thumbnail',
+        'insert' => 'append',
+        'library' => 'all',
+        'mime_types' => 'mp4,webm,ogg',
+      ],
 
       // ========================================
       // Tab: Info Icons
