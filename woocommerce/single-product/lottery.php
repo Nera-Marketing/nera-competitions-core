@@ -39,6 +39,7 @@ $countdown = nera_get_countdown_parts($end_date_gmt);
 $gallery_badge_text = get_field('gallery_badge_text', $product_id);
 $gallery_badge_color = get_field('gallery_badge_color', $product_id) ?: 'primary';
 $video_url = get_field('gallery_video_url', $product_id);
+$video_file = get_field('gallery_video_file', $product_id);
 ?>
 
 <main id="primary" class="site-main bg-gray-50 min-h-screen">
@@ -60,6 +61,7 @@ $video_url = get_field('gallery_video_url', $product_id);
               'badge_text' => $gallery_badge_text,
               'badge_color' => $gallery_badge_color,
               'video_url' => $video_url,
+              'video_file' => $video_file,
             ]); ?>
           </div>
 

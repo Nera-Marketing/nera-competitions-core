@@ -16,6 +16,58 @@ $product = $args['product'] ?? null;
 $badge_text = $args['badge_text'] ?? '';
 $badge_color = $args['badge_color'] ?? 'red';
 $video_url = $args['video_url'] ?? '';
+$raw_video_files = $args['video_file'] ?? [];
+if (is_array($raw_video_files) && isset($raw_video_files['url'])) {
+  $raw_video_files = [$raw_video_files];
+}
+$video_files = [];
+if (is_array($raw_video_files)) {
+  foreach ($raw_video_files as $file) {
+    if (!is_array($file)) {
+      continue;
+    }
+    $file_mime = (string) ($file['mime_type'] ?? '');
+    $file_url = (string) ($file['url'] ?? '');
+    if ($file_url === '' || strpos($file_mime, 'video/') !== 0) {
+      continue;
+    }
+    $poster = '';
+    $attachment_id = (int) ($file['ID'] ?? 0);
+    $poster_id = $attachment_id ? (int) get_post_thumbnail_id($attachment_id) : 0;
+    if ($poster_id) {
+      $poster = (string) wp_get_attachment_image_url($poster_id, 'large');
+    }
+    $video_files[] = [
+      'url' => $file_url,
+      'mime' => $file_mime,
+      'poster' => $poster,
+    ];
+  }
+}
+$video_embed = '';
+$video_thumb = '';
+if ($video_url && preg_match('~(?:youtu\.be/|youtube\.com/(?:watch\?(?:.*&)?v=|embed/|shorts/))([A-Za-z0-9_-]{6,})~', $video_url, $video_match)) {
+  $video_embed = 'https://www.youtube.com/embed/' . $video_match[1] . '?autoplay=1&rel=0';
+  $video_thumb = 'https://i.ytimg.com/vi/' . rawurlencode($video_match[1]) . '/hqdefault.jpg';
+} elseif ($video_url && preg_match('~vimeo\.com/(?:video/)?(\d+)~', $video_url, $video_match)) {
+  $video_embed = 'https://player.vimeo.com/video/' . $video_match[1] . '?autoplay=1';
+  $video_thumb = get_transient('nera_vimeo_thumb_' . $video_match[1]);
+  if ($video_thumb === false) {
+    $video_thumb = '';
+    $vimeo_response = wp_remote_get(
+      'https://vimeo.com/api/oembed.json?url=' . rawurlencode('https://vimeo.com/' . $video_match[1]),
+      ['timeout' => 3]
+    );
+    if (!is_wp_error($vimeo_response)) {
+      $vimeo_data = json_decode(wp_remote_retrieve_body($vimeo_response), true);
+      if (!empty($vimeo_data['thumbnail_url']) && is_string($vimeo_data['thumbnail_url'])) {
+        $video_thumb = $vimeo_data['thumbnail_url'];
+      }
+    }
+    set_transient('nera_vimeo_thumb_' . $video_match[1], $video_thumb, DAY_IN_SECONDS);
+  }
+}
+$has_gallery_video = $video_files !== [] || $video_embed !== '';
 $unified_mobile = !empty($args['unified_mobile']);
 
 // Configurable main image aspect ratio (Theme Settings → WooCommerce); null = default 4/3
@@ -108,10 +160,38 @@ $alpine_images = array_map(function ($img) {
             />
           </div>
         <?php endforeach; ?>
+
+        <?php foreach ($video_files as $video_file): ?>
+          <div class="swiper-slide flex items-center justify-center bg-black" data-gallery-video-slide>
+            <video
+              class="h-full w-full"
+              data-gallery-video-player
+              controls
+              playsinline
+              preload="metadata"
+              <?php echo $video_file['poster'] ? 'poster="' . esc_url($video_file['poster']) . '"' : ''; ?>
+            >
+              <source src="<?php echo esc_url($video_file['url']); ?>" type="<?php echo esc_attr($video_file['mime']); ?>" />
+            </video>
+          </div>
+        <?php endforeach; ?>
+
+        <?php if ($video_embed): ?>
+          <div class="swiper-slide flex items-center justify-center bg-black" data-gallery-video-slide>
+            <iframe
+              class="h-full w-full"
+              data-gallery-video-frame
+              data-src="<?php echo esc_url($video_embed); ?>"
+              title="<?php esc_attr_e('Product video', 'nera-competitions'); ?>"
+              allow="autoplay; encrypted-media; picture-in-picture"
+              allowfullscreen
+            ></iframe>
+          </div>
+        <?php endif; ?>
       </div>
     </div>
 
-    <?php if (count($images) > 1): ?>
+    <?php if (count($images) > 1 || $has_gallery_video): ?>
       <button
         class="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-surface/90 rounded-full shadow-lg flex items-center justify-center hover:bg-surface opacity-0 group-hover:opacity-100 transition-opacity z-10"
         data-gallery-prev
@@ -129,7 +209,7 @@ $alpine_images = array_map(function ($img) {
     <?php endif; ?>
   </div>
 
-  <?php if (count($images) > 1 || $video_url): ?>
+  <?php if (count($images) > 1 || $has_gallery_video): ?>
     <div class="mt-4">
       <div class="swiper gallery-thumbs-swiper" data-gallery-thumbs>
         <div class="swiper-wrapper">
@@ -146,14 +226,48 @@ $alpine_images = array_map(function ($img) {
             </div>
           <?php endforeach; ?>
 
-          <?php if ($video_url): ?>
+          <?php foreach ($video_files as $video_index => $video_file): ?>
             <div
               class="swiper-slide !w-20 sm:!w-24 cursor-pointer"
               data-video-thumb
-              onclick="window.open('<?php echo esc_url($video_url); ?>', '_blank', 'noopener,noreferrer')"
+              role="button"
+              aria-label="<?php echo esc_attr(sprintf(__('Play uploaded video %d', 'nera-competitions'), $video_index + 1)); ?>"
             >
-              <div class="aspect-square rounded-lg overflow-hidden border-2 border-transparent bg-background-dark flex items-center justify-center transition-all hover:border-primary/50">
-                <span class="material-symbols-outlined text-white text-2xl">play_arrow</span>
+              <div class="thumb-border relative aspect-square rounded-lg overflow-hidden border-2 border-transparent bg-background-dark transition-all hover:border-primary/50">
+                <?php if ($video_file['poster']): ?>
+                  <img
+                    src="<?php echo esc_url($video_file['poster']); ?>"
+                    alt="<?php echo esc_attr(sprintf(__('Uploaded product video %d', 'nera-competitions'), $video_index + 1)); ?>"
+                    class="h-full w-full object-cover"
+                    loading="lazy"
+                  />
+                <?php endif; ?>
+                <span class="absolute inset-0 flex items-center justify-center" style="background: rgba(0, 0, 0, 0.4);">
+                  <span class="material-symbols-outlined text-white text-2xl">play_arrow</span>
+                </span>
+              </div>
+            </div>
+          <?php endforeach; ?>
+
+          <?php if ($video_embed): ?>
+            <div
+              class="swiper-slide !w-20 sm:!w-24 cursor-pointer"
+              data-video-thumb
+              role="button"
+              aria-label="<?php esc_attr_e('Play product video', 'nera-competitions'); ?>"
+            >
+              <div class="thumb-border relative aspect-square rounded-lg overflow-hidden border-2 border-transparent bg-background-dark transition-all hover:border-primary/50">
+                <?php if ($video_thumb): ?>
+                  <img
+                    src="<?php echo esc_url($video_thumb); ?>"
+                    alt="<?php esc_attr_e('Product video', 'nera-competitions'); ?>"
+                    class="h-full w-full object-cover"
+                    loading="lazy"
+                  />
+                <?php endif; ?>
+                <span class="absolute inset-0 flex items-center justify-center" style="background: rgba(0, 0, 0, 0.4);">
+                  <span class="material-symbols-outlined text-white text-2xl">play_arrow</span>
+                </span>
               </div>
             </div>
           <?php endif; ?>

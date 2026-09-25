@@ -47,6 +47,12 @@ $countdown = nera_get_countdown_parts($end_date_gmt);
 $specifications = function_exists('get_field')
   ? get_field('product_specifications', $product_id)
   : [];
+$gallery_video_url = function_exists('get_field')
+  ? (string) get_field('gallery_video_url', $product_id)
+  : '';
+$gallery_video_file = function_exists('get_field')
+  ? get_field('gallery_video_file', $product_id)
+  : [];
 
 // Calculate ticket data
 $max_tickets = $lottery_data['maxTickets'] ?? 0;
@@ -165,6 +171,8 @@ $purchase_card_args = [
                     : '',
                   'badge_color' => 'red',
                   'unified_mobile' => true,
+                  'video_url' => $gallery_video_url,
+                  'video_file' => $gallery_video_file,
                 ]); ?>
               </div>
 
@@ -206,6 +214,8 @@ $purchase_card_args = [
                     ? __('Featured Prize', 'nera-competitions')
                     : '',
                   'badge_color' => 'red',
+                  'video_url' => $gallery_video_url,
+                  'video_file' => $gallery_video_file,
                 ]); ?>
               </div>
 
