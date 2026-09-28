@@ -1223,6 +1223,7 @@ require_once get_template_directory() . '/inc/catalog-order.php';
 
 // ACF Postal Entry Fields
 require_once get_template_directory() . '/inc/acf/postal-entry/acf-postal-entry.php';
+require_once get_template_directory() . '/inc/helpers/postal-entry.php';
 
 // ACF WooCommerce Settings
 require_once get_template_directory() . '/inc/acf/woocommerce/acf-woocommerce.php';
