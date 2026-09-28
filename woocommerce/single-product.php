@@ -413,7 +413,7 @@ $purchase_card_args = [
         <!-- Close Text Button -->
         <button type="button"
                 @click="$store.postDialog.show = false"
-                class="w-full rounded-lg bg-white px-6 py-3 font-semibold text-primary hover:bg-gray-100 transition-colors focus:outline-none focus:ring-2 focus:ring-white/50">
+                class="w-full rounded-lg border border-white/20 px-6 py-3 font-bold text-white hover:bg-white/10 transition-colors focus:outline-none focus:ring-2 focus:ring-white/50">
           <?php echo esc_html($postal_close_text); ?>
         </button>
       <?php endif; ?>
