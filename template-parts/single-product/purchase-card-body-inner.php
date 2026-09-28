@@ -154,6 +154,19 @@ $decimal_sep       = wc_get_price_decimal_separator();
   <?php endif; ?>
 </div>
 
+<?php
+/**
+ * Between the ticket quantity and the entry form.
+ *
+ * Prize Safety & Add-ons (inc/prize-addons.php) renders here. Callbacks print
+ * their own `px-6 pb-6` wrapper so nothing is output when they have nothing.
+ *
+ * @param WC_Product $product Lottery product.
+ * @param array      $args    Purchase card args (is_expired, is_manual_ticket, …).
+ */
+do_action('nera_purchase_card_before_enter_form', $product, $args);
+?>
+
 <!-- Enter Now Form (includes Skill Challenge Q&A) -->
 <div class="px-6 pb-6">
   <?php if (!defined('NERA_PURCHASE_CARD_ALPINE_LOADED')): ?>
@@ -400,13 +413,17 @@ $decimal_sep       = wc_get_price_decimal_separator();
               const qtyInput = this.getQtyInput();
               if (qtyInput) {
                 this.quantity = qtyInput.value;
-                qtyInput.addEventListener('change', (e) => {
+                const onQuantityChange = (e) => {
                   this.quantity = e.target.value;
                   if (!config.bundlesExclusive) {
                     this.syncBundleFromQuantity(parseInt(e.target.value, 10) || 0);
                   }
                   this.updateTicketPrice();
-                });
+                };
+                qtyInput.addEventListener('change', onQuantityChange);
+                // Also while typing: the ticket total row appearing on blur pushed the next
+                // control (an add-on checkbox, Enter Now) out from under the customer's click.
+                qtyInput.addEventListener('input', onQuantityChange);
 
                 const observer = new MutationObserver(() => {
                   this.quantity = qtyInput.value;
@@ -513,6 +530,17 @@ $decimal_sep       = wc_get_price_decimal_separator();
                 if (perTicketInput && perTicketInput.value !== '') {
                   ajaxData.append('lty_per_ticket_amount', perTicketInput.value);
                 }
+              }
+
+              // Prize add-ons ticked on this page (Components/blocks/PrizeAddOns). Only sent
+              // when the block is present, so an existing add-on line is left alone otherwise.
+              // The server prices them; nothing here carries a price.
+              const addonsRoot = document.querySelector('[data-prize-addons="' + config.productId + '"]');
+              if (addonsRoot) {
+                ajaxData.append('nera_addons_submitted', '1');
+                addonsRoot.querySelectorAll('input[name="nera_addon_ids[]"]:checked').forEach((input) => {
+                  ajaxData.append('nera_addon_ids[]', input.value);
+                });
               }
 
               if (config.hasQa) {

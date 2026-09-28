@@ -1,0 +1,20 @@
+# Sell prize add-ons as one server-priced cart line per draw
+
+Each giveaway can show a free **Safety** list and sell optional paid **Add-ons** (storage, servicing, training, fuel…) on its prize page. The client's rules: a fixed price per option; charged **once per draw** however many tickets are bought; a fixed **Full bundle price** only when every option is bought together; options already paid for can't be bought again, and top-ups pay full price per option ("option A", confirmed by the client); no refund if the customer doesn't win; nothing happens on the website afterwards — the site owner arranges and pays for the add-ons offline for the winner only.
+
+We sell the chosen add-ons as **one cart line per draw**, backed by a single hidden "Add-on bundle" product (`nera_prize_addon_product_id` option, created lazily), with cart item data `nera_prize_addon = { draw_id, option_ids }`. The line's price is set on `woocommerce_before_calculate_totals` from the prize's ACF settings; nothing priced by the browser is ever read. Implemented in `inc/prize-addons.php`, data helpers in `inc/helpers/prize-addons.php`, UI in `Components/blocks/PrizeSafety` and `Components/blocks/PrizeAddOns`.
+
+## Why not a product add-ons plugin
+
+Product add-on plugins price per quantity — per ticket here — and hook the add-to-cart form, which the lottery plugin's AJAX flows bypass. "Once per draw" and "locked once bought" would both be fighting the plugin.
+
+## Consequences
+
+- **Linked by draw, not by ticket line.** A draw can have several ticket lines (different manual numbers, answers or packs). The add-on line goes only when the last ticket line of its draw goes (`woocommerce_cart_item_removed`), and is re-sorted to sit after that draw's tickets.
+- **Only the prize page sends add-ons.** The purchase card posts `nera_addons_submitted` + `nera_addon_ids[]` with the tickets; the theme's AJAX handler fires `nera_ajax_add_to_cart_success` once the tickets pass validation. A request with the field replaces the draw's selection (empty removes it); one without it — the listing quick-add, Lucky Dip — leaves the line alone. Lucky Dip gets no add-ons in v1.
+- **The "Purchased" lock is per account.** Checkout already requires an account, so every order has a customer. Bought options are read from the snapshot stored on the order item (`_nera_addon_draw_id`, `_nera_addon_options`, …), which survives options being reordered or renamed and the draw being deleted. Paid statuses: processing, completed, on-hold; items refunded in full don't count.
+- **Signed-out customers can pick an option they already own.** When they sign in, `woocommerce_check_cart_items` strips it and says so. While an order is being placed the same message is an **error**, so no order is placed at a total the customer never saw.
+- **Exception to ADR 0001.** ADR 0001 never auto-completes an order holding a non-lottery product, because merchandise must be shipped. An add-on line has nothing to ship and no fulfilment obligation on the website, so `nera_order_is_lottery_only()` and `nera_lottery_order_fulfilment_note()` skip it. An order must still hold at least one real lottery item to complete.
+- **Coupons discount tickets only** (`woocommerce_coupon_is_valid_for_product`, `woocommerce_coupon_get_items_to_apply`). The spending limit plugin counts add-ons automatically, because it reads cart and order totals; that is intended.
+- **Stable option IDs.** ACF repeaters have no row IDs, so a hidden `option_id` sub-field is filled on `acf/save_post` (priority 5, before ACF saves); duplicated rows get a fresh ID.
+- **Prices follow the settings until the order is placed.** An admin price change reaches carts that already hold the line; placed orders keep the prices paid.

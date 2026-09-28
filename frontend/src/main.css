@@ -692,6 +692,276 @@ button {
 }
 
 /* ==========================================================================
+   Purchase card — Prize Safety (free kit, display only)
+   Components/blocks/PrizeSafety · inc/prize-addons.php
+   ========================================================================== */
+
+.ncs-prize-safety {
+  --ncs-prize-safety-bg: var(--color-gray-50);
+  --ncs-prize-safety-border: var(--color-gray-100);
+  --ncs-prize-safety-text: var(--color-text-primary);
+  --ncs-prize-safety-text-secondary: var(--color-text-secondary);
+  --ncs-prize-safety-accent: var(--color-success);
+  --ncs-prize-safety-icon: var(--color-primary);
+  --ncs-prize-safety-icon-bg: var(--color-surface);
+  --ncs-prize-safety-badge-bg: var(--color-success-bg);
+  --ncs-prize-safety-badge-text: var(--color-success-text);
+
+  @apply flex flex-col gap-2.5 rounded-xl border p-4;
+  background-color: var(--ncs-prize-safety-bg);
+  border-color: var(--ncs-prize-safety-border);
+  color: var(--ncs-prize-safety-text);
+}
+
+.ncs-prize-safety__title {
+  @apply m-0 flex items-center gap-2 text-[15px] font-bold leading-snug;
+}
+
+.ncs-prize-safety__title-icon {
+  @apply text-xl;
+  color: var(--ncs-prize-safety-accent);
+}
+
+.ncs-prize-safety__description {
+  @apply m-0 text-[13px];
+  color: var(--ncs-prize-safety-text-secondary);
+}
+
+.ncs-prize-safety__list {
+  @apply m-0 flex list-none flex-col gap-2 p-0;
+}
+
+.ncs-prize-safety__item {
+  @apply m-0 grid grid-cols-[30px_1fr_auto] items-center gap-2.5;
+}
+
+.ncs-prize-safety__icon {
+  @apply flex h-[30px] w-[30px] items-center justify-center rounded-lg border border-gray-200;
+  background-color: var(--ncs-prize-safety-icon-bg);
+  color: var(--ncs-prize-safety-icon);
+}
+
+.ncs-prize-safety__icon .material-symbols-outlined {
+  @apply text-lg;
+}
+
+.ncs-prize-safety__text {
+  @apply flex min-w-0 flex-col;
+}
+
+.ncs-prize-safety__name {
+  @apply text-[13px] font-semibold leading-snug;
+}
+
+.ncs-prize-safety__desc {
+  @apply text-xs leading-snug;
+  color: var(--ncs-prize-safety-text-secondary);
+}
+
+.ncs-prize-safety__badge {
+  @apply rounded-full px-2 py-0.5 text-[11px] font-semibold;
+  background-color: var(--ncs-prize-safety-badge-bg);
+  color: var(--ncs-prize-safety-badge-text);
+}
+
+/* ==========================================================================
+   Purchase card — Prize Add-ons (paid extras, once per draw)
+   Components/blocks/PrizeAddOns · frontend/assets/js/alpine-prize-addons.js
+   ========================================================================== */
+
+.ncs-prize-addons {
+  --ncs-prize-addons-bg: color-mix(in srgb, var(--color-primary) 5%, var(--color-surface));
+  --ncs-prize-addons-border: color-mix(in srgb, var(--color-primary) 12%, var(--color-surface));
+  --ncs-prize-addons-list-bg: var(--color-surface);
+  --ncs-prize-addons-divider: var(--color-gray-100);
+  --ncs-prize-addons-text: var(--color-text-primary);
+  --ncs-prize-addons-text-secondary: var(--color-text-secondary);
+  --ncs-prize-addons-accent: var(--color-primary);
+  --ncs-prize-addons-toggle-bg: var(--color-surface);
+  --ncs-prize-addons-toggle-border: var(--color-gray-200);
+  --ncs-prize-addons-purchased-bg: var(--color-success-bg);
+  --ncs-prize-addons-purchased-border: var(--color-success-border);
+  --ncs-prize-addons-purchased-text: var(--color-success-text);
+  --ncs-prize-addons-purchased-icon: var(--color-success);
+  --ncs-prize-addons-muted-bg: var(--color-gray-50);
+
+  @apply flex flex-col gap-3 rounded-2xl border p-3.5;
+  background-color: var(--ncs-prize-addons-bg);
+  border-color: var(--ncs-prize-addons-border);
+  color: var(--ncs-prize-addons-text);
+}
+
+.ncs-prize-addons__head {
+  @apply flex cursor-pointer items-start justify-between gap-3;
+}
+
+.ncs-prize-addons__heading {
+  @apply min-w-0;
+}
+
+.ncs-prize-addons__eyebrow {
+  @apply m-0 text-[11px] font-semibold uppercase tracking-[0.08em];
+  color: var(--ncs-prize-addons-accent);
+}
+
+.ncs-prize-addons__title {
+  @apply m-0 text-[15px] font-bold leading-snug;
+}
+
+.ncs-prize-addons__description {
+  @apply m-0 mt-0.5 text-[13px];
+  color: var(--ncs-prize-addons-text-secondary);
+}
+
+.ncs-prize-addons__toggle {
+  @apply flex h-9 w-9 flex-shrink-0 cursor-pointer items-center justify-center rounded-full border p-0 transition-colors;
+  background-color: var(--ncs-prize-addons-toggle-bg);
+  border-color: var(--ncs-prize-addons-toggle-border);
+  color: var(--ncs-prize-addons-text);
+}
+
+.ncs-prize-addons__head:hover .ncs-prize-addons__toggle,
+.ncs-prize-addons__toggle:focus-visible {
+  border-color: var(--ncs-prize-addons-accent);
+  color: var(--ncs-prize-addons-accent);
+}
+
+.ncs-prize-addons__toggle .material-symbols-outlined {
+  @apply text-[22px];
+}
+
+.ncs-prize-addons__body {
+  @apply flex flex-col gap-3;
+}
+
+.ncs-prize-addons__list {
+  @apply m-0 flex list-none flex-col overflow-hidden rounded-xl border p-0;
+  background-color: var(--ncs-prize-addons-list-bg);
+  border-color: var(--ncs-prize-addons-border);
+}
+
+.ncs-prize-addons__option {
+  @apply m-0 grid grid-cols-[20px_1fr_auto] items-center gap-3 px-3.5 py-3;
+  border-top: 1px solid var(--ncs-prize-addons-divider);
+}
+
+.ncs-prize-addons__option:first-child {
+  border-top: 0;
+}
+
+.ncs-prize-addons__option--purchased {
+  background-color: var(--ncs-prize-addons-muted-bg);
+}
+
+.ncs-prize-addons__checkbox {
+  @apply m-0 h-[18px] w-[18px] cursor-pointer;
+  accent-color: var(--ncs-prize-addons-accent);
+}
+
+.ncs-prize-addons__check {
+  @apply text-xl;
+  color: var(--ncs-prize-addons-purchased-icon);
+}
+
+.ncs-prize-addons__text {
+  @apply flex min-w-0 cursor-pointer flex-col;
+}
+
+.ncs-prize-addons__option--purchased .ncs-prize-addons__text {
+  @apply cursor-default;
+}
+
+.ncs-prize-addons__name {
+  @apply text-sm font-semibold leading-snug;
+}
+
+.ncs-prize-addons__desc {
+  @apply text-xs leading-snug;
+  color: var(--ncs-prize-addons-text-secondary);
+}
+
+.ncs-prize-addons__price {
+  @apply whitespace-nowrap text-sm font-semibold tabular-nums;
+}
+
+.ncs-prize-addons__purchased {
+  @apply inline-flex items-center gap-0.5 whitespace-nowrap rounded-full border px-2 py-0.5 text-[11px] font-semibold;
+  background-color: var(--ncs-prize-addons-purchased-bg);
+  border-color: var(--ncs-prize-addons-purchased-border);
+  color: var(--ncs-prize-addons-purchased-text);
+}
+
+.ncs-prize-addons__purchased .material-symbols-outlined {
+  @apply text-sm;
+}
+
+.ncs-prize-addons__bundle {
+  @apply flex items-center justify-between gap-2.5 rounded-xl border border-dashed px-3.5 py-2.5 text-[13px];
+  background-color: var(--ncs-prize-addons-list-bg);
+  border-color: var(--ncs-prize-addons-accent);
+}
+
+.ncs-prize-addons__select-all {
+  @apply cursor-pointer whitespace-nowrap border-0 bg-transparent p-0 text-[13px] font-semibold underline underline-offset-[3px];
+  color: var(--ncs-prize-addons-accent);
+}
+
+.ncs-prize-addons__notice,
+.ncs-prize-addons__summary {
+  @apply m-0 rounded-xl border px-3 py-2.5 text-xs;
+  background-color: var(--ncs-prize-addons-list-bg);
+  border-color: var(--ncs-prize-addons-border);
+  color: var(--ncs-prize-addons-text-secondary);
+}
+
+.ncs-prize-addons__summary {
+  @apply text-[13px];
+}
+
+.ncs-prize-addons__total {
+  @apply flex items-baseline justify-between gap-3 text-sm;
+}
+
+.ncs-prize-addons__total-value strong {
+  @apply text-[17px] font-bold tabular-nums;
+  color: var(--ncs-prize-addons-accent);
+}
+
+.ncs-prize-addons__was {
+  @apply mr-1.5 text-sm font-medium text-gray-400 tabular-nums;
+}
+
+.ncs-prize-addons__note {
+  @apply m-0 flex items-start gap-1.5 text-xs;
+  color: var(--ncs-prize-addons-text-secondary);
+}
+
+.ncs-prize-addons__note .material-symbols-outlined {
+  @apply mt-px text-base;
+}
+
+/* Cart row for an add-on line — sits under its draw's tickets.
+   Doubled class so it wins over the later `.ncs-cart-item { border: none }`. */
+.ncs-cart-item.ncs-cart-item--addon {
+  --ncs-cart-addon-icon-bg: color-mix(in srgb, var(--color-primary) 8%, var(--color-surface));
+  --ncs-cart-addon-icon: var(--color-primary);
+  --ncs-cart-addon-rail: color-mix(in srgb, var(--color-primary) 18%, var(--color-surface));
+
+  @apply ml-4 border-l-2 pl-3 md:ml-10;
+  border-left-color: var(--ncs-cart-addon-rail);
+}
+
+.ncs-cart-addon__icon {
+  background-color: var(--ncs-cart-addon-icon-bg);
+  color: var(--ncs-cart-addon-icon);
+}
+
+.ncs-cart-addon__tag {
+  background-color: var(--ncs-cart-addon-icon-bg);
+  color: var(--ncs-cart-addon-icon);
+}
+
+/* ==========================================================================
    Purchase card — quantity slider layout
    ========================================================================== */
 

@@ -19,6 +19,12 @@ if (!$product || !$cart_item_key) {
   return;
 }
 
+// Prize add-on lines ("Add-ons for: …") have their own row (inc/prize-addons.php).
+if (function_exists('nera_prize_addons_is_addon_cart_item') && nera_prize_addons_is_addon_cart_item($cart_item)) {
+  get_template_part('template-parts/cart/cart-item-addon', null, $args);
+  return;
+}
+
 $product_id = $product->get_id();
 $product_name = $product->get_name();
 $product_price = $product->get_price(); // Unit price

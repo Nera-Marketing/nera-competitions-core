@@ -1560,7 +1560,11 @@ function nera_output_toast_data()
   }
   ?>
   <script>
-    document.addEventListener('alpine:initialized', function () {
+    (function () {
+    // This prints after Alpine (wp_footer 999 vs the footer scripts), and Alpine starts as
+    // soon as its script runs — so alpine:initialized has usually already fired and a bare
+    // listener never ran. Show now when the toast store exists, otherwise wait for Alpine.
+    var showNeraNotices = function () {
       <?php foreach ($notices as $notice): ?>
           Alpine.store('toast').<?php echo esc_js($notice['type']); ?>(
           <?php echo json_encode(wp_kses_post($notice['message'])); ?>
@@ -1574,7 +1578,13 @@ function nera_output_toast_data()
           <?php endif; ?>
           );
       <?php endforeach; ?>
-    });
+    };
+    if (window.Alpine && typeof window.Alpine.store === 'function' && window.Alpine.store('toast')) {
+      showNeraNotices();
+    } else {
+      document.addEventListener('alpine:initialized', showNeraNotices);
+    }
+    })();
   </script>
   <?php
 }

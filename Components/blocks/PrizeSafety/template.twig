@@ -1,0 +1,38 @@
+{#
+  PrizeSafety — view data contract (authoritative source: index.php get_data() PHPDoc)
+  Child themes may override this view; data is provided by the parent's get_data().
+  key          type    req/opt   note
+  enabled      bool    required  false → render nothing
+  title        string  required  heading
+  description  string  required  may be ''
+  items        list    required  {icon, title, description}; icon is a Material Symbol name
+  i18n         array   required  free
+  Timber autoescape is off: every admin-entered value is escaped here.
+#}
+{% if enabled and items|length > 0 %}
+<section class="ncs-prize-safety" aria-label="{{ title|e('html_attr') }}">
+  <h3 class="ncs-prize-safety__title">
+    <span class="material-symbols-outlined ncs-prize-safety__title-icon" aria-hidden="true">health_and_safety</span>
+    {{ title|e }}
+  </h3>
+  {% if description %}
+    <p class="ncs-prize-safety__description">{{ description|e }}</p>
+  {% endif %}
+  <ul class="ncs-prize-safety__list" role="list">
+    {% for item in items %}
+      <li class="ncs-prize-safety__item">
+        <span class="ncs-prize-safety__icon" aria-hidden="true">
+          <span class="material-symbols-outlined">{{ item.icon|e }}</span>
+        </span>
+        <span class="ncs-prize-safety__text">
+          <span class="ncs-prize-safety__name">{{ item.title|e }}</span>
+          {% if item.description %}
+            <span class="ncs-prize-safety__desc">{{ item.description|e }}</span>
+          {% endif %}
+        </span>
+        <span class="ncs-prize-safety__badge">{{ i18n.free|e }}</span>
+      </li>
+    {% endfor %}
+  </ul>
+</section>
+{% endif %}

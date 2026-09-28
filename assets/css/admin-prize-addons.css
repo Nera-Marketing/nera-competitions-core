@@ -1,0 +1,51 @@
+/**
+ * Prize Safety & Add-ons — product edit screen (wp-admin).
+ * Tailwind is not compiled for wp-admin, so this is plain CSS (see CLAUDE.md).
+ */
+
+.nera-icon-choice {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  vertical-align: middle;
+}
+
+/* Declared in full, and with extra specificity: WordPress core styles
+   `[role="treeitem"] span[aria-hidden]` (select2 options are treeitems) as an
+   absolutely positioned dashicon, which pulls the glyph out of the row and
+   swaps its font. */
+.nera-icon-choice .nera-icon-choice__glyph,
+.select2-results__option .nera-icon-choice .nera-icon-choice__glyph[aria-hidden] {
+  position: static;
+  pointer-events: none;
+  display: inline-block;
+  flex-shrink: 0;
+  width: 22px;
+  overflow: hidden;
+  font-family: 'Material Symbols Outlined' !important;
+  font-size: 22px;
+  font-style: normal;
+  font-weight: normal;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  font-feature-settings: 'liga';
+  -webkit-font-smoothing: antialiased;
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  color: #2271b1;
+}
+
+.select2-results__option.select2-results__option--highlighted .nera-icon-choice .nera-icon-choice__glyph[aria-hidden] {
+  color: inherit;
+}
+
+.nera-icon-choice-dropdown .select2-results__group {
+  color: #646970;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}

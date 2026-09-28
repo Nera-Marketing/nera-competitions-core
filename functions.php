@@ -835,6 +835,14 @@ function nera_enqueue_scripts()
       NERA_VERSION,
       true,
     );
+    // Prize Add-ons block on the purchase card (inc/prize-addons.php).
+    wp_enqueue_script(
+      'nera-alpine-prize-addons',
+      NERA_ASSETS_URI . '/js/alpine-prize-addons.js',
+      [],
+      NERA_VERSION,
+      true,
+    );
   }
 
   // 4. Checkout component (must load before Alpine.js initializes)
@@ -876,6 +884,7 @@ function nera_enqueue_scripts()
   }
   if (is_product()) {
     $alpine_component_deps[] = 'nera-alpine-product-gallery';
+    $alpine_component_deps[] = 'nera-alpine-prize-addons';
   }
   if (is_checkout() && !is_order_received_page()) {
     // nera-checkout defines window.neraCheckout(), which the checkout form's
@@ -1177,6 +1186,8 @@ require_once get_template_directory() . '/inc/acf/homepage/acf-homepage.php';
 
 // ACF Single Product Competition Fields
 require_once get_template_directory() . '/inc/acf/single-product/acf-single-product.php';
+require_once get_template_directory() . '/inc/helpers/prize-safety-icons.php';
+require_once get_template_directory() . '/inc/acf/single-product/acf-prize-addons.php';
 
 // ACF Contact Page Fields
 require_once get_template_directory() . '/inc/acf/contact/acf-contact.php';
@@ -1289,6 +1300,13 @@ if (class_exists('WooCommerce_Lottery')) {
 // exact quantity match only, so 30 tickets got no bundle discount at all).
 if (class_exists('WooCommerce')) {
   require_once NERA_DIR . '/inc/lty-bundle-tier-pricing.php';
+}
+
+// Prize Safety & Add-ons: per-giveaway free safety list and paid add-ons,
+// sold as one cart line per draw (ADR 0012).
+if (class_exists('WooCommerce') && function_exists('lty_is_lottery_product')) {
+  require_once NERA_DIR . '/inc/helpers/prize-addons.php';
+  require_once NERA_DIR . '/inc/prize-addons.php';
 }
 
 // Complete lottery orders once tickets are confirmed. WooCommerce leaves them on
@@ -2222,6 +2240,17 @@ function nera_ajax_add_to_cart()
         'message' => nera_resolve_ajax_add_to_cart_error_message($product_id),
       ]);
     }
+
+    /**
+     * Tickets are in the cart and passed validation.
+     *
+     * Prize Add-ons (inc/prize-addons.php) attaches the options ticked on the
+     * prize page here, so they are only ever added alongside valid tickets.
+     *
+     * @param int    $product_id    Lottery product ID.
+     * @param string $cart_item_key Ticket cart item key.
+     */
+    do_action('nera_ajax_add_to_cart_success', $product_id, $cart_item_key);
 
     // Fire the cart cookies action so woocommerce_items_in_cart cookie is set.
     // SiteGround Dynamic Cache (and similar Nginx caches) bypass caching when this
