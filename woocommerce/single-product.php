@@ -273,6 +273,10 @@ $purchase_card_args = [
 </main>
 
 <!-- Enter By Post Modal - Rendered at body level to fix z-index stacking context -->
+<?php if (
+  !function_exists('nera_postal_entry_destination_url') ||
+  nera_postal_entry_destination_url() === ''
+): ?>
 <div x-data 
      x-show="$store.postDialog.show" 
      x-cloak
@@ -390,6 +394,7 @@ $purchase_card_args = [
     </div>
   </div>
 </div>
+<?php endif; ?>
 
 <script>
   document.addEventListener('DOMContentLoaded', function () {
