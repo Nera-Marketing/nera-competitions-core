@@ -52,6 +52,40 @@ if (function_exists('acf_add_local_field_group')) {
           'id' => '',
         ],
       ],
+      // Link Supporting Text (purchase card CTA)
+      [
+        'key' => 'field_postal_link_supporting_text',
+        'label' => 'Link Supporting Text',
+        'name' => 'postal_link_supporting_text',
+        'type' => 'textarea',
+        'instructions' =>
+          'Optional text shown after the postal entry link on single product pages. Leave blank to hide it.',
+        'required' => 0,
+        'default_value' => '',
+        'rows' => 2,
+        'new_lines' => '',
+        'wrapper' => [
+          'width' => '',
+          'class' => '',
+          'id' => '',
+        ],
+      ],
+      // Modal Eyebrow
+      [
+        'key' => 'field_postal_modal_eyebrow',
+        'label' => 'Modal Eyebrow',
+        'name' => 'postal_modal_eyebrow',
+        'type' => 'text',
+        'instructions' =>
+          'Optional small line shown above the postal entry modal title, e.g. "No purchase necessary". The title is the Link Text. Leave blank to hide it.',
+        'required' => 0,
+        'default_value' => '',
+        'wrapper' => [
+          'width' => '',
+          'class' => '',
+          'id' => '',
+        ],
+      ],
       // Instruction Text
       [
         'key' => 'field_postal_instruction_text',
@@ -63,6 +97,21 @@ if (function_exists('acf_add_local_field_group')) {
         'default_value' =>
           'To enter this competition by post, send an unenclosed postcard with sufficient postage (1st or 2nd class stamp) to:',
         'rows' => 3,
+        'wrapper' => [
+          'width' => '',
+          'class' => '',
+          'id' => '',
+        ],
+      ],
+      // Address Label
+      [
+        'key' => 'field_postal_address_label',
+        'label' => 'Address Label',
+        'name' => 'postal_address_label',
+        'type' => 'text',
+        'instructions' => 'Optional heading shown above the postal address, e.g. "Post it to". Leave blank to hide it.',
+        'required' => 0,
+        'default_value' => '',
         'wrapper' => [
           'width' => '',
           'class' => '',
@@ -133,6 +182,40 @@ if (function_exists('acf_add_local_field_group')) {
           'id' => '',
         ],
       ],
+      // Address Note
+      [
+        'key' => 'field_postal_address_note',
+        'label' => 'Address Note',
+        'name' => 'postal_address_note',
+        'type' => 'textarea',
+        'instructions' =>
+          'Optional note shown under the postal address, e.g. which postage is accepted. Leave blank to hide it.',
+        'required' => 0,
+        'default_value' => '',
+        'rows' => 2,
+        'new_lines' => '',
+        'wrapper' => [
+          'width' => '',
+          'class' => '',
+          'id' => '',
+        ],
+      ],
+      // Required Information Label
+      [
+        'key' => 'field_postal_required_items_label',
+        'label' => 'Required Information Label',
+        'name' => 'postal_required_items_label',
+        'type' => 'text',
+        'instructions' => 'Heading shown above the required information items. Leave blank to use "Include the following:".',
+        'required' => 0,
+        'default_value' => '',
+        'placeholder' => 'Include the following:',
+        'wrapper' => [
+          'width' => '',
+          'class' => '',
+          'id' => '',
+        ],
+      ],
       // Required Information Items (Repeater)
       [
         'key' => 'field_postal_required_items',
@@ -186,6 +269,38 @@ if (function_exists('acf_add_local_field_group')) {
         'required' => 0,
         'default_value' => '',
         'placeholder' => 'https://example.com/terms-and-conditions/',
+        'wrapper' => [
+          'width' => '50',
+          'class' => '',
+          'id' => '',
+        ],
+      ],
+      // Terms Link Text
+      [
+        'key' => 'field_postal_terms_link_text',
+        'label' => 'Terms Link Text',
+        'name' => 'postal_terms_link_text',
+        'type' => 'text',
+        'instructions' => 'Text of the terms and conditions link. Leave blank to use "TERMS AND CONDITIONS".',
+        'required' => 0,
+        'default_value' => '',
+        'placeholder' => 'TERMS AND CONDITIONS',
+        'wrapper' => [
+          'width' => '50',
+          'class' => '',
+          'id' => '',
+        ],
+      ],
+      // Close Button Text
+      [
+        'key' => 'field_postal_close_text',
+        'label' => 'Close Button Text',
+        'name' => 'postal_close_text',
+        'type' => 'text',
+        'instructions' =>
+          'Optional text button that closes the postal entry modal, e.g. "Got it". Leave blank to show only the close icon.',
+        'required' => 0,
+        'default_value' => '',
         'wrapper' => [
           'width' => '50',
           'class' => '',

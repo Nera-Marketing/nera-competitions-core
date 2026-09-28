@@ -320,6 +320,12 @@ $purchase_card_args = [
     $postal_items = get_field('postal_required_items', 'option');
     $postal_terms_text = get_field('postal_terms_text', 'option');
     $postal_terms_url = get_field('postal_terms_url', 'option');
+    $postal_eyebrow = get_field('postal_modal_eyebrow', 'option');
+    $postal_address_label = get_field('postal_address_label', 'option');
+    $postal_address_note = get_field('postal_address_note', 'option');
+    $postal_items_label = get_field('postal_required_items_label', 'option');
+    $postal_terms_link_text = get_field('postal_terms_link_text', 'option');
+    $postal_close_text = get_field('postal_close_text', 'option');
 
     if (!$postal_instruction) {
       $postal_instruction =
@@ -331,8 +337,21 @@ $purchase_card_args = [
     if (!$postal_terms_url) {
       $postal_terms_url = home_url('/terms-and-conditions/');
     }
+    if (!$postal_items_label) {
+      $postal_items_label = __('Include the following:', 'nera-competitions');
+    }
+    if (!$postal_terms_link_text) {
+      $postal_terms_link_text = __('TERMS AND CONDITIONS', 'nera-competitions');
+    }
     ?>
     <div class="space-y-6">
+      <?php if ($postal_eyebrow): ?>
+        <!-- Eyebrow -->
+        <p class="text-sm font-semibold uppercase tracking-wide text-white/80">
+          <?php echo esc_html($postal_eyebrow); ?>
+        </p>
+      <?php endif; ?>
+
       <!-- Instruction Text -->
       <p class="text-lg leading-relaxed">
         <?php echo esc_html($postal_instruction); ?>
@@ -340,12 +359,14 @@ $purchase_card_args = [
 
       <!-- Postal Address -->
       <div class="space-y-1">
+        <?php if ($postal_address_label): ?><p class="font-semibold"><?php echo esc_html($postal_address_label); ?></p><?php endif; ?>
         <?php if ($postal_company): ?><p><?php echo esc_html($postal_company); ?></p><?php endif; ?>
         <?php if ($postal_address): ?><p><?php echo esc_html($postal_address); ?></p><?php endif; ?>
         <?php if ($postal_town): ?><p><?php echo esc_html($postal_town); ?></p><?php endif; ?>
         <?php if ($postal_postcode): ?><p><?php echo esc_html(
   $postal_postcode,
 ); ?></p><?php endif; ?>
+        <?php if ($postal_address_note): ?><p class="pt-2 text-sm text-white/80"><?php echo esc_html($postal_address_note); ?></p><?php endif; ?>
       </div>
 
       <!-- Divider -->
@@ -354,7 +375,7 @@ $purchase_card_args = [
       <!-- Required Information -->
       <div>
         <p class="font-semibold mb-3">
-          <?php _e('Include the following:', 'nera-competitions'); ?>
+          <?php echo esc_html($postal_items_label); ?>
         </p>
         <ul class="space-y-2 list-disc list-inside">
           <?php if ($postal_items): ?>
@@ -383,10 +404,19 @@ $purchase_card_args = [
           <a href="<?php echo esc_url($postal_terms_url); ?>"
              target="_blank"
              class="font-bold !underline hover:text-gray-200 transition-colors">
-            <?php _e('TERMS AND CONDITIONS', 'nera-competitions'); ?>
+            <?php echo esc_html($postal_terms_link_text); ?>
           </a>
         </p>
       </div>
+
+      <?php if ($postal_close_text): ?>
+        <!-- Close Text Button -->
+        <button type="button"
+                @click="$store.postDialog.show = false"
+                class="w-full rounded-lg bg-white px-6 py-3 font-semibold text-primary hover:bg-gray-100 transition-colors focus:outline-none focus:ring-2 focus:ring-white/50">
+          <?php echo esc_html($postal_close_text); ?>
+        </button>
+      <?php endif; ?>
     </div>
   </div>
 </div>
