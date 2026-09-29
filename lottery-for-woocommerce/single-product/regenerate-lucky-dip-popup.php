@@ -186,6 +186,12 @@ if ($nera_has_qa) {
       <?php endif; ?>
 
       <?php
+      // Safety, then add-ons for this prize, between the generated tickets and the quantity / gate note.
+      get_template_part('template-parts/single-product/lucky-dip-safety', null, ['product' => $product]);
+      get_template_part('template-parts/single-product/lucky-dip-addons', null, ['product' => $product]);
+      ?>
+
+      <?php
       /*
        * Quantity sits directly above the button that consumes it. At the top of
        * the column it read as a stray field with no obvious effect; next to

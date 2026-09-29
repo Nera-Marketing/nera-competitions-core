@@ -191,6 +191,12 @@ function nera_lottery_order_fulfilment_note(WC_Order $order): string
   $saw_plays = false;
 
   foreach ($items as $item) {
+    // Prize add-ons are fulfilled offline for the winner only, so they carry
+    // nothing the website must issue (ADR 0012).
+    if (function_exists('nera_prize_addons_is_order_item') && nera_prize_addons_is_order_item($item)) {
+      continue;
+    }
+
     $has_obligation = false;
 
     if (nera_lottery_item_has_ticket_numbers($item)) {
@@ -212,6 +218,11 @@ function nera_lottery_order_fulfilment_note(WC_Order $order): string
     if (!$has_obligation) {
       return '';
     }
+  }
+
+  // Only add-on lines: nothing was actually issued, so nothing to complete.
+  if (!$saw_tickets && !$saw_plays) {
+    return '';
   }
 
   if ($saw_tickets && $saw_plays) {
@@ -368,6 +379,10 @@ function nera_lottery_order_has_tickets(int $order_id): bool
  * merchandise sits unsent, with nothing anywhere to flag it — so anything that
  * is not a lottery product blocks completion.
  *
+ * The one exception is a prize add-on line: it is bought with its draw's
+ * tickets, has nothing to ship, and is only acted on offline if that customer
+ * wins (ADR 0012). It neither blocks completion nor counts as a lottery item.
+ *
  * @param WC_Order $order Order.
  * @return bool
  */
@@ -378,13 +393,18 @@ function nera_order_is_lottery_only(WC_Order $order): bool
     return false;
   }
 
+  $saw_lottery = false;
   foreach ($items as $item) {
+    if (function_exists('nera_prize_addons_is_order_item') && nera_prize_addons_is_order_item($item)) {
+      continue;
+    }
     if (!nera_order_item_is_lottery($item)) {
       return false;
     }
+    $saw_lottery = true;
   }
 
-  return true;
+  return $saw_lottery;
 }
 
 /**

@@ -117,6 +117,15 @@ $notes = $order->get_customer_order_notes();
             $quantity = $item->get_quantity();
             $total = $order->get_formatted_line_subtotal($item);
             $thumbnail = $product->get_image('thumbnail');
+
+            // Prize add-on line (inc/prize-addons.php): show the prize image and its options.
+            $is_prize_addon = function_exists('nera_prize_addons_is_order_item') && nera_prize_addons_is_order_item($item);
+            if ($is_prize_addon) {
+              $addon_draw = wc_get_product((int) $item->get_meta('_nera_addon_draw_id', true));
+              if ($addon_draw) {
+                $thumbnail = $addon_draw->get_image('thumbnail');
+              }
+            }
             ?>
             <div class="flex items-start gap-4 p-4 bg-gray-50 rounded-xl">
               <div class="w-16 h-16 flex-shrink-0 bg-surface rounded-lg overflow-hidden border border-gray-200">
@@ -131,6 +140,17 @@ $notes = $order->get_customer_order_notes();
    $quantity,
  ); ?>
                 </p>
+                <?php if ($is_prize_addon): ?>
+                  <dl class="mt-2 grid grid-cols-[auto_1fr] gap-x-3 gap-y-0.5 text-sm text-gray-600">
+                    <?php foreach ($item->get_formatted_meta_data() as $addon_meta):
+                      if (0 !== strpos((string) $addon_meta->key, 'nera_addon_')) {
+                        continue;
+                      } ?>
+                      <dt class="font-medium text-gray-500"><?php echo wp_kses_post($addon_meta->display_key); ?></dt>
+                      <dd class="m-0"><?php echo wp_kses_post($addon_meta->display_value); ?></dd>
+                    <?php endforeach; ?>
+                  </dl>
+                <?php endif; ?>
                 <?php
                 $lty_tickets = $item->get_meta('_lty_lottery_tickets');
                 if (!is_array($lty_tickets)) {

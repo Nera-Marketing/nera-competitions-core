@@ -154,6 +154,19 @@ $decimal_sep       = wc_get_price_decimal_separator();
   <?php endif; ?>
 </div>
 
+<?php
+/**
+ * Between the ticket quantity and the entry form.
+ *
+ * Prize Safety & Add-ons (inc/prize-addons.php) renders here. Callbacks print
+ * their own `px-6 pb-6` wrapper so nothing is output when they have nothing.
+ *
+ * @param WC_Product $product Lottery product.
+ * @param array      $args    Purchase card args (is_expired, is_manual_ticket, …).
+ */
+do_action('nera_purchase_card_before_enter_form', $product, $args);
+?>
+
 <!-- Enter Now Form (includes Skill Challenge Q&A) -->
 <div class="px-6 pb-6">
   <?php if (!defined('NERA_PURCHASE_CARD_ALPINE_LOADED')): ?>
@@ -400,13 +413,17 @@ $decimal_sep       = wc_get_price_decimal_separator();
               const qtyInput = this.getQtyInput();
               if (qtyInput) {
                 this.quantity = qtyInput.value;
-                qtyInput.addEventListener('change', (e) => {
+                const onQuantityChange = (e) => {
                   this.quantity = e.target.value;
                   if (!config.bundlesExclusive) {
                     this.syncBundleFromQuantity(parseInt(e.target.value, 10) || 0);
                   }
                   this.updateTicketPrice();
-                });
+                };
+                qtyInput.addEventListener('change', onQuantityChange);
+                // Also while typing: the ticket total row appearing on blur pushed the next
+                // control (an add-on checkbox, Enter Now) out from under the customer's click.
+                qtyInput.addEventListener('input', onQuantityChange);
 
                 const observer = new MutationObserver(() => {
                   this.quantity = qtyInput.value;
@@ -515,17 +532,48 @@ $decimal_sep       = wc_get_price_decimal_separator();
                 }
               }
 
+              // Prize add-ons ticked on this page (Components/blocks/PrizeAddOns). Only sent
+              // when the block is present, so an existing add-on line is left alone otherwise.
+              // The server prices them; nothing here carries a price.
+              const addonsRoot = document.querySelector('[data-prize-addons="' + config.productId + '"]');
+              if (addonsRoot) {
+                ajaxData.append('nera_addons_submitted', '1');
+                addonsRoot.querySelectorAll('input[name="nera_addon_ids[]"]:checked').forEach((input) => {
+                  ajaxData.append('nera_addon_ids[]', input.value);
+                });
+              }
+
               if (config.hasQa) {
                 // Lottery plugin validates/reads this request key during add-to-cart.
                 ajaxData.append('lty_question_answer_id', this.selectedAnswer);
               }
 
-              const ajaxResponse = await fetch(config.ajaxUrl, {
-                method: 'POST',
-                body: ajaxData
-              });
+              // Ask the server to tell us first if this would take the basket over the
+              // customer's spending limit (Spending Limit plugin). Nothing is added until
+              // they agree.
+              ajaxData.append('nera_limit_check', '1');
 
-              const result = await ajaxResponse.json();
+              const postAddToCart = async () => {
+                const ajaxResponse = await fetch(config.ajaxUrl, {
+                  method: 'POST',
+                  body: ajaxData
+                });
+                return ajaxResponse.json();
+              };
+
+              let result = await postAddToCart();
+
+              if (result.needs_confirmation) {
+                const c = result.confirmation || {};
+                const proceed = window.NeraSpendLimit && window.NeraSpendLimit.confirm
+                  ? await window.NeraSpendLimit.confirm(c)
+                  : window.confirm(c.message || '');
+                if (!proceed) {
+                  return; // finally{} re-enables the button
+                }
+                ajaxData.set('nera_limit_ack', '1');
+                result = await postAddToCart();
+              }
 
               if (result.error) {
                 Alpine.store('toast').error(result.message || config.i18n.error);

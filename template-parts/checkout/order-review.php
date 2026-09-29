@@ -17,6 +17,16 @@ if (!defined('ABSPATH')) {
 
   <!-- Cart Items -->
   <div class="space-y-4 mb-6">
+    <?php
+    // Prize add-ons (inc/prize-addons.php) are not rows of their own here: the add-on panel
+    // is shown under the last ticket row of its draw, the same panel the basket uses.
+    $nera_last_ticket_key = [];
+    foreach (WC()->cart->get_cart() as $nera_key => $nera_item) {
+      if (!function_exists('nera_prize_addons_is_addon_cart_item') || !nera_prize_addons_is_addon_cart_item($nera_item)) {
+        $nera_last_ticket_key[(int) ($nera_item['product_id'] ?? 0)] = $nera_key;
+      }
+    }
+    ?>
     <?php foreach (WC()->cart->get_cart() as $cart_item_key => $cart_item):
 
       $_product = apply_filters(
@@ -27,6 +37,9 @@ if (!defined('ABSPATH')) {
       );
 
       if (!$_product || !$_product->exists() || $cart_item['quantity'] <= 0) {
+        continue;
+      }
+      if (function_exists('nera_prize_addons_is_addon_cart_item') && nera_prize_addons_is_addon_cart_item($cart_item)) {
         continue;
       }
       if (
@@ -103,6 +116,24 @@ if (!defined('ABSPATH')) {
           } ?>
         </div>
       </div>
+
+      <?php
+      // Add-ons bought with this draw, under its last ticket row.
+      if (
+        function_exists('nera_prize_addons_find_cart_line') &&
+        ($nera_last_ticket_key[(int) $_product->get_id()] ?? null) === $cart_item_key
+      ) {
+        $nera_addon_line = nera_prize_addons_find_cart_line((int) $_product->get_id());
+        if ($nera_addon_line) {
+          get_template_part('template-parts/cart/cart-item-addon', null, [
+            'cart_item_key' => $nera_addon_line[0],
+            'cart_item' => $nera_addon_line[1],
+            'readonly' => true,
+            'compact' => true,
+          ]);
+        }
+      }
+      ?>
 
     <?php
     endforeach; ?>

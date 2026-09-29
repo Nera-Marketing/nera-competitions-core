@@ -32,6 +32,17 @@ do_action('lty_before_lottery_ticket_lucky_dip_container');
     </button>
   </div>
 
+  <?php
+  /*
+   * "Add directly": the click already puts tickets in the basket, so this is the one moment
+   * to choose add-ons for them. With "only display" they are chosen in the popup instead.
+   */
+  if (function_exists('nera_lucky_dip_is_direct_method') && nera_lucky_dip_is_direct_method($product)) {
+    get_template_part('template-parts/single-product/lucky-dip-safety', null, ['product' => $product]);
+    get_template_part('template-parts/single-product/lucky-dip-addons', null, ['product' => $product]);
+  }
+  ?>
+
   <p class="nera-lucky-dip-inline__error" hidden role="alert" aria-live="polite"></p>
 
   <input type="hidden" class="lty-ticket-product-id" value="<?php echo esc_attr($product->get_id()); ?>"/>

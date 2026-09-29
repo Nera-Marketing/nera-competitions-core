@@ -269,6 +269,12 @@ if (function_exists('acf_add_local_field_group')) {
     ],
   ];
 
+  // "Add-ons Bundles": site switch and Global default for Safety & Add-ons.
+  // Sits above "Spin To Win" (inc/prize-addons-settings.php).
+  if (function_exists('nera_prize_addons_settings_fields')) {
+    $woocommerce_fields = array_merge($woocommerce_fields, nera_prize_addons_settings_fields());
+  }
+
   if (class_exists('Nera_STW_ACF_Copy_Settings')) {
     $woocommerce_fields = array_merge(
       $woocommerce_fields,

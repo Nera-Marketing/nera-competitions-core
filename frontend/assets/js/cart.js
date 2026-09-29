@@ -18,17 +18,38 @@
     removeItem: function (key) {
       if (!confirm('Are you sure you want to remove this item?')) return;
 
-      // Standard removal URL usually available in render
-      // But since we want AJAX, we can use the wc_cart_remove_item endpoint or ?remove_item=key query
-      // Safest: Use the remove link href if available, prevent default, and fetch it.
-      // We didn't render standard remove link, so let's construct it or use form.
+      NeraCart.request(`?remove_item=${key}`, `cart-item-${key}`, 'Item removed');
+    },
 
-      const url = `?remove_item=${key}&_wpnonce=${document.querySelector('#woocommerce-cart-nonce').value}`;
+    /**
+     * Remove one option from a prize's add-on line (the × on an option).
+     * Removing the last option removes the line. Handled by
+     * nera_prize_addons_handle_remove_option() in inc/prize-addons.php.
+     * @param {string} key      Add-on cart line key.
+     * @param {string} optionId Add-on option ID.
+     */
+    removeAddonOption: function (key, optionId) {
+      const query = `?nera_addon_line=${encodeURIComponent(key)}&nera_remove_addon=${encodeURIComponent(optionId)}`;
+      NeraCart.request(query, `cart-item-${key}`, 'Add-on removed', false);
+    },
 
-      const itemRow = document.getElementById(`cart-item-${key}`);
+    /**
+     * Fetch a cart-changing URL and swap the refreshed cart form in.
+     * @param {string}  query      Query string (the nonce is appended).
+     * @param {string}  rowId      Row to fade while waiting.
+     * @param {string}  message    Toast shown when done.
+     * @param {boolean} slideAway  Slide the whole row out (true) or just fade it.
+     */
+    request: function (query, rowId, message, slideAway = true) {
+      const nonce = document.querySelector('#woocommerce-cart-nonce').value;
+      const url = `${query}&_wpnonce=${nonce}`;
+
+      const itemRow = document.getElementById(rowId);
       if (itemRow) {
-        itemRow.style.transform = 'translateX(100px)';
-        itemRow.style.opacity = '0';
+        if (slideAway) {
+          itemRow.style.transform = 'translateX(100px)';
+        }
+        itemRow.style.opacity = slideAway ? '0' : '0.5';
       }
 
       fetch(url)
@@ -40,13 +61,8 @@
           const newForm = doc.querySelector('.woocommerce-cart-form');
           const emptyCart = doc.querySelector('.nera-cart-empty-state'); // if cart became empty
 
-          const container = document.querySelector('.woocommerce-cart-form').parentNode;
-
           if (emptyCart) {
-            // Cart is now empty
-            document.querySelector('.woocommerce-cart-form').remove();
-            // Inject message
-            // Best to reload or just put the HTML
+            // Cart is now empty: reload to show the empty state
             location.reload();
             return;
           }
@@ -56,7 +72,7 @@
           }
 
           jQuery(document.body).trigger('wc_fragment_refresh');
-          if (window.Alpine) Alpine.store('toast').info('Item removed');
+          if (window.Alpine) Alpine.store('toast').info(message);
         })
         .catch(err => location.reload()); // Fallback
     },

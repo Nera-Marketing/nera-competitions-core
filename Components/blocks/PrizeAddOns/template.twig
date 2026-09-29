@@ -1,0 +1,118 @@
+{#
+  PrizeAddOns — view data contract (authoritative source: index.php get_data() PHPDoc)
+  Child themes may override this view; data is provided by the parent's get_data().
+  key              type    req/opt   note
+  enabled          bool    required  false → render nothing
+  product_id       int     required  data-prize-addons value; the purchase card reads checked
+                                     input[name="nera_addon_ids[]"] inside it on submit
+  dom_id           string  required  id prefix
+  title            string  required  may be ''
+  description      string  required  may be ''
+  options          list    required  {id, title, description, price, price_html, purchased, selected}
+  option_count     int     required
+  purchased_count  int     required
+  available_count  int     required
+  bundle           array   required  {available, offer_html (escaped HTML)}
+  notice           string  required  '' or the "already bought" note
+  initial          array   required  {subtotal_text, total_text, is_full_bundle}
+  config_json      string  required  argument for x-data="neraPrizeAddons(…)"
+  i18n             array   required  eyebrow, total, non_refundable, purchased, select_all, hide
+  Timber autoescape is off: every admin-entered value is escaped here.
+  The total and the non-refundable line stay visible when the block is collapsed.
+#}
+{% if enabled and options|length > 0 %}
+<section
+  class="ncs-prize-addons"
+  id="{{ dom_id }}"
+  data-prize-addons="{{ product_id }}"
+  x-data="neraPrizeAddons({{ config_json|e('html_attr') }})"
+>
+  <div class="ncs-prize-addons__head" @click="toggle()">
+    <div class="ncs-prize-addons__heading">
+      <p class="ncs-prize-addons__eyebrow">{{ i18n.eyebrow|e }}</p>
+      {% if title %}
+        <h3 class="ncs-prize-addons__title">{{ title|e }}</h3>
+      {% endif %}
+      {% if description %}
+        <p class="ncs-prize-addons__description" x-show="open">{{ description|e }}</p>
+      {% endif %}
+    </div>
+    <button
+      type="button"
+      class="ncs-prize-addons__toggle"
+      @click.stop="toggle()"
+      aria-controls="{{ dom_id }}-body"
+      aria-expanded="true"
+      :aria-expanded="open ? 'true' : 'false'"
+      aria-label="{{ i18n.hide|e('html_attr') }}"
+      :aria-label="open ? i18n.hide : i18n.show"
+    >
+      <span class="material-symbols-outlined" aria-hidden="true" x-text="open ? 'expand_less' : 'expand_more'">expand_less</span>
+    </button>
+  </div>
+
+  <div class="ncs-prize-addons__body" id="{{ dom_id }}-body" x-show="open">
+    <ul class="ncs-prize-addons__list" role="list">
+      {% for option in options %}
+        {% if option.purchased %}
+          <li class="ncs-prize-addons__option ncs-prize-addons__option--purchased">
+            <span class="material-symbols-outlined ncs-prize-addons__check" aria-hidden="true">check_circle</span>
+            <span class="ncs-prize-addons__text">
+              <span class="ncs-prize-addons__name">{{ option.title|e }}</span>
+              {% if option.description %}
+                <span class="ncs-prize-addons__desc">{{ option.description|e }}</span>
+              {% endif %}
+            </span>
+            <span class="ncs-prize-addons__purchased">
+              <span class="material-symbols-outlined" aria-hidden="true">check</span>{{ i18n.purchased|e }}
+            </span>
+          </li>
+        {% else %}
+          <li class="ncs-prize-addons__option">
+            <input
+              type="checkbox"
+              class="ncs-prize-addons__checkbox"
+              id="{{ dom_id }}-{{ option.id|e('html_attr') }}"
+              name="nera_addon_ids[]"
+              value="{{ option.id|e('html_attr') }}"
+              x-model="selected"
+              {% if option.selected %}checked{% endif %}
+            >
+            <label class="ncs-prize-addons__text" for="{{ dom_id }}-{{ option.id|e('html_attr') }}">
+              <span class="ncs-prize-addons__name">{{ option.title|e }}</span>
+              {% if option.description %}
+                <span class="ncs-prize-addons__desc">{{ option.description|e }}</span>
+              {% endif %}
+            </label>
+            <span class="ncs-prize-addons__price">{{ option.price_html|raw }}</span>
+          </li>
+        {% endif %}
+      {% endfor %}
+    </ul>
+
+    {% if bundle.available %}
+      <div class="ncs-prize-addons__bundle">
+        <span>{{ bundle.offer_html|raw }}</span>
+        <button type="button" class="ncs-prize-addons__select-all" @click="toggleAll()" x-text="allSelected() ? i18n.clear : i18n.selectAll">{{ i18n.select_all|e }}</button>
+      </div>
+    {% elseif notice %}
+      <p class="ncs-prize-addons__notice">{{ notice|e }}</p>
+    {% endif %}
+  </div>
+
+  <p class="ncs-prize-addons__summary" x-show="!open" x-text="summary()" x-cloak></p>
+
+  <div class="ncs-prize-addons__total">
+    <span>{{ i18n.total|e }}</span>
+    <span class="ncs-prize-addons__total-value">
+      <s class="ncs-prize-addons__was" x-show="isFullBundle()" x-text="format(subtotal())"{% if not initial.is_full_bundle %} x-cloak{% endif %}>{{ initial.subtotal_text|e }}</s>
+      <strong x-text="format(total())">{{ initial.total_text|e }}</strong>
+    </span>
+  </div>
+
+  <p class="ncs-prize-addons__note">
+    <span class="material-symbols-outlined" aria-hidden="true">info</span>
+    <span>{{ i18n.non_refundable|e }}</span>
+  </p>
+</section>
+{% endif %}

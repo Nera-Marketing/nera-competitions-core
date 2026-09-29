@@ -143,6 +143,15 @@ Parent templates add `.ncs-*` classes to the components child themes most often 
 | `.ncs-quantity-slider` | Purchase-card quantity slider root | `Components/blocks/QuantitySelector/template.twig` |
 | `.ncs-quantity-slider__live-discount` | Fixed pack discount chip beside ticket count | same |
 | `.ncs-quantity-slider__live-discount--visible` | Live chip visible when qty matches a pack | same |
+| `.ncs-prize-safety` | Purchase-card free safety kit root | `Components/blocks/PrizeSafety/template.twig` |
+| `.ncs-prize-safety__item` / `__icon` / `__badge` | Safety row, icon tile, "Free" badge | same |
+| `.ncs-prize-addons` | Purchase-card paid add-ons panel root | `Components/blocks/PrizeAddOns/template.twig` |
+| `.ncs-prize-addons__toggle` | Collapse/expand icon button | same |
+| `.ncs-prize-addons__option` / `--purchased` | Option row / already-bought row | same |
+| `.ncs-prize-addons__bundle` | "Select all N for £X" offer | same |
+| `.ncs-prize-addons__summary` | One-line summary shown while collapsed | same |
+| `.ncs-prize-addons__total` / `__note` | Add-ons total and non-refundable line (always visible) | same |
+| `.ncs-cart-item--addon` | Cart row for an "Add-ons for: …" line | `template-parts/cart/cart-item-addon.php` |
 
 ### Hooks not yet in parent templates
 
@@ -312,6 +321,43 @@ Track height is **14px** (`h-[14px]` on `.ncs-progress__track`). Fill uses a hor
 | `--ncs-countdown-value` | `var(--color-text-primary)` | Digit color |
 | `--ncs-countdown-value-urgent` | `var(--color-danger)` | Urgent digit color |
 | `--ncs-countdown-label` | `var(--color-text-secondary)` | Unit label (DAYS/HRS) |
+
+### `.ncs-prize-safety`
+
+| Knob | Default | Controls |
+|---|---|---|
+| `--ncs-prize-safety-bg` | `var(--color-gray-50)` | Panel background |
+| `--ncs-prize-safety-border` | `var(--color-gray-100)` | Panel border |
+| `--ncs-prize-safety-text` / `-text-secondary` | text tokens | Item name / description |
+| `--ncs-prize-safety-accent` | `var(--color-success)` | Heading shield icon |
+| `--ncs-prize-safety-icon` / `-icon-bg` | `var(--color-primary)` / `var(--color-surface)` | Item icon tile |
+| `--ncs-prize-safety-badge-bg` / `-badge-text` | success triplet | "Free" badge |
+
+### `.ncs-prize-addons`
+
+| Knob | Default | Controls |
+|---|---|---|
+| `--ncs-prize-addons-bg` | `color-mix(in srgb, var(--color-primary) 5%, var(--color-surface))` | Panel tint |
+| `--ncs-prize-addons-border` | `color-mix(in srgb, var(--color-primary) 12%, var(--color-surface))` | Panel, list and summary borders |
+| `--ncs-prize-addons-list-bg` | `var(--color-surface)` | Option list, bundle offer, summary |
+| `--ncs-prize-addons-divider` | `var(--color-gray-100)` | Lines between options |
+| `--ncs-prize-addons-text` / `-text-secondary` | text tokens | Names / descriptions and notes |
+| `--ncs-prize-addons-accent` | `var(--color-primary)` | Eyebrow, checkbox, total, Select all |
+| `--ncs-prize-addons-toggle-bg` / `-toggle-border` | `var(--color-surface)` / `var(--color-gray-200)` | Collapse button |
+| `--ncs-prize-addons-purchased-bg` / `-border` / `-text` / `-icon` | success triplet | "Purchased" chip and tick |
+| `--ncs-prize-addons-muted-bg` | `var(--color-gray-50)` | Purchased row background |
+
+The cart row (`.ncs-cart-item.ncs-cart-item--addon`) is a tinted panel under its draw's tickets with no quantity shown; it exposes `--ncs-cart-addon-icon-bg`, `--ncs-cart-addon-icon`, `--ncs-cart-addon-bg` and `--ncs-cart-addon-border`.
+
+**Prize add-on hooks** (see `docs/adr/0012-prize-add-on-lines.md`):
+
+- `nera_purchase_card_before_enter_form` (action, `$product, $args`) — between the ticket quantity and the entry form; Safety and Add-ons render here at priority 10.
+- `nera_ajax_add_to_cart_success` (action, `$product_id, $cart_item_key`) — tickets added and validated by the theme's AJAX add to cart.
+- `nera_prize_addons_label` (filter, `$text, $key`) — reword any customer-facing label (`eyebrow`, `non_refundable`, `line_name`, `purchased`, …).
+- `nera_prize_addons_paid_statuses` (filter) — order statuses that lock options as "Purchased".
+- `nera_add_to_cart_confirmation` (filter, `$confirmation, $product_id, $projected_total`) — return `['title','message','ok','cancel']` to make the prize page and the Lucky Dip dialogs ask the customer before tickets are added (the Spending Limit plugin answers it). `$projected_total` is set when nothing has been added yet.
+- `nera_prize_safety_icon_choices` (filter) — the Safety icon dropdown, as group label => [Material Symbol name => label]. Admins can still pick "Other" and type any Material Symbol name.
+- Site switch and Global default: Theme Settings → WooCommerce → Add-ons Bundles (`nera_prize_addons_enabled`, off by default). `nera_prize_addons_site_enabled()` reads it; while off, Safety and Add-ons render nothing and add-on lines leave the basket. The Global default is copied into a prize's empty list in the admin form (see `docs/adr/0013-add-ons-site-switch-and-copied-global-defaults.md`).
 
 ### `.ncs-cart-item`
 
@@ -526,6 +572,8 @@ For exact types, defaults, and notes, read the `get_data()` PHPDoc or the `templ
 |---|---|
 | blocks/AddToCartButton | product_id, is_expired, is_manual_ticket, label_active, label_ended |
 | blocks/CountdownTimer | countdown_date, days, hours, minutes, seconds, is_expired |
+| blocks/PrizeAddOns | enabled, product_id, dom_id, title, description, options, option_count, purchased_count, available_count, bundle, notice, initial, config_json, i18n |
+| blocks/PrizeSafety | enabled, title, description, items, i18n |
 | blocks/ProductTitle | name, is_sold_out |
 | blocks/QuantitySelector | min, max, quick_add, default, layout (resolved via `nera_get_quantity_selector_layout()`: global Theme Settings → WooCommerce + optional product override) |
 | blocks/SkillQuestionAnswer | question_text, answers, cart_answer_id, qa_can_display |
