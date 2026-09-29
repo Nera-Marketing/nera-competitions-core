@@ -726,6 +726,9 @@ if (!$postal_entry_link_text) {
 $postal_entry_url = function_exists('nera_postal_entry_destination_url')
   ? nera_postal_entry_destination_url()
   : '';
+$postal_link_supporting_text = function_exists('get_field')
+  ? get_field('postal_link_supporting_text', 'option')
+  : '';
 ?>
 <div class="px-6 pb-6" x-data>
   <div class="border-t border-gray-200">
@@ -739,6 +742,9 @@ $postal_entry_url = function_exists('nera_postal_entry_destination_url')
         <button type="button" @click="$store.postDialog.show = true" class="text-primary font-semibold hover:text-primary-dark transition-colors">
           <?php echo esc_html($postal_entry_link_text); ?>
         </button>
+      <?php endif; ?>
+      <?php if ($postal_link_supporting_text): ?>
+        <?php echo esc_html($postal_link_supporting_text); ?>
       <?php endif; ?>
     </p>
   </div>
