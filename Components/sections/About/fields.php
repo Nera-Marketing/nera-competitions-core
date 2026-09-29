@@ -123,6 +123,64 @@ function get_acf_layout(): array {
                 'library'       => 'all',
             ],
             [
+                'key'           => 'field_pc_about_show_stat',
+                'label'         => __('Show Floating Stat', 'nera-competitions-standard'),
+                'name'          => 'show_stat',
+                'type'          => 'true_false',
+                'instructions'  => __('Show the floating credibility badge over the image (e.g. "150+ Happy Winners").', 'nera-competitions-standard'),
+                'default_value' => 1,
+                'ui'            => 1,
+            ],
+            [
+                'key'               => 'field_pc_about_stat_value',
+                'label'             => __('Stat Number', 'nera-competitions-standard'),
+                'name'              => 'stat_value',
+                'type'              => 'text',
+                'default_value'     => '150',
+                'conditional_logic' => [
+                    [
+                        [
+                            'field'    => 'field_pc_about_show_stat',
+                            'operator' => '==',
+                            'value'    => '1',
+                        ],
+                    ],
+                ],
+            ],
+            [
+                'key'               => 'field_pc_about_stat_suffix',
+                'label'             => __('Stat Accent', 'nera-competitions-standard'),
+                'name'              => 'stat_suffix',
+                'type'              => 'text',
+                'instructions'      => __('Primary-colored suffix after the number (e.g. "+").', 'nera-competitions-standard'),
+                'default_value'     => '+',
+                'conditional_logic' => [
+                    [
+                        [
+                            'field'    => 'field_pc_about_show_stat',
+                            'operator' => '==',
+                            'value'    => '1',
+                        ],
+                    ],
+                ],
+            ],
+            [
+                'key'               => 'field_pc_about_stat_label',
+                'label'             => __('Stat Label', 'nera-competitions-standard'),
+                'name'              => 'stat_label',
+                'type'              => 'text',
+                'default_value'     => 'Happy Winners',
+                'conditional_logic' => [
+                    [
+                        [
+                            'field'    => 'field_pc_about_show_stat',
+                            'operator' => '==',
+                            'value'    => '1',
+                        ],
+                    ],
+                ],
+            ],
+            [
                 'key'           => 'field_pc_about_image_position',
                 'label'         => __('Image Position', 'nera-competitions-standard'),
                 'name'          => 'image_position',

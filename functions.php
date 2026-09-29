@@ -3,7 +3,7 @@
  * Nera Competitions Standard Theme
  *
  * @package Nera_Competitions
- * @version 1.3.37
+ * @version 1.3.39
  */
 
 use YahnisElsts\PluginUpdateChecker\v5p5\Vcs\GitHubApi;
@@ -19,7 +19,7 @@ require_once __DIR__ . '/inc/env-loader.php';
 require_once __DIR__ . '/inc/upgrade-temp-backup-helper.php';
 
 // Define theme constants (template directory = parent theme; child-safe when used as a parent)
-define('NERA_VERSION', '1.3.37');
+define('NERA_VERSION', '1.3.39');
 define('NERA_DIR', get_template_directory());
 define('NERA_URI', get_template_directory_uri());
 define('NERA_FRONTEND_DIST_DIR', NERA_DIR . '/frontend/dist');
@@ -1223,6 +1223,7 @@ require_once get_template_directory() . '/inc/catalog-order.php';
 
 // ACF Postal Entry Fields
 require_once get_template_directory() . '/inc/acf/postal-entry/acf-postal-entry.php';
+require_once get_template_directory() . '/inc/helpers/postal-entry.php';
 
 // ACF WooCommerce Settings
 require_once get_template_directory() . '/inc/acf/woocommerce/acf-woocommerce.php';

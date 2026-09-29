@@ -571,6 +571,65 @@ if (function_exists('acf_add_local_field_group')) {
         'library' => 'all',
       ],
       [
+        'key' => 'field_about_show_stat',
+        'label' => 'Show Floating Stat',
+        'name' => 'about_show_stat',
+        'type' => 'true_false',
+        'instructions' =>
+          'Show the floating credibility badge over the image (e.g. "150+ Happy Winners").',
+        'default_value' => 1,
+        'ui' => 1,
+      ],
+      [
+        'key' => 'field_about_stat_value',
+        'label' => 'Stat Number',
+        'name' => 'about_stat_value',
+        'type' => 'text',
+        'default_value' => '150',
+        'conditional_logic' => [
+          [
+            [
+              'field' => 'field_about_show_stat',
+              'operator' => '==',
+              'value' => '1',
+            ],
+          ],
+        ],
+      ],
+      [
+        'key' => 'field_about_stat_suffix',
+        'label' => 'Stat Accent',
+        'name' => 'about_stat_suffix',
+        'type' => 'text',
+        'instructions' => 'Primary-colored suffix after the number (e.g. "+").',
+        'default_value' => '+',
+        'conditional_logic' => [
+          [
+            [
+              'field' => 'field_about_show_stat',
+              'operator' => '==',
+              'value' => '1',
+            ],
+          ],
+        ],
+      ],
+      [
+        'key' => 'field_about_stat_label',
+        'label' => 'Stat Label',
+        'name' => 'about_stat_label',
+        'type' => 'text',
+        'default_value' => 'Happy Winners',
+        'conditional_logic' => [
+          [
+            [
+              'field' => 'field_about_show_stat',
+              'operator' => '==',
+              'value' => '1',
+            ],
+          ],
+        ],
+      ],
+      [
         'key' => 'field_about_image_position',
         'label' => 'Image Position',
         'name' => 'about_image_position',

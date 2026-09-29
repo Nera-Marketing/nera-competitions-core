@@ -16,6 +16,10 @@ if (!defined('ABSPATH')) exit;
  *   cta_url: string,          // required, default '/about/' — CTA href
  *   image_url: string,        // required, default '' — resolved image src (empty = placeholder shown)
  *   image_alt: string,        // required, default title value — img alt text
+ *   show_stat: bool,          // required, default true — whether to render floating credibility badge
+ *   stat_value: string,       // required, default '150' — main number in floating badge
+ *   stat_suffix: string,      // required, default '+' — primary-colored suffix after the number
+ *   stat_label: string,       // required, default 'Happy Winners' — label under the number
  *   bg_class: string,         // required, derived from 'background' ACF field — section background Tailwind class
  *   text_order: string,       // required, derived from 'image_position' — order-1 or order-2
  *   image_order: string,      // required, derived from 'image_position' — order-2 or order-1
@@ -71,6 +75,10 @@ function get_data(array $args = []): array
         'cta_url'          => nera_component_field($args, 'cta_url',  'about_cta_url',  '/about/'),
         'image_url'        => $image_url,
         'image_alt'        => $image_alt,
+        'show_stat'        => (bool) nera_component_field($args, 'show_stat',   'about_show_stat',   1),
+        'stat_value'       => nera_component_field($args, 'stat_value',  'about_stat_value',  '150'),
+        'stat_suffix'      => nera_component_field($args, 'stat_suffix', 'about_stat_suffix', '+'),
+        'stat_label'       => nera_component_field($args, 'stat_label',  'about_stat_label',  __('Happy Winners', 'nera-competitions')),
         'bg_class'         => $bg_class,
         'text_order'       => $text_order,
         'image_order'      => $image_order,

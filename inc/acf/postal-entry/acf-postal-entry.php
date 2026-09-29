@@ -52,6 +52,44 @@ if (function_exists('acf_add_local_field_group')) {
           'id' => '',
         ],
       ],
+      // Click action (purchase card CTA)
+      [
+        'key' => 'field_postal_entry_click_action',
+        'label' => 'Click Action',
+        'name' => 'postal_entry_click_action',
+        'type' => 'button_group',
+        'instructions' =>
+          'What happens when a visitor clicks the postal entry link on single product pages.',
+        'required' => 0,
+        'choices' => [
+          'dialog' => 'Open dialog',
+          'url' => 'Go to URL',
+        ],
+        'default_value' => 'dialog',
+        'return_format' => 'value',
+        'allow_null' => 0,
+        'layout' => 'horizontal',
+      ],
+      [
+        'key' => 'field_postal_entry_url',
+        'label' => 'Destination URL',
+        'name' => 'postal_entry_url',
+        'type' => 'url',
+        'instructions' =>
+          'Where the postal entry link goes on single product pages. Leave blank to keep opening the dialog.',
+        'required' => 0,
+        'default_value' => '',
+        'placeholder' => 'https://example.com/postal-entry/',
+        'conditional_logic' => [
+          [
+            [
+              'field' => 'field_postal_entry_click_action',
+              'operator' => '==',
+              'value' => 'url',
+            ],
+          ],
+        ],
+      ],
       // Link Supporting Text (purchase card CTA)
       [
         'key' => 'field_postal_link_supporting_text',
@@ -80,6 +118,15 @@ if (function_exists('acf_add_local_field_group')) {
           'Optional small line shown above the postal entry modal title, e.g. "No purchase necessary". The title is the Link Text. Leave blank to hide it.',
         'required' => 0,
         'default_value' => '',
+        'conditional_logic' => [
+          [
+            [
+              'field' => 'field_postal_entry_click_action',
+              'operator' => '!=',
+              'value' => 'url',
+            ],
+          ],
+        ],
         'wrapper' => [
           'width' => '',
           'class' => '',
@@ -112,6 +159,15 @@ if (function_exists('acf_add_local_field_group')) {
         'instructions' => 'Optional heading shown above the postal address, e.g. "Post it to". Leave blank to hide it.',
         'required' => 0,
         'default_value' => '',
+        'conditional_logic' => [
+          [
+            [
+              'field' => 'field_postal_entry_click_action',
+              'operator' => '!=',
+              'value' => 'url',
+            ],
+          ],
+        ],
         'wrapper' => [
           'width' => '',
           'class' => '',
@@ -194,6 +250,15 @@ if (function_exists('acf_add_local_field_group')) {
         'default_value' => '',
         'rows' => 2,
         'new_lines' => '',
+        'conditional_logic' => [
+          [
+            [
+              'field' => 'field_postal_entry_click_action',
+              'operator' => '!=',
+              'value' => 'url',
+            ],
+          ],
+        ],
         'wrapper' => [
           'width' => '',
           'class' => '',
@@ -210,6 +275,15 @@ if (function_exists('acf_add_local_field_group')) {
         'required' => 0,
         'default_value' => '',
         'placeholder' => 'Include the following:',
+        'conditional_logic' => [
+          [
+            [
+              'field' => 'field_postal_entry_click_action',
+              'operator' => '!=',
+              'value' => 'url',
+            ],
+          ],
+        ],
         'wrapper' => [
           'width' => '',
           'class' => '',
@@ -285,6 +359,15 @@ if (function_exists('acf_add_local_field_group')) {
         'required' => 0,
         'default_value' => '',
         'placeholder' => 'TERMS AND CONDITIONS',
+        'conditional_logic' => [
+          [
+            [
+              'field' => 'field_postal_entry_click_action',
+              'operator' => '!=',
+              'value' => 'url',
+            ],
+          ],
+        ],
         'wrapper' => [
           'width' => '50',
           'class' => '',
@@ -301,6 +384,15 @@ if (function_exists('acf_add_local_field_group')) {
           'Optional text button that closes the postal entry modal, e.g. "Got it". Leave blank to show only the close icon.',
         'required' => 0,
         'default_value' => '',
+        'conditional_logic' => [
+          [
+            [
+              'field' => 'field_postal_entry_click_action',
+              'operator' => '!=',
+              'value' => 'url',
+            ],
+          ],
+        ],
         'wrapper' => [
           'width' => '50',
           'class' => '',
