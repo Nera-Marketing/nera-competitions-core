@@ -4,7 +4,7 @@
  * The Safety "Icon" field is an ACF select (select2 UI) whose values are
  * Material Symbols names. This shows each icon next to its label, in the list
  * and in the chosen value, so admins pick by sight instead of by name.
- * Enqueued on product edit screens by inc/prize-addons.php.
+ * Enqueued on product edit screens and Theme Settings → WooCommerce by inc/prize-addons.php.
  */
 (function ($) {
   'use strict';
@@ -13,7 +13,8 @@
     return;
   }
 
-  const FIELD_KEY = 'field_nera_psa_safety_item_icon';
+  // The prize's own Icon field and the Add-ons Bundles Global default's.
+  const FIELD_KEY = /^field_nera_psag?_safety_item_icon$/;
   const CUSTOM = '__custom';
 
   function render(state) {
@@ -31,7 +32,7 @@
   function withIconTemplates(args, $select) {
     // Identify the field from the DOM: the legacy acf.add_filter API passes a
     // jQuery element where acf.addFilter passes a field model.
-    if ($select && $select.closest('.acf-field').attr('data-key') === FIELD_KEY) {
+    if ($select && FIELD_KEY.test($select.closest('.acf-field').attr('data-key') || '')) {
       args.templateResult = render;
       args.templateSelection = render;
       args.dropdownCssClass = ((args.dropdownCssClass || '') + ' nera-icon-choice-dropdown').trim();

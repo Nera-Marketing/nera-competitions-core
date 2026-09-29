@@ -118,7 +118,7 @@ function nera_prize_safety_config(int $product_id): array
 {
   $config = ['enabled' => false, 'title' => '', 'description' => '', 'items' => []];
 
-  if (!$product_id || !function_exists('get_field') || !get_field('safety_enabled', $product_id)) {
+  if (!$product_id || !nera_prize_addons_site_enabled() || !function_exists('get_field') || !get_field('safety_enabled', $product_id)) {
     return $config;
   }
 
@@ -178,7 +178,7 @@ function nera_prize_addons_config(int $product_id): array
     'bundle_price' => null,
   ];
 
-  if (!$product_id || !function_exists('get_field') || !get_field('addons_enabled', $product_id)) {
+  if (!$product_id || !nera_prize_addons_site_enabled() || !function_exists('get_field') || !get_field('addons_enabled', $product_id)) {
     return $cache[$product_id] = $config;
   }
 

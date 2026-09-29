@@ -169,6 +169,14 @@ if ($nera_show_qa) {
         </div>
       </div>
 
+      <?php
+      // Safety, then add-ons for this prize, between the generated tickets and the quantity / gate note.
+      if ($nera_product) {
+        get_template_part('template-parts/single-product/lucky-dip-safety', null, ['product' => $nera_product]);
+        get_template_part('template-parts/single-product/lucky-dip-addons', null, ['product' => $nera_product]);
+      }
+      ?>
+
       <?php if ($nera_qty_args) : ?>
         <div class="nera-lucky-dip-regenerate__quantity">
           <?php

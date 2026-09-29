@@ -17,6 +17,16 @@ if (!defined('ABSPATH')) {
 
   <!-- Cart Items -->
   <div class="space-y-4 mb-6">
+    <?php
+    // Prize add-ons (inc/prize-addons.php) are not rows of their own here: the add-on panel
+    // is shown under the last ticket row of its draw, the same panel the basket uses.
+    $nera_last_ticket_key = [];
+    foreach (WC()->cart->get_cart() as $nera_key => $nera_item) {
+      if (!function_exists('nera_prize_addons_is_addon_cart_item') || !nera_prize_addons_is_addon_cart_item($nera_item)) {
+        $nera_last_ticket_key[(int) ($nera_item['product_id'] ?? 0)] = $nera_key;
+      }
+    }
+    ?>
     <?php foreach (WC()->cart->get_cart() as $cart_item_key => $cart_item):
 
       $_product = apply_filters(
@@ -27,6 +37,9 @@ if (!defined('ABSPATH')) {
       );
 
       if (!$_product || !$_product->exists() || $cart_item['quantity'] <= 0) {
+        continue;
+      }
+      if (function_exists('nera_prize_addons_is_addon_cart_item') && nera_prize_addons_is_addon_cart_item($cart_item)) {
         continue;
       }
       if (
@@ -43,21 +56,6 @@ if (!defined('ABSPATH')) {
       );
       $quantity = $cart_item['quantity'];
       $thumbnail = $_product->get_image([56, 56], ['class' => 'w-full h-full object-cover']);
-
-      // Prize add-on line: show the prize image and the chosen options (inc/prize-addons.php).
-      $addon_quote = null;
-      if (function_exists('nera_prize_addons_is_addon_cart_item') && nera_prize_addons_is_addon_cart_item($cart_item)) {
-        $addon_draw_id = (int) $cart_item[NERA_PRIZE_ADDON_CART_KEY]['draw_id'];
-        $addon_draw = wc_get_product($addon_draw_id);
-        if ($addon_draw) {
-          $thumbnail = $addon_draw->get_image([56, 56], ['class' => 'w-full h-full object-cover']);
-        }
-        $addon_quote = nera_prize_addons_quote(
-          $addon_draw_id,
-          (array) ($cart_item[NERA_PRIZE_ADDON_CART_KEY]['option_ids'] ?? []),
-          nera_prize_addons_current_user_purchased($addon_draw_id),
-        );
-      }
       ?>
 
       <div class="flex gap-3 items-start" data-cart-item-key="<?php echo esc_attr(
@@ -73,34 +71,22 @@ if (!defined('ABSPATH')) {
           <?php echo function_exists('nera_basket_hold_countdown_html')
             ? nera_basket_hold_countdown_html($cart_item_key, $cart_item)
             : ''; ?>
-          <?php if ($addon_quote && !empty($addon_quote['options'])): ?>
-            <ul class="mb-1 flex flex-col gap-0.5 text-xs text-text-secondary" role="list">
-              <?php foreach ($addon_quote['options'] as $addon_option): ?>
-                <li><?php echo esc_html($addon_option['title']); ?></li>
-              <?php endforeach; ?>
-            </ul>
-          <?php endif; ?>
           <div class="flex justify-between items-center">
             <span class="text-xs text-text-secondary">
               <?php // Show ticket count for lottery products
 
-      if ($addon_quote) {
-                // One add-on line per draw: no "qty × price", just what it is.
-                echo esc_html($addon_quote['full_bundle'] ? nera_prize_addons_label('meta_full_bundle') : nera_prize_addons_label('eyebrow'));
+      if ($_product->get_type() === 'lottery') {
+                $tickets_per_entry = 1; // Default, may vary by lottery plugin config
+                $total_tickets = $quantity * $tickets_per_entry;
+                echo esc_html(
+                  sprintf(
+                    _n('%d ticket', '%d tickets', $total_tickets, 'nera-competitions'),
+                    $total_tickets,
+                  ),
+                );
               } else {
-                if ($_product->get_type() === 'lottery') {
-                  $tickets_per_entry = 1; // Default, may vary by lottery plugin config
-                  $total_tickets = $quantity * $tickets_per_entry;
-                  echo esc_html(
-                    sprintf(
-                      _n('%d ticket', '%d tickets', $total_tickets, 'nera-competitions'),
-                      $total_tickets,
-                    ),
-                  );
-                } else {
-                  echo esc_html($quantity);
-                } ?> &times; <?php echo wp_kses_post(wc_price($_product->get_price()));
-              } ?>
+                echo esc_html($quantity);
+              } ?> &times; <?php echo wp_kses_post(wc_price($_product->get_price())); ?>
             </span>
             <span class="text-sm font-bold text-text-primary">
               <?php echo apply_filters(
@@ -130,6 +116,24 @@ if (!defined('ABSPATH')) {
           } ?>
         </div>
       </div>
+
+      <?php
+      // Add-ons bought with this draw, under its last ticket row.
+      if (
+        function_exists('nera_prize_addons_find_cart_line') &&
+        ($nera_last_ticket_key[(int) $_product->get_id()] ?? null) === $cart_item_key
+      ) {
+        $nera_addon_line = nera_prize_addons_find_cart_line((int) $_product->get_id());
+        if ($nera_addon_line) {
+          get_template_part('template-parts/cart/cart-item-addon', null, [
+            'cart_item_key' => $nera_addon_line[0],
+            'cart_item' => $nera_addon_line[1],
+            'readonly' => true,
+            'compact' => true,
+          ]);
+        }
+      }
+      ?>
 
     <?php
     endforeach; ?>

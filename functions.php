@@ -843,6 +843,27 @@ function nera_enqueue_scripts()
       NERA_VERSION,
       true,
     );
+    // Lucky Dip dialogs: prize add-ons, and the spending-limit question before tickets are
+    // added. Both are plain JS (the popups arrive after Alpine has started).
+    wp_enqueue_script(
+      'nera-lucky-dip-addons',
+      NERA_ASSETS_URI . '/js/lucky-dip-addons.js',
+      ['jquery'],
+      NERA_VERSION,
+      true,
+    );
+    wp_enqueue_script(
+      'nera-lucky-dip-limit',
+      NERA_ASSETS_URI . '/js/lucky-dip-limit.js',
+      ['jquery'],
+      NERA_VERSION,
+      true,
+    );
+    wp_add_inline_script(
+      'nera-lucky-dip-limit',
+      'window.neraLuckyDipLimit = ' . wp_json_encode(['ajaxUrl' => admin_url('admin-ajax.php')]) . ';',
+      'before',
+    );
   }
 
   // 4. Checkout component (must load before Alpine.js initializes)
@@ -1186,7 +1207,9 @@ require_once get_template_directory() . '/inc/acf/homepage/acf-homepage.php';
 
 // ACF Single Product Competition Fields
 require_once get_template_directory() . '/inc/acf/single-product/acf-single-product.php';
-require_once get_template_directory() . '/inc/helpers/prize-safety-icons.php';
+// Site switch + Global default for Safety & Add-ons: defines the shared field builder,
+// so it loads before both field groups (product box and Theme Settings → WooCommerce).
+require_once get_template_directory() . '/inc/prize-addons-settings.php';
 require_once get_template_directory() . '/inc/acf/single-product/acf-prize-addons.php';
 
 // ACF Contact Page Fields
@@ -2222,6 +2245,12 @@ function nera_ajax_add_to_cart()
     ]);
   }
 
+  // The prize page asks to be told before anything is added if the basket would go over a
+  // spending limit (nera_limit_check); other callers of this handler are not gated. Once the
+  // customer agreed (nera_limit_ack) the add goes ahead. Basket as it is now, to put back.
+  $limit_check = !empty($_POST['nera_limit_check']) && empty($_POST['nera_limit_ack']); // phpcs:ignore WordPress.Security.NonceVerification.Missing
+  $basket_before = $limit_check ? WC()->cart->get_cart_contents() : [];
+
   // Add to cart
   $cart_item_key = WC()->cart->add_to_cart($product_id, $quantity);
 
@@ -2252,6 +2281,41 @@ function nera_ajax_add_to_cart()
      * @param string $cart_item_key Ticket cart item key.
      */
     do_action('nera_ajax_add_to_cart_success', $product_id, $cart_item_key);
+
+    if ($limit_check) {
+      /**
+       * Ask whether the basket, now holding the new tickets and add-ons, needs the
+       * customer's confirmation before it stays that way.
+       *
+       * The Spending Limit plugin answers when the total would exceed the customer's limit.
+       *
+       * @param array|null $confirmation Null, or ['title', 'message', 'ok', 'cancel'].
+       * @param int        $product_id   Lottery product ID being added.
+       */
+      $confirmation = apply_filters('nera_add_to_cart_confirmation', null, $product_id);
+      if (is_array($confirmation)) {
+        // Nothing was agreed yet: put the basket back exactly as it was.
+        WC()->cart->set_cart_contents($basket_before);
+        WC()->cart->calculate_totals();
+        WC()->cart->set_session();
+        // A signed-in customer's saved basket is updated separately; without this the refused
+        // items would come back the next time they sign in on another device.
+        if (is_user_logged_in() && WC()->session && apply_filters('woocommerce_persistent_cart_enabled', true)) {
+          update_user_meta(get_current_user_id(), '_woocommerce_persistent_cart_' . get_current_blog_id(), [
+            'cart' => WC()->session->get('cart'),
+          ]);
+        }
+        if (WC()->session) {
+          WC()->session->save_data();
+        }
+        wp_send_json([
+          'error' => true,
+          'needs_confirmation' => true,
+          'message' => (string) ($confirmation['message'] ?? ''),
+          'confirmation' => $confirmation,
+        ]);
+      }
+    }
 
     // Fire the cart cookies action so woocommerce_items_in_cart cookie is set.
     // SiteGround Dynamic Cache (and similar Nginx caches) bypass caching when this
@@ -2295,6 +2359,58 @@ function nera_ajax_add_to_cart()
 }
 add_action('wp_ajax_woocommerce_ajax_add_to_cart', 'nera_ajax_add_to_cart');
 add_action('wp_ajax_nopriv_woocommerce_ajax_add_to_cart', 'nera_ajax_add_to_cart');
+
+/**
+ * Would adding tickets (and add-ons) take the basket over the customer's spending limit?
+ *
+ * Used by the Lucky Dip dialogs, which add tickets through Lottery for WooCommerce's own
+ * handlers and so cannot be gated inside nera_ajax_add_to_cart(). The script asks first,
+ * shows the confirmation if there is one, and only then lets the real request go.
+ *
+ * It only looks: nothing is added, so there is nothing to put back. The projection is the
+ * basket total now, plus quantity x the ticket price, plus the change to the prize's
+ * add-on line. Checkout stays the authority.
+ *
+ * Answers through the same nera_add_to_cart_confirmation filter as the purchase card.
+ */
+function nera_ajax_add_to_cart_limit_preview()
+{
+  // phpcs:disable WordPress.Security.NonceVerification.Missing -- read-only projection, changes nothing.
+  $product_id = isset($_POST['product_id']) ? absint($_POST['product_id']) : 0;
+  // 0 is allowed: ticking add-ons in a Lucky Dip popup, once its tickets are already in the basket.
+  $quantity = isset($_POST['quantity']) ? absint($_POST['quantity']) : 1;
+  $product = $product_id ? wc_get_product($product_id) : null;
+
+  if (!$product || !function_exists('WC') || !WC()->cart) {
+    wp_send_json(['needs_confirmation' => false]);
+  }
+
+  WC()->cart->calculate_totals();
+  $projected = (float) WC()->cart->get_total('edit') + $quantity * (float) $product->get_price();
+
+  if (
+    !empty($_POST['nera_addons_submitted']) &&
+    function_exists('nera_prize_addons_site_enabled') &&
+    nera_prize_addons_site_enabled() &&
+    nera_prize_addons_config($product_id)['enabled']
+  ) {
+    $raw = isset($_POST['nera_addon_ids']) ? (array) wp_unslash($_POST['nera_addon_ids']) : [];
+    $ids = array_values(array_unique(array_filter(array_map('sanitize_key', array_map('strval', $raw)))));
+    $quote = nera_prize_addons_quote($product_id, $ids, nera_prize_addons_current_user_purchased($product_id));
+    $line = nera_prize_addons_find_cart_line($product_id);
+    $projected += (float) $quote['total'] - ($line ? (float) ($line[1]['line_total'] ?? 0) : 0.0);
+  }
+  // phpcs:enable
+
+  $confirmation = apply_filters('nera_add_to_cart_confirmation', null, $product_id, $projected);
+  if (is_array($confirmation)) {
+    wp_send_json(['needs_confirmation' => true, 'confirmation' => $confirmation]);
+  }
+
+  wp_send_json(['needs_confirmation' => false]);
+}
+add_action('wp_ajax_nera_add_to_cart_limit_preview', 'nera_ajax_add_to_cart_limit_preview');
+add_action('wp_ajax_nopriv_nera_add_to_cart_limit_preview', 'nera_ajax_add_to_cart_limit_preview');
 
 /**
  * Send no-cache headers for the cart page

@@ -347,7 +347,7 @@ Track height is **14px** (`h-[14px]` on `.ncs-progress__track`). Fill uses a hor
 | `--ncs-prize-addons-purchased-bg` / `-border` / `-text` / `-icon` | success triplet | "Purchased" chip and tick |
 | `--ncs-prize-addons-muted-bg` | `var(--color-gray-50)` | Purchased row background |
 
-The cart row (`.ncs-cart-item.ncs-cart-item--addon`) exposes `--ncs-cart-addon-icon-bg`, `--ncs-cart-addon-icon` and `--ncs-cart-addon-rail` (the left rail that ties it to its tickets).
+The cart row (`.ncs-cart-item.ncs-cart-item--addon`) is a tinted panel under its draw's tickets with no quantity shown; it exposes `--ncs-cart-addon-icon-bg`, `--ncs-cart-addon-icon`, `--ncs-cart-addon-bg` and `--ncs-cart-addon-border`.
 
 **Prize add-on hooks** (see `docs/adr/0012-prize-add-on-lines.md`):
 
@@ -355,7 +355,9 @@ The cart row (`.ncs-cart-item.ncs-cart-item--addon`) exposes `--ncs-cart-addon-i
 - `nera_ajax_add_to_cart_success` (action, `$product_id, $cart_item_key`) — tickets added and validated by the theme's AJAX add to cart.
 - `nera_prize_addons_label` (filter, `$text, $key`) — reword any customer-facing label (`eyebrow`, `non_refundable`, `line_name`, `purchased`, …).
 - `nera_prize_addons_paid_statuses` (filter) — order statuses that lock options as "Purchased".
+- `nera_add_to_cart_confirmation` (filter, `$confirmation, $product_id, $projected_total`) — return `['title','message','ok','cancel']` to make the prize page and the Lucky Dip dialogs ask the customer before tickets are added (the Spending Limit plugin answers it). `$projected_total` is set when nothing has been added yet.
 - `nera_prize_safety_icon_choices` (filter) — the Safety icon dropdown, as group label => [Material Symbol name => label]. Admins can still pick "Other" and type any Material Symbol name.
+- Site switch and Global default: Theme Settings → WooCommerce → Add-ons Bundles (`nera_prize_addons_enabled`, off by default). `nera_prize_addons_site_enabled()` reads it; while off, Safety and Add-ons render nothing and add-on lines leave the basket. The Global default is copied into a prize's empty list in the admin form (see `docs/adr/0013-add-ons-site-switch-and-copied-global-defaults.md`).
 
 ### `.ncs-cart-item`
 

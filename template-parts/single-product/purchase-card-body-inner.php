@@ -548,12 +548,32 @@ do_action('nera_purchase_card_before_enter_form', $product, $args);
                 ajaxData.append('lty_question_answer_id', this.selectedAnswer);
               }
 
-              const ajaxResponse = await fetch(config.ajaxUrl, {
-                method: 'POST',
-                body: ajaxData
-              });
+              // Ask the server to tell us first if this would take the basket over the
+              // customer's spending limit (Spending Limit plugin). Nothing is added until
+              // they agree.
+              ajaxData.append('nera_limit_check', '1');
 
-              const result = await ajaxResponse.json();
+              const postAddToCart = async () => {
+                const ajaxResponse = await fetch(config.ajaxUrl, {
+                  method: 'POST',
+                  body: ajaxData
+                });
+                return ajaxResponse.json();
+              };
+
+              let result = await postAddToCart();
+
+              if (result.needs_confirmation) {
+                const c = result.confirmation || {};
+                const proceed = window.NeraSpendLimit && window.NeraSpendLimit.confirm
+                  ? await window.NeraSpendLimit.confirm(c)
+                  : window.confirm(c.message || '');
+                if (!proceed) {
+                  return; // finally{} re-enables the button
+                }
+                ajaxData.set('nera_limit_ack', '1');
+                result = await postAddToCart();
+              }
 
               if (result.error) {
                 Alpine.store('toast').error(result.message || config.i18n.error);

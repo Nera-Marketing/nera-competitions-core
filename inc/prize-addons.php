@@ -38,22 +38,28 @@ if (!defined('ABSPATH')) {
  */
 function nera_prize_addons_acf_normalise_option_ids(): void
 {
-  // phpcs:ignore WordPress.Security.NonceVerification.Missing -- ACF verified its nonce before firing acf/save_post.
-  if (empty($_POST['acf'][NERA_PRIZE_ADDON_ACF_ITEMS]) || !is_array($_POST['acf'][NERA_PRIZE_ADDON_ACF_ITEMS])) {
-    return;
-  }
+  // The prize's own options and the Global default's share the same rule.
+  foreach ([NERA_PRIZE_ADDON_KEY_PRODUCT, NERA_PRIZE_ADDON_KEY_GLOBAL] as $prefix) {
+    $items_key = $prefix . 'addons_items';
+    $id_key = $prefix . 'addon_option_id';
 
-  $seen = [];
-  foreach ($_POST['acf'][NERA_PRIZE_ADDON_ACF_ITEMS] as $row_key => $row) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
-    if (!is_array($row)) {
+    // phpcs:ignore WordPress.Security.NonceVerification.Missing -- ACF verified its nonce before firing acf/save_post.
+    if (empty($_POST['acf'][$items_key]) || !is_array($_POST['acf'][$items_key])) {
       continue;
     }
-    $id = sanitize_key((string) ($row[NERA_PRIZE_ADDON_ACF_ITEM_ID] ?? ''));
-    while ('' === $id || isset($seen[$id])) {
-      $id = 'ao_' . strtolower(wp_generate_password(10, false, false));
+
+    $seen = [];
+    foreach ($_POST['acf'][$items_key] as $row_key => $row) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
+      if (!is_array($row)) {
+        continue;
+      }
+      $id = sanitize_key((string) ($row[$id_key] ?? ''));
+      while ('' === $id || isset($seen[$id])) {
+        $id = 'ao_' . strtolower(wp_generate_password(10, false, false));
+      }
+      $seen[$id] = true;
+      $_POST['acf'][$items_key][$row_key][$id_key] = $id; // phpcs:ignore WordPress.Security.NonceVerification.Missing
     }
-    $seen[$id] = true;
-    $_POST['acf'][NERA_PRIZE_ADDON_ACF_ITEMS][$row_key][NERA_PRIZE_ADDON_ACF_ITEM_ID] = $id; // phpcs:ignore WordPress.Security.NonceVerification.Missing
   }
 }
 add_action('acf/save_post', 'nera_prize_addons_acf_normalise_option_ids', 5);
@@ -73,6 +79,7 @@ function nera_prize_addons_acf_hide_option_id($field)
   return $field;
 }
 add_filter('acf/prepare_field/key=' . NERA_PRIZE_ADDON_ACF_ITEM_ID, 'nera_prize_addons_acf_hide_option_id');
+add_filter('acf/prepare_field/key=' . NERA_PRIZE_ADDON_KEY_GLOBAL . 'addon_option_id', 'nera_prize_addons_acf_hide_option_id');
 
 /**
  * Reject a Full bundle price that is not a real discount.
@@ -81,24 +88,29 @@ add_filter('acf/prepare_field/key=' . NERA_PRIZE_ADDON_ACF_ITEM_ID, 'nera_prize_
  * @param mixed       $value Submitted bundle price.
  * @return bool|string
  */
-function nera_prize_addons_acf_validate_bundle($valid, $value)
+function nera_prize_addons_acf_validate_bundle($valid, $value, $field = [])
 {
   if (true !== $valid || '' === $value || null === $value) {
     return $valid;
   }
 
+  // The Global default is checked against its own options and its own switch.
+  $is_global = 0 === strpos((string) ($field['key'] ?? ''), NERA_PRIZE_ADDON_KEY_GLOBAL);
+  $prefix = $is_global ? NERA_PRIZE_ADDON_KEY_GLOBAL : NERA_PRIZE_ADDON_KEY_PRODUCT;
+  $enabled_key = $is_global ? NERA_PRIZE_ADDON_ACF_SITE_SWITCH : NERA_PRIZE_ADDON_ACF_ENABLED;
+
   // phpcs:disable WordPress.Security.NonceVerification.Missing -- ACF validates its own nonce.
   $acf = isset($_POST['acf']) && is_array($_POST['acf']) ? wp_unslash($_POST['acf']) : [];
   // phpcs:enable
-  if (empty($acf[NERA_PRIZE_ADDON_ACF_ENABLED])) {
+  if (empty($acf[$enabled_key])) {
     return $valid;
   }
 
   $count = 0;
   $total = 0.0;
-  foreach ((array) ($acf[NERA_PRIZE_ADDON_ACF_ITEMS] ?? []) as $row) {
-    $title = trim((string) ($row[NERA_PRIZE_ADDON_ACF_ITEM_TITLE] ?? ''));
-    $price = (float) ($row[NERA_PRIZE_ADDON_ACF_ITEM_PRICE] ?? 0);
+  foreach ((array) ($acf[$prefix . 'addons_items'] ?? []) as $row) {
+    $title = trim((string) ($row[$prefix . 'addon_title'] ?? ''));
+    $price = (float) ($row[$prefix . 'addon_price'] ?? 0);
     if ('' !== $title && $price > 0) {
       $count++;
       $total += $price;
@@ -119,7 +131,8 @@ function nera_prize_addons_acf_validate_bundle($valid, $value)
 
   return $valid;
 }
-add_filter('acf/validate_value/key=' . NERA_PRIZE_ADDON_ACF_BUNDLE, 'nera_prize_addons_acf_validate_bundle', 10, 2);
+add_filter('acf/validate_value/key=' . NERA_PRIZE_ADDON_ACF_BUNDLE, 'nera_prize_addons_acf_validate_bundle', 10, 3);
+add_filter('acf/validate_value/key=' . NERA_PRIZE_ADDON_KEY_GLOBAL . 'addons_bundle_price', 'nera_prize_addons_acf_validate_bundle', 10, 3);
 
 /**
  * Plain message for an option price of 0 or less.
@@ -142,16 +155,19 @@ function nera_prize_addons_acf_validate_price($valid, $value)
     : __('Price must be greater than 0. Free items belong in the Safety tab.', 'nera-competitions');
 }
 add_filter('acf/validate_value/key=' . NERA_PRIZE_ADDON_ACF_ITEM_PRICE, 'nera_prize_addons_acf_validate_price', 20, 2);
+add_filter('acf/validate_value/key=' . NERA_PRIZE_ADDON_KEY_GLOBAL . 'addon_price', 'nera_prize_addons_acf_validate_price', 20, 2);
 
 /**
- * Icon preview for the Safety icon dropdown on product edit screens.
+ * Icon preview and price-field styling for the product edit screen and the Add-ons Bundles settings.
  *
  * @return void
  */
 function nera_prize_addons_admin_assets(): void
 {
   $screen = function_exists('get_current_screen') ? get_current_screen() : null;
-  if (!$screen || 'product' !== $screen->post_type) {
+  // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only screen check.
+  $on_settings = isset($_GET['page']) && 'acf-options-woocommerce' === sanitize_key(wp_unslash($_GET['page']));
+  if (!$screen || ('product' !== $screen->post_type && !$on_settings)) {
     return;
   }
 
@@ -258,7 +274,7 @@ add_action('template_redirect', 'nera_prize_addons_block_product_page');
  */
 function nera_prize_addons_render_purchase_card($product, $args = []): void
 {
-  if (!nera_prize_addons_is_lottery($product) || !function_exists('nera_render_component')) {
+  if (!nera_prize_addons_site_enabled() || !nera_prize_addons_is_lottery($product) || !function_exists('nera_render_component')) {
     return;
   }
   if (!empty($args['is_expired']) || (method_exists($product, 'is_closed') && $product->is_closed())) {
@@ -309,7 +325,7 @@ function nera_prize_addons_internal_add(?bool $set = null): bool
 function nera_prize_addons_sync_from_request($product_id, $cart_item_key = ''): void
 {
   // phpcs:disable WordPress.Security.NonceVerification.Missing -- same unauthenticated add-to-cart request as the tickets; prices are never read from it.
-  if (empty($_POST['nera_addons_submitted'])) {
+  if (!nera_prize_addons_site_enabled() || empty($_POST['nera_addons_submitted'])) {
     return;
   }
   $raw = isset($_POST['nera_addon_ids']) ? (array) wp_unslash($_POST['nera_addon_ids']) : [];
@@ -319,6 +335,79 @@ function nera_prize_addons_sync_from_request($product_id, $cart_item_key = ''): 
   nera_prize_addons_set_cart_selection((int) $product_id, $ids);
 }
 add_action('nera_ajax_add_to_cart_success', 'nera_prize_addons_sync_from_request', 10, 2);
+
+/**
+ * Apply the add-ons chosen in the Lucky Dip dialogs when Lucky Dip tickets are added.
+ *
+ * Lottery for WooCommerce adds Lucky Dip tickets with its own AJAX handlers, not the
+ * theme's, so nera_ajax_add_to_cart_success never fires for them. WooCommerce's own
+ * woocommerce_add_to_cart does, right after the tickets are in the basket. The Lucky
+ * Dip script (assets/js/lucky-dip-addons.js) adds nera_addons_submitted and
+ * nera_addon_ids[] to exactly these requests, and only when the prize shows add-ons.
+ *
+ * @param string $cart_item_key Ticket cart item key.
+ * @param int    $product_id    Product added.
+ * @return void
+ */
+function nera_prize_addons_sync_from_lucky_dip($cart_item_key, $product_id): void
+{
+  static $done = false;
+
+  // The add-on line is itself added to the basket: do not react to that.
+  if ($done || nera_prize_addons_internal_add() || !wp_doing_ajax()) {
+    return;
+  }
+  // phpcs:ignore WordPress.Security.NonceVerification.Missing -- LFW's handler verified its nonce before adding.
+  $action = isset($_POST['action']) ? sanitize_key(wp_unslash($_POST['action'])) : '';
+  if (!in_array($action, ['lty_process_lucky_dip', 'lty_regenerate_lucky_dip_add_to_cart'], true)) {
+    return;
+  }
+
+  $done = true;
+  nera_prize_addons_sync_from_request((int) $product_id, (string) $cart_item_key);
+}
+add_action('woocommerce_add_to_cart', 'nera_prize_addons_sync_from_lucky_dip', 20, 2);
+
+/**
+ * Save the add-ons ticked in a Lucky Dip popup once its tickets are already in the basket.
+ *
+ * After "add directly" the tickets are in the basket before the customer sees the popup,
+ * so ticking there has no add-to-cart request to ride on: the script (lucky-dip-addons.js)
+ * calls this instead. Same rules as everywhere else: the server prices and validates the
+ * line, an empty selection removes it, and it needs tickets for the draw to be in the
+ * basket.
+ *
+ * @return void
+ */
+function nera_prize_addons_ajax_save_selection(): void
+{
+  // phpcs:disable WordPress.Security.NonceVerification.Missing -- changes only the caller's own basket, like add to cart.
+  $draw_id = isset($_POST['product_id']) ? absint($_POST['product_id']) : 0;
+  $raw = isset($_POST['nera_addon_ids']) ? (array) wp_unslash($_POST['nera_addon_ids']) : [];
+  // phpcs:enable
+
+  if (
+    !$draw_id ||
+    !nera_prize_addons_site_enabled() ||
+    !function_exists('WC') ||
+    !WC()->cart ||
+    !nera_prize_addons_draw_has_tickets($draw_id)
+  ) {
+    wp_send_json(['ok' => false]);
+  }
+
+  $ids = array_values(array_unique(array_filter(array_map('sanitize_key', array_map('strval', $raw)))));
+  nera_prize_addons_set_cart_selection($draw_id, $ids);
+  WC()->cart->calculate_totals();
+  if (WC()->session) {
+    WC()->session->save_data();
+  }
+
+  $line = nera_prize_addons_find_cart_line($draw_id);
+  wp_send_json(['ok' => true, 'selected' => $line ? array_values((array) $line[1][NERA_PRIZE_ADDON_CART_KEY]['option_ids']) : []]);
+}
+add_action('wp_ajax_nera_prize_addons_save', 'nera_prize_addons_ajax_save_selection');
+add_action('wp_ajax_nopriv_nera_prize_addons_save', 'nera_prize_addons_ajax_save_selection');
 
 /**
  * Make the cart's add-on line for a draw match a selection.
@@ -636,6 +725,47 @@ function nera_prize_addons_after_item_removed($cart_item_key, $cart): void
   }
 }
 add_action('woocommerce_cart_item_removed', 'nera_prize_addons_after_item_removed', 10, 2);
+
+/**
+ * Remove one option from a draw's add-on line (the × on an option in the basket).
+ *
+ * Mirrors WooCommerce's own `?remove_item=` link: a GET carrying the cart nonce,
+ * handled on wp_loaded (after WooCommerce's handler at priority 20), then a redirect
+ * back to the basket. Removing the last option removes the whole line. Dropping an
+ * option from a Full bundle simply reprices the rest at their own prices.
+ *
+ * @return void
+ */
+function nera_prize_addons_handle_remove_option(): void
+{
+  // phpcs:disable WordPress.Security.NonceVerification.Recommended -- nonce checked below.
+  if (empty($_GET['nera_remove_addon']) || empty($_GET['nera_addon_line']) || !function_exists('WC') || !WC()->cart) {
+    return;
+  }
+  $nonce = isset($_GET['_wpnonce']) ? sanitize_text_field(wp_unslash($_GET['_wpnonce'])) : '';
+  if (!wp_verify_nonce($nonce, 'woocommerce-cart')) {
+    return;
+  }
+  $line_key = sanitize_text_field(wp_unslash($_GET['nera_addon_line']));
+  $option_id = sanitize_key(wp_unslash($_GET['nera_remove_addon']));
+  // phpcs:enable
+
+  $cart = WC()->cart;
+  $item = $cart->get_cart_item($line_key);
+  if ($item && nera_prize_addons_is_addon_cart_item($item)) {
+    $left = array_values(array_diff((array) ($item[NERA_PRIZE_ADDON_CART_KEY]['option_ids'] ?? []), [$option_id]));
+    if (empty($left)) {
+      $cart->remove_cart_item($line_key);
+    } else {
+      $cart->cart_contents[$line_key][NERA_PRIZE_ADDON_CART_KEY]['option_ids'] = $left;
+    }
+    $cart->calculate_totals();
+  }
+
+  wp_safe_redirect(wc_get_cart_url());
+  exit;
+}
+add_action('wp_loaded', 'nera_prize_addons_handle_remove_option', 25);
 
 /**
  * Add-on lines are not tickets: leave them out of the header basket count.
