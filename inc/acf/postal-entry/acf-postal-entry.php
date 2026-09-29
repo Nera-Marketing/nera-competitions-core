@@ -52,6 +52,44 @@ if (function_exists('acf_add_local_field_group')) {
           'id' => '',
         ],
       ],
+      // Click action (purchase card CTA)
+      [
+        'key' => 'field_postal_entry_click_action',
+        'label' => 'Click Action',
+        'name' => 'postal_entry_click_action',
+        'type' => 'button_group',
+        'instructions' =>
+          'What happens when a visitor clicks the postal entry link on single product pages.',
+        'required' => 0,
+        'choices' => [
+          'dialog' => 'Open dialog',
+          'url' => 'Go to URL',
+        ],
+        'default_value' => 'dialog',
+        'return_format' => 'value',
+        'allow_null' => 0,
+        'layout' => 'horizontal',
+      ],
+      [
+        'key' => 'field_postal_entry_url',
+        'label' => 'Destination URL',
+        'name' => 'postal_entry_url',
+        'type' => 'url',
+        'instructions' =>
+          'Where the postal entry link goes on single product pages. Leave blank to keep opening the dialog.',
+        'required' => 0,
+        'default_value' => '',
+        'placeholder' => 'https://example.com/postal-entry/',
+        'conditional_logic' => [
+          [
+            [
+              'field' => 'field_postal_entry_click_action',
+              'operator' => '==',
+              'value' => 'url',
+            ],
+          ],
+        ],
+      ],
       // Instruction Text
       [
         'key' => 'field_postal_instruction_text',
