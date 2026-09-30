@@ -1,5 +1,7 @@
 # Gate Safety & Add-ons behind a site switch and seed prizes from copied global defaults
 
+> **Partly superseded by [ADR 0014](0014-add-ons-catalog-that-prizes-pick-from.md).** Prizes no longer receive a copy of a "Global default": Safety items and Add-on options live in one Catalog that prizes pick from. The site switch and the rules for switching it off below still apply.
+
 Not every site sells prize add-ons, and most prizes on a site that does still won't. Theme Settings → WooCommerce → **Add-ons Bundles** therefore holds a site-wide switch (**off by default**) and a **Global default** for Safety and for Add-ons, so an admin types a common list once instead of on every prize. Implemented in `inc/prize-addons-settings.php`; the same field builder produces the prize box and the settings section.
 
 ## Why a copy, not a live link

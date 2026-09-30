@@ -1220,10 +1220,12 @@ require_once get_template_directory() . '/inc/acf/homepage/acf-homepage.php';
 
 // ACF Single Product Competition Fields
 require_once get_template_directory() . '/inc/acf/single-product/acf-single-product.php';
-// Site switch + Global default for Safety & Add-ons: defines the shared field builder,
-// so it loads before both field groups (product box and Theme Settings → WooCommerce).
+// Site switch + Catalog for Safety & Add-ons: defines the Catalog reader and the settings
+// fields, so it loads before the field groups that use them (docs/adr/0014).
 require_once get_template_directory() . '/inc/prize-addons-settings.php';
 require_once get_template_directory() . '/inc/acf/single-product/acf-prize-addons.php';
+// One-time move of per-prize Safety items and Add-on options into the Catalog (docs/adr/0014).
+require_once get_template_directory() . '/inc/prize-addons-migration.php';
 
 // ACF Contact Page Fields
 require_once get_template_directory() . '/inc/acf/contact/acf-contact.php';

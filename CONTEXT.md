@@ -17,11 +17,19 @@ An optional paid extra a customer can buy with their tickets for a prize. Charge
 _Avoid_: Upsell, extra (in customer-facing copy "extras" is tolerated)
 
 **Add-on option**:
-One purchasable item within a prize's Add-ons, with a fixed price.
+One purchasable item with a fixed price, defined once in the Add-ons catalog and chosen by prizes from there.
 _Avoid_: Add-on (when meaning a single item)
 
+**Catalog**:
+The site-wide list of Safety items and Add-on options, kept only in site settings. A prize picks entries from it and cannot change them; editing an entry applies to every prize using it at once, and an entry a prize uses cannot be deleted.
+_Avoid_: Global default, template, library
+
+**Selected items**:
+The catalog entries one prize has chosen, in the order the admin chose them. A prize's own text (title, description) and its Full bundle price are the only things a prize can set for itself.
+_Avoid_: Prize items, overrides (for the picks)
+
 **Full bundle**:
-An optional fixed price that replaces the options total, applying only when a customer buys every option of a prize in one purchase and owns none of them already.
+A fixed price, set per prize, that replaces the total of that prize's selected options, applying only when a customer buys every one of them in one purchase and owns none already. It is offered only when the prize has two or more options and the price is below their total; it can never exceed the total.
 _Avoid_: Discount, package
 
 **Purchased**:
@@ -31,7 +39,3 @@ _Avoid_: Owned, locked
 **Add-ons Bundles switch**:
 The site-wide on/off for the whole Safety and Add-ons feature. While off, customers see and can buy nothing from it, but saved prize data and already-placed orders are untouched. Off by default.
 _Avoid_: Master toggle, feature flag
-
-**Global default**:
-A site-wide template of Safety items and Add-on options, entered once in site settings. It is copied into a prize when that prize's section is set up; after that the prize's own list is independent, and later edits to the global default never reach prizes already set up.
-_Avoid_: Global setting, shared list, inherited

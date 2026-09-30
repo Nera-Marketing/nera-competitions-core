@@ -26,10 +26,6 @@ const NERA_PRIZE_ADDON_CART_KEY = 'nera_prize_addon';
 
 /** ACF field keys the save/validate hooks need to reach into $_POST['acf']. */
 const NERA_PRIZE_ADDON_ACF_ENABLED = 'field_nera_psa_addons_enabled';
-const NERA_PRIZE_ADDON_ACF_ITEMS = 'field_nera_psa_addons_items';
-const NERA_PRIZE_ADDON_ACF_ITEM_ID = 'field_nera_psa_addon_option_id';
-const NERA_PRIZE_ADDON_ACF_ITEM_TITLE = 'field_nera_psa_addon_title';
-const NERA_PRIZE_ADDON_ACF_ITEM_PRICE = 'field_nera_psa_addon_price';
 const NERA_PRIZE_ADDON_ACF_BUNDLE = 'field_nera_psa_addons_bundle_price';
 
 /**
@@ -109,10 +105,56 @@ function nera_prize_addons_money_text(float $amount): string
 }
 
 /**
+ * The Catalog entries a prize has picked, in the order the admin picked them.
+ *
+ * Picks that no longer resolve (an entry that was deleted, or a stale ID) are skipped
+ * rather than shown broken. The Catalog itself refuses to delete an entry a prize uses.
+ *
+ * @param int    $product_id Lottery product ID.
+ * @param string $kind       'safety' or 'addons'.
+ * @return array<string,array<string,mixed>> Catalog entries keyed by ID.
+ */
+function nera_prize_addons_picked_entries(int $product_id, string $kind): array
+{
+  $catalog = nera_prize_addons_catalog($kind);
+  $picked = (array) get_field('safety' === $kind ? 'safety_item_ids' : 'addon_option_ids', $product_id);
+
+  $entries = [];
+  foreach ($picked as $id) {
+    $id = sanitize_key((string) $id);
+    if (isset($catalog[$id])) {
+      $entries[$id] = $catalog[$id];
+    }
+  }
+
+  return $entries;
+}
+
+/**
+ * A prize's own title or description, or the settings default when it has none.
+ *
+ * Read when it is shown, not copied: changing the default reaches every prize that has
+ * no text of its own.
+ *
+ * @param int    $product_id Lottery product ID.
+ * @param string $field      Prize field name (e.g. 'safety_title').
+ * @return string
+ */
+function nera_prize_addons_text(int $product_id, string $field): string
+{
+  $own = trim((string) get_field($field, $product_id));
+  if ('' !== $own) {
+    return $own;
+  }
+
+  return trim((string) get_field(NERA_PRIZE_ADDON_GLOBAL_PREFIX . $field, 'option'));
+}
+
+/**
  * Safety block settings for one prize.
  *
  * @param int $product_id Lottery product ID.
- * @return array{enabled:bool,title:string,description:string,items:list<array{icon:string,title:string,description:string}>}
+ * @return array{enabled:bool,title:string,description:string,items:list<array{id:string,icon:string,title:string,description:string}>}
  */
 function nera_prize_safety_config(int $product_id): array
 {
@@ -122,32 +164,17 @@ function nera_prize_safety_config(int $product_id): array
     return $config;
   }
 
-  $items = [];
-  foreach ((array) get_field('safety_items', $product_id) as $row) {
-    $title = trim((string) ($row['title'] ?? ''));
-    if ('' === $title) {
-      continue;
-    }
-    $icon = function_exists('nera_prize_safety_resolve_icon')
-      ? nera_prize_safety_resolve_icon((string) ($row['icon'] ?? ''), (string) ($row['icon_custom'] ?? ''))
-      : preg_replace('/[^a-z0-9_]/', '', strtolower(trim((string) ($row['icon'] ?? ''))));
-    $items[] = [
-      'icon' => $icon ?: 'health_and_safety',
-      'title' => $title,
-      'description' => trim((string) ($row['description'] ?? '')),
-    ];
-  }
-
+  $items = array_values(nera_prize_addons_picked_entries($product_id, 'safety'));
   if (empty($items)) {
     return $config;
   }
 
-  $title = trim((string) get_field('safety_title', $product_id));
+  $title = nera_prize_addons_text($product_id, 'safety_title');
 
   return [
     'enabled' => true,
     'title' => '' !== $title ? $title : nera_prize_addons_label('safety_title'),
-    'description' => trim((string) get_field('safety_description', $product_id)),
+    'description' => nera_prize_addons_text($product_id, 'safety_description'),
     'items' => $items,
   ];
 }
@@ -155,9 +182,10 @@ function nera_prize_safety_config(int $product_id): array
 /**
  * Add-ons settings for one prize.
  *
- * Options without an ID, a title or a price above 0 are dropped. The bundle
- * price is only kept when there are at least two options and it is below the
- * options total; anything else means "no bundle discount".
+ * The options are the Catalog entries the prize picked, so their titles, descriptions
+ * and prices are the Catalog's. The bundle price is the prize's own and only counts
+ * when there are at least two options and it is below their total: anything else means
+ * "no bundle discount".
  *
  * @param int $product_id Lottery product ID.
  * @return array{enabled:bool,title:string,description:string,options:array<string,array{id:string,title:string,description:string,price:float}>,total:float,bundle_price:?float}
@@ -182,34 +210,19 @@ function nera_prize_addons_config(int $product_id): array
     return $cache[$product_id] = $config;
   }
 
-  $options = [];
-  foreach ((array) get_field('addons_items', $product_id) as $row) {
-    $id = sanitize_key((string) ($row['option_id'] ?? ''));
-    $title = trim((string) ($row['title'] ?? ''));
-    $price = round((float) ($row['price'] ?? 0), 2);
-    if ('' === $id || '' === $title || $price <= 0 || isset($options[$id])) {
-      continue;
-    }
-    $options[$id] = [
-      'id' => $id,
-      'title' => $title,
-      'description' => trim((string) ($row['description'] ?? '')),
-      'price' => $price,
-    ];
-  }
-
+  $options = nera_prize_addons_picked_entries($product_id, 'addons');
   if (empty($options)) {
     return $cache[$product_id] = $config;
   }
 
   $total = round(array_sum(array_column($options, 'price')), 2);
   $bundle_raw = get_field('addons_bundle_price', $product_id);
-  $bundle = '' === $bundle_raw || null === $bundle_raw ? 0.0 : round((float) $bundle_raw, 2);
+  $bundle = '' === $bundle_raw || null === $bundle_raw || false === $bundle_raw ? 0.0 : round((float) $bundle_raw, 2);
 
   return $cache[$product_id] = [
     'enabled' => true,
-    'title' => trim((string) get_field('addons_title', $product_id)),
-    'description' => trim((string) get_field('addons_description', $product_id)),
+    'title' => nera_prize_addons_text($product_id, 'addons_title'),
+    'description' => nera_prize_addons_text($product_id, 'addons_description'),
     'options' => $options,
     'total' => $total,
     'bundle_price' => count($options) >= 2 && $bundle > 0 && $bundle < $total ? $bundle : null,

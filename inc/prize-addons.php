@@ -25,24 +25,27 @@ if (!defined('ABSPATH')) {
 }
 
 /* -------------------------------------------------------------------------
- * Admin: stable option IDs, bundle price validation, hidden product
+ * Admin: the Catalog, a prize's picks, hidden product
  * ---------------------------------------------------------------------- */
 
 /**
- * Give every add-on option a stable, unique ID before ACF saves the rows.
+ * Give every Catalog entry a stable, unique ID before ACF saves the rows.
  *
- * Runs ahead of ACF's own save (priority 10) so the IDs are saved with the
- * row. Duplicated rows (ACF's "duplicate row" copies the ID) get a fresh one.
+ * Runs ahead of ACF's own save (priority 10) so the IDs are saved with the row. A
+ * prize refers to an entry by this ID, and the "Purchased" lock and placed orders
+ * match add-on options by it, so it must survive renaming and reordering. Duplicated
+ * rows (ACF's "duplicate row" copies the ID) get a fresh one.
  *
  * @return void
  */
-function nera_prize_addons_acf_normalise_option_ids(): void
+function nera_prize_addons_acf_normalise_ids(): void
 {
-  // The prize's own options and the Global default's share the same rule.
-  foreach ([NERA_PRIZE_ADDON_KEY_PRODUCT, NERA_PRIZE_ADDON_KEY_GLOBAL] as $prefix) {
-    $items_key = $prefix . 'addons_items';
-    $id_key = $prefix . 'addon_option_id';
+  $catalogs = [
+    [NERA_PRIZE_ADDON_CATALOG_SAFETY, NERA_PRIZE_ADDON_CATALOG_SAFETY_ID, 'si_'],
+    [NERA_PRIZE_ADDON_CATALOG_ADDONS, NERA_PRIZE_ADDON_CATALOG_ADDONS_ID, 'ao_'],
+  ];
 
+  foreach ($catalogs as [$items_key, $id_key, $id_prefix]) {
     // phpcs:ignore WordPress.Security.NonceVerification.Missing -- ACF verified its nonce before firing acf/save_post.
     if (empty($_POST['acf'][$items_key]) || !is_array($_POST['acf'][$items_key])) {
       continue;
@@ -55,22 +58,22 @@ function nera_prize_addons_acf_normalise_option_ids(): void
       }
       $id = sanitize_key((string) ($row[$id_key] ?? ''));
       while ('' === $id || isset($seen[$id])) {
-        $id = 'ao_' . strtolower(wp_generate_password(10, false, false));
+        $id = $id_prefix . strtolower(wp_generate_password(10, false, false));
       }
       $seen[$id] = true;
       $_POST['acf'][$items_key][$row_key][$id_key] = $id; // phpcs:ignore WordPress.Security.NonceVerification.Missing
     }
   }
 }
-add_action('acf/save_post', 'nera_prize_addons_acf_normalise_option_ids', 5);
+add_action('acf/save_post', 'nera_prize_addons_acf_normalise_ids', 5);
 
 /**
- * Keep the option ID field out of the admin's way; it is generated on save.
+ * Keep the ID field out of the admin's way; it is generated on save.
  *
  * @param array|false $field ACF field.
  * @return array|false
  */
-function nera_prize_addons_acf_hide_option_id($field)
+function nera_prize_addons_acf_hide_id($field)
 {
   if (is_array($field)) {
     $field['wrapper']['class'] = trim(($field['wrapper']['class'] ?? '') . ' acf-hidden');
@@ -78,61 +81,60 @@ function nera_prize_addons_acf_hide_option_id($field)
 
   return $field;
 }
-add_filter('acf/prepare_field/key=' . NERA_PRIZE_ADDON_ACF_ITEM_ID, 'nera_prize_addons_acf_hide_option_id');
-add_filter('acf/prepare_field/key=' . NERA_PRIZE_ADDON_KEY_GLOBAL . 'addon_option_id', 'nera_prize_addons_acf_hide_option_id');
+add_filter('acf/prepare_field/key=' . NERA_PRIZE_ADDON_CATALOG_SAFETY_ID, 'nera_prize_addons_acf_hide_id');
+add_filter('acf/prepare_field/key=' . NERA_PRIZE_ADDON_CATALOG_ADDONS_ID, 'nera_prize_addons_acf_hide_id');
 
 /**
- * Reject a Full bundle price that is not a real discount.
+ * Reject a Full bundle price above the total of the options the prize picked.
+ *
+ * The field is locked until an option is picked and capped in the browser too
+ * (assets/js/admin-prize-addons.js); this is the authoritative check. A price equal to
+ * the total is accepted but never offered to customers, since it saves nothing
+ * (nera_prize_addons_config()).
  *
  * @param bool|string $valid Current validity.
  * @param mixed       $value Submitted bundle price.
  * @return bool|string
  */
-function nera_prize_addons_acf_validate_bundle($valid, $value, $field = [])
+function nera_prize_addons_acf_validate_bundle($valid, $value)
 {
   if (true !== $valid || '' === $value || null === $value) {
     return $valid;
   }
 
-  // The Global default is checked against its own options and its own switch.
-  $is_global = 0 === strpos((string) ($field['key'] ?? ''), NERA_PRIZE_ADDON_KEY_GLOBAL);
-  $prefix = $is_global ? NERA_PRIZE_ADDON_KEY_GLOBAL : NERA_PRIZE_ADDON_KEY_PRODUCT;
-  $enabled_key = $is_global ? NERA_PRIZE_ADDON_ACF_SITE_SWITCH : NERA_PRIZE_ADDON_ACF_ENABLED;
-
   // phpcs:disable WordPress.Security.NonceVerification.Missing -- ACF validates its own nonce.
   $acf = isset($_POST['acf']) && is_array($_POST['acf']) ? wp_unslash($_POST['acf']) : [];
   // phpcs:enable
-  if (empty($acf[$enabled_key])) {
-    return $valid;
+  if (empty($acf[NERA_PRIZE_ADDON_ACF_ENABLED])) {
+    return $valid; // Add-ons are not shown on this prize: nothing to price.
   }
 
-  $count = 0;
+  $catalog = nera_prize_addons_catalog('addons');
   $total = 0.0;
-  foreach ((array) ($acf[$prefix . 'addons_items'] ?? []) as $row) {
-    $title = trim((string) ($row[$prefix . 'addon_title'] ?? ''));
-    $price = (float) ($row[$prefix . 'addon_price'] ?? 0);
-    if ('' !== $title && $price > 0) {
+  $count = 0;
+  foreach (array_unique(array_map('sanitize_key', array_map('strval', (array) ($acf[NERA_PRIZE_ADDON_PICK_ADDONS] ?? [])))) as $id) {
+    if (isset($catalog[$id])) {
+      $total += $catalog[$id]['price'];
       $count++;
-      $total += $price;
     }
   }
+  $total = round($total, 2);
 
-  if ($count < 2) {
-    return __('A Full bundle price needs at least two options. Add another option or leave the bundle price empty.', 'nera-competitions');
+  if (0 === $count) {
+    return __('Choose add-on options first: the Full bundle price is for the options chosen above. Leave it empty to have none.', 'nera-competitions');
   }
 
-  if ((float) $value >= $total) {
+  if ((float) $value > $total) {
     return sprintf(
       /* translators: %s: options total */
-      __('The Full bundle price must be lower than the options total (%s). Leave it empty for no bundle discount.', 'nera-competitions'),
+      __('The Full bundle price cannot be higher than the total of the chosen options (%s).', 'nera-competitions'),
       nera_prize_addons_money_text($total)
     );
   }
 
   return $valid;
 }
-add_filter('acf/validate_value/key=' . NERA_PRIZE_ADDON_ACF_BUNDLE, 'nera_prize_addons_acf_validate_bundle', 10, 3);
-add_filter('acf/validate_value/key=' . NERA_PRIZE_ADDON_KEY_GLOBAL . 'addons_bundle_price', 'nera_prize_addons_acf_validate_bundle', 10, 3);
+add_filter('acf/validate_value/key=' . NERA_PRIZE_ADDON_ACF_BUNDLE, 'nera_prize_addons_acf_validate_bundle', 10, 2);
 
 /**
  * Plain message for an option price of 0 or less.
@@ -152,13 +154,103 @@ function nera_prize_addons_acf_validate_price($valid, $value)
 
   return (float) $value > 0
     ? $valid
-    : __('Price must be greater than 0. Free items belong in the Safety tab.', 'nera-competitions');
+    : __('Price must be greater than 0. Free items belong in the Safety catalog.', 'nera-competitions');
 }
-add_filter('acf/validate_value/key=' . NERA_PRIZE_ADDON_ACF_ITEM_PRICE, 'nera_prize_addons_acf_validate_price', 20, 2);
 add_filter('acf/validate_value/key=' . NERA_PRIZE_ADDON_KEY_GLOBAL . 'addon_price', 'nera_prize_addons_acf_validate_price', 20, 2);
 
 /**
- * Icon preview and price-field styling for the product edit screen and the Add-ons Bundles settings.
+ * The prizes that have picked a Catalog entry.
+ *
+ * @param string $meta_key 'safety_item_ids' or 'addon_option_ids'.
+ * @param string $id       Catalog entry ID.
+ * @return int[] Product IDs (trash and auto-drafts left out).
+ */
+function nera_prize_addons_products_using(string $meta_key, string $id): array
+{
+  global $wpdb;
+
+  // A pick list is stored as a serialized array of strings, so the ID appears quoted.
+  $like = '%' . $wpdb->esc_like('"' . $id . '"') . '%';
+  $ids = $wpdb->get_col(
+    $wpdb->prepare(
+      "SELECT DISTINCT m.post_id
+         FROM {$wpdb->postmeta} m
+         INNER JOIN {$wpdb->posts} p ON p.ID = m.post_id
+        WHERE m.meta_key = %s AND m.meta_value LIKE %s
+          AND p.post_type = 'product' AND p.post_status NOT IN ('trash', 'auto-draft')
+        ORDER BY p.post_title",
+      $meta_key,
+      $like
+    )
+  );
+
+  return array_map('intval', $ids);
+}
+
+/**
+ * Refuse to delete a Catalog entry that a prize has picked.
+ *
+ * The message names each prize with the address of its edit page. ACF escapes the text
+ * of a validation error, so the addresses arrive as plain text and
+ * assets/js/admin-prize-addons.js turns them into links.
+ *
+ * @param bool|string $valid Current validity.
+ * @param mixed       $value Submitted catalog rows.
+ * @param array       $field ACF repeater.
+ * @return bool|string
+ */
+function nera_prize_addons_acf_guard_catalog_delete($valid, $value, $field)
+{
+  if (true !== $valid) {
+    return $valid;
+  }
+
+  $is_safety = NERA_PRIZE_ADDON_CATALOG_SAFETY === ($field['key'] ?? '');
+  $kind = $is_safety ? 'safety' : 'addons';
+  $id_key = $is_safety ? NERA_PRIZE_ADDON_CATALOG_SAFETY_ID : NERA_PRIZE_ADDON_CATALOG_ADDONS_ID;
+
+  $submitted = [];
+  foreach ((array) $value as $row) {
+    $id = is_array($row) ? sanitize_key((string) ($row[$id_key] ?? '')) : '';
+    if ('' !== $id) {
+      $submitted[$id] = true;
+    }
+  }
+
+  // What is saved now, before this request replaces it, minus what was submitted.
+  $messages = [];
+  foreach (array_diff_key(nera_prize_addons_catalog($kind), $submitted) as $id => $entry) {
+    $products = nera_prize_addons_products_using($is_safety ? 'safety_item_ids' : 'addon_option_ids', $id);
+    if (empty($products)) {
+      continue;
+    }
+
+    $prizes = [];
+    foreach ($products as $product_id) {
+      // Built by hand: get_edit_post_link() returns nothing to someone without the capability to edit that product.
+      $prizes[] = sprintf('%s (%s)', get_the_title($product_id), admin_url('post.php?post=' . $product_id . '&action=edit'));
+    }
+    $messages[] = sprintf(
+      /* translators: 1: entry name, 2: number of prizes, 3: prizes with the address of their edit page */
+      _n(
+        '"%1$s" is used by %2$d prize and cannot be deleted. Remove it from that prize first: %3$s',
+        '"%1$s" is used by %2$d prizes and cannot be deleted. Remove it from these prizes first: %3$s',
+        count($products),
+        'nera-competitions'
+      ),
+      $entry['title'],
+      count($products),
+      implode('; ', $prizes)
+    );
+  }
+
+  return empty($messages) ? $valid : implode("\n", $messages);
+}
+add_filter('acf/validate_value/key=' . NERA_PRIZE_ADDON_CATALOG_SAFETY, 'nera_prize_addons_acf_guard_catalog_delete', 10, 3);
+add_filter('acf/validate_value/key=' . NERA_PRIZE_ADDON_CATALOG_ADDONS, 'nera_prize_addons_acf_guard_catalog_delete', 10, 3);
+
+/**
+ * Admin styling and scripts for the prize box and the Add-ons Bundles settings.
  *
  * @return void
  */
@@ -190,6 +282,28 @@ function nera_prize_addons_admin_assets(): void
     NERA_VERSION,
     true
   );
+  wp_enqueue_script(
+    'nera-admin-prize-addons',
+    get_template_directory_uri() . '/assets/js/admin-prize-addons.js',
+    ['jquery', 'acf-input'],
+    NERA_VERSION,
+    true
+  );
+  wp_localize_script('nera-admin-prize-addons', 'neraPsaAdmin', [
+    // Option ID => price: the prize's Full bundle price is capped at the total of its picks.
+    'prices' => array_map(static fn($entry) => $entry['price'], nera_prize_addons_catalog('addons')),
+    'pickerKey' => NERA_PRIZE_ADDON_PICK_ADDONS,
+    'bundleKey' => NERA_PRIZE_ADDON_ACF_BUNDLE,
+    'currency' => [
+      'symbol' => nera_prize_addons_currency_symbol(),
+      'decimals' => function_exists('wc_get_price_decimals') ? (int) wc_get_price_decimals() : 2,
+    ],
+    'i18n' => [
+      /* translators: %s: options total, already formatted with the currency */
+      'max' => __('Highest allowed: %s (the total of the chosen options).', 'nera-competitions'),
+      'locked' => __('Choose add-on options above to set a Full bundle price.', 'nera-competitions'),
+    ],
+  ]);
 }
 add_action('acf/input/admin_enqueue_scripts', 'nera_prize_addons_admin_assets');
 
