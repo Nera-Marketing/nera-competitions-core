@@ -143,7 +143,7 @@ if (function_exists('acf_add_local_field_group') && function_exists('nera_prize_
         'label' => 'Full bundle price',
         'name' => 'addons_bundle_price',
         'type' => 'number',
-        'instructions' => 'Optional. Charged instead of the options total when a customer selects every option in one purchase. Cannot be higher than the total of the options above. Shown to customers only when it is lower than that total and there are at least two options.',
+        'instructions' => 'Optional. Charged instead of the total when a customer buys every option together. It cannot be higher than that total, and it is only offered with two or more options and a price below the total.',
         'min' => 0.01,
         'step' => 0.01,
         'prepend' => $nera_psa_currency,

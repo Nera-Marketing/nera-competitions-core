@@ -1593,6 +1593,43 @@ function nera_drop_purchased_tickets_toast($message)
 add_filter('woocommerce_add_success', 'nera_drop_purchased_tickets_toast');
 
 /**
+ * Whether a message is Lottery for WooCommerce's "Verify Answer Limited Type (1 Attempt)" error.
+ *
+ * The plugin adds it as an error notice on every visit to a prize by a customer who has already
+ * answered its question wrongly ("Incorrect answer. You cannot participate in this giveaway.").
+ * Nothing else in the plugin uses that setting, so matching its text finds only this notice.
+ *
+ * @param string $message Notice text.
+ * @return bool
+ */
+function nera_is_incorrect_answer_arrival_notice($message): bool
+{
+  $text = trim((string) get_option('lty_settings_limited_type_single_attempt_error_message', ''));
+
+  return '' !== $text && trim(wp_strip_all_tags((string) $message)) === $text;
+}
+
+/**
+ * Do not toast "Incorrect answer…" on arriving at a prize page.
+ *
+ * It is a standing state of the customer, repeated on every visit, and it popped up like news.
+ * Trying to enter still tells them why they cannot (the answer check on add to cart). Only the
+ * prize page is touched: the same words in answer to something the customer just did still show.
+ *
+ * @param string $message Notice text.
+ * @return string
+ */
+function nera_drop_incorrect_answer_arrival_toast($message)
+{
+  if (function_exists('is_product') && is_product() && nera_is_incorrect_answer_arrival_notice($message)) {
+    return '';
+  }
+
+  return $message;
+}
+add_filter('woocommerce_add_error', 'nera_drop_incorrect_answer_arrival_toast');
+
+/**
  * Output toast data as inline script in footer
  */
 function nera_output_toast_data()

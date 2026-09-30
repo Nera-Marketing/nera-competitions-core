@@ -64,6 +64,8 @@ function nera_prize_addons_label(string $key): string
     'summary_none' => __('None selected · %d extras available', 'nera-competitions'),
     /* translators: %s: prize name */
     'line_name' => __('Add-ons for: %s', 'nera-competitions'),
+    // The visible title of the basket / checkout panel, which already sits under its prize's tickets.
+    'line_short' => __('Add-ons', 'nera-competitions'),
     'meta_for' => __('For', 'nera-competitions'),
     'meta_options' => __('Options', 'nera-competitions'),
     'meta_full_bundle' => __('Full bundle', 'nera-competitions'),

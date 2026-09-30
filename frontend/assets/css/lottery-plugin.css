@@ -1470,8 +1470,20 @@ body.nera-ticket-dialog-open {
  * have to win over that class's own styling.
  */
 .nera-lucky-dip-regenerate__qa-message {
+  /*
+   * The plugin's .nera-lucky-dip-inline__error sets flex-basis: 100% so it drops to its own row in
+   * the horizontal Lucky Dip box. This message lives in the question column, which stacks
+   * vertically, where 100% means the whole column height: the box grew to fill it and pushed the
+   * Answer button out of view. Size it by its text instead.
+   */
+  flex: 0 0 auto !important;
+  width: auto !important;
+  height: auto;
   margin: 12px 0 0 !important;
-  padding: 10px 12px;
+  padding: 10px 12px !important;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
   border-radius: 10px;
   background: color-mix(in srgb, var(--color-danger, #dc2626) 6%, white);
   border: 1px solid color-mix(in srgb, var(--color-danger, #dc2626) 22%, transparent);
@@ -1479,6 +1491,21 @@ body.nera-ticket-dialog-open {
   font-size: 0.8125rem;
   font-weight: 600;
   line-height: 1.45;
+}
+
+/* A small alert icon in front of the text (the same icon font the rest of the dialog uses). */
+.nera-lucky-dip-regenerate__qa-message::before {
+  content: 'error';
+  flex-shrink: 0;
+  font-family: 'Material Symbols Outlined';
+  font-size: 1.125rem;
+  font-weight: 400;
+  line-height: 1.2;
+  letter-spacing: normal;
+  text-transform: none;
+  font-feature-settings: 'liga';
+  -webkit-font-smoothing: antialiased;
+  font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
 }
 
 .nera-lucky-dip-regenerate__qa-message[hidden] {
