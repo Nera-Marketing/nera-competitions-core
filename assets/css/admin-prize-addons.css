@@ -82,3 +82,15 @@
   margin: 0;
   border-radius: 0 4px 4px 0;
 }
+
+/* Full bundle price: locked until the prize has picked at least one add-on option. */
+.acf-field.nera-psa-locked input[type='number'] {
+  background: #f0f0f1;
+  color: #8c8f94;
+  cursor: not-allowed;
+}
+
+.acf-field .nera-psa-bundle-hint {
+  margin: 6px 0 0;
+  color: #646970;
+}
