@@ -54,15 +54,15 @@ $wallet_partial_enabled = 'on' === woo_wallet()->settings_api->get_option(
 
 <div class="ncs-wallet-balance bg-gradient-to-br from-primary/5 to-secondary rounded-2xl border-2 border-primary/20 shadow-sm p-6 mb-6 hover:shadow-md hover:border-primary/30 transition-all duration-300">
   
-  <!-- Header -->
-  <div class="flex items-center justify-between mb-4">
+  <!-- Header: icon + title, then the amount on its own line (centred) on a phone; side by side from 640px -->
+  <div class="flex flex-col gap-2 mb-4 sm:flex-row sm:items-center sm:justify-between">
     <div class="flex items-center gap-2">
       <span class="material-symbols-outlined text-primary text-2xl">account_balance_wallet</span>
       <h3 class="text-lg font-bold text-text-primary">
         <?php esc_html_e('Your Wallet Balance', 'nera-competitions'); ?>
       </h3>
     </div>
-    <span class="text-2xl font-bold text-primary">
+    <span class="text-center text-2xl font-bold text-primary sm:text-right">
       <?php echo wc_price($balance); ?>
     </span>
   </div>

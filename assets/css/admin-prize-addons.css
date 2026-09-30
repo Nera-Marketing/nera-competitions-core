@@ -85,12 +85,33 @@
 
 /* Full bundle price: locked until the prize has picked at least one add-on option. */
 .acf-field.nera-psa-locked input[type='number'] {
-  background: #f0f0f1;
-  color: #8c8f94;
+  background: #f6f7f7;
+  border-color: #dcdcde;
+  color: #a7aaad;
   cursor: not-allowed;
+  box-shadow: none;
 }
 
+.acf-field.nera-psa-locked .acf-input-prepend {
+  background: #f6f7f7;
+  border-color: #dcdcde;
+  color: #a7aaad;
+}
+
+/* One short line under the field: why it is locked, or the highest price allowed. */
 .acf-field .nera-psa-bundle-hint {
-  margin: 6px 0 0;
+  margin: 8px 0 0;
+  font-size: 12px;
+  line-height: 1.5;
   color: #646970;
+}
+
+.acf-field.nera-psa-locked .nera-psa-bundle-hint::before {
+  content: '\f160'; /* dashicons lock */
+  font-family: dashicons;
+  font-size: 14px;
+  line-height: 1;
+  vertical-align: -2px;
+  margin-right: 4px;
+  color: #a7aaad;
 }

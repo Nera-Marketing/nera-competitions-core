@@ -48,7 +48,9 @@
     var ids = $picker.val() || [];
     var $hint = $field.find('.nera-psa-bundle-hint');
     if (!$hint.length) {
-      $hint = $('<p class="description nera-psa-bundle-hint"></p>').appendTo($field.find('.acf-input').first());
+      // After the input row, not inside it: the row is a flex line (currency chip + input), and a
+      // child of it would sit beside the input instead of under it.
+      $hint = $('<p class="nera-psa-bundle-hint"></p>').insertAfter($field.find('.acf-input').first());
     }
 
     if (!ids.length) {

@@ -963,8 +963,15 @@ button {
 /* Checkout order review: smaller, and lined up with the product title beside its
    56px thumbnail (w-14) + gap-3, so it reads as part of that product. */
 .ncs-cart-item.ncs-cart-item--addon-compact {
-  margin-left: 4.25rem;
   @apply mb-0 mt-2;
+}
+
+/* On a wide screen the panel lines up with the product title beside its thumbnail; on a phone it
+   takes the full width, where the indent only squeezed the option chips. */
+@media (min-width: 640px) {
+  .ncs-cart-item.ncs-cart-item--addon-compact {
+    margin-left: 4.25rem;
+  }
 }
 
 /* The order review spaces its rows with space-y, which works on the bottom margin;
@@ -993,8 +1000,71 @@ button {
   @apply px-2 py-0 text-[11px];
 }
 
-.ncs-cart-addon--compact ul {
-  @apply mt-1.5 gap-1;
+.ncs-cart-addon__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.375rem;
+  margin-top: 1rem;
+}
+
+.ncs-cart-addon--compact .ncs-cart-addon__chips {
+  gap: 0.25rem;
+  margin-top: 0.75rem;
+}
+
+/* The panel measures itself, not the screen: the basket panel is wide on a desktop, the checkout one sits
+   in a narrow sidebar, and both can be on a phone. */
+.ncs-cart-addon {
+  container-type: inline-size;
+}
+
+/* Header. Narrow: two rows -- icon, title and remove; then the Full bundle tag and the price.
+   The tag stays put and the price is right-aligned, so the amounts line up under the remove button. */
+.ncs-cart-addon__head {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-areas:
+    'icon  title remove'
+    'badge badge price';
+  align-items: center;
+  column-gap: 0.75rem;
+  row-gap: 0.5rem;
+}
+
+.ncs-cart-addon__head > .ncs-cart-addon__icon {
+  grid-area: icon;
+}
+
+.ncs-cart-addon__head > .ncs-cart-addon__title {
+  grid-area: title;
+}
+
+.ncs-cart-addon__head > .ncs-cart-addon__tag {
+  grid-area: badge;
+  justify-self: start;
+}
+
+.ncs-cart-addon__head > .ncs-cart-addon__price {
+  grid-area: price;
+  justify-self: end;
+}
+
+.ncs-cart-addon__head > .ncs-cart-addon__remove {
+  grid-area: remove;
+  justify-self: end;
+}
+
+/* Wide enough for it all: icon, title, tag, price and remove on one line. */
+@container (min-width: 27rem) {
+  .ncs-cart-addon__head {
+    grid-template-columns: auto auto minmax(0, 1fr) auto auto;
+    grid-template-areas: 'icon title badge price remove';
+    column-gap: 0.75rem;
+  }
+
+  .ncs-cart-addon__head > .ncs-cart-addon__price {
+    margin-right: 0.25rem;
+  }
 }
 
 .ncs-cart-addon__icon {
