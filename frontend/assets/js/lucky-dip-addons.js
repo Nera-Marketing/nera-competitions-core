@@ -159,6 +159,34 @@
     });
   }
 
+  // The prize page's own Add-ons block (Components/blocks/PrizeAddOns, Alpine) keeps its own
+  // `selected` list, read when Enter Now is pressed. Once the basket's add-on line has been
+  // changed from a Lucky Dip dialog, bring that block in line so the two never disagree.
+  function syncPrizePage(productId, ids) {
+    var root = document.querySelector('[data-prize-addons="' + productId + '"]');
+    if (!root || !window.Alpine || typeof window.Alpine.$data !== 'function') {
+      return;
+    }
+    try {
+      var data = window.Alpine.$data(root);
+      if (data && Array.isArray(data.selected)) {
+        data.selected = ids.slice();
+      }
+    } catch (e) {
+      // The block is only a convenience mirror: never let it break the dialog.
+    }
+  }
+
+  // The theme's toast (Alpine store), with the wording supplied by the server so it is translatable.
+  function toast(type, key) {
+    var messages = (window.neraLuckyDipAddons || {}).i18n || {};
+    var message = messages[key];
+    var store = window.Alpine && window.Alpine.store ? window.Alpine.store('toast') : null;
+    if (message && store && typeof store[type] === 'function') {
+      store[type](message);
+    }
+  }
+
   function post(params) {
     return fetch((window.neraLuckyDipLimit || {}).ajaxUrl, {
       method: 'POST',
@@ -209,15 +237,27 @@
         return post(withIds(new URLSearchParams({ action: 'nera_prize_addons_save', product_id: productId }), ids)).then(function (saved) {
           if (!saved || !saved.ok) {
             revert();
-          } else {
+            toast('error', 'error');
+            return;
+          }
+          syncPrizePage(productId, Array.isArray(saved.selected) ? saved.selected : ids);
+          if (ids.length) {
+            // Something was added or changed: the "added to basket" chime goes with a toast.
+            toast('success', 'saved');
             document.dispatchEvent(new CustomEvent('nera:cart:updated', { detail: { productId: productId } }));
-            if (window.jQuery) {
-              window.jQuery(document.body).trigger('wc_fragment_refresh');
-            }
+          } else {
+            // Everything was taken out: say so, but not with the "added" chime.
+            toast('info', 'removed');
+          }
+          if (window.jQuery) {
+            window.jQuery(document.body).trigger('wc_fragment_refresh');
           }
         });
       })
-      .catch(revert)
+      .catch(function () {
+        revert();
+        toast('error', 'error');
+      })
       .then(function () {
         busy.forEach(function (b) {
           b.classList.remove('is-saving');
@@ -304,6 +344,29 @@
             return '&nera_addon_ids%5B%5D=' + encodeURIComponent(id);
           })
           .join('');
+    });
+  }
+
+  // A Lucky Dip add that carried add-ons went through: the basket's add-on line now matches
+  // what was sent, so the prize page's block follows.
+  if ($) {
+    $(document).ajaxSuccess(function (event, xhr, settings) {
+      var data = settings && settings.data;
+      if (typeof data !== 'string' || !ADD_ACTIONS.test(data) || data.indexOf('nera_addons_submitted=1') === -1) {
+        return;
+      }
+      var response = xhr.responseJSON;
+      if (!response) {
+        try {
+          response = JSON.parse(xhr.responseText);
+        } catch (e) {
+          return;
+        }
+      }
+      var match = /(?:^|&)product_id=(\d+)/.exec(data);
+      if (response && response.success && match && selection[match[1]] !== undefined) {
+        syncPrizePage(match[1], selection[match[1]]);
+      }
     });
   }
 
