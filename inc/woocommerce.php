@@ -1549,6 +1549,50 @@ function nera_get_toast_notices()
 }
 
 /**
+ * Whether a message is Lottery for WooCommerce's "Purchased Tickets Message".
+ *
+ * The plugin adds it as a success notice every time a signed-in customer who has
+ * bought tickets opens that prize ("You have bought 2 ticket(s) for this giveaway!").
+ * The wording is the admin-editable setting with %d for the count, so it is matched
+ * against that setting rather than a fixed sentence.
+ *
+ * @param string $message Notice text.
+ * @return bool
+ */
+function nera_is_purchased_tickets_notice($message): bool
+{
+  $template = trim((string) get_option('lty_settings_purchased_tickets_message', ''));
+  if ('' === $template) {
+    return false;
+  }
+
+  $pattern = '/^' . str_replace('%d', '\d+', preg_quote($template, '/')) . '$/u';
+
+  return 1 === preg_match($pattern, trim(wp_strip_all_tags((string) $message)));
+}
+
+/**
+ * Do not toast "You have bought N ticket(s)…" on arriving at a prize page.
+ *
+ * Toasts are for what just happened (added to basket, a problem). This one is a
+ * standing fact the page shows anyway, and it popped up on every visit to a prize
+ * the customer had already entered. An empty notice is dropped by wc_add_notice(),
+ * and only the prize page is touched.
+ *
+ * @param string $message Notice text.
+ * @return string
+ */
+function nera_drop_purchased_tickets_toast($message)
+{
+  if (function_exists('is_product') && is_product() && nera_is_purchased_tickets_notice($message)) {
+    return '';
+  }
+
+  return $message;
+}
+add_filter('woocommerce_add_success', 'nera_drop_purchased_tickets_toast');
+
+/**
  * Output toast data as inline script in footer
  */
 function nera_output_toast_data()
