@@ -97,6 +97,86 @@ function nera_show_entry_list_tab(?int $product_id = null): bool
 }
 
 /**
+ * Resolve whether the "How this draw is run" section is shown on a product page.
+ *
+ * Product show/hide wins; inherit/empty uses Theme Settings → WooCommerce.
+ *
+ * @param int|null $product_id Product post ID.
+ * @return bool
+ */
+function nera_show_draw_run(?int $product_id = null): bool
+{
+  if (!function_exists('get_field')) {
+    return true;
+  }
+
+  $global_value = get_field('show_draw_run', 'option');
+  $global = $global_value === null ? true : (bool) $global_value;
+
+  if (!$product_id) {
+    return $global;
+  }
+
+  $override = get_field('show_draw_run', $product_id);
+
+  if ($override === 'show') {
+    return true;
+  }
+  if ($override === 'hide') {
+    return false;
+  }
+
+  return $global;
+}
+
+/**
+ * "How this draw is run" copy from Theme Settings → WooCommerce.
+ *
+ * Empty kicker/title fall back to $defaults; an empty card list falls back to
+ * $defaults['cards']. Card values keep the {closing_date} token for the caller.
+ *
+ * @param array{kicker?: string, title?: string, cards?: array} $defaults Theme copy.
+ * @return array{kicker: string, title: string, cards: list<array{label: string, value: string, text: string}>}
+ */
+function nera_get_draw_run_content(array $defaults = []): array
+{
+  $content = [
+    'kicker' => (string) ($defaults['kicker'] ?? ''),
+    'title' => (string) ($defaults['title'] ?? ''),
+    'cards' => $defaults['cards'] ?? [],
+  ];
+
+  if (!function_exists('get_field')) {
+    return $content;
+  }
+
+  foreach (['kicker', 'title'] as $key) {
+    $value = get_field('draw_run_' . $key, 'option');
+    if (is_string($value) && trim($value) !== '') {
+      $content[$key] = $value;
+    }
+  }
+
+  $cards = [];
+  $rows = get_field('draw_run_cards', 'option');
+  foreach (is_array($rows) ? $rows : [] as $row) {
+    $card = [
+      'label' => trim((string) ($row['label'] ?? '')),
+      'value' => trim((string) ($row['value'] ?? '')),
+      'text' => trim((string) ($row['text'] ?? '')),
+    ];
+    if (implode('', $card) !== '') {
+      $cards[] = $card;
+    }
+  }
+  if ($cards) {
+    $content['cards'] = $cards;
+  }
+
+  return $content;
+}
+
+/**
  * Normalise ACF taxonomy values to product_cat term IDs.
  *
  * @param mixed $raw Field value (ids, WP_Term objects, or a single value).
