@@ -435,6 +435,20 @@ if (function_exists('acf_add_local_field_group')) {
         'ui' => 1,
       ],
       [
+        'key' => 'field_sp_show_draw_run',
+        'label' => 'Show "How this draw is run" (override)',
+        'name' => 'show_draw_run',
+        'type' => 'select',
+        'instructions' => 'Optional override for this product. Use site default to follow Theme Settings → WooCommerce.',
+        'choices' => [
+          'inherit' => 'Use site default (Theme Settings → WooCommerce)',
+          'show' => 'Visible',
+          'hide' => 'Hidden',
+        ],
+        'default_value' => 'inherit',
+        'ui' => 1,
+      ],
+      [
         'key' => 'field_sp_show_tickets_progress',
         'label' => 'Show Tickets Counter / Progress Bar (override)',
         'name' => 'show_tickets_progress',

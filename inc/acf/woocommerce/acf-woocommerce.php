@@ -267,6 +267,84 @@ if (function_exists('acf_add_local_field_group')) {
         'id' => '',
       ],
     ],
+
+    // ── How this draw is run ───────────────────────────────────────────────
+    // Read through nera_show_draw_run() and nera_get_draw_run_content(). Rendered by child
+    // themes that output the section; empty text fields fall back to the child's own copy.
+    [
+      'key' => 'field_wc_draw_run_accordion',
+      'label' => 'How This Draw Is Run',
+      'name' => '',
+      'type' => 'accordion',
+      'placement' => 'top',
+      'open' => 0,
+      'multi_expand' => 0,
+      'endpoint' => 0,
+    ],
+    [
+      'key' => 'field_wc_show_draw_run',
+      'label' => 'Show "How this draw is run"',
+      'name' => 'show_draw_run',
+      'type' => 'true_false',
+      'instructions' => 'Site-wide default for the "How this draw is run" cards on competition product pages. Products can override under Competition Settings → Content.',
+      'default_value' => 1,
+      'ui' => 1,
+      'ui_on_text' => 'Visible',
+      'ui_off_text' => 'Hidden',
+    ],
+    [
+      'key' => 'field_wc_draw_run_kicker',
+      'label' => 'Kicker',
+      'name' => 'draw_run_kicker',
+      'type' => 'text',
+      'instructions' => 'Small line above the heading. Leave empty to use the theme default.',
+      'placeholder' => 'Nothing happens off camera',
+      'wrapper' => ['width' => '50', 'class' => '', 'id' => ''],
+    ],
+    [
+      'key' => 'field_wc_draw_run_title',
+      'label' => 'Heading',
+      'name' => 'draw_run_title',
+      'type' => 'text',
+      'instructions' => 'Leave empty to use the theme default.',
+      'placeholder' => 'How this draw is run',
+      'wrapper' => ['width' => '50', 'class' => '', 'id' => ''],
+    ],
+    [
+      'key' => 'field_wc_draw_run_cards',
+      'label' => 'Cards',
+      'name' => 'draw_run_cards',
+      'type' => 'repeater',
+      'instructions' => 'Leave empty to use the theme default cards. Type {closing_date} in a Value to show the product\'s closing date.',
+      'layout' => 'block',
+      'button_label' => 'Add Card',
+      'sub_fields' => [
+        [
+          'key' => 'field_wc_draw_run_card_label',
+          'label' => 'Label',
+          'name' => 'label',
+          'type' => 'text',
+          'placeholder' => 'Closing',
+          'wrapper' => ['width' => '30', 'class' => '', 'id' => ''],
+        ],
+        [
+          'key' => 'field_wc_draw_run_card_value',
+          'label' => 'Value',
+          'name' => 'value',
+          'type' => 'text',
+          'placeholder' => '{closing_date}',
+          'wrapper' => ['width' => '70', 'class' => '', 'id' => ''],
+        ],
+        [
+          'key' => 'field_wc_draw_run_card_text',
+          'label' => 'Text',
+          'name' => 'text',
+          'type' => 'textarea',
+          'rows' => 2,
+          'new_lines' => '',
+        ],
+      ],
+    ],
   ];
 
   // "Add-ons Bundles": site switch and the Catalog of Safety items and Add-on options.
