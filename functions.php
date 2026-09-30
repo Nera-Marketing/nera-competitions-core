@@ -852,6 +852,19 @@ function nera_enqueue_scripts()
       NERA_VERSION,
       true,
     );
+    wp_add_inline_script(
+      'nera-lucky-dip-addons',
+      'window.neraLuckyDipAddons = ' .
+        wp_json_encode([
+          'i18n' => [
+            'saved' => __('Add-ons updated in your basket.', 'nera-competitions'),
+            'removed' => __('Add-ons removed from your basket.', 'nera-competitions'),
+            'error' => __('Could not update your add-ons. Please try again.', 'nera-competitions'),
+          ],
+        ]) .
+        ';',
+      'before',
+    );
     wp_enqueue_script(
       'nera-lucky-dip-limit',
       NERA_ASSETS_URI . '/js/lucky-dip-limit.js',
