@@ -34,6 +34,7 @@ competitions-standard/
 │   ├── acf/                    # ACF field group registrations (one subdir per page)
 │   │   ├── homepage/acf-homepage.php
 │   │   ├── single-product/acf-single-product.php
+│   │   ├── product-components/acf-product-components.php  # "Add Component" area on lottery products (see Components/ section below)
 │   │   ├── contact/acf-contact.php
 │   │   ├── about-us/acf-about-us.php
 │   │   ├── how-it-works/acf-how-it-works.php
@@ -258,6 +259,28 @@ When adding a new component:
 2. Match the existing pattern (look at a sibling component for shape).
 3. Run `yarn build` to confirm Tailwind picks up new classes and lint passes.
 
+### "Add Component" on Page vs Product
+
+Every top-level component (the pool `nera_get_component_layouts()` in
+`lib/components.php` builds) is available from **two** separate "Add Component"
+areas, each its own ACF flexible-content field — writing a component once makes
+it pickable from both:
+
+| Field | Post type | Where it shows | Gate |
+|---|---|---|---|
+| `page_components` (`group_page_components`) | `page` | Normal metabox, every page | Always registered |
+| `product_components` (`group_product_components`) | `product` (lottery only) | Normal metabox, just under "Product short description" | "Enable Product Page Components" (Theme Settings → WooCommerce), off by default |
+
+Product's field group (`inc/acf/product-components/acf-product-components.php`)
+is registered only when that switch is on — turning it off removes the metabox
+from the screen entirely (not just hides it), though any components already
+saved on a product are untouched and reappear once the switch is back on.
+Frontend output renders in `woocommerce/single-product.php`, just above the
+Related Competitions section, via `nera_render_product_components()`: nothing is
+printed at all if the feature is off or the product isn't a lottery product, and
+a bare unstyled `<div>` (no padding/margin) if the feature applies but no
+components are saved — so an empty state never shows as unwanted whitespace.
+
 ## PHP Conventions
 
 ### inc/ directory structure
@@ -363,6 +386,7 @@ The theme integrates with WooCommerce for competition products:
 - Competition end dates stored in `_lty_end_date_gmt` meta
 - Custom product card template in `template-parts/competition-card.php`
 - WooCommerce customizations in `inc/woocommerce.php`
+- Optional "Add Component" area on lottery product pages — see "Add Component on Page vs Product" under Components/ above
 
 ## Common Tasks
 

@@ -206,6 +206,26 @@ if (function_exists('acf_add_local_field_group')) {
       ],
     ],
 
+    // ── Product Components ──────────────────────────────────────────────────
+    // Site-wide switch for the "Add Component" area on lottery product edit
+    // screens (see inc/acf/product-components/acf-product-components.php) and
+    // its matching display block on the product page, just above the Related
+    // Competitions section. Off by default — same reasoning as the Add-ons
+    // Bundles switch below: flipping it off must not touch anything already
+    // saved, only whether the admin UI and the frontend block appear at all.
+    [
+      'key' => 'field_wc_enable_product_components',
+      'label' => 'Enable Product Page Components',
+      'name' => 'enable_product_components',
+      'type' => 'true_false',
+      'instructions' =>
+        'Lets admins add page-style components (FAQ, Testimonials, Promo Banner, etc.) to individual lottery product pages, shown just above Related Competitions. Off hides the "Add Component" area in the product editor and the display block on the frontend — saved component data is kept either way.',
+      'default_value' => 0,
+      'ui' => 1,
+      'ui_on_text' => 'Enabled',
+      'ui_off_text' => 'Disabled',
+    ],
+
     // ── Store behaviour ────────────────────────────────────────────────────
     // Moved here from WooCommerce → Settings → General (ADR 0009 / 0010). Never read these
     // directly — nera_basket_hold_minutes() and nera_show_giveaway_buyer_emails() own the

@@ -59,6 +59,29 @@ function nera_get_mobile_card_layout(?int $product_id = null): string
 }
 
 /**
+ * Whether the Product Components block (the "Add Component" area — see
+ * inc/acf/product-components/acf-product-components.php) applies to this
+ * product: the site-wide switch is on, AND the product is a lottery product
+ * (the only single-product template this block is built for).
+ *
+ * @param WC_Product|null $product Product to check.
+ * @return bool
+ */
+function nera_product_components_enabled(?WC_Product $product): bool
+{
+  if (!$product) {
+    return false;
+  }
+
+  $enabled = function_exists('get_field') ? (bool) get_field('enable_product_components', 'option') : false;
+  if (!$enabled) {
+    return false;
+  }
+
+  return method_exists($product, 'is_type') && $product->is_type('lottery');
+}
+
+/**
  * Resolve whether the Entry List tab is shown on a product page.
  *
  * Product show/hide wins; inherit/empty uses Theme Settings → WooCommerce.

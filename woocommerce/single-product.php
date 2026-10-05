@@ -249,6 +249,18 @@ $purchase_card_args = [
 
     <?php do_action('nera_before_related_competitions', $product); ?>
 
+    <!-- Product Components (admin-controlled, only when enabled + lottery product) -->
+    <?php if (function_exists('nera_product_components_enabled') && nera_product_components_enabled($product)):
+      $product_components_rows = function_exists('get_field') ? get_field('product_components', $product_id) : null;
+      $has_product_components = !empty($product_components_rows);
+    ?>
+      <div<?php echo $has_product_components ? ' class="p-6 lg:p-8 bg-surface rounded-2xl"' : ''; ?>>
+        <?php if ($has_product_components && function_exists('nera_render_product_components')):
+          nera_render_product_components($product_id);
+        endif; ?>
+      </div>
+    <?php endif; ?>
+
     <!-- Related Competitions Section (Upsells hoisted to front, then auto-related) -->
     <?php
     $merged_related = nera_get_merged_related_ids($product_id, 4);

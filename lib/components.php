@@ -132,6 +132,36 @@ function nera_render_page_components(): bool {
     return $rendered_any;
 }
 
+/**
+ * Same as nera_render_page_components(), reading the Product's own flexible
+ * content field instead (`product_components` — see acf-product-components.php).
+ * Only meaningful when nera_product_components_enabled() is true for the
+ * product; callers still check that first so an empty wrapper is never styled
+ * as if it had content (see woocommerce/single-product.php).
+ *
+ * @param int $product_id Product (post) ID. Explicit, not get_the_ID() — called
+ *                         from inside the WooCommerce template loop by ID, same
+ *                         convention as the other get_field() calls there.
+ * @return bool Whether anything was rendered.
+ */
+function nera_render_product_components(int $product_id): bool {
+    $rows = function_exists('get_field') ? get_field('product_components', $product_id) : null;
+    if (!is_array($rows) || empty($rows)) {
+        return false;
+    }
+
+    $rendered_any = false;
+    foreach ($rows as $row) {
+        $layout = $row['acf_fc_layout'] ?? '';
+        if (!$layout) continue;
+
+        nera_render_component($layout, ['acf_row' => $row]);
+        $rendered_any = true;
+    }
+
+    return $rendered_any;
+}
+
 function nera_component_field(array $args, string $row_key, string $legacy_key, $default = null) {
     $row = $args['acf_row'] ?? null;
     if (is_array($row) && array_key_exists($row_key, $row)) {
@@ -158,9 +188,16 @@ function nera_component_field(array $args, string $row_key, string $legacy_key, 
     return $default;
 }
 
-add_action('acf/init', function () {
-    if (!function_exists('acf_add_local_field_group')) return;
-
+/**
+ * Every top-level component's ACF flexible-content layout definition (parent +
+ * child theme, parent wins on a name collision). Shared by every flexible-content
+ * field that lets an editor "Add Component" — currently Page (`page_components`)
+ * and Product (`product_components`) — so both pick from the exact same pool and
+ * a new component only has to be written once to show up in both.
+ *
+ * @return array List of ACF layout definitions, ready to pass as a field's 'layouts'.
+ */
+function nera_get_component_layouts(): array {
     $components_dir = get_template_directory() . '/Components';
     $layouts = [];
     $seen_layout_names = [];
@@ -199,6 +236,13 @@ add_action('acf/init', function () {
         }
     }
 
+    return $layouts;
+}
+
+add_action('acf/init', function () {
+    if (!function_exists('acf_add_local_field_group')) return;
+
+    $layouts = nera_get_component_layouts();
     if (empty($layouts)) return;
 
     acf_add_local_field_group([
