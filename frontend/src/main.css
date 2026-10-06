@@ -929,6 +929,14 @@ button {
   @apply cursor-not-allowed opacity-50;
 }
 
+/* Out-of-range Term (native min/max): a visible error state instead of
+   silently clamping what the customer typed — pricing itself always clamps
+   via pricedYears() regardless (docs/adr/0015). */
+.ncs-prize-addons__years-input:invalid {
+  border-color: var(--color-danger);
+  background-color: var(--color-danger-bg);
+}
+
 .ncs-prize-addons__purchased {
   @apply inline-flex items-center gap-0.5 whitespace-nowrap rounded-full border px-2 py-0.5 text-[11px] font-semibold;
   background-color: var(--ncs-prize-addons-purchased-bg);
@@ -1343,6 +1351,14 @@ button {
 
 .nera-ld-addons__years-input:disabled {
   @apply cursor-not-allowed opacity-50;
+}
+
+/* Out-of-range Term (native min/max): same error state as the prize page's
+   own Years input — pricing always clamps via clampForPricing() regardless
+   (docs/adr/0015). */
+.nera-ld-addons__years-input:invalid {
+  border-color: var(--color-danger);
+  background-color: var(--color-danger-bg);
 }
 
 .nera-ld-addons__item--purchased {
