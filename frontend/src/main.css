@@ -1314,9 +1314,13 @@ button {
 
 /* Years input (docs/adr/0015) — a plain flex sibling of .nera-ld-addons__name/
    __price, not a grid, so no wrapper is needed here the way the prize-page
-   block needed one (see its own main.css comment). */
+   block needed one (see its own main.css comment). The extra margin-left (on
+   top of .nera-ld-addons__label's gap-2) moves it away from the name and
+   towards the price column, same request as the prize page card's own
+   Years column — .nera-ld-addons__name is flex-1 and would otherwise leave
+   the input sitting flush against the name text with only the base gap. */
 .nera-ld-addons__years-input {
-  @apply h-6 w-11 shrink-0 rounded-md border border-gray-200 px-1 text-center text-xs tabular-nums;
+  @apply ml-3 h-6 w-11 shrink-0 rounded-md border border-gray-200 px-1 text-center text-xs tabular-nums;
 }
 
 /* Enabled (the option is ticked): same accent-border cue as the prize page
