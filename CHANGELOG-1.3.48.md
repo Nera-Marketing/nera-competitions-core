@@ -1,4 +1,4 @@
-# Nera Competitions Standard 1.3.47
+# Nera Competitions Standard 1.3.48
 
 ## Feature — Add-on terms (buy each add-on for 1–N years)
 
