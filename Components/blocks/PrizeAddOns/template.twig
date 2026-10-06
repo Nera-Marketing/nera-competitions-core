@@ -89,7 +89,7 @@
             </label>
             {% if terms_enabled %}
               {# Its own grid column (.ncs-prize-addons__option--with-years in main.css) —
-                 Years, then the combined "total - price/year" money column (docs/adr/0015). #}
+                 Years, then the money column: total (bold) + per-year rate (muted) (docs/adr/0015). #}
               <span class="ncs-prize-addons__years">
                 <label class="sr-only" for="{{ dom_id }}-{{ option.id|e('html_attr') }}-years">{{ i18n.years|e }} — {{ option.title|e }}</label>
                 <input
@@ -106,7 +106,10 @@
                   @input="setYears('{{ option.id|e('js') }}', $event.target.value)"
                 >
               </span>
-              <span class="ncs-prize-addons__price" x-text="priceLine('{{ option.id|e('js') }}')">{{ option.price_html|raw }} - {{ option.price_html|raw }} {{ i18n.per_year|e }}</span>
+              <span class="ncs-prize-addons__price">
+                <span x-text="format(optionAmount('{{ option.id|e('js') }}'))">{{ option.price_html|raw }}</span>
+                <small class="font-normal text-text-secondary text-[11px]" x-text="unitPriceLine('{{ option.id|e('js') }}')">({{ option.price_html|raw }} {{ i18n.per_year|e }})</small>
+              </span>
             {% else %}
               <span class="ncs-prize-addons__price">{{ option.price_html|raw }}</span>
             {% endif %}

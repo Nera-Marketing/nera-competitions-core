@@ -151,12 +151,14 @@
         return price * this.years(id);
       },
 
-      // "£48.00 - £24.00 / year" — the option's money column when Term choice
-      // is on (docs/adr/0015): what it currently costs, then its per-year rate.
-      priceLine(id) {
+      // "(£24.00 / year)" — the muted part of the money column, beside the
+      // bold total from optionAmount() (docs/adr/0015). Split in two so the
+      // template can style them differently; see this component's own Twig
+      // for why that rules out one combined x-text string.
+      unitPriceLine(id) {
         const option = findOption(id);
         const price = option ? Number(option.price || 0) : 0;
-        return this.format(this.optionAmount(id)) + ' - ' + this.format(price) + ' ' + (i18n.perYear || '');
+        return '(' + this.format(price) + ' ' + (i18n.perYear || '') + ')';
       },
 
       subtotal() {

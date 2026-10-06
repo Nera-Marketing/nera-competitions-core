@@ -74,8 +74,9 @@ if (empty($nera_ld['enabled']) || empty($nera_ld['options'])) {
             <?php if (!empty($nera_ld['terms_enabled'])): ?>
               <?php
               // A plain number input, not Alpine (see this file's own docblock): lucky-dip-addons.js
-              // reads/writes it directly via the data-nera-ld-years attribute, and builds the
-              // "total - price/year" text below from the same data-config it already reads.
+              // reads/writes it directly via the data-nera-ld-years attribute, and updates the
+              // total (data-nera-ld-amount) below from the same data-config it already reads. The
+              // per-year rate beside it never changes with the Term, so it is static markup.
               ?>
               <input type="number" class="nera-ld-addons__years-input"
                 data-nera-ld-years="<?php echo esc_attr($nera_ld_option['id']); ?>"
@@ -84,7 +85,12 @@ if (empty($nera_ld['enabled']) || empty($nera_ld['options'])) {
                 <?php disabled(empty($nera_ld_option['selected'])); ?>
                 aria-label="<?php echo esc_attr(($nera_ld['i18n']['years'] ?? 'Years') . ' — ' . $nera_ld_option['title']); ?>">
             <?php endif; ?>
-            <span class="nera-ld-addons__price" data-nera-ld-amount="<?php echo esc_attr($nera_ld_option['id']); ?>"><?php echo wp_kses_post($nera_ld_option['price_html']); ?></span>
+            <span class="nera-ld-addons__price">
+              <span data-nera-ld-amount="<?php echo esc_attr($nera_ld_option['id']); ?>"><?php echo wp_kses_post($nera_ld_option['price_html']); ?></span>
+              <?php if (!empty($nera_ld['terms_enabled'])): ?>
+                <small class="font-normal text-text-secondary text-[11px]">(<?php echo wp_kses_post($nera_ld_option['price_html']); ?> <?php echo esc_html($nera_ld['i18n']['per_year'] ?? ''); ?>)</small>
+              <?php endif; ?>
+            </span>
           </label>
         <?php endif; ?>
       </li>

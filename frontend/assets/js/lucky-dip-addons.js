@@ -153,21 +153,17 @@
     // never the bundle-adjusted "only the years beyond the set" figure, which
     // reads as a confusing £0.00 next to a ticked, paid-for option whose
     // single year the bundle happened to cover. The bundle discount still
-    // shows, just only in the aggregate total above (docs/adr/0015). With
-    // Term choice on, shown as "total - price/year", same format as the
-    // prize page card and the cart/checkout chip.
+    // shows, just only in the aggregate total above (docs/adr/0015). The
+    // static "(price / year)" beside it (template-parts/single-product/
+    // lucky-dip-addons.php) never changes with the Term, so only this total
+    // needs updating here.
     Array.prototype.forEach.call(block.querySelectorAll('[data-nera-ld-amount]'), function (el) {
       var id = el.getAttribute('data-nera-ld-amount');
       var option = findOption(cfg, id);
       var price = option ? Number(option.price || 0) : 0;
       var isSelected = Object.prototype.hasOwnProperty.call(sel, id);
       var amount = price * (isSelected ? sel[id] || 1 : 1);
-      if (cfg.termsEnabled) {
-        var i18n = cfg.i18n || {};
-        el.textContent = formatMoney(amount, cfg.currency) + ' - ' + formatMoney(price, cfg.currency) + ' ' + (i18n.perYear || '');
-      } else {
-        el.textContent = formatMoney(amount, cfg.currency);
-      }
+      el.textContent = formatMoney(amount, cfg.currency);
     });
 
     var btn = block.querySelector('[data-nera-ld-select-all]');
