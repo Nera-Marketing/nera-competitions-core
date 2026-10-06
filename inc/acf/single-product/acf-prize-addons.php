@@ -137,13 +137,26 @@ if (function_exists('acf_add_local_field_group') && function_exists('nera_prize_
         'conditional_logic' => $nera_psa_addons_on,
       ],
       [
+        'key' => 'field_nera_psa_addons_terms_enabled',
+        'label' => 'Term choice',
+        'name' => 'addons_terms_enabled',
+        'type' => 'true_false',
+        'instructions' => 'Let the customer buy each option for a whole number of years (1 up to the site-wide Maximum term in Theme Settings → WooCommerce → Add-ons Bundles) instead of always one year (docs/adr/0015).',
+        'default_value' => 0,
+        'ui' => 1,
+        'ui_on_text' => 'On',
+        'ui_off_text' => 'Off',
+        'conditional_logic' => $nera_psa_addons_on,
+        'wrapper' => ['width' => '', 'class' => 'nera-acf-field--toggle', 'id' => ''],
+      ],
+      [
         // Locked until an option is chosen, and capped at their total
         // (assets/js/admin-prize-addons.js); checked again on save (inc/prize-addons.php).
         'key' => 'field_nera_psa_addons_bundle_price',
-        'label' => 'Full bundle price',
+        'label' => 'Full bundle price (per year)',
         'name' => 'addons_bundle_price',
         'type' => 'number',
-        'instructions' => 'Optional. Charged instead of the total when a customer buys every option together. It cannot be higher than that total, and it is only offered with two or more options and a price below the total.',
+        'instructions' => 'Optional. Charged per complete set of years instead of the per-year total when a customer buys every option together (docs/adr/0015). It cannot be higher than that total, and it is only offered with two or more options and a price below the total.',
         'min' => 0.01,
         'step' => 0.01,
         'prepend' => $nera_psa_currency,

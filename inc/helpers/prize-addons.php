@@ -190,7 +190,7 @@ function nera_prize_safety_config(int $product_id): array
  * "no bundle discount".
  *
  * @param int $product_id Lottery product ID.
- * @return array{enabled:bool,title:string,description:string,options:array<string,array{id:string,title:string,description:string,price:float}>,total:float,bundle_price:?float}
+ * @return array{enabled:bool,title:string,description:string,options:array<string,array{id:string,title:string,description:string,price:float}>,total:float,bundle_price:?float,terms_enabled:bool,max_term:int}
  */
 function nera_prize_addons_config(int $product_id): array
 {
@@ -199,6 +199,9 @@ function nera_prize_addons_config(int $product_id): array
     return $cache[$product_id];
   }
 
+  // max_term is the site-wide setting (docs/adr/0015) and applies whether or
+  // not this prize has Add-ons on — Task 2's quote() clamps against it even
+  // for a prize read before Add-ons were ever enabled.
   $config = [
     'enabled' => false,
     'title' => '',
@@ -206,6 +209,8 @@ function nera_prize_addons_config(int $product_id): array
     'options' => [],
     'total' => 0.0,
     'bundle_price' => null,
+    'terms_enabled' => false,
+    'max_term' => nera_prize_addons_max_term(),
   ];
 
   if (!$product_id || !nera_prize_addons_site_enabled() || !function_exists('get_field') || !get_field('addons_enabled', $product_id)) {
@@ -228,35 +233,65 @@ function nera_prize_addons_config(int $product_id): array
     'options' => $options,
     'total' => $total,
     'bundle_price' => count($options) >= 2 && $bundle > 0 && $bundle < $total ? $bundle : null,
+    'terms_enabled' => (bool) get_field('addons_terms_enabled', $product_id),
+    'max_term' => $config['max_term'],
   ];
 }
 
 /**
- * Price a selection of add-on options for one draw.
+ * Price a selection of add-on options for one draw (docs/adr/0015).
  *
  * Options already bought, or no longer offered, are dropped and reported so the
- * caller can tell the customer. The Full bundle price applies only when every
- * option is chosen now and none was bought before.
+ * caller can tell the customer. The Full bundle price (per year) applies only
+ * when every option is chosen now and none was bought before: the number of
+ * complete sets is the smallest Term among the chosen options, each set costs
+ * the bundle price, and every year beyond the sets costs that option's own
+ * Price per year. Years are always clamped here — to 1 when the prize's Term
+ * choice is off, otherwise to 1..max_term — so a caller never has to trust
+ * what the browser posted.
  *
- * @param int      $draw_id       Lottery product ID.
- * @param string[] $option_ids    Chosen option IDs.
- * @param string[] $purchased_ids Option IDs already paid for by this customer.
- * @return array{options:array<string,array>,dropped:array<string,string>,subtotal:float,total:float,full_bundle:bool}
+ * @param int                $draw_id       Lottery product ID.
+ * @param string[]|array<string,int> $selection Chosen option IDs — either a
+ *        plain list (old shape, each read as 1 year) or a map of
+ *        option_id => years (missing/invalid years read as 1).
+ * @param string[]           $purchased_ids Option IDs already paid for by this customer.
+ * @return array{options:array<string,array{id:string,title:string,description:string,price:float,years:int,charged:float}>,dropped:array<string,string>,subtotal:float,total:float,full_bundle:bool,bundle_sets:int,extra_years:array<string,int>}
  */
-function nera_prize_addons_quote(int $draw_id, array $option_ids, array $purchased_ids = []): array
+function nera_prize_addons_quote(int $draw_id, array $selection, array $purchased_ids = []): array
 {
   $config = nera_prize_addons_config($draw_id);
   $purchased = array_fill_keys(array_map('strval', $purchased_ids), true);
 
+  // $selection is a plain list (old shape) when its keys are exactly 0..n-1 —
+  // the shape array_map('strval', $option_ids) has always produced. Anything
+  // else is read as the new id => years map.
+  $is_list = [] === $selection || array_keys($selection) === range(0, count($selection) - 1);
+
+  $years_by_id = [];
+  foreach ($selection as $key => $value) {
+    $id = (string) ($is_list ? $value : $key);
+    $years = $is_list ? 1 : (int) $value;
+    $years_by_id[$id] = $years;
+  }
+
+  $terms_enabled = $config['terms_enabled'];
+  $max_term = $config['max_term'] >= 1 ? $config['max_term'] : 10;
+  $clamp_years = static function (int $years) use ($terms_enabled, $max_term): int {
+    if (!$terms_enabled) {
+      return 1;
+    }
+    return max(1, min($years, $max_term));
+  };
+
   $options = [];
   $dropped = [];
-  foreach (array_unique(array_map('strval', $option_ids)) as $id) {
+  foreach ($years_by_id as $id => $years) {
     if (!isset($config['options'][$id])) {
       $dropped[$id] = 'unavailable';
     } elseif (isset($purchased[$id])) {
       $dropped[$id] = 'purchased';
     } else {
-      $options[$id] = $config['options'][$id];
+      $options[$id] = $years;
     }
   }
 
@@ -264,22 +299,48 @@ function nera_prize_addons_quote(int $draw_id, array $option_ids, array $purchas
   $ordered = [];
   foreach ($config['options'] as $id => $option) {
     if (isset($options[$id])) {
-      $ordered[$id] = $option;
+      $ordered[$id] = $option + ['years' => $clamp_years($options[$id])];
     }
   }
 
-  $subtotal = round(array_sum(array_column($ordered, 'price')), 2);
   $bought_any = (bool) array_intersect_key($config['options'], $purchased);
   $full = null !== $config['bundle_price']
     && !$bought_any
     && count($ordered) === count($config['options']);
 
+  $bundle_sets = 0;
+  $extra_years = [];
+  if ($full) {
+    $bundle_sets = min(array_column($ordered, 'years'));
+    foreach ($ordered as $id => $option) {
+      $extra_years[$id] = max(0, $option['years'] - $bundle_sets);
+    }
+  }
+
+  $subtotal = 0.0;
+  foreach ($ordered as $id => &$option) {
+    // Without a bundle, an option is charged for every year it was bought.
+    // With one, the bundle price already covers $bundle_sets of every
+    // option, so only the years beyond that are charged per option.
+    $billable_years = $full ? $extra_years[$id] : $option['years'];
+    $option['charged'] = round($option['price'] * $billable_years, 2);
+    $subtotal += $option['price'] * $option['years'];
+  }
+  unset($option);
+  $subtotal = round($subtotal, 2);
+
+  $total = $full
+    ? round($bundle_sets * (float) $config['bundle_price'] + array_sum(array_column($ordered, 'charged')), 2)
+    : $subtotal;
+
   return [
     'options' => $ordered,
     'dropped' => $dropped,
     'subtotal' => $subtotal,
-    'total' => $full ? (float) $config['bundle_price'] : $subtotal,
+    'total' => $total,
     'full_bundle' => $full,
+    'bundle_sets' => $bundle_sets,
+    'extra_years' => $extra_years,
   ];
 }
 
