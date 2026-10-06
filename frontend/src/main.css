@@ -855,7 +855,7 @@ button {
    one ("£24.00 - £24.00 / year" is a different width than "£16.00 - £16.00 /
    year" only by a character or two, but auto still shifts the whole row). */
 .ncs-prize-addons__option--with-years {
-  grid-template-columns: 20px 1fr 56px 190px;
+  grid-template-columns: 20px 1fr 40px 180px;
 }
 
 .ncs-prize-addons__option--with-years .ncs-prize-addons__price {
@@ -908,7 +908,7 @@ button {
 }
 
 .ncs-prize-addons__years-input {
-  @apply h-6 w-12 rounded-md border px-1.5 text-center text-xs tabular-nums;
+  @apply h-6 w-10 rounded-md border px-1 text-center text-xs tabular-nums;
   border-color: var(--ncs-prize-addons-divider);
 }
 
