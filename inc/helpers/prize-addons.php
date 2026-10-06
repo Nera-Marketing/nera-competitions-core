@@ -387,7 +387,11 @@ function nera_prize_addons_paid_statuses(): array
  * Add-on options a customer has already paid for, grouped by draw.
  *
  * Reads the snapshot stored on each add-on order item (so it survives the
- * admin reordering or renaming options) and skips items refunded in full.
+ * admin reordering or renaming options) and skips items refunded in full, or
+ * whose Term has run out (docs/adr/0015): the lock lasts the bought number of
+ * years from the order's payment date (falling back to when it was created),
+ * after which the option can be bought again on that draw. An order with no
+ * 'years' in its snapshot (placed before this change) reads as 1 year.
  *
  * @param int $user_id Customer user ID.
  * @return array<int,string[]> Draw ID => option IDs.
@@ -401,6 +405,11 @@ function nera_prize_addons_purchased_map(int $user_id): array
   if (isset($cache[$user_id])) {
     return $cache[$user_id];
   }
+
+  // One reference point for every expiry check this call makes, so the
+  // static cache below reflects one consistent "now" rather than whatever
+  // time() happens to return at each order/option visited in the loop.
+  $now = time();
 
   $order_ids = wc_get_orders([
     'customer_id' => $user_id,
@@ -446,11 +455,21 @@ function nera_prize_addons_purchased_map(int $user_id): array
       if ($refunded_qty >= $qty || ($line_total > 0 && $refunded_total >= $line_total)) {
         continue;
       }
+
+      $start = $order->get_date_paid() ?: $order->get_date_created();
+      $start_ts = $start instanceof WC_DateTime ? $start->getTimestamp() : $now;
+
       foreach ((array) $item->get_meta('_nera_addon_options', true) as $option) {
         $id = sanitize_key((string) ($option['id'] ?? ''));
-        if ('' !== $id) {
-          $map[$draw_id][$id] = $id;
+        if ('' === $id) {
+          continue;
         }
+        $years = isset($option['years']) ? max(1, (int) $option['years']) : 1;
+        $expires_ts = strtotime('+' . $years . ' years', $start_ts);
+        if (false !== $expires_ts && $expires_ts <= $now) {
+          continue; // The Term has run out: the option can be bought again.
+        }
+        $map[$draw_id][$id] = $id;
       }
     }
   }

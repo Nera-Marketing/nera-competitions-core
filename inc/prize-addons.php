@@ -1160,15 +1160,24 @@ function nera_prize_addons_create_order_line_item($item, $cart_item_key, $values
 
   $draw_id = (int) $values[NERA_PRIZE_ADDON_CART_KEY]['draw_id'];
   $draw_name = nera_prize_addons_draw_name($draw_id);
-  $quote = nera_prize_addons_quote(
-    $draw_id,
+  $selection = nera_prize_addons_years_map(
     (array) ($values[NERA_PRIZE_ADDON_CART_KEY]['option_ids'] ?? []),
-    nera_prize_addons_current_user_purchased($draw_id)
+    (array) ($values[NERA_PRIZE_ADDON_CART_KEY]['option_years'] ?? [])
   );
+  $quote = nera_prize_addons_quote($draw_id, $selection, nera_prize_addons_current_user_purchased($draw_id));
 
+  // The snapshot (docs/adr/0015): years and charged per option, so the
+  // "Purchased" lock and the admin/email display never need the Catalog or
+  // the prize settings to still agree with what was actually bought.
   $options = [];
   foreach ($quote['options'] as $option) {
-    $options[] = ['id' => $option['id'], 'title' => $option['title'], 'price' => $option['price']];
+    $options[] = [
+      'id' => $option['id'],
+      'title' => $option['title'],
+      'price' => $option['price'],
+      'years' => $option['years'],
+      'charged' => $option['charged'],
+    ];
   }
 
   $item->set_name(sprintf(nera_prize_addons_label('line_name'), $draw_name));
@@ -1176,6 +1185,7 @@ function nera_prize_addons_create_order_line_item($item, $cart_item_key, $values
   $item->add_meta_data('_nera_addon_draw_name', $draw_name, true);
   $item->add_meta_data('_nera_addon_options', $options, true);
   $item->add_meta_data('_nera_addon_full_bundle', $quote['full_bundle'] ? 'yes' : 'no', true);
+  $item->add_meta_data('_nera_addon_bundle_sets', (int) $quote['bundle_sets'], true);
 }
 add_action('woocommerce_checkout_create_order_line_item', 'nera_prize_addons_create_order_line_item', 10, 3);
 
@@ -1195,13 +1205,39 @@ function nera_prize_addons_formatted_meta($formatted_meta, $item)
   }
 
   $draw_name = (string) $item->get_meta('_nera_addon_draw_name', true);
+
+  // Same start the lock itself uses (nera_prize_addons_purchased_map): the
+  // order's payment date, falling back to when it was created.
+  $order = method_exists($item, 'get_order') ? $item->get_order() : null;
+  $start = $order instanceof WC_Order ? ($order->get_date_paid() ?: $order->get_date_created()) : null;
+
   $options = [];
   foreach ((array) $item->get_meta('_nera_addon_options', true) as $option) {
-    $options[] = sprintf(
-      '%s (%s)',
+    // Orders placed before this change have no 'years'/'charged' in the
+    // snapshot at all: read as 1 year, at the option's own price (docs/adr/0015).
+    $years = isset($option['years']) ? max(1, (int) $option['years']) : 1;
+    $charged = array_key_exists('charged', $option) ? (float) $option['charged'] : (float) ($option['price'] ?? 0);
+
+    $line = sprintf(
+      /* translators: 1: option title, 2: amount charged, 3: term in years (e.g. "2 Years") */
+      __('%1$s (%2$s · %3$s)', 'nera-competitions'),
       (string) ($option['title'] ?? ''),
-      nera_prize_addons_money_text((float) ($option['price'] ?? 0))
+      nera_prize_addons_money_text($charged),
+      sprintf('%1$d %2$s', $years, nera_prize_addons_label('years'))
     );
+
+    if ($start instanceof WC_DateTime) {
+      $expires_ts = strtotime('+' . $years . ' years', $start->getTimestamp());
+      if (false !== $expires_ts) {
+        $line .= sprintf(
+          ' — %1$s: %2$s',
+          nera_prize_addons_label('valid_until'),
+          date_i18n(get_option('date_format'), $expires_ts)
+        );
+      }
+    }
+
+    $options[] = $line;
   }
   $full = 'yes' === $item->get_meta('_nera_addon_full_bundle', true);
 
@@ -1239,6 +1275,7 @@ function nera_prize_addons_hidden_order_itemmeta($keys)
     '_nera_addon_draw_name',
     '_nera_addon_options',
     '_nera_addon_full_bundle',
+    '_nera_addon_bundle_sets',
   ]);
 }
 add_filter('woocommerce_hidden_order_itemmeta', 'nera_prize_addons_hidden_order_itemmeta');
