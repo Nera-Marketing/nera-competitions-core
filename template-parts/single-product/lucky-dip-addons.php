@@ -72,10 +72,10 @@ if (empty($nera_ld['enabled']) || empty($nera_ld['options'])) {
               <?php checked($nera_ld_option['selected']); ?>>
             <span class="nera-ld-addons__name"><?php echo esc_html($nera_ld_option['title']); ?></span>
             <?php if (!empty($nera_ld['terms_enabled'])): ?>
-              <span class="nera-ld-addons__peryear"><?php echo wp_kses_post($nera_ld_option['price_html']); ?> <?php echo esc_html($nera_ld['i18n']['per_year'] ?? ''); ?></span>
               <?php
               // A plain number input, not Alpine (see this file's own docblock): lucky-dip-addons.js
-              // reads/writes it directly via the data-nera-ld-years attribute.
+              // reads/writes it directly via the data-nera-ld-years attribute, and builds the
+              // "total - price/year" text below from the same data-config it already reads.
               ?>
               <input type="number" class="nera-ld-addons__years-input"
                 data-nera-ld-years="<?php echo esc_attr($nera_ld_option['id']); ?>"

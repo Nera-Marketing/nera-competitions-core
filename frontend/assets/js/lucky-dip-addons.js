@@ -150,7 +150,9 @@
     }
 
     // Per-option amount: price x years normally, or — once the bundle
-    // applies — only the years beyond the shared set count.
+    // applies — only the years beyond the shared set count. With Term choice
+    // on, shown as "total - price/year" (docs/adr/0015), same format as the
+    // prize page card and the cart/checkout chip.
     Array.prototype.forEach.call(block.querySelectorAll('[data-nera-ld-amount]'), function (el) {
       var id = el.getAttribute('data-nera-ld-amount');
       var option = findOption(cfg, id);
@@ -160,7 +162,12 @@
       if (isSelected) {
         amount = totals.full ? price * Math.max(0, (sel[id] || 1) - totals.bundleSets) : price * (sel[id] || 1);
       }
-      el.textContent = formatMoney(amount, cfg.currency);
+      if (cfg.termsEnabled) {
+        var i18n = cfg.i18n || {};
+        el.textContent = formatMoney(amount, cfg.currency) + ' - ' + formatMoney(price, cfg.currency) + ' ' + (i18n.perYear || '');
+      } else {
+        el.textContent = formatMoney(amount, cfg.currency);
+      }
     });
 
     var btn = block.querySelector('[data-nera-ld-select-all]');

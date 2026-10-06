@@ -70,7 +70,7 @@
             </span>
           </li>
         {% else %}
-          <li class="ncs-prize-addons__option">
+          <li class="ncs-prize-addons__option{% if terms_enabled %} ncs-prize-addons__option--with-years{% endif %}">
             <input
               type="checkbox"
               class="ncs-prize-addons__checkbox"
@@ -87,31 +87,29 @@
                 <span class="ncs-prize-addons__desc">{{ option.description|e }}</span>
               {% endif %}
             </label>
-            {# Grouped in one wrapper: .ncs-prize-addons__option is a 3-column grid
-               (checkbox | text | auto), so the Years controls join the price as a
-               single third cell instead of breaking that layout into six columns. #}
-            <div class="ncs-prize-addons__price-wrap">
-              {% if terms_enabled %}
-                <span class="ncs-prize-addons__peryear">{{ option.price_html|raw }} {{ i18n.per_year|e }}</span>
-                <span class="ncs-prize-addons__years">
-                  <label class="ncs-prize-addons__years-label sr-only" for="{{ dom_id }}-{{ option.id|e('html_attr') }}-years">{{ i18n.years|e }} — {{ option.title|e }}</label>
-                  <input
-                    type="number"
-                    class="ncs-prize-addons__years-input"
-                    id="{{ dom_id }}-{{ option.id|e('html_attr') }}-years"
-                    name="nera_addon_years[{{ option.id|e('html_attr') }}]"
-                    min="1"
-                    max="{{ max_term }}"
-                    step="1"
-                    value="{{ option.years }}"
-                    :value="years('{{ option.id|e('js') }}')"
-                    :disabled="!isChecked('{{ option.id|e('js') }}')"
-                    @input="setYears('{{ option.id|e('js') }}', $event.target.value)"
-                  >
-                </span>
-              {% endif %}
-              <span class="ncs-prize-addons__price" x-text="format(optionAmount('{{ option.id|e('js') }}'))">{{ option.price_html|raw }}</span>
-            </div>
+            {% if terms_enabled %}
+              {# Its own grid column (.ncs-prize-addons__option--with-years in main.css) —
+                 Years, then the combined "total - price/year" money column (docs/adr/0015). #}
+              <span class="ncs-prize-addons__years">
+                <label class="sr-only" for="{{ dom_id }}-{{ option.id|e('html_attr') }}-years">{{ i18n.years|e }} — {{ option.title|e }}</label>
+                <input
+                  type="number"
+                  class="ncs-prize-addons__years-input"
+                  id="{{ dom_id }}-{{ option.id|e('html_attr') }}-years"
+                  name="nera_addon_years[{{ option.id|e('html_attr') }}]"
+                  min="1"
+                  max="{{ max_term }}"
+                  step="1"
+                  value="{{ option.years }}"
+                  :value="years('{{ option.id|e('js') }}')"
+                  :disabled="!isChecked('{{ option.id|e('js') }}')"
+                  @input="setYears('{{ option.id|e('js') }}', $event.target.value)"
+                >
+              </span>
+              <span class="ncs-prize-addons__price" x-text="priceLine('{{ option.id|e('js') }}')">{{ option.price_html|raw }} - {{ option.price_html|raw }} {{ i18n.per_year|e }}</span>
+            {% else %}
+              <span class="ncs-prize-addons__price">{{ option.price_html|raw }}</span>
+            {% endif %}
           </li>
         {% endif %}
       {% endfor %}

@@ -1062,13 +1062,17 @@ function nera_prize_addons_cart_item_data($item_data, $cart_item)
   );
   $quote = nera_prize_addons_quote($draw_id, $selection, nera_prize_addons_current_user_purchased($draw_id));
 
-  // "Title (× N Years)" — only when a term is actually more than one year, so
-  // a prize with Term choice off (every option 1 year) reads exactly as
-  // before (docs/adr/0015).
+  // "Title £charged (£price / year)" — same format as the cart/checkout chip
+  // (template-parts/cart/cart-item-addon.php) and the Lucky Dip dialogs
+  // (docs/adr/0015), so an add-on's money reads the same wherever it shows.
   $option_labels = array_map(static function (array $option): string {
-    return $option['years'] > 1
-      ? sprintf('%1$s (× %2$d %3$s)', $option['title'], $option['years'], nera_prize_addons_label('years'))
-      : $option['title'];
+    return sprintf(
+      '%1$s %2$s (%3$s %4$s)',
+      $option['title'],
+      nera_prize_addons_money_text((float) $option['charged']),
+      nera_prize_addons_money_text((float) $option['price']),
+      nera_prize_addons_label('per_year')
+    );
   }, $quote['options']);
 
   $item_data[] = [

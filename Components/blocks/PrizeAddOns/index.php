@@ -153,6 +153,7 @@ function get_data(array $args = []): array
             'show'            => nera_prize_addons_label('show'),
             'selectAll'       => nera_prize_addons_label('select_all'),
             'clear'           => nera_prize_addons_label('clear'),
+            'perYear'         => nera_prize_addons_label('per_year'),
             'summarySelected' => nera_prize_addons_label('summary_selected'),
             'summaryNone'     => nera_prize_addons_label('summary_none'),
             'allPurchased'    => nera_prize_addons_label('all_purchased'),

@@ -845,6 +845,12 @@ button {
   border-top: 1px solid var(--ncs-prize-addons-divider);
 }
 
+/* Term choice on (docs/adr/0015): a dedicated Years column between the name
+   and the money column, instead of the plain 3-column layout above. */
+.ncs-prize-addons__option--with-years {
+  grid-template-columns: 20px 1fr 56px auto;
+}
+
 .ncs-prize-addons__option:first-child {
   border-top: 0;
 }
@@ -884,16 +890,10 @@ button {
   @apply whitespace-nowrap text-sm font-semibold tabular-nums;
 }
 
-/* Groups the per-year price, the Years input and the computed amount into the
-   option row's third grid column (docs/adr/0015) — see template.twig's own
-   comment on why these can't be separate grid children. */
-.ncs-prize-addons__price-wrap {
-  @apply flex flex-col items-end gap-1;
-}
-
-.ncs-prize-addons__peryear {
-  @apply whitespace-nowrap text-[11px];
-  color: var(--ncs-prize-addons-text-secondary);
+/* The Years input's own grid column (docs/adr/0015) — centers the compact
+   input under a column too narrow for anything else. */
+.ncs-prize-addons__years {
+  @apply flex items-center justify-center;
 }
 
 .ncs-prize-addons__years-input {
@@ -1288,14 +1288,9 @@ button {
   color: var(--color-text-secondary);
 }
 
-/* Per-year price + Years input (docs/adr/0015) — plain flex siblings of
-   .nera-ld-addons__name/__price, not a grid, so no wrapper is needed here
-   the way the prize-page block needed one (see its own main.css comment). */
-.nera-ld-addons__peryear {
-  @apply whitespace-nowrap text-[11px];
-  color: var(--color-text-secondary);
-}
-
+/* Years input (docs/adr/0015) — a plain flex sibling of .nera-ld-addons__name/
+   __price, not a grid, so no wrapper is needed here the way the prize-page
+   block needed one (see its own main.css comment). */
 .nera-ld-addons__years-input {
   @apply h-6 w-11 shrink-0 rounded-md border border-gray-200 px-1 text-center text-xs tabular-nums;
 }

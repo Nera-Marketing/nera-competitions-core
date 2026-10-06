@@ -104,14 +104,15 @@ $subtotal = (float) ($cart_item['line_subtotal'] ?? $quote['total']);
       <ul class="ncs-cart-addon__chips" role="list">
         <?php foreach ($quote['options'] as $option): ?>
           <li class="ncs-cart-addon__chip">
+            <?php // Same "<name> <total> (<price>/year)" format everywhere an
+            // add-on's money is shown — cart, checkout order review, and the
+            // mini-cart (nera_prize_addons_cart_item_data()) — docs/adr/0015. ?>
             <?php echo esc_html($option['title']); ?>
-            <?php if ($option['years'] > 1): ?>
-              <?php // <small>, not <span>: the sibling rule below styles every
-              // direct-child <span> bold/primary (so the price stands out),
-              // which would also catch this if it were a span. ?>
-              <small class="font-normal text-text-secondary text-[11px]"><?php echo esc_html(sprintf('× %d %s', $option['years'], nera_prize_addons_label('years'))); ?></small>
-            <?php endif; ?>
             <span class="tabular-nums"><?php echo wp_kses_post(wc_price($option['charged'])); ?></span>
+            <?php // <small>, not <span>: the sibling rule below styles every
+            // direct-child <span> bold/primary (so the charged amount stands
+            // out), which would also catch this if it were a span. ?>
+            <small class="font-normal text-text-secondary text-[11px]">(<?php echo wp_kses_post(wc_price($option['price'])); ?> <?php echo esc_html(nera_prize_addons_label('per_year')); ?>)</small>
             <?php if (!$readonly): ?>
             <button type="button" class="ncs-cart-addon__chip-remove" aria-label="<?php echo esc_attr(
               sprintf(
