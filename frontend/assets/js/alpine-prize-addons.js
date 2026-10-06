@@ -84,6 +84,10 @@
       selected: initialSelected,
       i18n: i18n,
 
+      init() {
+        this.syncValidity();
+      },
+
       toggle() {
         this.open = !this.open;
       },
@@ -97,12 +101,36 @@
         return id in this.selected;
       },
 
+      // True once a CHECKED option's raw (unclamped) Term is over the
+      // Maximum term — the same condition the input's own :invalid state
+      // shows (docs/adr/0015).
+      isYearsInvalid(id) {
+        return termsEnabled && this.isChecked(id) && this.years(id) > maxTerm;
+      },
+
+      hasInvalidYears() {
+        return this.chosen().some((option) => this.isYearsInvalid(option.id));
+      },
+
+      // Tells the Enter Now button (a sibling Alpine component, purchaseCard
+      // in purchase-card-body-inner.php) to disable itself while any add-on's
+      // Term is out of range, via the same cross-component window-event
+      // pattern already used for the Lucky Dip skill-question answer. Called
+      // from every place `selected` can change, including an external write
+      // from lucky-dip-addons.js's syncPrizePage().
+      syncValidity() {
+        window.dispatchEvent(
+          new CustomEvent('nera-addon-years-invalid', { detail: { invalid: this.hasInvalidYears() } })
+        );
+      },
+
       toggleOption(id) {
         if (this.isChecked(id)) {
           delete this.selected[id];
         } else {
           this.selected[id] = 1;
         }
+        this.syncValidity();
       },
 
       // The raw value for the input's own display — never rewritten to a
@@ -124,6 +152,7 @@
         const n = Math.trunc(Number(event.target.value));
         this.selected[id] = Number.isFinite(n) && n >= 1 ? n : 1;
         event.target.reportValidity();
+        this.syncValidity();
       },
 
       chosen() {
@@ -198,6 +227,7 @@
       toggleAll() {
         if (this.allSelected()) {
           this.selected = {};
+          this.syncValidity();
           return;
         }
         const next = {};
@@ -205,6 +235,7 @@
           next[option.id] = this.isChecked(option.id) ? this.years(option.id) : 1;
         });
         this.selected = next;
+        this.syncValidity();
       },
 
       format(amount) {

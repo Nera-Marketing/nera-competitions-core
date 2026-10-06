@@ -176,6 +176,7 @@ do_action('nera_purchase_card_before_enter_form', $product, $args);
         Alpine.data('purchaseCard', (config) => ({
           selectedAnswer: config.selectedAnswer,
           isSubmitting: false,
+          addonsInvalid: false,
           quantity: 1,
           _syncingFromBundle: false,
 
@@ -505,6 +506,11 @@ do_action('nera_purchase_card_before_enter_form', $product, $args);
               return;
             }
 
+            if (this.addonsInvalid) {
+              Alpine.store('toast').error(config.i18n.fixAddonYears);
+              return;
+            }
+
             this.isSubmitting = true;
 
             try {
@@ -649,11 +655,17 @@ do_action('nera_purchase_card_before_enter_form', $product, $args);
           generalError: '<?php echo esc_js(__(
             'An error occurred. Please try again.',
             'nera-competitions',
+          )); ?>',
+          fixAddonYears: '<?php echo esc_js(__(
+            'Fix the add-on Term above the Maximum term before continuing.',
+            'nera-competitions',
           )); ?>'
     }
   })"
     <?php /* The Lucky Dip popup answers on the customer's behalf; mirror it back so they are not asked twice. */ ?>
-    @nera-qa-answer-selected.window="selectedAnswer = $event.detail.answerId">
+    @nera-qa-answer-selected.window="selectedAnswer = $event.detail.answerId"
+    <?php /* Components/blocks/PrizeAddOns (Alpine, a sibling component — not nested in this x-data) dispatches this whenever a checked option's Term goes over the Maximum term, so Enter Now can disable itself (docs/adr/0015). */ ?>
+    @nera-addon-years-invalid.window="addonsInvalid = $event.detail.invalid">
     <form class="cart" @submit.prevent="submitForm"
       action="<?php echo esc_url(
         apply_filters('woocommerce_add_to_cart_form_action', $product->get_permalink()),

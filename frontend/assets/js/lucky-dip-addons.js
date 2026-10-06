@@ -22,6 +22,12 @@
 
   var BLOCK = '[data-nera-ld-addons]';
   var ADD_ACTIONS = /(?:^|&)action=lty_(?:process_lucky_dip|regenerate_lucky_dip_add_to_cart)(?:&|$)/;
+  // Every button/link that puts Lucky Dip tickets in the basket, across all three
+  // Lottery for WooCommerce popup/box templates this theme overrides — the same set
+  // lottery-alertable.js and lucky-dip-limit.js already key off of.
+  var LUCKY_DIP_ACTION_SELECTOR =
+    '.lty-add-to-cart-lucky-dip-button, .lty-lucky-dip-button, .lty-regenerate-lucky-dip-button, .lty-regenerate-lucky-dip-add-to-cart-button, .lty-add-more-lucky-tip';
+  var LUCKY_DIP_CONTAINER = '.lty-lottery-ticket-lucky-dip-container';
 
   // Prize ID -> { option_id: years }. Absent until a block for that prize has been seen.
   var selectionState = {};
@@ -97,6 +103,55 @@
       sel[id] = isFinite(years) && years >= 1 ? years : 1;
     });
     return sel;
+  }
+
+  // Any checked option's Years input out of [min, max] — disabled inputs
+  // (unticked options) are "barred from constraint validation" per the HTML
+  // spec, so checkValidity() already reads true for them without a guard.
+  function hasInvalidYears(block) {
+    return Array.prototype.some.call(block.querySelectorAll('[data-nera-ld-years]'), function (input) {
+      return input.checkValidity && !input.checkValidity();
+    });
+  }
+
+  // Disables every Lucky Dip add/regenerate action in this box or popup while
+  // a ticked add-on's Term is over the Maximum term — otherwise the highlighted
+  // :invalid input still let the customer add to cart with it (docs/adr/0015).
+  // Scoped to the add-ons block's own container, never to [data-nera-ld-addons]
+  // itself, so its own Select all / collapse controls stay usable to fix the value.
+  //
+  // Some of these buttons are already disabled statically by PHP for unrelated
+  // reasons (the frozen "Answered" button, Add More before the skill question is
+  // answered) — data-nera-addons-disabled marks only the ones WE disabled, so
+  // turning invalid back off never re-enables someone else's disabled state.
+  function setActionsDisabled(block, invalid) {
+    var container = block.closest(LUCKY_DIP_CONTAINER);
+    if (!container) {
+      return;
+    }
+    Array.prototype.forEach.call(container.querySelectorAll(LUCKY_DIP_ACTION_SELECTOR), function (el) {
+      if (invalid) {
+        var alreadyDisabled = el.tagName === 'BUTTON' ? el.disabled : el.getAttribute('aria-disabled') === 'true';
+        if (alreadyDisabled && !el.hasAttribute('data-nera-addons-disabled')) {
+          return; // disabled for another reason (e.g. unanswered skill question) — leave that alone
+        }
+        if (el.tagName === 'BUTTON') {
+          el.disabled = true;
+        } else {
+          el.setAttribute('aria-disabled', 'true');
+        }
+        el.setAttribute('data-nera-addons-disabled', '1');
+        el.classList.add('nera-lucky-dip-action--disabled');
+      } else if (el.hasAttribute('data-nera-addons-disabled')) {
+        el.removeAttribute('data-nera-addons-disabled');
+        el.classList.remove('nera-lucky-dip-action--disabled');
+        if (el.tagName === 'BUTTON') {
+          el.disabled = false;
+        } else {
+          el.removeAttribute('aria-disabled');
+        }
+      }
+    });
   }
 
   function apply(block, selection) {
@@ -203,6 +258,8 @@
         ? String(i18n.summarySelected || '%1$d of %2$d selected').replace('%1$d', count).replace('%2$d', options.length)
         : String(i18n.summaryNone || 'None selected · %d extras available').replace('%d', options.length);
     }
+
+    setActionsDisabled(block, hasInvalidYears(block));
   }
 
   function setCollapsed(block, collapsed) {
@@ -269,6 +326,13 @@
       var data = window.Alpine.$data(root);
       if (data && data.selected && typeof data.selected === 'object') {
         data.selected = Object.assign({}, selection);
+        // syncValidity() isn't triggered by this direct assignment (it only
+        // runs from the component's own methods), so call it explicitly —
+        // Enter Now must disable itself if this selection carries an
+        // over-the-Maximum-term value in from a Lucky Dip popup.
+        if (typeof data.syncValidity === 'function') {
+          data.syncValidity();
+        }
       }
     } catch (e) {
       // The block is only a convenience mirror: never let it break the dialog.
@@ -410,6 +474,23 @@
       userChoose(yearsBlock, readSelection(yearsBlock));
     }
   });
+
+  // A disabled <button> never dispatches click at all, but some of these
+  // actions render as <a href="#">, which has no native disabled state — so
+  // aria-disabled alone (set by setActionsDisabled() above) would still let
+  // the click through to LFW's own delegated (bubble-phase) handler. Capture
+  // phase, ahead of it, same pattern as lottery-lucky-dip-qa.js's own gate.
+  document.addEventListener(
+    'click',
+    function (e) {
+      var trigger = e.target.closest && e.target.closest(LUCKY_DIP_ACTION_SELECTOR);
+      if (trigger && trigger.hasAttribute('data-nera-addons-disabled')) {
+        e.preventDefault();
+        e.stopImmediatePropagation();
+      }
+    },
+    true
+  );
 
   document.addEventListener('click', function (e) {
     var toggle = e.target.closest && e.target.closest('[data-nera-ld-toggle]');

@@ -831,6 +831,25 @@ body.nera-ticket-dialog-open {
   transform: translateY(-1px);
 }
 
+/* Disabled while a ticked add-on's Term is over the Maximum term
+   (frontend/assets/js/lucky-dip-addons.js, docs/adr/0015) — same muted
+   dashed-border treatment as .nera-lucky-dip-popup__btn's own disabled state. */
+.nera-lucky-dip-inline__btn:disabled,
+.nera-lucky-dip-inline__btn[disabled],
+.nera-lucky-dip-inline__btn[aria-disabled='true'] {
+  background: #f8fafc !important;
+  color: #94a3b8 !important;
+  border: 1px dashed #cbd5e1 !important;
+  cursor: not-allowed;
+}
+
+.nera-lucky-dip-inline__btn:disabled:hover,
+.nera-lucky-dip-inline__btn[disabled]:hover,
+.nera-lucky-dip-inline__btn[aria-disabled='true']:hover {
+  background: #f8fafc !important;
+  transform: none;
+}
+
 .nera-lucky-dip-inline__error {
   flex-basis: 100%;
   width: 100%;
