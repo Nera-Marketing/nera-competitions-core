@@ -1298,6 +1298,17 @@ button {
   color: var(--color-text-primary);
 }
 
+/* Term choice on (docs/adr/0015): a real grid instead of flex. Flex's
+   name:flex-1 should in theory push the Years input and price to the same
+   x position on every row regardless of each row's own text, but in the
+   compact Lucky Dip dialog the input visibly landed at a different spot per
+   row anyway — a fixed grid column removes any doubt, the same fix already
+   proven on the prize page card. */
+.nera-ld-addons__label--with-years {
+  @apply grid items-center gap-2;
+  grid-template-columns: 16px 1fr 56px 148px;
+}
+
 .nera-ld-addons__check {
   @apply h-4 w-4 shrink-0 cursor-pointer rounded;
   accent-color: var(--color-primary);
@@ -1312,15 +1323,16 @@ button {
   color: var(--color-text-secondary);
 }
 
-/* Years input (docs/adr/0015) — a plain flex sibling of .nera-ld-addons__name/
-   __price, not a grid, so no wrapper is needed here the way the prize-page
-   block needed one (see its own main.css comment). The extra margin-left (on
-   top of .nera-ld-addons__label's gap-2) moves it away from the name and
-   towards the price column, same request as the prize page card's own
-   Years column — .nera-ld-addons__name is flex-1 and would otherwise leave
-   the input sitting flush against the name text with only the base gap. */
+.nera-ld-addons__label--with-years .nera-ld-addons__price {
+  @apply text-right;
+}
+
+/* Years input (docs/adr/0015), in its own grid column (.nera-ld-addons__label
+   --with-years above) — justify-self: end gives it room to sit near the
+   price instead of flush against the name, the column being wider than the
+   input itself. */
 .nera-ld-addons__years-input {
-  @apply ml-3 h-6 w-11 shrink-0 rounded-md border border-gray-200 px-1 text-center text-xs tabular-nums;
+  @apply h-6 w-11 shrink-0 justify-self-end rounded-md border border-gray-200 px-1 text-center text-xs tabular-nums;
 }
 
 /* Enabled (the option is ticked): same accent-border cue as the prize page

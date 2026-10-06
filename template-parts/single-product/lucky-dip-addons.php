@@ -66,7 +66,7 @@ if (empty($nera_ld['enabled']) || empty($nera_ld['options'])) {
             <?php echo esc_html($nera_ld['i18n']['purchased']); ?>
           </span>
         <?php else: ?>
-          <label class="nera-ld-addons__label">
+          <label class="nera-ld-addons__label<?php echo !empty($nera_ld['terms_enabled']) ? ' nera-ld-addons__label--with-years' : ''; ?>">
             <input type="checkbox" name="nera_ld_addon_ids[]" class="nera-ld-addons__check"
               value="<?php echo esc_attr($nera_ld_option['id']); ?>"
               <?php checked($nera_ld_option['selected']); ?>>
