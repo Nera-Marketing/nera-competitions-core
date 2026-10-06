@@ -346,21 +346,30 @@ function nera_prize_addons_quote(int $draw_id, array $selection, array $purchase
     }
   }
 
+  // Each option's own charged amount is always its own price x years — shown
+  // per-option everywhere (cart, order, prize page) and always summing to
+  // $subtotal, bundle or not. The bundle discount lives only in $total below,
+  // the same way the pre-Term "Select all for £X (save £Y)" messaging already
+  // explains a bundle with no extra years: nothing here tries to attribute
+  // the saving to one option, since every option still has a plain, honest
+  // price next to it (a per-option "only the years beyond the bundle" charge
+  // read as a confusing £0.00 next to a ticked, paid-for option).
   $subtotal = 0.0;
   foreach ($ordered as $id => &$option) {
-    // Without a bundle, an option is charged for every year it was bought.
-    // With one, the bundle price already covers $bundle_sets of every
-    // option, so only the years beyond that are charged per option.
-    $billable_years = $full ? $extra_years[$id] : $option['years'];
-    $option['charged'] = round($option['price'] * $billable_years, 2);
+    $option['charged'] = round($option['price'] * $option['years'], 2);
     $subtotal += $option['price'] * $option['years'];
   }
   unset($option);
   $subtotal = round($subtotal, 2);
 
-  $total = $full
-    ? round($bundle_sets * (float) $config['bundle_price'] + array_sum(array_column($ordered, 'charged')), 2)
-    : $subtotal;
+  $total = $subtotal;
+  if ($full) {
+    $extra_charge = 0.0;
+    foreach ($ordered as $id => $option) {
+      $extra_charge += $option['price'] * $extra_years[$id];
+    }
+    $total = round($bundle_sets * (float) $config['bundle_price'] + $extra_charge, 2);
+  }
 
   return [
     'options' => $ordered,

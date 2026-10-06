@@ -149,19 +149,19 @@
       totalEl.appendChild(document.createTextNode(formatMoney(totals.total, cfg.currency)));
     }
 
-    // Per-option amount: price x years normally, or — once the bundle
-    // applies — only the years beyond the shared set count. With Term choice
-    // on, shown as "total - price/year" (docs/adr/0015), same format as the
+    // Per-option amount: always its own price x years (1 when unticked) —
+    // never the bundle-adjusted "only the years beyond the set" figure, which
+    // reads as a confusing £0.00 next to a ticked, paid-for option whose
+    // single year the bundle happened to cover. The bundle discount still
+    // shows, just only in the aggregate total above (docs/adr/0015). With
+    // Term choice on, shown as "total - price/year", same format as the
     // prize page card and the cart/checkout chip.
     Array.prototype.forEach.call(block.querySelectorAll('[data-nera-ld-amount]'), function (el) {
       var id = el.getAttribute('data-nera-ld-amount');
       var option = findOption(cfg, id);
       var price = option ? Number(option.price || 0) : 0;
       var isSelected = Object.prototype.hasOwnProperty.call(sel, id);
-      var amount = price;
-      if (isSelected) {
-        amount = totals.full ? price * Math.max(0, (sel[id] || 1) - totals.bundleSets) : price * (sel[id] || 1);
-      }
+      var amount = price * (isSelected ? sel[id] || 1 : 1);
       if (cfg.termsEnabled) {
         var i18n = cfg.i18n || {};
         el.textContent = formatMoney(amount, cfg.currency) + ' - ' + formatMoney(price, cfg.currency) + ' ' + (i18n.perYear || '');

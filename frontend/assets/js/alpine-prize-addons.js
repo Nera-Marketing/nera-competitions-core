@@ -80,7 +80,12 @@
       },
 
       isChecked(id) {
-        return Object.prototype.hasOwnProperty.call(this.selected, id);
+        // `in`, not hasOwnProperty.call() — Alpine's reactivity (like Vue 3's)
+        // tracks the `in` operator's `has` trap but not a plain
+        // hasOwnProperty call, so the latter silently never re-evaluates
+        // :disabled/:checked when a single option is ticked (only a whole
+        // re-assignment of `selected`, e.g. toggleAll(), happened to work).
+        return id in this.selected;
       },
 
       toggleOption(id) {
@@ -131,17 +136,19 @@
         return Math.max(0, this.years(id) - this.bundleSets());
       },
 
-      // The amount shown beside one option: its own price × years normally,
-      // or — once every option is selected and the bundle applies — only the
-      // years beyond the bundle's sets (the sets themselves are covered by
-      // the bundle price, not attributed to any one option).
+      // The amount shown beside one option: always its own price × years
+      // (ticked or not — years(id) already reads an unticked option as 1).
+      // Never the bundle-adjusted "only the years beyond the set" figure:
+      // that read as a confusing £0.00 next to a ticked, paid-for option
+      // whose single year the bundle happened to cover. The bundle discount
+      // still shows, just only in the aggregate total() below — the same way
+      // the existing "Select all for £X (save £Y)" banner already explains a
+      // bundle with no extra years, matching the server's own
+      // nera_prize_addons_quote() (docs/adr/0015).
       optionAmount(id) {
         const option = findOption(id);
         const price = option ? Number(option.price || 0) : 0;
-        if (!this.isChecked(id)) {
-          return price; // Preview: what ticking it now would cost for 1 year.
-        }
-        return price * (this.isFullBundle() ? this.extraYears(id) : this.years(id));
+        return price * this.years(id);
       },
 
       // "£48.00 - £24.00 / year" — the option's money column when Term choice
