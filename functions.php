@@ -453,7 +453,7 @@ function nera_get_entry_list_pdf_download_url($product_id)
 }
 
 /**
- * Stream entry-list PDF via Lottery plugin generator when ?nera_entry_list_pdf={id} is requested.
+ * Stream the entry-list PDF (chunked, see inc/helpers/entry-list-pdf.php) when ?nera_entry_list_pdf={id} is requested.
  *
  * @return void
  */
@@ -506,7 +506,7 @@ function nera_handle_entry_list_pdf_download()
     );
   }
 
-  if (!class_exists('LTY_Generate_PDF_Handler')) {
+  if (!nera_entry_list_pdf_available()) {
     status_header(503);
     nocache_headers();
     wp_die(
@@ -517,7 +517,7 @@ function nera_handle_entry_list_pdf_download()
   }
 
   nocache_headers();
-  LTY_Generate_PDF_Handler::download_lottery_entry_list($product_id);
+  nera_output_entry_list_pdf($product);
   exit;
 }
 add_action('template_redirect', 'nera_handle_entry_list_pdf_download', 5);
@@ -1304,6 +1304,9 @@ require_once get_template_directory() . '/inc/helpers/author-avatar.php';
 
 // Winners dataset helpers for server rendering
 require_once get_template_directory() . '/inc/helpers/winners-dataset.php';
+
+// Entry-list PDF download, written in chunks (large lists)
+require_once get_template_directory() . '/inc/helpers/entry-list-pdf.php';
 
 // Social icon helpers (shared by promo-banner and Twig components)
 require_once NERA_DIR . '/inc/helpers/social-icons.php';
