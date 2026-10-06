@@ -31,7 +31,10 @@ $draw = wc_get_product($draw_id);
 $line_name = sprintf(nera_prize_addons_label('line_name'), nera_prize_addons_draw_name($draw_id));
 $quote = nera_prize_addons_quote(
   $draw_id,
-  (array) ($cart_item[NERA_PRIZE_ADDON_CART_KEY]['option_ids'] ?? []),
+  nera_prize_addons_years_map(
+    (array) ($cart_item[NERA_PRIZE_ADDON_CART_KEY]['option_ids'] ?? []),
+    (array) ($cart_item[NERA_PRIZE_ADDON_CART_KEY]['option_years'] ?? [])
+  ),
   nera_prize_addons_current_user_purchased($draw_id)
 );
 $subtotal = (float) ($cart_item['line_subtotal'] ?? $quote['total']);
@@ -102,7 +105,13 @@ $subtotal = (float) ($cart_item['line_subtotal'] ?? $quote['total']);
         <?php foreach ($quote['options'] as $option): ?>
           <li class="ncs-cart-addon__chip">
             <?php echo esc_html($option['title']); ?>
-            <span class="tabular-nums"><?php echo wp_kses_post(wc_price($option['price'])); ?></span>
+            <?php if ($option['years'] > 1): ?>
+              <?php // <small>, not <span>: the sibling rule below styles every
+              // direct-child <span> bold/primary (so the price stands out),
+              // which would also catch this if it were a span. ?>
+              <small class="font-normal text-text-secondary text-[11px]"><?php echo esc_html(sprintf('× %d %s', $option['years'], nera_prize_addons_label('years'))); ?></small>
+            <?php endif; ?>
+            <span class="tabular-nums"><?php echo wp_kses_post(wc_price($option['charged'])); ?></span>
             <?php if (!$readonly): ?>
             <button type="button" class="ncs-cart-addon__chip-remove" aria-label="<?php echo esc_attr(
               sprintf(

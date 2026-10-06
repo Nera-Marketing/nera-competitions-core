@@ -71,6 +71,14 @@ function nera_prize_addons_label(string $key): string
     'meta_full_bundle' => __('Full bundle', 'nera-competitions'),
     'yes' => __('Yes', 'nera-competitions'),
     'no' => __('No', 'nera-competitions'),
+
+    // Add-on terms (docs/adr/0015).
+    'per_year' => __('/ year', 'nera-competitions'),
+    'years' => __('Years', 'nera-competitions'),
+    'valid_until' => __('Valid until', 'nera-competitions'),
+    /* translators: 1: number of complete bundle sets, 2: number of extra years charged at their own price */
+    'bundle_sets' => __('%1$d bundle set(s) + %2$d extra year(s)', 'nera-competitions'),
+    'meta_term' => __('Term', 'nera-competitions'),
   ];
 
   $text = $labels[$key] ?? '';
@@ -236,6 +244,27 @@ function nera_prize_addons_config(int $product_id): array
     'terms_enabled' => (bool) get_field('addons_terms_enabled', $product_id),
     'max_term' => $config['max_term'],
   ];
+}
+
+/**
+ * Build the `id => years` map nera_prize_addons_quote() expects from a cart
+ * line's two parallel arrays, an id missing from `$years` reading as 1 year
+ * (docs/adr/0015 — orders and carts saved before this change have no
+ * `option_years` at all, so they read as 1 year throughout, not just here).
+ *
+ * @param string[]        $ids   Chosen option IDs (cart item's option_ids).
+ * @param array<string,int> $years Years saved per ID (cart item's option_years).
+ * @return array<string,int>
+ */
+function nera_prize_addons_years_map(array $ids, array $years): array
+{
+  $map = [];
+  foreach ($ids as $id) {
+    $id = (string) $id;
+    $map[$id] = isset($years[$id]) ? (int) $years[$id] : 1;
+  }
+
+  return $map;
 }
 
 /**
