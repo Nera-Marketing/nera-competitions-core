@@ -534,12 +534,19 @@ do_action('nera_purchase_card_before_enter_form', $product, $args);
 
               // Prize add-ons ticked on this page (Components/blocks/PrizeAddOns). Only sent
               // when the block is present, so an existing add-on line is left alone otherwise.
-              // The server prices them; nothing here carries a price.
+              // The server prices them (and re-clamps any Term posted here, docs/adr/0015);
+              // nothing here carries a price.
               const addonsRoot = document.querySelector('[data-prize-addons="' + config.productId + '"]');
               if (addonsRoot) {
                 ajaxData.append('nera_addons_submitted', '1');
                 addonsRoot.querySelectorAll('input[name="nera_addon_ids[]"]:checked').forEach((input) => {
                   ajaxData.append('nera_addon_ids[]', input.value);
+                  const yearsInput = addonsRoot.querySelector(
+                    'input[name="nera_addon_years[' + input.value + ']"]'
+                  );
+                  if (yearsInput) {
+                    ajaxData.append('nera_addon_years[' + input.value + ']', yearsInput.value);
+                  }
                 });
               }
 

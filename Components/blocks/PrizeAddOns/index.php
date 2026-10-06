@@ -21,7 +21,9 @@ if (!defined('ABSPATH')) {
  *   dom_id: string,         // required — unique id prefix for labels / aria-controls
  *   title: string,          // required — may be ''
  *   description: string,    // required — may be ''
- *   options: list<array{id:string,title:string,description:string,price:float,price_html:string,purchased:bool,selected:bool}>, // required
+ *   terms_enabled: bool,    // required — Term choice switch (docs/adr/0015); off → no Years input, every option reads as 1 year
+ *   max_term: int,          // required — Years input's max attribute
+ *   options: list<array{id:string,title:string,description:string,price:float,price_html:string,purchased:bool,selected:bool,years:int}>, // required
  *   option_count: int,      // required
  *   purchased_count: int,   // required — options bought in earlier paid orders
  *   available_count: int,   // required — options that can still be ticked
@@ -29,7 +31,7 @@ if (!defined('ABSPATH')) {
  *   notice: string,         // required — '' or the "already bought" note
  *   initial: array{subtotal_text:string,total_text:string,is_full_bundle:bool}, // required — server-rendered totals before Alpine boots
  *   config_json: string,    // required — JSON for the neraPrizeAddons Alpine component
- *   i18n: array<string,string> // required — eyebrow, total, non_refundable, purchased, select_all, hide
+ *   i18n: array<string,string> // required — eyebrow, total, non_refundable, purchased, select_all, hide, per_year, years
  * }
  */
 function get_data(array $args = []): array
@@ -41,6 +43,8 @@ function get_data(array $args = []): array
         'dom_id'          => '',
         'title'           => '',
         'description'     => '',
+        'terms_enabled'   => false,
+        'max_term'        => 10,
         'options'         => [],
         'option_count'    => 0,
         'purchased_count' => 0,
@@ -62,24 +66,28 @@ function get_data(array $args = []): array
         return $empty;
     }
 
-    $purchased = array_fill_keys(nera_prize_addons_current_user_purchased($product_id), true);
-    $line      = nera_prize_addons_find_cart_line($product_id);
-    $in_cart   = $line ? array_fill_keys((array) ($line[1][NERA_PRIZE_ADDON_CART_KEY]['option_ids'] ?? []), true) : [];
+    $purchased   = array_fill_keys(nera_prize_addons_current_user_purchased($product_id), true);
+    $line        = nera_prize_addons_find_cart_line($product_id);
+    $in_cart     = $line ? array_fill_keys((array) ($line[1][NERA_PRIZE_ADDON_CART_KEY]['option_ids'] ?? []), true) : [];
+    $cart_years  = $line ? (array) ($line[1][NERA_PRIZE_ADDON_CART_KEY]['option_years'] ?? []) : [];
 
     $options         = [];
     $js_options      = [];
+    // id => years (docs/adr/0015) — nera_prize_addons_quote() reads either
+    // shape, so this map goes straight into it below with no conversion.
     $selected        = [];
     $purchased_count = 0;
     foreach ($config['options'] as $id => $option) {
         $is_purchased = isset($purchased[$id]);
         $is_selected  = !$is_purchased && isset($in_cart[$id]);
+        $years        = isset($cart_years[$id]) ? max(1, (int) $cart_years[$id]) : 1;
         if ($is_purchased) {
             $purchased_count++;
         } else {
             $js_options[] = ['id' => $id, 'title' => $option['title'], 'price' => $option['price']];
         }
         if ($is_selected) {
-            $selected[] = $id;
+            $selected[$id] = $years;
         }
         $options[] = [
             'id'          => $id,
@@ -89,6 +97,7 @@ function get_data(array $args = []): array
             'price_html'  => wc_price($option['price']),
             'purchased'   => $is_purchased,
             'selected'    => $is_selected,
+            'years'       => $years,
         ];
     }
 
@@ -122,12 +131,16 @@ function get_data(array $args = []): array
         'purchased'      => nera_prize_addons_label('purchased'),
         'select_all'     => nera_prize_addons_label('select_all'),
         'hide'           => nera_prize_addons_label('hide'),
+        'per_year'       => nera_prize_addons_label('per_year'),
+        'years'          => nera_prize_addons_label('years'),
     ];
 
     $js_config = [
-        'options'     => $js_options,
-        'selected'    => $selected,
-        'bundlePrice' => $bundle_available ? (float) $config['bundle_price'] : null,
+        'options'       => $js_options,
+        'selected'      => (object) $selected, // id => years; (object) so an empty selection still encodes as {} not [].
+        'bundlePrice'   => $bundle_available ? (float) $config['bundle_price'] : null,
+        'termsEnabled'  => (bool) $config['terms_enabled'],
+        'maxTerm'       => (int) $config['max_term'],
         'currency'    => [
             'symbol'    => html_entity_decode(get_woocommerce_currency_symbol(), ENT_QUOTES, 'UTF-8'),
             'position'  => (string) get_option('woocommerce_currency_pos', 'left'),
@@ -143,6 +156,7 @@ function get_data(array $args = []): array
             'summarySelected' => nera_prize_addons_label('summary_selected'),
             'summaryNone'     => nera_prize_addons_label('summary_none'),
             'allPurchased'    => nera_prize_addons_label('all_purchased'),
+            'bundleSets'      => nera_prize_addons_label('bundle_sets'),
         ],
     ];
 
@@ -152,6 +166,8 @@ function get_data(array $args = []): array
         'dom_id'          => 'ncs-prize-addons-' . $product_id,
         'title'           => $config['title'],
         'description'     => $config['description'],
+        'terms_enabled'   => (bool) $config['terms_enabled'],
+        'max_term'        => (int) $config['max_term'],
         'options'         => $options,
         'option_count'    => $option_count,
         'purchased_count' => $purchased_count,

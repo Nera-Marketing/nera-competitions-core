@@ -8,7 +8,9 @@
   dom_id           string  required  id prefix
   title            string  required  may be ''
   description      string  required  may be ''
-  options          list    required  {id, title, description, price, price_html, purchased, selected}
+  terms_enabled    bool    required  Term choice switch (docs/adr/0015) — off: no Years input, every option reads 1 year
+  max_term         int     required  Years input's max attribute
+  options          list    required  {id, title, description, price, price_html, purchased, selected, years}
   option_count     int     required
   purchased_count  int     required
   available_count  int     required
@@ -16,7 +18,7 @@
   notice           string  required  '' or the "already bought" note
   initial          array   required  {subtotal_text, total_text, is_full_bundle}
   config_json      string  required  argument for x-data="neraPrizeAddons(…)"
-  i18n             array   required  eyebrow, total, non_refundable, purchased, select_all, hide
+  i18n             array   required  eyebrow, total, non_refundable, purchased, select_all, hide, per_year, years
   Timber autoescape is off: every admin-entered value is escaped here.
   The total and the non-refundable line stay visible when the block is collapsed.
 #}
@@ -75,7 +77,8 @@
               id="{{ dom_id }}-{{ option.id|e('html_attr') }}"
               name="nera_addon_ids[]"
               value="{{ option.id|e('html_attr') }}"
-              x-model="selected"
+              :checked="isChecked('{{ option.id|e('js') }}')"
+              @change="toggleOption('{{ option.id|e('js') }}')"
               {% if option.selected %}checked{% endif %}
             >
             <label class="ncs-prize-addons__text" for="{{ dom_id }}-{{ option.id|e('html_attr') }}">
@@ -84,7 +87,31 @@
                 <span class="ncs-prize-addons__desc">{{ option.description|e }}</span>
               {% endif %}
             </label>
-            <span class="ncs-prize-addons__price">{{ option.price_html|raw }}</span>
+            {# Grouped in one wrapper: .ncs-prize-addons__option is a 3-column grid
+               (checkbox | text | auto), so the Years controls join the price as a
+               single third cell instead of breaking that layout into six columns. #}
+            <div class="ncs-prize-addons__price-wrap">
+              {% if terms_enabled %}
+                <span class="ncs-prize-addons__peryear">{{ option.price_html|raw }} {{ i18n.per_year|e }}</span>
+                <span class="ncs-prize-addons__years">
+                  <label class="ncs-prize-addons__years-label sr-only" for="{{ dom_id }}-{{ option.id|e('html_attr') }}-years">{{ i18n.years|e }} — {{ option.title|e }}</label>
+                  <input
+                    type="number"
+                    class="ncs-prize-addons__years-input"
+                    id="{{ dom_id }}-{{ option.id|e('html_attr') }}-years"
+                    name="nera_addon_years[{{ option.id|e('html_attr') }}]"
+                    min="1"
+                    max="{{ max_term }}"
+                    step="1"
+                    value="{{ option.years }}"
+                    :value="years('{{ option.id|e('js') }}')"
+                    :disabled="!isChecked('{{ option.id|e('js') }}')"
+                    @input="setYears('{{ option.id|e('js') }}', $event.target.value)"
+                  >
+                </span>
+              {% endif %}
+              <span class="ncs-prize-addons__price" x-text="format(optionAmount('{{ option.id|e('js') }}'))">{{ option.price_html|raw }}</span>
+            </div>
           </li>
         {% endif %}
       {% endfor %}
@@ -95,6 +122,9 @@
         <span>{{ bundle.offer_html|raw }}</span>
         <button type="button" class="ncs-prize-addons__select-all" @click="toggleAll()" x-text="allSelected() ? i18n.clear : i18n.selectAll">{{ i18n.select_all|e }}</button>
       </div>
+      {% if terms_enabled %}
+        <p class="ncs-prize-addons__bundle-extra" x-show="extraYearsLine()" x-text="extraYearsLine()" x-cloak></p>
+      {% endif %}
     {% elseif notice %}
       <p class="ncs-prize-addons__notice">{{ notice|e }}</p>
     {% endif %}

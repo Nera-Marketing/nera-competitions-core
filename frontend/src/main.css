@@ -884,6 +884,27 @@ button {
   @apply whitespace-nowrap text-sm font-semibold tabular-nums;
 }
 
+/* Groups the per-year price, the Years input and the computed amount into the
+   option row's third grid column (docs/adr/0015) — see template.twig's own
+   comment on why these can't be separate grid children. */
+.ncs-prize-addons__price-wrap {
+  @apply flex flex-col items-end gap-1;
+}
+
+.ncs-prize-addons__peryear {
+  @apply whitespace-nowrap text-[11px];
+  color: var(--ncs-prize-addons-text-secondary);
+}
+
+.ncs-prize-addons__years-input {
+  @apply h-6 w-12 rounded-md border px-1.5 text-center text-xs tabular-nums;
+  border-color: var(--ncs-prize-addons-divider);
+}
+
+.ncs-prize-addons__years-input:disabled {
+  @apply cursor-not-allowed opacity-50;
+}
+
 .ncs-prize-addons__purchased {
   @apply inline-flex items-center gap-0.5 whitespace-nowrap rounded-full border px-2 py-0.5 text-[11px] font-semibold;
   background-color: var(--ncs-prize-addons-purchased-bg);
@@ -899,6 +920,13 @@ button {
   @apply flex items-center justify-between gap-2.5 rounded-xl border border-dashed px-3.5 py-2.5 text-[13px];
   background-color: var(--ncs-prize-addons-list-bg);
   border-color: var(--ncs-prize-addons-accent);
+}
+
+/* "N bundle set(s) + M extra year(s)" — shown under the bundle offer only
+   once a chosen Term runs past the shared set count (docs/adr/0015). */
+.ncs-prize-addons__bundle-extra {
+  @apply mt-1.5 px-3.5 text-[12px];
+  color: var(--ncs-prize-addons-text-secondary);
 }
 
 .ncs-prize-addons__select-all {
