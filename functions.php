@@ -2414,7 +2414,12 @@ function nera_ajax_add_to_cart_limit_preview()
   ) {
     $raw = isset($_POST['nera_addon_ids']) ? (array) wp_unslash($_POST['nera_addon_ids']) : [];
     $ids = array_values(array_unique(array_filter(array_map('sanitize_key', array_map('strval', $raw)))));
-    $quote = nera_prize_addons_quote($product_id, $ids, nera_prize_addons_current_user_purchased($product_id));
+    // Read the posted Term too (docs/adr/0015) — easy to forget, and skipping
+    // it would silently under-count this projection for any option bought at
+    // more than 1 year.
+    $years = function_exists('nera_prize_addons_years_from_request') ? nera_prize_addons_years_from_request($ids) : [];
+    $selection = function_exists('nera_prize_addons_years_map') ? nera_prize_addons_years_map($ids, $years) : $ids;
+    $quote = nera_prize_addons_quote($product_id, $selection, nera_prize_addons_current_user_purchased($product_id));
     $line = nera_prize_addons_find_cart_line($product_id);
     $projected += (float) $quote['total'] - ($line ? (float) ($line[1]['line_total'] ?? 0) : 0.0);
   }

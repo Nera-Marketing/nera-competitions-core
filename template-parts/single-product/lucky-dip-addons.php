@@ -71,7 +71,20 @@ if (empty($nera_ld['enabled']) || empty($nera_ld['options'])) {
               value="<?php echo esc_attr($nera_ld_option['id']); ?>"
               <?php checked($nera_ld_option['selected']); ?>>
             <span class="nera-ld-addons__name"><?php echo esc_html($nera_ld_option['title']); ?></span>
-            <span class="nera-ld-addons__price"><?php echo wp_kses_post($nera_ld_option['price_html']); ?></span>
+            <?php if (!empty($nera_ld['terms_enabled'])): ?>
+              <span class="nera-ld-addons__peryear"><?php echo wp_kses_post($nera_ld_option['price_html']); ?> <?php echo esc_html($nera_ld['i18n']['per_year'] ?? ''); ?></span>
+              <?php
+              // A plain number input, not Alpine (see this file's own docblock): lucky-dip-addons.js
+              // reads/writes it directly via the data-nera-ld-years attribute.
+              ?>
+              <input type="number" class="nera-ld-addons__years-input"
+                data-nera-ld-years="<?php echo esc_attr($nera_ld_option['id']); ?>"
+                min="1" max="<?php echo esc_attr($nera_ld['max_term']); ?>" step="1"
+                value="<?php echo esc_attr($nera_ld_option['years']); ?>"
+                <?php disabled(empty($nera_ld_option['selected'])); ?>
+                aria-label="<?php echo esc_attr(($nera_ld['i18n']['years'] ?? 'Years') . ' — ' . $nera_ld_option['title']); ?>">
+            <?php endif; ?>
+            <span class="nera-ld-addons__price" data-nera-ld-amount="<?php echo esc_attr($nera_ld_option['id']); ?>"><?php echo wp_kses_post($nera_ld_option['price_html']); ?></span>
           </label>
         <?php endif; ?>
       </li>

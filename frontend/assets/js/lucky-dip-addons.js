@@ -6,13 +6,16 @@
  *
  *  - One selection per prize, shared by every copy of the block on the page: the one in
  *    the Lucky Dip box, and the ones in the popups. A copy that appears later (a popup)
- *    starts from what was already chosen.
- *  - The total is for display only; the cart prices the add-on line on the server.
- *  - The chosen options ride along on the Lucky Dip requests that put tickets in the
- *    basket, so the add-on line is created or updated in the same step. The server side
+ *    starts from what was already chosen. The selection is an id => years map
+ *    (docs/adr/0015) — a missing id means 1 year, same convention as the server.
+ *  - The total is for display only; the cart prices the add-on line on the server, which
+ *    re-clamps whatever Term this posts (off prize switch => 1, else 1..max_term).
+ *  - The chosen options and years ride along on the Lucky Dip requests that put tickets in
+ *    the basket, so the add-on line is created or updated in the same step. The server side
  *    is nera_prize_addons_sync_from_lucky_dip() in inc/prize-addons.php.
- *  - In a popup that is shown after the tickets were added, a tick is saved to the basket
- *    at once (nera_prize_addons_save), asking about the spending limit first.
+ *  - In a popup that is shown after the tickets were added, a tick (or a Years edit) is
+ *    saved to the basket at once (nera_prize_addons_save), asking about the spending limit
+ *    first.
  */
 (function ($) {
   'use strict';
@@ -20,8 +23,8 @@
   var BLOCK = '[data-nera-ld-addons]';
   var ADD_ACTIONS = /(?:^|&)action=lty_(?:process_lucky_dip|regenerate_lucky_dip_add_to_cart)(?:&|$)/;
 
-  // Prize ID -> chosen option IDs. Absent until a block for that prize has been seen.
-  var selection = {};
+  // Prize ID -> { option_id: years }. Absent until a block for that prize has been seen.
+  var selectionState = {};
 
   function config(block) {
     try {
@@ -57,42 +60,112 @@
     });
   }
 
-  function checkedIds(block) {
-    return Array.prototype.map.call(block.querySelectorAll('.nera-ld-addons__check:checked'), function (i) {
-      return i.value;
+  function findOption(cfg, id) {
+    return (cfg.options || []).filter(function (o) {
+      return o.id === id;
+    })[0];
+  }
+
+  // Reads the block's own checkboxes + their paired Years inputs into one
+  // { option_id: years } map — the single source of truth for "what is
+  // ticked right now" (apply() below writes the same shape back to the DOM).
+  function readSelection(block) {
+    var sel = {};
+    Array.prototype.forEach.call(block.querySelectorAll('.nera-ld-addons__check:checked'), function (input) {
+      var id = input.value;
+      var yearsInput = block.querySelector('[data-nera-ld-years="' + id + '"]');
+      var years = yearsInput ? parseInt(yearsInput.value, 10) : 1;
+      sel[id] = isFinite(years) && years >= 1 ? years : 1;
+    });
+    return sel;
+  }
+
+  function apply(block, selection) {
+    Array.prototype.forEach.call(block.querySelectorAll('.nera-ld-addons__check'), function (input) {
+      var isSelected = Object.prototype.hasOwnProperty.call(selection, input.value);
+      input.checked = isSelected;
+      var yearsInput = block.querySelector('[data-nera-ld-years="' + input.value + '"]');
+      if (yearsInput) {
+        yearsInput.disabled = !isSelected;
+        if (isSelected) {
+          yearsInput.value = selection[input.value];
+        }
+      }
     });
   }
 
-  function apply(block, ids) {
-    Array.prototype.forEach.call(block.querySelectorAll('.nera-ld-addons__check'), function (input) {
-      input.checked = ids.indexOf(input.value) !== -1;
-    });
+  // Mirrors nera_prize_addons_quote()'s formula (display only; the server is
+  // always authoritative — docs/adr/0015): complete sets price at the bundle
+  // rate, years beyond the smallest Term price at each option's own rate.
+  function computeTotals(cfg, selection) {
+    var options = cfg.options || [];
+    var ids = Object.keys(selection);
+    var all = options.length > 0 && ids.length === options.length;
+    var hasBundle = cfg.bundlePrice !== null && cfg.bundlePrice !== undefined;
+    var full = hasBundle && all;
+
+    var subtotal = options.reduce(function (sum, o) {
+      return Object.prototype.hasOwnProperty.call(selection, o.id) ? sum + Number(o.price || 0) * (selection[o.id] || 1) : sum;
+    }, 0);
+
+    var bundleSets = 0;
+    var extraYearsTotal = 0;
+    var total = subtotal;
+    if (full) {
+      bundleSets = Math.min.apply(
+        null,
+        ids.map(function (id) {
+          return selection[id] || 1;
+        })
+      );
+      var extraCharge = 0;
+      ids.forEach(function (id) {
+        var option = findOption(cfg, id);
+        var price = option ? Number(option.price || 0) : 0;
+        var extraY = Math.max(0, (selection[id] || 1) - bundleSets);
+        extraYearsTotal += extraY;
+        extraCharge += price * extraY;
+      });
+      total = bundleSets * Number(cfg.bundlePrice) + extraCharge;
+    }
+
+    return { subtotal: subtotal, total: total, full: full, bundleSets: bundleSets, extraYearsTotal: extraYearsTotal };
   }
 
   function render(block) {
     var cfg = config(block);
     var options = cfg.options || [];
-    var ids = checkedIds(block);
-    var subtotal = options.reduce(function (sum, o) {
-      return ids.indexOf(o.id) !== -1 ? sum + Number(o.price || 0) : sum;
-    }, 0);
-    var all = options.length > 0 && ids.length === options.length;
-    var full = cfg.bundlePrice !== null && cfg.bundlePrice !== undefined && all;
-    var total = full ? Number(cfg.bundlePrice) : subtotal;
+    var sel = readSelection(block);
+    var totals = computeTotals(cfg, sel);
 
     var totalEl = block.querySelector('[data-nera-ld-total]');
     if (totalEl) {
       totalEl.textContent = '';
-      if (full) {
+      if (totals.full) {
         var strike = document.createElement('s');
-        strike.textContent = formatMoney(subtotal, cfg.currency) + ' ';
+        strike.textContent = formatMoney(totals.subtotal, cfg.currency) + ' ';
         totalEl.appendChild(strike);
       }
-      totalEl.appendChild(document.createTextNode(formatMoney(total, cfg.currency)));
+      totalEl.appendChild(document.createTextNode(formatMoney(totals.total, cfg.currency)));
     }
+
+    // Per-option amount: price x years normally, or — once the bundle
+    // applies — only the years beyond the shared set count.
+    Array.prototype.forEach.call(block.querySelectorAll('[data-nera-ld-amount]'), function (el) {
+      var id = el.getAttribute('data-nera-ld-amount');
+      var option = findOption(cfg, id);
+      var price = option ? Number(option.price || 0) : 0;
+      var isSelected = Object.prototype.hasOwnProperty.call(sel, id);
+      var amount = price;
+      if (isSelected) {
+        amount = totals.full ? price * Math.max(0, (sel[id] || 1) - totals.bundleSets) : price * (sel[id] || 1);
+      }
+      el.textContent = formatMoney(amount, cfg.currency);
+    });
 
     var btn = block.querySelector('[data-nera-ld-select-all]');
     if (btn) {
+      var all = options.length > 0 && Object.keys(sel).length === options.length;
       btn.classList.toggle('is-active', all);
       btn.setAttribute('aria-pressed', all ? 'true' : 'false');
     }
@@ -101,8 +174,9 @@
     var summary = block.querySelector('[data-nera-ld-summary]');
     if (summary) {
       var i18n = cfg.i18n || {};
-      summary.textContent = ids.length
-        ? String(i18n.summarySelected || '%1$d of %2$d selected').replace('%1$d', ids.length).replace('%2$d', options.length)
+      var count = Object.keys(sel).length;
+      summary.textContent = count
+        ? String(i18n.summarySelected || '%1$d of %2$d selected').replace('%1$d', count).replace('%2$d', options.length)
         : String(i18n.summaryNone || 'None selected · %d extras available').replace('%d', options.length);
     }
   }
@@ -134,10 +208,10 @@
     block.setAttribute('data-nera-ld-ready', '1');
     var pid = block.getAttribute('data-product-id');
 
-    if (selection[pid] === undefined) {
-      selection[pid] = checkedIds(block); // first copy seen: what the basket already holds
+    if (selectionState[pid] === undefined) {
+      selectionState[pid] = readSelection(block); // first copy seen: what the basket already holds
     } else {
-      apply(block, selection[pid]);
+      apply(block, selectionState[pid]);
     }
     render(block);
   }
@@ -151,26 +225,26 @@
     }
   }
 
-  function choose(productId, ids) {
-    selection[productId] = ids;
+  function choose(productId, selection) {
+    selectionState[productId] = selection;
     blocksFor(productId).forEach(function (b) {
-      apply(b, ids);
+      apply(b, selection);
       render(b);
     });
   }
 
   // The prize page's own Add-ons block (Components/blocks/PrizeAddOns, Alpine) keeps its own
-  // `selected` list, read when Enter Now is pressed. Once the basket's add-on line has been
-  // changed from a Lucky Dip dialog, bring that block in line so the two never disagree.
-  function syncPrizePage(productId, ids) {
+  // `selected` id => years map, read when Enter Now is pressed. Once the basket's add-on line
+  // has been changed from a Lucky Dip dialog, bring that block in line so the two never disagree.
+  function syncPrizePage(productId, selection) {
     var root = document.querySelector('[data-prize-addons="' + productId + '"]');
     if (!root || !window.Alpine || typeof window.Alpine.$data !== 'function') {
       return;
     }
     try {
       var data = window.Alpine.$data(root);
-      if (data && Array.isArray(data.selected)) {
-        data.selected = ids.slice();
+      if (data && data.selected && typeof data.selected === 'object') {
+        data.selected = Object.assign({}, selection);
       }
     } catch (e) {
       // The block is only a convenience mirror: never let it break the dialog.
@@ -198,17 +272,18 @@
     });
   }
 
-  function withIds(params, ids) {
-    ids.forEach(function (id) {
+  function withSelection(params, selection) {
+    Object.keys(selection).forEach(function (id) {
       params.append('nera_addon_ids[]', id);
+      params.append('nera_addon_years[' + id + ']', selection[id]);
     });
     return params;
   }
 
-  // The popup after "add directly": the tickets are already in the basket, so a tick has no
-  // add-to-cart request to ride on. Ask about the spending limit, then save it right away;
-  // on Cancel or a failure the tick is put back.
-  function persist(productId, ids, previous) {
+  // The popup after "add directly": the tickets are already in the basket, so a tick (or a
+  // Years edit) has no add-to-cart request to ride on. Ask about the spending limit, then
+  // save it right away; on Cancel or a failure the previous selection is put back.
+  function persist(productId, selection, previous) {
     var busy = blocksFor(productId);
     busy.forEach(function (b) {
       b.classList.add('is-saving');
@@ -218,12 +293,12 @@
     };
 
     var ask = new URLSearchParams({ action: 'nera_add_to_cart_limit_preview', product_id: productId, quantity: '0', nera_addons_submitted: '1' });
-    post(withIds(ask, ids))
+    post(withSelection(ask, selection))
       .catch(function () {
         return null; // could not ask: carry on, checkout still enforces the limit
       })
       .then(function (res) {
-        if (res && res.needs_confirmation && ids.length) {
+        if (res && res.needs_confirmation && Object.keys(selection).length) {
           var c = res.confirmation || {};
           return window.NeraSpendLimit && window.NeraSpendLimit.confirm ? window.NeraSpendLimit.confirm(c) : window.confirm(c.message || '');
         }
@@ -234,14 +309,20 @@
           revert();
           return null;
         }
-        return post(withIds(new URLSearchParams({ action: 'nera_prize_addons_save', product_id: productId }), ids)).then(function (saved) {
+        return post(withSelection(new URLSearchParams({ action: 'nera_prize_addons_save', product_id: productId }), selection)).then(function (saved) {
           if (!saved || !saved.ok) {
             revert();
             toast('error', 'error');
             return;
           }
-          syncPrizePage(productId, Array.isArray(saved.selected) ? saved.selected : ids);
-          if (ids.length) {
+          var savedIds = Array.isArray(saved.selected) ? saved.selected : [];
+          var savedYears = saved.years && typeof saved.years === 'object' ? saved.years : {};
+          var confirmed = {};
+          savedIds.forEach(function (id) {
+            confirmed[id] = savedYears[id] || 1;
+          });
+          syncPrizePage(productId, confirmed);
+          if (savedIds.length) {
             // Something was added or changed: the "added to basket" chime goes with a toast.
             toast('success', 'saved');
             document.dispatchEvent(new CustomEvent('nera:cart:updated', { detail: { productId: productId } }));
@@ -265,23 +346,42 @@
       });
   }
 
-  // A tick made by the customer (not a re-sync between copies).
-  function userChoose(block, ids) {
+  // A tick or a Years edit made by the customer (not a re-sync between copies).
+  function userChoose(block, selection) {
     var pid = block.getAttribute('data-product-id');
-    var previous = (selection[pid] || []).slice();
-    choose(pid, ids);
+    var previous = Object.assign({}, selectionState[pid] || {});
+    choose(pid, selection);
     if (block.closest('[data-nera-lucky-dip-state="added"]')) {
-      persist(pid, ids, previous);
+      persist(pid, selection, previous);
     }
   }
 
+  // Years input: re-render on every keystroke (visual only, no server round
+  // trip), persist once the field is committed (change — blur/enter/stepper).
+  document.addEventListener('input', function (e) {
+    var input = e.target;
+    if (input && input.hasAttribute && input.hasAttribute('data-nera-ld-years')) {
+      var block = input.closest(BLOCK);
+      if (block) {
+        render(block);
+      }
+    }
+  });
+
   document.addEventListener('change', function (e) {
     var input = e.target;
-    if (!input || !input.classList || !input.classList.contains('nera-ld-addons__check')) {
+    if (!input) {
       return;
     }
-    var block = input.closest(BLOCK);
-    userChoose(block, checkedIds(block));
+    if (input.classList && input.classList.contains('nera-ld-addons__check')) {
+      var block = input.closest(BLOCK);
+      userChoose(block, readSelection(block));
+      return;
+    }
+    if (input.hasAttribute && input.hasAttribute('data-nera-ld-years')) {
+      var yearsBlock = input.closest(BLOCK);
+      userChoose(yearsBlock, readSelection(yearsBlock));
+    }
   });
 
   document.addEventListener('click', function (e) {
@@ -301,16 +401,15 @@
     var block = btn.closest(BLOCK);
     var cfg = config(block);
     var options = cfg.options || [];
-    var ids = checkedIds(block);
-    var all = options.length > 0 && ids.length === options.length;
-    userChoose(
-      block,
-      all
-        ? []
-        : options.map(function (o) {
-            return o.id;
-          })
-    );
+    var sel = readSelection(block);
+    var all = options.length > 0 && Object.keys(sel).length === options.length;
+    var next = {};
+    if (!all) {
+      options.forEach(function (o) {
+        next[o.id] = sel[o.id] || 1;
+      });
+    }
+    userChoose(block, next);
   });
 
   // Copies that arrive later (the Lucky Dip popups) join in.
@@ -324,7 +423,7 @@
     });
   }).observe(document.documentElement, { childList: true, subtree: true });
 
-  // Add the chosen options to the requests that put Lucky Dip tickets in the basket.
+  // Add the chosen options and years to the requests that put Lucky Dip tickets in the basket.
   if ($ && $.ajaxPrefilter) {
     $.ajaxPrefilter(function (options) {
       var data = options.data;
@@ -333,17 +432,15 @@
       }
       var match = /(?:^|&)product_id=(\d+)/.exec(data);
       var pid = match ? match[1] : null;
-      if (!pid || selection[pid] === undefined) {
+      if (!pid || selectionState[pid] === undefined) {
         return; // no add-ons block for this prize: leave the request alone
       }
-      options.data =
-        data +
-        '&nera_addons_submitted=1' +
-        selection[pid]
-          .map(function (id) {
-            return '&nera_addon_ids%5B%5D=' + encodeURIComponent(id);
-          })
-          .join('');
+      var extra = '&nera_addons_submitted=1';
+      Object.keys(selectionState[pid]).forEach(function (id) {
+        extra += '&nera_addon_ids%5B%5D=' + encodeURIComponent(id);
+        extra += '&nera_addon_years%5B' + encodeURIComponent(id) + '%5D=' + encodeURIComponent(selectionState[pid][id]);
+      });
+      options.data = data + extra;
     });
   }
 
@@ -364,8 +461,8 @@
         }
       }
       var match = /(?:^|&)product_id=(\d+)/.exec(data);
-      if (response && response.success && match && selection[match[1]] !== undefined) {
-        syncPrizePage(match[1], selection[match[1]]);
+      if (response && response.success && match && selectionState[match[1]] !== undefined) {
+        syncPrizePage(match[1], selectionState[match[1]]);
       }
     });
   }
@@ -380,8 +477,10 @@
   }
 
   window.NeraLuckyDipAddons = {
+    // id => years (docs/adr/0015). lucky-dip-limit.js reads this to build
+    // its own spending-limit preview request.
     selected: function (productId) {
-      return (selection[productId] || []).slice();
+      return Object.assign({}, selectionState[productId] || {});
     },
   };
 })(window.jQuery);

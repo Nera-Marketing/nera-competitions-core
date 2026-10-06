@@ -1288,6 +1288,22 @@ button {
   color: var(--color-text-secondary);
 }
 
+/* Per-year price + Years input (docs/adr/0015) — plain flex siblings of
+   .nera-ld-addons__name/__price, not a grid, so no wrapper is needed here
+   the way the prize-page block needed one (see its own main.css comment). */
+.nera-ld-addons__peryear {
+  @apply whitespace-nowrap text-[11px];
+  color: var(--color-text-secondary);
+}
+
+.nera-ld-addons__years-input {
+  @apply h-6 w-11 shrink-0 rounded-md border border-gray-200 px-1 text-center text-xs tabular-nums;
+}
+
+.nera-ld-addons__years-input:disabled {
+  @apply cursor-not-allowed opacity-50;
+}
+
 .nera-ld-addons__item--purchased {
   @apply flex items-center justify-between gap-2 text-sm;
   color: var(--color-text-secondary);
