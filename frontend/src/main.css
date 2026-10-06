@@ -855,7 +855,12 @@ button {
    one ("£24.00 - £24.00 / year" is a different width than "£16.00 - £16.00 /
    year" only by a character or two, but auto still shifts the whole row). */
 .ncs-prize-addons__option--with-years {
-  grid-template-columns: 20px 1fr 64px 180px;
+  /* 56px (years, widened for its own slack) + 164px (money) keeps the same
+     220px of fixed-width columns as before (40+180), so 1fr (the name
+     column) stays exactly as wide as it was — the years column's extra room
+     comes out of the money column's own slack, never out of the name
+     column. */
+  grid-template-columns: 20px 1fr 56px 164px;
 }
 
 .ncs-prize-addons__option--with-years .ncs-prize-addons__price {
