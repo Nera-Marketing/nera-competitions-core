@@ -38,8 +38,10 @@
     var pid = productId();
     if (window.NeraLuckyDipAddons && document.querySelector('[data-nera-ld-addons][data-product-id="' + pid + '"]')) {
       params.append('nera_addons_submitted', '1');
-      window.NeraLuckyDipAddons.selected(pid).forEach(function (id) {
+      var selection = window.NeraLuckyDipAddons.selected(pid); // id => years (docs/adr/0015)
+      Object.keys(selection).forEach(function (id) {
         params.append('nera_addon_ids[]', id);
+        params.append('nera_addon_years[' + id + ']', selection[id]);
       });
     }
     return params;

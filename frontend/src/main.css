@@ -845,6 +845,28 @@ button {
   border-top: 1px solid var(--ncs-prize-addons-divider);
 }
 
+/* Term choice on (docs/adr/0015): a dedicated Years column between the name
+   and the money column, instead of the plain 3-column layout above. Each
+   option <li> is its own independent grid (no shared grid across the <ul>,
+   see .ncs-prize-addons__list below), so the money column must be a FIXED
+   width here, not auto — auto sizes to that one row's own text, which made
+   the Years input (and the money text itself) land at a different x position
+   on every row once the money column started showing two prices instead of
+   one ("£24.00 - £24.00 / year" is a different width than "£16.00 - £16.00 /
+   year" only by a character or two, but auto still shifts the whole row). */
+.ncs-prize-addons__option--with-years {
+  /* 56px (years, widened for its own slack) + 164px (money) keeps the same
+     220px of fixed-width columns as before (40+180), so 1fr (the name
+     column) stays exactly as wide as it was — the years column's extra room
+     comes out of the money column's own slack, never out of the name
+     column. */
+  grid-template-columns: 20px 1fr 56px 164px;
+}
+
+.ncs-prize-addons__option--with-years .ncs-prize-addons__price {
+  @apply text-right;
+}
+
 .ncs-prize-addons__option:first-child {
   border-top: 0;
 }
@@ -884,6 +906,29 @@ button {
   @apply whitespace-nowrap text-sm font-semibold tabular-nums;
 }
 
+/* The Years input's own grid column (docs/adr/0015) — right-aligned so it
+   sits next to the money column instead of floating in the middle of empty
+   space either side of it. */
+.ncs-prize-addons__years {
+  @apply flex items-center justify-end;
+}
+
+.ncs-prize-addons__years-input {
+  @apply h-6 w-10 rounded-md border px-1 text-center text-xs tabular-nums;
+  border-color: var(--ncs-prize-addons-divider);
+}
+
+/* Enabled (the option is ticked): an accent border, the same cue the
+   checkbox's own accent-color gives, so it reads as "you can type here now"
+   instead of looking the same as the disabled, untickable state. */
+.ncs-prize-addons__years-input:enabled {
+  border-color: var(--ncs-prize-addons-accent);
+}
+
+.ncs-prize-addons__years-input:disabled {
+  @apply cursor-not-allowed opacity-50;
+}
+
 .ncs-prize-addons__purchased {
   @apply inline-flex items-center gap-0.5 whitespace-nowrap rounded-full border px-2 py-0.5 text-[11px] font-semibold;
   background-color: var(--ncs-prize-addons-purchased-bg);
@@ -899,6 +944,13 @@ button {
   @apply flex items-center justify-between gap-2.5 rounded-xl border border-dashed px-3.5 py-2.5 text-[13px];
   background-color: var(--ncs-prize-addons-list-bg);
   border-color: var(--ncs-prize-addons-accent);
+}
+
+/* "N bundle set(s) + M extra year(s)" — shown under the bundle offer only
+   once a chosen Term runs past the shared set count (docs/adr/0015). */
+.ncs-prize-addons__bundle-extra {
+  @apply mt-1.5 px-3.5 text-[12px];
+  color: var(--ncs-prize-addons-text-secondary);
 }
 
 .ncs-prize-addons__select-all {
@@ -1246,6 +1298,17 @@ button {
   color: var(--color-text-primary);
 }
 
+/* Term choice on (docs/adr/0015): a real grid instead of flex. Flex's
+   name:flex-1 should in theory push the Years input and price to the same
+   x position on every row regardless of each row's own text, but in the
+   compact Lucky Dip dialog the input visibly landed at a different spot per
+   row anyway — a fixed grid column removes any doubt, the same fix already
+   proven on the prize page card. */
+.nera-ld-addons__label--with-years {
+  @apply grid items-center gap-2;
+  grid-template-columns: 16px 1fr 56px 148px;
+}
+
 .nera-ld-addons__check {
   @apply h-4 w-4 shrink-0 cursor-pointer rounded;
   accent-color: var(--color-primary);
@@ -1258,6 +1321,28 @@ button {
 .nera-ld-addons__price {
   @apply whitespace-nowrap text-xs font-semibold tabular-nums;
   color: var(--color-text-secondary);
+}
+
+.nera-ld-addons__label--with-years .nera-ld-addons__price {
+  @apply text-right;
+}
+
+/* Years input (docs/adr/0015), in its own grid column (.nera-ld-addons__label
+   --with-years above) — justify-self: end gives it room to sit near the
+   price instead of flush against the name, the column being wider than the
+   input itself. */
+.nera-ld-addons__years-input {
+  @apply h-6 w-11 shrink-0 justify-self-end rounded-md border border-gray-200 px-1 text-center text-xs tabular-nums;
+}
+
+/* Enabled (the option is ticked): same accent-border cue as the prize page
+   card's Years input, so it reads as "you can type here now". */
+.nera-ld-addons__years-input:enabled {
+  border-color: var(--color-primary);
+}
+
+.nera-ld-addons__years-input:disabled {
+  @apply cursor-not-allowed opacity-50;
 }
 
 .nera-ld-addons__item--purchased {

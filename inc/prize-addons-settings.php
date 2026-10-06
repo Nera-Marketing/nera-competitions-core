@@ -27,6 +27,12 @@ const NERA_PRIZE_ADDON_SITE_OPTION = 'nera_prize_addons_enabled';
 /** ACF field key of the site-wide switch. */
 const NERA_PRIZE_ADDON_ACF_SITE_SWITCH = 'field_nera_psag_enabled';
 
+/** ACF option holding the site-wide Maximum term (stored as options_nera_prize_addons_max_term). */
+const NERA_PRIZE_ADDON_SITE_MAX_TERM_OPTION = 'nera_prize_addons_max_term';
+
+/** ACF field key of the Maximum term field. */
+const NERA_PRIZE_ADDON_ACF_MAX_TERM = 'field_nera_psag_max_term';
+
 /** Field key prefixes: the prize's box and the settings section (Catalog). */
 const NERA_PRIZE_ADDON_KEY_PRODUCT = 'field_nera_psa_';
 const NERA_PRIZE_ADDON_KEY_GLOBAL = 'field_nera_psag_';
@@ -54,6 +60,23 @@ const NERA_PRIZE_ADDON_PICK_ADDONS = 'field_nera_psa_addon_option_ids';
 function nera_prize_addons_site_enabled(): bool
 {
   return '1' === (string) get_option('options_' . NERA_PRIZE_ADDON_SITE_OPTION, '0');
+}
+
+/**
+ * Site-wide Maximum term (years) a customer may choose for an add-on option on
+ * a prize that has Term choice switched on (docs/adr/0015).
+ *
+ * Read straight from the option, like the site switch, so it is available
+ * wherever quote() runs. The field's own placeholder shows 10; empty or below
+ * 1 reads as 10 here too, so an admin who never touches the field gets the
+ * same number the settings screen already showed them.
+ *
+ * @return int
+ */
+function nera_prize_addons_max_term(): int
+{
+  $value = (int) get_option('options_' . NERA_PRIZE_ADDON_SITE_MAX_TERM_OPTION, '');
+  return $value >= 1 ? $value : 10;
 }
 
 /**
@@ -230,6 +253,18 @@ function nera_prize_addons_settings_fields(): array
       'ui_off_text' => 'Off',
       'wrapper' => ['width' => '', 'class' => 'nera-acf-field--toggle', 'id' => ''],
     ],
+    [
+      'key' => NERA_PRIZE_ADDON_ACF_MAX_TERM,
+      'label' => 'Maximum term (years)',
+      'name' => NERA_PRIZE_ADDON_SITE_MAX_TERM_OPTION,
+      'type' => 'number',
+      'instructions' => 'The longest Term, in years, a customer may choose for an add-on option on a prize that has Term choice switched on (docs/adr/0015). Leave empty for 10.',
+      'min' => 1,
+      'step' => 1,
+      'placeholder' => 10,
+      'conditional_logic' => $on,
+      'wrapper' => ['width' => '30', 'class' => '', 'id' => ''],
+    ],
 
     // ---- Safety ---------------------------------------------------------
     [
@@ -385,9 +420,10 @@ function nera_prize_addons_settings_fields(): array
         ],
         [
           'key' => $prefix . 'addon_price',
-          'label' => 'Price',
+          'label' => 'Price per year',
           'name' => 'price',
           'type' => 'number',
+          'instructions' => 'What one year of this option costs. On a prize with Term choice on (docs/adr/0015), the customer pays this price times the number of years they choose.',
           'required' => 1,
           'min' => 0.01,
           'step' => 0.01,

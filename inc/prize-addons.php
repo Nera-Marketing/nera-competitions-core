@@ -427,6 +427,31 @@ function nera_prize_addons_internal_add(?bool $set = null): bool
 }
 
 /**
+ * Read `nera_addon_years[<option_id>]` from $_POST for just the given ids,
+ * sanitised to positive ints (docs/adr/0015). An id missing here, or posted
+ * with an invalid value, is left out — nera_prize_addons_years_map() and
+ * quote() both read a missing id as 1 year, so there is nothing to default
+ * here; a value out of 1..max_term is still clamped by quote() itself.
+ *
+ * @param string[] $ids Option IDs already read from the same request.
+ * @return array<string,int> id => years, only for ids present and > 0.
+ */
+function nera_prize_addons_years_from_request(array $ids): array
+{
+  // phpcs:ignore WordPress.Security.NonceVerification.Missing -- same unauthenticated request as the ids; prices are never read from it.
+  $raw = isset($_POST['nera_addon_years']) && is_array($_POST['nera_addon_years']) ? wp_unslash($_POST['nera_addon_years']) : [];
+
+  $years = [];
+  foreach ($ids as $id) {
+    if (isset($raw[$id]) && is_numeric($raw[$id]) && (int) $raw[$id] > 0) {
+      $years[$id] = (int) $raw[$id];
+    }
+  }
+
+  return $years;
+}
+
+/**
  * Apply the add-ons chosen on the prize page after its tickets were added.
  *
  * Only runs when the request carries the add-on field, so the listing
@@ -446,7 +471,8 @@ function nera_prize_addons_sync_from_request($product_id, $cart_item_key = ''): 
   // phpcs:enable
 
   $ids = array_values(array_unique(array_filter(array_map('sanitize_key', array_map('strval', $raw)))));
-  nera_prize_addons_set_cart_selection((int) $product_id, $ids);
+  $years = nera_prize_addons_years_from_request($ids);
+  nera_prize_addons_set_cart_selection((int) $product_id, $ids, $years);
 }
 add_action('nera_ajax_add_to_cart_success', 'nera_prize_addons_sync_from_request', 10, 2);
 
@@ -511,14 +537,21 @@ function nera_prize_addons_ajax_save_selection(): void
   }
 
   $ids = array_values(array_unique(array_filter(array_map('sanitize_key', array_map('strval', $raw)))));
-  nera_prize_addons_set_cart_selection($draw_id, $ids);
+  $years = nera_prize_addons_years_from_request($ids);
+  nera_prize_addons_set_cart_selection($draw_id, $ids, $years);
   WC()->cart->calculate_totals();
   if (WC()->session) {
     WC()->session->save_data();
   }
 
   $line = nera_prize_addons_find_cart_line($draw_id);
-  wp_send_json(['ok' => true, 'selected' => $line ? array_values((array) $line[1][NERA_PRIZE_ADDON_CART_KEY]['option_ids']) : []]);
+  wp_send_json([
+    'ok' => true,
+    'selected' => $line ? array_values((array) $line[1][NERA_PRIZE_ADDON_CART_KEY]['option_ids']) : [],
+    // The years actually saved (clamped by quote() inside set_cart_selection()),
+    // not merely what was posted — the Alpine UI reconciles against this.
+    'years' => $line ? (object) ($line[1][NERA_PRIZE_ADDON_CART_KEY]['option_years'] ?? []) : (object) [],
+  ]);
 }
 add_action('wp_ajax_nera_prize_addons_save', 'nera_prize_addons_ajax_save_selection');
 add_action('wp_ajax_nopriv_nera_prize_addons_save', 'nera_prize_addons_ajax_save_selection');
@@ -527,12 +560,16 @@ add_action('wp_ajax_nopriv_nera_prize_addons_save', 'nera_prize_addons_ajax_save
  * Make the cart's add-on line for a draw match a selection.
  *
  * One line per draw: an existing line is updated, an empty selection removes it.
+ * The years actually stored are quote()'s own clamped values (docs/adr/0015),
+ * never the raw posted years, so the cart can never hold an out-of-range term.
  *
- * @param int      $draw_id Lottery product ID.
- * @param string[] $ids     Chosen option IDs.
+ * @param int                 $draw_id Lottery product ID.
+ * @param string[]            $ids     Chosen option IDs.
+ * @param array<string,int>   $years   Years per ID (missing id => 1); unchanged
+ *                                     callers passing none still work.
  * @return void
  */
-function nera_prize_addons_set_cart_selection(int $draw_id, array $ids): void
+function nera_prize_addons_set_cart_selection(int $draw_id, array $ids, array $years = []): void
 {
   if (!function_exists('WC') || !WC()->cart) {
     return;
@@ -540,8 +577,9 @@ function nera_prize_addons_set_cart_selection(int $draw_id, array $ids): void
 
   $line = nera_prize_addons_find_cart_line($draw_id);
   $config = nera_prize_addons_config($draw_id);
+  $selection = nera_prize_addons_years_map($ids, $years);
   $quote = $config['enabled']
-    ? nera_prize_addons_quote($draw_id, $ids, nera_prize_addons_current_user_purchased($draw_id))
+    ? nera_prize_addons_quote($draw_id, $selection, nera_prize_addons_current_user_purchased($draw_id))
     : ['options' => []];
   $valid_ids = array_keys($quote['options']);
 
@@ -552,8 +590,14 @@ function nera_prize_addons_set_cart_selection(int $draw_id, array $ids): void
     return;
   }
 
+  $valid_years = [];
+  foreach ($quote['options'] as $id => $option) {
+    $valid_years[$id] = $option['years'];
+  }
+
   if ($line) {
     WC()->cart->cart_contents[$line[0]][NERA_PRIZE_ADDON_CART_KEY]['option_ids'] = $valid_ids;
+    WC()->cart->cart_contents[$line[0]][NERA_PRIZE_ADDON_CART_KEY]['option_years'] = $valid_years;
   } else {
     $addon_product_id = nera_prize_addons_ensure_product();
     if (!$addon_product_id) {
@@ -561,7 +605,7 @@ function nera_prize_addons_set_cart_selection(int $draw_id, array $ids): void
     }
     nera_prize_addons_internal_add(true);
     WC()->cart->add_to_cart($addon_product_id, 1, 0, [], [
-      NERA_PRIZE_ADDON_CART_KEY => ['draw_id' => $draw_id, 'option_ids' => $valid_ids],
+      NERA_PRIZE_ADDON_CART_KEY => ['draw_id' => $draw_id, 'option_ids' => $valid_ids, 'option_years' => $valid_years],
     ]);
     nera_prize_addons_internal_add(false);
   }
@@ -597,11 +641,22 @@ function nera_prize_addons_merge_duplicate_lines(): bool
       continue;
     }
     $keep = $first[$draw_id];
-    $merged = array_values(array_unique(array_merge(
-      (array) (WC()->cart->cart_contents[$keep][NERA_PRIZE_ADDON_CART_KEY]['option_ids'] ?? []),
-      (array) ($item[NERA_PRIZE_ADDON_CART_KEY]['option_ids'] ?? [])
-    )));
+    $keep_ids = (array) (WC()->cart->cart_contents[$keep][NERA_PRIZE_ADDON_CART_KEY]['option_ids'] ?? []);
+    $keep_years = (array) (WC()->cart->cart_contents[$keep][NERA_PRIZE_ADDON_CART_KEY]['option_years'] ?? []);
+    $item_ids = (array) ($item[NERA_PRIZE_ADDON_CART_KEY]['option_ids'] ?? []);
+    $item_years = (array) ($item[NERA_PRIZE_ADDON_CART_KEY]['option_years'] ?? []);
+
+    $merged = array_values(array_unique(array_merge($keep_ids, $item_ids)));
+    // Same option on both lines (guest cart merged into a signed-in one, say):
+    // keep whichever term is longer rather than silently shortening one the
+    // customer already chose (docs/adr/0015).
+    $merged_years = [];
+    foreach ($merged as $id) {
+      $merged_years[$id] = max((int) ($keep_years[$id] ?? 1), (int) ($item_years[$id] ?? 1));
+    }
+
     WC()->cart->cart_contents[$keep][NERA_PRIZE_ADDON_CART_KEY]['option_ids'] = $merged;
+    WC()->cart->cart_contents[$keep][NERA_PRIZE_ADDON_CART_KEY]['option_years'] = $merged_years;
     unset(WC()->cart->cart_contents[$key]);
     $changed = true;
   }
@@ -703,11 +758,11 @@ function nera_prize_addons_set_prices($cart): void
     $config = nera_prize_addons_config($draw_id);
     $price = 0.0;
     if ($config['enabled']) {
-      $quote = nera_prize_addons_quote(
-        $draw_id,
+      $selection = nera_prize_addons_years_map(
         (array) ($item[NERA_PRIZE_ADDON_CART_KEY]['option_ids'] ?? []),
-        nera_prize_addons_current_user_purchased($draw_id)
+        (array) ($item[NERA_PRIZE_ADDON_CART_KEY]['option_years'] ?? [])
       );
+      $quote = nera_prize_addons_quote($draw_id, $selection, nera_prize_addons_current_user_purchased($draw_id));
       $price = $quote['total'];
     }
     $item['data']->set_price($price);
@@ -769,12 +824,27 @@ function nera_prize_addons_check_cart_items(): void
       continue;
     }
 
+    $stored_ids = (array) ($item[NERA_PRIZE_ADDON_CART_KEY]['option_ids'] ?? []);
+    $stored_years = (array) ($item[NERA_PRIZE_ADDON_CART_KEY]['option_years'] ?? []);
     $quote = nera_prize_addons_quote(
       $draw_id,
-      (array) ($item[NERA_PRIZE_ADDON_CART_KEY]['option_ids'] ?? []),
+      nera_prize_addons_years_map($stored_ids, $stored_years),
       nera_prize_addons_current_user_purchased($draw_id)
     );
-    if (empty($quote['dropped'])) {
+
+    // A surviving option whose clamped year differs from what was stored means
+    // the switch was turned off, or the Maximum term was lowered, since this
+    // line was last saved (docs/adr/0015) — reprice and say so, same tone as
+    // an option dropped outright.
+    $terms_clamped = false;
+    foreach ($quote['options'] as $option_id => $option) {
+      if ((int) ($stored_years[$option_id] ?? 1) !== (int) $option['years']) {
+        $terms_clamped = true;
+        break;
+      }
+    }
+
+    if (empty($quote['dropped']) && !$terms_clamped) {
       continue;
     }
 
@@ -796,10 +866,23 @@ function nera_prize_addons_check_cart_items(): void
       }
     }
 
+    if ($terms_clamped) {
+      wc_add_notice(sprintf(
+        /* translators: %s: prize name */
+        __('An add-on term for %s was adjusted to fit what is currently allowed, and your basket total has been updated.', 'nera-competitions'),
+        $draw_name
+      ), $type);
+    }
+
     if (empty($quote['options'])) {
       WC()->cart->remove_cart_item($key);
     } else {
+      $years_out = [];
+      foreach ($quote['options'] as $option_id => $option) {
+        $years_out[$option_id] = $option['years'];
+      }
       WC()->cart->cart_contents[$key][NERA_PRIZE_ADDON_CART_KEY]['option_ids'] = array_keys($quote['options']);
+      WC()->cart->cart_contents[$key][NERA_PRIZE_ADDON_CART_KEY]['option_years'] = $years_out;
     }
     $changed = true;
   }
@@ -871,7 +954,10 @@ function nera_prize_addons_handle_remove_option(): void
     if (empty($left)) {
       $cart->remove_cart_item($line_key);
     } else {
+      $years = (array) ($item[NERA_PRIZE_ADDON_CART_KEY]['option_years'] ?? []);
+      unset($years[$option_id]);
       $cart->cart_contents[$line_key][NERA_PRIZE_ADDON_CART_KEY]['option_ids'] = $left;
+      $cart->cart_contents[$line_key][NERA_PRIZE_ADDON_CART_KEY]['option_years'] = $years;
     }
     $cart->calculate_totals();
   }
@@ -970,15 +1056,28 @@ function nera_prize_addons_cart_item_data($item_data, $cart_item)
     return $item_data;
   }
   $draw_id = (int) $cart_item[NERA_PRIZE_ADDON_CART_KEY]['draw_id'];
-  $quote = nera_prize_addons_quote(
-    $draw_id,
+  $selection = nera_prize_addons_years_map(
     (array) ($cart_item[NERA_PRIZE_ADDON_CART_KEY]['option_ids'] ?? []),
-    nera_prize_addons_current_user_purchased($draw_id)
+    (array) ($cart_item[NERA_PRIZE_ADDON_CART_KEY]['option_years'] ?? [])
   );
+  $quote = nera_prize_addons_quote($draw_id, $selection, nera_prize_addons_current_user_purchased($draw_id));
+
+  // "Title £charged (£price / year)" — same format as the cart/checkout chip
+  // (template-parts/cart/cart-item-addon.php) and the Lucky Dip dialogs
+  // (docs/adr/0015), so an add-on's money reads the same wherever it shows.
+  $option_labels = array_map(static function (array $option): string {
+    return sprintf(
+      '%1$s %2$s (%3$s %4$s)',
+      $option['title'],
+      nera_prize_addons_money_text((float) $option['charged']),
+      nera_prize_addons_money_text((float) $option['price']),
+      nera_prize_addons_label('per_year')
+    );
+  }, $quote['options']);
 
   $item_data[] = [
     'key' => nera_prize_addons_label('meta_options'),
-    'value' => implode(', ', array_column($quote['options'], 'title')),
+    'value' => implode(', ', $option_labels),
   ];
   if ($quote['full_bundle']) {
     $item_data[] = ['key' => nera_prize_addons_label('meta_full_bundle'), 'value' => nera_prize_addons_label('yes')];
@@ -1065,15 +1164,24 @@ function nera_prize_addons_create_order_line_item($item, $cart_item_key, $values
 
   $draw_id = (int) $values[NERA_PRIZE_ADDON_CART_KEY]['draw_id'];
   $draw_name = nera_prize_addons_draw_name($draw_id);
-  $quote = nera_prize_addons_quote(
-    $draw_id,
+  $selection = nera_prize_addons_years_map(
     (array) ($values[NERA_PRIZE_ADDON_CART_KEY]['option_ids'] ?? []),
-    nera_prize_addons_current_user_purchased($draw_id)
+    (array) ($values[NERA_PRIZE_ADDON_CART_KEY]['option_years'] ?? [])
   );
+  $quote = nera_prize_addons_quote($draw_id, $selection, nera_prize_addons_current_user_purchased($draw_id));
 
+  // The snapshot (docs/adr/0015): years and charged per option, so the
+  // "Purchased" lock and the admin/email display never need the Catalog or
+  // the prize settings to still agree with what was actually bought.
   $options = [];
   foreach ($quote['options'] as $option) {
-    $options[] = ['id' => $option['id'], 'title' => $option['title'], 'price' => $option['price']];
+    $options[] = [
+      'id' => $option['id'],
+      'title' => $option['title'],
+      'price' => $option['price'],
+      'years' => $option['years'],
+      'charged' => $option['charged'],
+    ];
   }
 
   $item->set_name(sprintf(nera_prize_addons_label('line_name'), $draw_name));
@@ -1081,6 +1189,7 @@ function nera_prize_addons_create_order_line_item($item, $cart_item_key, $values
   $item->add_meta_data('_nera_addon_draw_name', $draw_name, true);
   $item->add_meta_data('_nera_addon_options', $options, true);
   $item->add_meta_data('_nera_addon_full_bundle', $quote['full_bundle'] ? 'yes' : 'no', true);
+  $item->add_meta_data('_nera_addon_bundle_sets', (int) $quote['bundle_sets'], true);
 }
 add_action('woocommerce_checkout_create_order_line_item', 'nera_prize_addons_create_order_line_item', 10, 3);
 
@@ -1100,13 +1209,39 @@ function nera_prize_addons_formatted_meta($formatted_meta, $item)
   }
 
   $draw_name = (string) $item->get_meta('_nera_addon_draw_name', true);
+
+  // Same start the lock itself uses (nera_prize_addons_purchased_map): the
+  // order's payment date, falling back to when it was created.
+  $order = method_exists($item, 'get_order') ? $item->get_order() : null;
+  $start = $order instanceof WC_Order ? ($order->get_date_paid() ?: $order->get_date_created()) : null;
+
   $options = [];
   foreach ((array) $item->get_meta('_nera_addon_options', true) as $option) {
-    $options[] = sprintf(
-      '%s (%s)',
+    // Orders placed before this change have no 'years'/'charged' in the
+    // snapshot at all: read as 1 year, at the option's own price (docs/adr/0015).
+    $years = isset($option['years']) ? max(1, (int) $option['years']) : 1;
+    $charged = array_key_exists('charged', $option) ? (float) $option['charged'] : (float) ($option['price'] ?? 0);
+
+    $line = sprintf(
+      /* translators: 1: option title, 2: amount charged, 3: term in years (e.g. "2 Years") */
+      __('%1$s (%2$s · %3$s)', 'nera-competitions'),
       (string) ($option['title'] ?? ''),
-      nera_prize_addons_money_text((float) ($option['price'] ?? 0))
+      nera_prize_addons_money_text($charged),
+      sprintf('%1$d %2$s', $years, nera_prize_addons_label('years'))
     );
+
+    if ($start instanceof WC_DateTime) {
+      $expires_ts = strtotime('+' . $years . ' years', $start->getTimestamp());
+      if (false !== $expires_ts) {
+        $line .= sprintf(
+          ' — %1$s: %2$s',
+          nera_prize_addons_label('valid_until'),
+          date_i18n(get_option('date_format'), $expires_ts)
+        );
+      }
+    }
+
+    $options[] = $line;
   }
   $full = 'yes' === $item->get_meta('_nera_addon_full_bundle', true);
 
@@ -1144,6 +1279,7 @@ function nera_prize_addons_hidden_order_itemmeta($keys)
     '_nera_addon_draw_name',
     '_nera_addon_options',
     '_nera_addon_full_bundle',
+    '_nera_addon_bundle_sets',
   ]);
 }
 add_filter('woocommerce_hidden_order_itemmeta', 'nera_prize_addons_hidden_order_itemmeta');
