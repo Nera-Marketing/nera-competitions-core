@@ -66,6 +66,25 @@
     })[0];
   }
 
+  // Clamped years for PRICING math only — never to rewrite what was typed.
+  // Term choice off ⇒ always 1 year, same as the server's own clamp
+  // (nera_prize_addons_quote(), docs/adr/0015). The input itself (via
+  // readSelection()/apply() below) always keeps the raw typed value, even
+  // out of range: the input's own min/max make the browser mark it
+  // :invalid and report a native validation message instead of the value
+  // being silently corrected away.
+  function clampForPricing(cfg, years) {
+    if (!cfg.termsEnabled) {
+      return 1;
+    }
+    var n = parseInt(years, 10);
+    if (!isFinite(n) || n < 1) {
+      return 1;
+    }
+    var max = isFinite(cfg.maxTerm) && cfg.maxTerm >= 1 ? cfg.maxTerm : 10;
+    return Math.min(n, max);
+  }
+
   // Reads the block's own checkboxes + their paired Years inputs into one
   // { option_id: years } map — the single source of truth for "what is
   // ticked right now" (apply() below writes the same shape back to the DOM).
@@ -105,7 +124,9 @@
     var full = hasBundle && all;
 
     var subtotal = options.reduce(function (sum, o) {
-      return Object.prototype.hasOwnProperty.call(selection, o.id) ? sum + Number(o.price || 0) * (selection[o.id] || 1) : sum;
+      return Object.prototype.hasOwnProperty.call(selection, o.id)
+        ? sum + Number(o.price || 0) * clampForPricing(cfg, selection[o.id])
+        : sum;
     }, 0);
 
     var bundleSets = 0;
@@ -115,14 +136,14 @@
       bundleSets = Math.min.apply(
         null,
         ids.map(function (id) {
-          return selection[id] || 1;
+          return clampForPricing(cfg, selection[id]);
         })
       );
       var extraCharge = 0;
       ids.forEach(function (id) {
         var option = findOption(cfg, id);
         var price = option ? Number(option.price || 0) : 0;
-        var extraY = Math.max(0, (selection[id] || 1) - bundleSets);
+        var extraY = Math.max(0, clampForPricing(cfg, selection[id]) - bundleSets);
         extraYearsTotal += extraY;
         extraCharge += price * extraY;
       });
@@ -162,7 +183,7 @@
       var option = findOption(cfg, id);
       var price = option ? Number(option.price || 0) : 0;
       var isSelected = Object.prototype.hasOwnProperty.call(sel, id);
-      var amount = price * (isSelected ? sel[id] || 1 : 1);
+      var amount = price * (isSelected ? clampForPricing(cfg, sel[id]) : 1);
       el.textContent = formatMoney(amount, cfg.currency);
     });
 
@@ -364,6 +385,9 @@
   document.addEventListener('input', function (e) {
     var input = e.target;
     if (input && input.hasAttribute && input.hasAttribute('data-nera-ld-years')) {
+      if (input.reportValidity) {
+        input.reportValidity(); // native out-of-range message; :invalid styling is pure CSS
+      }
       var block = input.closest(BLOCK);
       if (block) {
         render(block);

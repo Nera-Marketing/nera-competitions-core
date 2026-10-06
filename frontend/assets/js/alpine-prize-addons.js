@@ -45,7 +45,16 @@
     // Term choice off ⇒ every option is 1 year, same as the server
     // (nera_prize_addons_quote()'s own clamp) — so a prize without the
     // switch behaves exactly as it did before terms existed.
-    function clampYears(value) {
+    //
+    // Only used for PRICING (optionAmount()/subtotal()/total() etc.), never
+    // to silently rewrite what the customer typed (docs/adr/0015): a prize
+    // owner reported typing a Term over the Maximum term and having it just
+    // work, with no indication the number was wrong anywhere. The input
+    // itself shows exactly what was typed via years() below; min/max on the
+    // <input type="number"> make the browser mark it :invalid and show its
+    // own validation message (setYears() calls reportValidity()) so an
+    // out-of-range value is visibly wrong, not quietly corrected away.
+    function clampForPricing(value) {
       if (!termsEnabled) {
         return 1;
       }
@@ -66,7 +75,7 @@
     const initialSelected = {};
     if (config.selected && typeof config.selected === 'object') {
       Object.keys(config.selected).forEach((id) => {
-        initialSelected[id] = clampYears(config.selected[id]);
+        initialSelected[id] = config.selected[id];
       });
     }
 
@@ -96,15 +105,25 @@
         }
       },
 
+      // The raw value for the input's own display — never rewritten to a
+      // clamped number so the customer sees exactly what they typed,
+      // including an out-of-range one (docs/adr/0015).
       years(id) {
         return this.selected[id] || 1;
       },
 
-      setYears(id, value) {
+      // Clamped years for PRICING math only — see clampForPricing() above.
+      pricedYears(id) {
+        return clampForPricing(this.years(id));
+      },
+
+      setYears(id, event) {
         if (!this.isChecked(id)) {
           return;
         }
-        this.selected[id] = clampYears(value);
+        const n = Math.trunc(Number(event.target.value));
+        this.selected[id] = Number.isFinite(n) && n >= 1 ? n : 1;
+        event.target.reportValidity();
       },
 
       chosen() {
@@ -126,14 +145,14 @@
         if (!this.isFullBundle()) {
           return 0;
         }
-        return Math.min.apply(null, this.chosen().map((option) => this.years(option.id)));
+        return Math.min.apply(null, this.chosen().map((option) => this.pricedYears(option.id)));
       },
 
       extraYears(id) {
         if (!this.isFullBundle()) {
           return 0;
         }
-        return Math.max(0, this.years(id) - this.bundleSets());
+        return Math.max(0, this.pricedYears(id) - this.bundleSets());
       },
 
       // The amount shown beside one option: always its own price × years
@@ -148,7 +167,7 @@
       optionAmount(id) {
         const option = findOption(id);
         const price = option ? Number(option.price || 0) : 0;
-        return price * this.years(id);
+        return price * this.pricedYears(id);
       },
 
       // "(£24.00 / year)" — the muted part of the money column, beside the
@@ -162,7 +181,7 @@
       },
 
       subtotal() {
-        return this.chosen().reduce((sum, option) => sum + Number(option.price || 0) * this.years(option.id), 0);
+        return this.chosen().reduce((sum, option) => sum + Number(option.price || 0) * this.pricedYears(option.id), 0);
       },
 
       total() {

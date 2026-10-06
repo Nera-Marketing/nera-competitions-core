@@ -103,7 +103,7 @@
                   value="{{ option.years }}"
                   :value="years('{{ option.id|e('js') }}')"
                   :disabled="!isChecked('{{ option.id|e('js') }}')"
-                  @input="setYears('{{ option.id|e('js') }}', $event.target.value)"
+                  @input="setYears('{{ option.id|e('js') }}', $event)"
                 >
               </span>
               <span class="ncs-prize-addons__price">
