@@ -901,15 +901,23 @@ button {
   @apply whitespace-nowrap text-sm font-semibold tabular-nums;
 }
 
-/* The Years input's own grid column (docs/adr/0015) — centers the compact
-   input under a column too narrow for anything else. */
+/* The Years input's own grid column (docs/adr/0015) — right-aligned so it
+   sits next to the money column instead of floating in the middle of empty
+   space either side of it. */
 .ncs-prize-addons__years {
-  @apply flex items-center justify-center;
+  @apply flex items-center justify-end;
 }
 
 .ncs-prize-addons__years-input {
   @apply h-6 w-10 rounded-md border px-1 text-center text-xs tabular-nums;
   border-color: var(--ncs-prize-addons-divider);
+}
+
+/* Enabled (the option is ticked): an accent border, the same cue the
+   checkbox's own accent-color gives, so it reads as "you can type here now"
+   instead of looking the same as the disabled, untickable state. */
+.ncs-prize-addons__years-input:enabled {
+  border-color: var(--ncs-prize-addons-accent);
 }
 
 .ncs-prize-addons__years-input:disabled {
@@ -1304,6 +1312,12 @@ button {
    block needed one (see its own main.css comment). */
 .nera-ld-addons__years-input {
   @apply h-6 w-11 shrink-0 rounded-md border border-gray-200 px-1 text-center text-xs tabular-nums;
+}
+
+/* Enabled (the option is ticked): same accent-border cue as the prize page
+   card's Years input, so it reads as "you can type here now". */
+.nera-ld-addons__years-input:enabled {
+  border-color: var(--color-primary);
 }
 
 .nera-ld-addons__years-input:disabled {
