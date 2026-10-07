@@ -67,6 +67,24 @@ if (function_exists('acf_add_local_field_group')) {
       ],
     ],
     [
+      'key'          => 'field_wc_product_grid_mobile_layout',
+      'label'        => 'Mobile Grid Layout',
+      'name'         => 'product_grid_mobile_layout',
+      'type'         => 'select',
+      'instructions' => 'Competitions per row on mobile, across every competition grid: All Competitions, Closed Prizes, Giveaway Entry List, the homepage competitions section, Related Competitions, and Cart Cross-sells. Desktop layout is unaffected.',
+      'choices'      => [
+        'feature'  => 'Feature (1 item per row)',
+        'multiple' => 'Multiple (2 items per row)',
+      ],
+      'default_value' => 'feature',
+      'ui'            => 1,
+      'wrapper'       => [
+        'width' => '50',
+        'class' => '',
+        'id'    => '',
+      ],
+    ],
+    [
       'key' => 'field_add_to_cart_success_message',
       'label' => 'Add to Cart Success Message',
       'name' => 'add_to_cart_success_message',

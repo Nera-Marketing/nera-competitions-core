@@ -8,6 +8,7 @@
   total_count      int                                                           required  0         total competition count across all categories
   cards            list<{product_id:int,x_show:string,category_colors:array}>   required  []        card data passed to CompetitionCard component
   has_cards        bool                                                          required            true when cards is non-empty
+  mobile_grid_class string                                                       required            'grid-cols-1' or 'grid-cols-2' (Theme Settings → WooCommerce → Mobile Grid Layout)
 #}
 <section class="py-24 bg-surface relative overflow-hidden" id="categories-competitions" data-aos="fade-up"
   x-data="{ activeCategory: 'all' }">
@@ -104,7 +105,7 @@
     </div>
 
     <!-- Competitions Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="categories-grid" role="tabpanel">
+    <div class="grid {{ mobile_grid_class }} md:grid-cols-2 lg:grid-cols-3 gap-8" id="categories-grid" role="tabpanel">
 
       {% if has_cards %}
         {% for card in cards %}

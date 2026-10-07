@@ -22,6 +22,7 @@ if (!defined('ABSPATH')) exit;
  *     category_colors: array<string, string>, // full color map passed through to CompetitionCard
  *   }>,
  *   has_cards: bool,         // required — true when cards is non-empty
+ *   mobile_grid_class: string, // required — 'grid-cols-1' or 'grid-cols-2' (Theme Settings → WooCommerce → Mobile Grid Layout)
  * }
  */
 function get_data(array $args = []): array
@@ -110,11 +111,12 @@ function get_data(array $args = []): array
     }
 
     return [
-        'title'       => $title,
-        'subtitle'    => $subtitle,
-        'categories'  => $categories,
-        'total_count' => $total_count,
-        'cards'       => $cards,
-        'has_cards'   => !empty($cards),
+        'title'             => $title,
+        'subtitle'          => $subtitle,
+        'categories'        => $categories,
+        'total_count'       => $total_count,
+        'cards'             => $cards,
+        'has_cards'         => !empty($cards),
+        'mobile_grid_class' => function_exists('nera_product_grid_mobile_class') ? nera_product_grid_mobile_class() : 'grid-cols-1',
     ];
 }

@@ -37,7 +37,7 @@ if (empty($crosssell_ids)) {
   </div>
 
   <!-- Products Grid -->
-  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+  <div class="grid <?php echo esc_attr(nera_product_grid_mobile_class()); ?> sm:grid-cols-2 lg:grid-cols-4 gap-6">
     <?php foreach ($crosssell_ids as $crosssell_id) {
       $crosssell_product = wc_get_product($crosssell_id);
 
