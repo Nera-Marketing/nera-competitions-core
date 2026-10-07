@@ -17,19 +17,32 @@ if (!defined('ABSPATH')) {
 }
 
 /**
+ * The raw setting, as a boolean: true for Multiple (2 per row), false for
+ * Feature (1 per row, the default). Child themes whose grids aren't built on
+ * Tailwind's grid-cols-* utilities (e.g. a hand-rolled CSS grid system) read
+ * this directly instead of nera_product_grid_mobile_class() below.
+ *
+ * @return bool
+ */
+function nera_product_grid_mobile_is_multiple(): bool
+{
+  static $is_multiple = null;
+  if ($is_multiple !== null) {
+    return $is_multiple;
+  }
+
+  $mode = function_exists('get_field') ? get_field('product_grid_mobile_layout', 'option') : 'feature';
+  $is_multiple = $mode === 'multiple';
+
+  return $is_multiple;
+}
+
+/**
  * Tailwind class for the mobile grid-cols-* breakpoint.
  *
  * @return string 'grid-cols-1' (Feature, default) or 'grid-cols-2' (Multiple).
  */
 function nera_product_grid_mobile_class(): string
 {
-  static $class = null;
-  if ($class !== null) {
-    return $class;
-  }
-
-  $mode = function_exists('get_field') ? get_field('product_grid_mobile_layout', 'option') : 'feature';
-  $class = $mode === 'multiple' ? 'grid-cols-2' : 'grid-cols-1';
-
-  return $class;
+  return nera_product_grid_mobile_is_multiple() ? 'grid-cols-2' : 'grid-cols-1';
 }
