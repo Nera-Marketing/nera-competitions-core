@@ -717,7 +717,7 @@ if (function_exists('is_shop') && is_shop() && function_exists('wc_get_page_id')
     </div>
 
     <!-- Competitions Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-2 <?php echo esc_attr($nera_adv_grid_lg_class); ?> gap-2.5 sm:gap-4 lg:gap-6 transition-opacity duration-200"
+    <div class="grid grid-cols-2 md:grid-cols-2 <?php echo esc_attr($nera_adv_grid_lg_class); ?> gap-2.5 sm:gap-4 lg:gap-6 transition-opacity duration-200"
          id="advanced-filter-grid"
          :class="{ 'opacity-50 pointer-events-none': gridLoading }"
          data-aos="fade-up" data-aos-duration="600" data-aos-delay="150">
