@@ -127,7 +127,7 @@ $x_data_expr = 'neraClosedPrizesGrid(' . $config_json . ')';
       <!-- Cards Grid -->
       <div
         x-ref="grid"
-        class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2.5 sm:gap-4 lg:gap-6"
+        class="grid <?php echo esc_attr(nera_product_grid_mobile_class()); ?> md:grid-cols-2 lg:grid-cols-3 gap-2.5 sm:gap-4 lg:gap-6"
       >
         <?php
         while ($query->have_posts()) {

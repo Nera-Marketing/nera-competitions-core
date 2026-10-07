@@ -41,7 +41,7 @@ if (empty($section_title)) {
   </div>
 
   <!-- Products Grid -->
-  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+  <div class="grid <?php echo esc_attr(nera_product_grid_mobile_class()); ?> sm:grid-cols-2 lg:grid-cols-4 gap-6">
     <?php foreach ($related_ids as $related_id) {
       $related_product = wc_get_product($related_id);
 

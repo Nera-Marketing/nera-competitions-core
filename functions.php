@@ -1266,6 +1266,9 @@ require_once get_template_directory() . '/inc/acf/shop-listing/acf-shop-listing.
 // Shop listing helpers (grid, card layout, aspect ratio)
 require_once get_template_directory() . '/inc/helpers/shop-listing.php';
 
+// Mobile grid column count, shared across every competition listing grid
+require_once get_template_directory() . '/inc/helpers/product-grid.php';
+
 // Catalog order helpers (Featured → menu_order → date) + admin Order column / notice
 require_once get_template_directory() . '/inc/helpers/catalog-order.php';
 require_once get_template_directory() . '/inc/catalog-order.php';
