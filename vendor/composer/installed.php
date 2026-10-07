@@ -3,7 +3,7 @@
         'name' => 'nera/competitions-standard',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-        'reference' => 'a1418b00d92a1eb01deb2303cf09c326c27d55dc',
+        'reference' => '66369ea90ff1ca0b18260d90ede2b28fdc3e3b70',
         'type' => 'wordpress-theme',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -13,7 +13,7 @@
         'nera/competitions-standard' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => 'a1418b00d92a1eb01deb2303cf09c326c27d55dc',
+            'reference' => '66369ea90ff1ca0b18260d90ede2b28fdc3e3b70',
             'type' => 'wordpress-theme',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
