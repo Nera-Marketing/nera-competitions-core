@@ -40,7 +40,7 @@ if (empty($lottery_winners)) {
                 <?php
                 switch ($col_key) {
                   case 'username':
-                    echo '<span class="font-semibold">' . esc_html(nera_mask_username($winner_log->display_user_name())) . '</span>';
+                    echo '<span class="font-semibold">' . esc_html(nera_winner_card_public_name($winner_log)) . '</span>';
                     break;
                   case 'gift_product':
                     echo wp_kses_post(lty_get_winner_gift_products_title(array_unique($winner_log->get_gift_products()), $product));
