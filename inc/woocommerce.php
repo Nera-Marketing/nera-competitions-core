@@ -3354,6 +3354,109 @@ function nera_winners_dynamic_get_allowed_types_for_page($page_id)
 }
 
 /**
+ * Whether automatic winner cards show first name plus surname initial.
+ *
+ * Theme Settings → WooCommerce → “Show first name on automatic winner cards”.
+ * Default: hide (masked username).
+ *
+ * @return bool
+ */
+function nera_show_automatic_winner_card_first_initial()
+{
+  $stored = get_option('options_nera_show_automatic_winner_card_first_initial', null);
+
+  if (null === $stored || '' === $stored) {
+    return false;
+  }
+
+  return (bool) (int) $stored;
+}
+
+/**
+ * Public name for one automatic winner card.
+ *
+ * Hide (default): masked username. Show: "Henry B." from the user profile,
+ * then the order billing name. Falls back to the masked username when both
+ * first name fields are empty.
+ *
+ * @param object $winner Lottery winner or instant-winner log.
+ * @return string
+ */
+function nera_winner_card_public_name($winner)
+{
+  $username = method_exists($winner, 'display_user_name') ? (string) $winner->display_user_name() : '';
+  if (function_exists('nera_mask_username')) {
+    $username = nera_mask_username($username);
+  }
+
+  if (!nera_show_automatic_winner_card_first_initial()) {
+    return $username;
+  }
+
+  $formatted = nera_format_winner_first_name_last_initial($winner);
+
+  return $formatted !== '' ? $formatted : $username;
+}
+
+/**
+ * "First L." from a winner's first name and surname.
+ *
+ * Prefers the WordPress user profile. Uses the order billing name only when
+ * the profile has no first name. Empty string means the caller should keep
+ * the username.
+ *
+ * @param object $winner Lottery winner or instant-winner log.
+ * @return string
+ */
+function nera_format_winner_first_name_last_initial($winner)
+{
+  $first = '';
+  $last  = '';
+
+  $user_id = method_exists($winner, 'get_user_id') ? (int) $winner->get_user_id() : 0;
+  if ($user_id > 0) {
+    $user = method_exists($winner, 'get_user') ? $winner->get_user() : get_user_by('ID', $user_id);
+    if ($user instanceof WP_User) {
+      $first = (string) $user->first_name;
+      $last  = (string) $user->last_name;
+    }
+  }
+
+  if (trim($first) === '') {
+    $order = null;
+    if (method_exists($winner, 'get_order')) {
+      $order = $winner->get_order();
+    } elseif (method_exists($winner, 'get_ticket_order')) {
+      $order = $winner->get_ticket_order();
+    }
+    if (is_object($order) && method_exists($order, 'get_billing_first_name')) {
+      $first = (string) $order->get_billing_first_name();
+      $last  = (string) $order->get_billing_last_name();
+    }
+  }
+
+  $first = sanitize_text_field(trim($first));
+  $last  = sanitize_text_field(trim($last));
+
+  if ($last === '' && preg_match('/^(.+)\s+(\S+)$/u', $first, $parts)) {
+    $first = $parts[1];
+    $last  = $parts[2];
+  }
+
+  if ($first === '') {
+    return '';
+  }
+
+  if ($last === '') {
+    return $first;
+  }
+
+  $initial = mb_strtoupper(mb_substr($last, 0, 1), 'UTF-8');
+
+  return $first . ' ' . $initial . '.';
+}
+
+/**
  * Build merged, sorted list of main winner rows (ended only) + instant winner rows (won logs).
  *
  * @param array|null $allowed Allowed winner types (subset of main|instant); null = both.
@@ -3362,7 +3465,8 @@ function nera_winners_dynamic_get_allowed_types_for_page($page_id)
 function nera_winners_dynamic_get_merged_entries($allowed = null)
 {
   $allowed = nera_winners_dynamic_allowed_types($allowed);
-  $cache_key = implode('-', $allowed);
+  $name_mode = nera_show_automatic_winner_card_first_initial() ? 'initial' : 'user';
+  $cache_key = implode('-', $allowed) . '-' . $name_mode;
 
   static $cache = [];
   if (isset($cache[$cache_key])) {
@@ -3410,10 +3514,7 @@ function nera_winners_dynamic_get_merged_entries($allowed = null)
       $prize_line = wp_strip_all_tags((string) $winner->get_winning_details());
     }
 
-    $name = method_exists($winner, 'display_user_name') ? (string) $winner->display_user_name() : '';
-    if (function_exists('nera_mask_username')) {
-      $name = nera_mask_username($name);
-    }
+    $name = nera_winner_card_public_name($winner);
 
     $ticket = method_exists($winner, 'get_lottery_ticket_number') ? (string) $winner->get_lottery_ticket_number() : '';
 
@@ -3467,10 +3568,7 @@ function nera_winners_dynamic_get_merged_entries($allowed = null)
       $prize_line = wp_strip_all_tags((string) $log->get_prize_message());
     }
 
-    $name = method_exists($log, 'display_user_name') ? (string) $log->display_user_name() : '';
-    if (function_exists('nera_mask_username')) {
-      $name = nera_mask_username($name);
-    }
+    $name = nera_winner_card_public_name($log);
 
     $ticket = method_exists($log, 'get_ticket_number') ? (string) $log->get_ticket_number() : '';
 
