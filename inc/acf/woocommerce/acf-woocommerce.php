@@ -305,6 +305,24 @@ if (function_exists('acf_add_local_field_group')) {
         'id' => '',
       ],
     ],
+    [
+      'key' => 'field_nera_show_automatic_winner_card_first_initial',
+      'label' => 'Show first name on automatic winner cards',
+      'name' => 'nera_show_automatic_winner_card_first_initial',
+      'type' => 'true_false',
+      'instructions' =>
+        'What name appears on the automatic winner cards (the Winners page). Show = the winner’s first name and the first letter of their surname (Henry B.). Hide = the username, as today (default). Does not change the Entry List or ticket logs.',
+      'required' => 0,
+      'ui' => 1,
+      'ui_on_text' => 'Show',
+      'ui_off_text' => 'Hide',
+      'default_value' => 0,
+      'wrapper' => [
+        'width' => '',
+        'class' => 'nera-acf-field--toggle',
+        'id' => '',
+      ],
+    ],
 
     // ── How this draw is run ───────────────────────────────────────────────
     // Read through nera_show_draw_run() and nera_get_draw_run_content(). Rendered by child
