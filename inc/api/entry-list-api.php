@@ -390,8 +390,8 @@ class Nera_Entry_List_API
           $text = (string) $ticket->get_lottery_ticket_number();
           break;
         case 'user_name':
-          $text = function_exists('nera_mask_username')
-            ? nera_mask_username($ticket->display_user_name_by())
+          $text = function_exists('nera_winner_card_public_name')
+            ? nera_winner_card_public_name($ticket)
             : (string) $ticket->display_user_name_by();
           break;
         case 'date':

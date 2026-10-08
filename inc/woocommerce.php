@@ -3373,18 +3373,27 @@ function nera_show_automatic_winner_card_first_initial()
 }
 
 /**
- * Public name for one automatic winner card.
+ * Public name for a winner card or a ticket-log row.
  *
  * Hide (default): masked username. Show: "Henry B." from the user profile,
  * then the order billing name. Falls back to the masked username when both
  * first name fields are empty.
  *
- * @param object $winner Lottery winner or instant-winner log.
+ * @param object $winner Lottery winner, instant-winner log, or ticket.
  * @return string
  */
 function nera_winner_card_public_name($winner)
 {
-  $username = method_exists($winner, 'display_user_name') ? (string) $winner->display_user_name() : '';
+  // Tickets expose both methods. The public log uses display_user_name_by()
+  // (guest label and the lottery display-type setting). Winners only have
+  // display_user_name().
+  if (method_exists($winner, 'display_user_name_by')) {
+    $username = (string) $winner->display_user_name_by();
+  } elseif (method_exists($winner, 'display_user_name')) {
+    $username = (string) $winner->display_user_name();
+  } else {
+    $username = '';
+  }
   if (function_exists('nera_mask_username')) {
     $username = nera_mask_username($username);
   }

@@ -307,11 +307,11 @@ if (function_exists('acf_add_local_field_group')) {
     ],
     [
       'key' => 'field_nera_show_automatic_winner_card_first_initial',
-      'label' => 'Show first name on automatic winner cards',
+      'label' => 'Show first name on winner cards and ticket logs',
       'name' => 'nera_show_automatic_winner_card_first_initial',
       'type' => 'true_false',
       'instructions' =>
-        'What name appears on the automatic winner cards (the Winners page). Show = the winner’s first name and the first letter of their surname (Henry B.). Hide = the username, as today (default). Does not change the Entry List or ticket logs.',
+        'What name appears on automatic winner cards and on public ticket logs (the product Entry List tab and the Entry List popup). Show = the person’s first name and the first letter of their surname (Henry B.). Hide = the username, as today (default).',
       'required' => 0,
       'ui' => 1,
       'ui_on_text' => 'Show',
