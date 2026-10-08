@@ -305,9 +305,11 @@ class Nera_Entry_List_API
         $text = '';
         switch ($col_key) {
           case 'username':
-            $text = function_exists('nera_mask_username')
-              ? nera_mask_username($winner_log->display_user_name())
-              : (string) $winner_log->display_user_name();
+            $text = function_exists('nera_winner_card_public_name')
+              ? nera_winner_card_public_name($winner_log)
+              : (function_exists('nera_mask_username')
+                ? nera_mask_username($winner_log->display_user_name())
+                : (string) $winner_log->display_user_name());
             break;
           case 'gift_product':
             $html = function_exists('lty_get_winner_gift_products_title')
