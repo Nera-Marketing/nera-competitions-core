@@ -24,7 +24,7 @@ foreach ($ticket_ids as $ticket_id):
             echo '<span class="font-mono font-bold text-primary">' . esc_html($ticket->get_lottery_ticket_number()) . '</span>';
             break;
           case 'user_name':
-            echo esc_html(nera_mask_username($ticket->display_user_name_by()));
+            echo esc_html(nera_winner_card_public_name($ticket));
             break;
           case 'date':
             echo esc_html($ticket->get_formatted_created_date());
