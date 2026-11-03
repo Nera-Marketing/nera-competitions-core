@@ -39,6 +39,8 @@ if ($is_sold_out) {
   return;
 }
 
+$is_not_started = function_exists('nera_lottery_is_not_started') && nera_lottery_is_not_started($product);
+
 $bundles_on = !$is_manual_ticket
   && method_exists($product, 'is_predefined_button_enabled')
   && method_exists($product, 'can_display_predefined_buttons')
@@ -75,9 +77,9 @@ $decimal_sep       = wc_get_price_decimal_separator();
 <!-- Ticket Price & Quantity -->
 <div class="px-6 pb-6 <?php echo esc_attr($seam_pt); ?>">
   <?php if (function_exists('nera_render_component')) { nera_render_component('TicketPrice', ['price' => $price]); } ?>
-  <?php if ($is_manual_ticket): ?>
+  <?php if (!$is_not_started && $is_manual_ticket): ?>
     <?php do_action('woocommerce_before_add_to_cart_button'); ?>
-  <?php else:
+  <?php elseif (!$is_not_started):
     $quantity_layout = nera_get_quantity_selector_layout($product_id);
     if ($bundles_on && function_exists('nera_render_component')) {
       nera_render_component('TicketBundles', ['product' => $product]);
@@ -153,6 +155,30 @@ $decimal_sep       = wc_get_price_decimal_separator();
     ?>
   <?php endif; ?>
 </div>
+
+<?php if ($is_not_started): ?>
+<div class="px-6 pb-6">
+  <?php if ($has_qa && function_exists('nera_render_component')) {
+    nera_render_component('SkillQuestionAnswer', [
+      'question_text'  => '',
+      'answers'        => [],
+      'cart_answer_id' => '',
+      'qa_can_display' => false,
+    ]);
+  } ?>
+  <button
+    type="button"
+    class="w-full bg-primary text-white text-lg py-4 rounded-xl font-bold shadow-lg shadow-primary/20 flex items-center justify-center gap-2 disabled:opacity-50 lty-participate-now-button"
+    style="cursor: not-allowed"
+    disabled
+  >
+    <span>
+      <?php esc_html_e('Enter Now', 'nera-competitions'); ?>
+      <span class="material-symbols-outlined relative top-1">arrow_forward</span>
+    </span>
+  </button>
+</div>
+<?php else: ?>
 
 <?php
 /**
@@ -733,6 +759,7 @@ do_action('nera_purchase_card_before_enter_form', $product, $args);
     </form>
   </div>
 </div>
+<?php endif; ?>
 
 <!-- Enter By Post Section -->
 <?php
@@ -749,6 +776,7 @@ $postal_link_supporting_text = function_exists('get_field')
   ? get_field('postal_link_supporting_text', 'option')
   : '';
 ?>
+<?php if (!$is_not_started): ?>
 <div class="px-6 pb-6" x-data>
   <div class="border-t border-gray-200">
     <p class="text-center text-sm text-text-secondary pt-6">
@@ -768,6 +796,7 @@ $postal_link_supporting_text = function_exists('get_field')
     </p>
   </div>
 </div>
+<?php endif; ?>
 
 <!-- Trust Badges -->
 <div class="px-6 pb-6">

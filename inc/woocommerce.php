@@ -815,6 +815,162 @@ function nera_validate_lottery_not_sold_out($passed, $product_id, $quantity)
 add_filter('woocommerce_add_to_cart_validation', 'nera_validate_lottery_not_sold_out', 10, 3);
 
 /**
+ * Whether this lottery is still before its start time.
+ *
+ * Matches Lottery for WooCommerce: no start date counts as not started.
+ *
+ * @param mixed $product Product object.
+ */
+function nera_lottery_is_not_started($product): bool
+{
+  if (!is_object($product) || !method_exists($product, 'get_type') || $product->get_type() !== 'lottery') {
+    return false;
+  }
+
+  if (!method_exists($product, 'is_started')) {
+    return false;
+  }
+
+  return !$product->is_started();
+}
+
+/**
+ * Notice shown when a ticket is added before the competition opens.
+ */
+function nera_lottery_not_started_message(): string
+{
+  return __('This competition has not opened yet.', 'nera-competitions');
+}
+
+/**
+ * Keep a not-yet-open lottery out of the basket on every add-to-cart path.
+ *
+ * @param bool       $purchasable Whether WooCommerce considers the product purchasable.
+ * @param WC_Product $product     Product object.
+ */
+function nera_lottery_not_started_is_purchasable($purchasable, $product)
+{
+  if (nera_lottery_is_not_started($product)) {
+    return false;
+  }
+
+  return $purchasable;
+}
+add_filter('woocommerce_is_purchasable', 'nera_lottery_not_started_is_purchasable', 10, 2);
+
+/**
+ * Use the same notice when WooCommerce refuses the product as not purchasable.
+ *
+ * @param string     $message Message.
+ * @param WC_Product $product Product object.
+ */
+function nera_lottery_not_started_purchasable_message($message, $product)
+{
+  if (nera_lottery_is_not_started($product)) {
+    return nera_lottery_not_started_message();
+  }
+
+  return $message;
+}
+add_filter('woocommerce_cart_product_cannot_be_purchased_message', 'nera_lottery_not_started_purchasable_message', 10, 2);
+
+/**
+ * Block the theme AJAX add-to-cart before the item is created.
+ *
+ * @param bool $passed     Validation passed.
+ * @param int  $product_id Product ID.
+ * @param int  $quantity   Quantity.
+ */
+function nera_validate_lottery_not_started($passed, $product_id, $quantity)
+{
+  if (!$passed) {
+    return false;
+  }
+
+  $product = wc_get_product($product_id);
+  if (!nera_lottery_is_not_started($product)) {
+    return $passed;
+  }
+
+  wc_add_notice(nera_lottery_not_started_message(), 'error');
+
+  return false;
+}
+add_filter('woocommerce_add_to_cart_validation', 'nera_validate_lottery_not_started', 8, 3);
+
+/**
+ * Drop tickets for a competition that has not opened, including ones added earlier.
+ */
+function nera_remove_not_started_lottery_from_cart(): void
+{
+  if (!function_exists('WC') || !WC()->cart) {
+    return;
+  }
+
+  foreach (WC()->cart->get_cart() as $cart_item_key => $cart_item) {
+    $product = $cart_item['data'] ?? null;
+    if (!nera_lottery_is_not_started($product)) {
+      continue;
+    }
+
+    WC()->cart->remove_cart_item($cart_item_key);
+    wc_add_notice(nera_lottery_not_started_message(), 'error');
+  }
+}
+add_action('woocommerce_check_cart_items', 'nera_remove_not_started_lottery_from_cart', 5);
+
+/**
+ * Lucky Dip adds tickets in its own AJAX handlers and ignores a failed add_to_cart().
+ * Stop those requests before the handler runs.
+ */
+function nera_block_not_started_lottery_ajax(): void
+{
+  // phpcs:ignore WordPress.Security.NonceVerification.Missing -- reject-only; the plugin handler verifies the nonce.
+  $product_id = isset($_POST['product_id']) ? absint(wp_unslash($_POST['product_id'])) : 0;
+  $product = $product_id ? wc_get_product($product_id) : null;
+  if (!nera_lottery_is_not_started($product)) {
+    return;
+  }
+
+  wp_send_json_error(['error' => nera_lottery_not_started_message()]);
+}
+foreach (
+  [
+    'wp_ajax_lty_process_lucky_dip',
+    'wp_ajax_nopriv_lty_process_lucky_dip',
+    'wp_ajax_lty_process_regenerate_lucky_dip',
+    'wp_ajax_nopriv_lty_process_regenerate_lucky_dip',
+    'wp_ajax_lty_regenerate_lucky_dip_add_to_cart',
+    'wp_ajax_nopriv_lty_regenerate_lucky_dip_add_to_cart',
+  ] as $nera_not_started_ajax_action
+) {
+  add_action($nera_not_started_ajax_action, 'nera_block_not_started_lottery_ajax', 1);
+}
+
+/**
+ * Predefined ticket packs add to the cart from a front-end URL, before validation.
+ */
+function nera_block_not_started_predefined_add_url(): void
+{
+  // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- reject-only; this request adds nothing when blocked.
+  if (empty($_REQUEST['lty_product_id'])) {
+    return;
+  }
+
+  // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- reject-only.
+  $product_id = absint(wp_unslash($_REQUEST['lty_product_id']));
+  $product = $product_id ? wc_get_product($product_id) : null;
+  if (!nera_lottery_is_not_started($product)) {
+    return;
+  }
+
+  wc_add_notice(nera_lottery_not_started_message(), 'error');
+  wp_safe_redirect(get_permalink($product_id));
+  exit;
+}
+add_action('wp', 'nera_block_not_started_predefined_add_url', 9);
+
+/**
  * Submitted skill-question answer key from the add-to-cart request.
  */
 function nera_get_submitted_question_answer_id(): string

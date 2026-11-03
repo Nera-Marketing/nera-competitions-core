@@ -8,15 +8,21 @@
   minutes         string  required  '00'      zero-padded minutes
   seconds         string  required  '00'      zero-padded seconds
   is_expired      bool    required  false     switches expired variant
+  opens_in        bool    required  false     counts to the start; neutral label
 #}
 {# CountdownTimer atom #}
-{# Variables: countdown_date (string|null), is_expired (bool), days, hours, minutes, seconds #}
+{# Variables: countdown_date (string|null), is_expired (bool), opens_in (bool), days, hours, minutes, seconds #}
 
 <div class="flex items-center gap-2 mb-3">
   {% if is_expired %}
     <span class="material-symbols-outlined text-gray-400 text-lg">lock</span>
     <span class="text-xs font-bold text-text-secondary uppercase tracking-wider">
       Competition Closed
+    </span>
+  {% elseif opens_in %}
+    <span class="material-symbols-outlined text-text-secondary text-lg">schedule</span>
+    <span class="text-xs font-bold text-text-secondary uppercase tracking-wider">
+      Opens In
     </span>
   {% else %}
     <span class="material-symbols-outlined text-danger text-lg">schedule</span>

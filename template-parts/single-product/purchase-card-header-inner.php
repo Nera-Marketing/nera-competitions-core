@@ -30,6 +30,15 @@ if (!$product) {
   return;
 }
 
+$is_not_started = function_exists('nera_lottery_is_not_started') && nera_lottery_is_not_started($product);
+if ($is_not_started && method_exists($product, 'get_lty_start_date_gmt')) {
+  $start_gmt = (string) $product->get_lty_start_date_gmt();
+  if ($start_gmt !== '' && function_exists('nera_get_countdown_parts')) {
+    $countdown = nera_get_countdown_parts($start_gmt);
+    $is_expired = false;
+  }
+}
+
 $show_tickets_progress = function_exists('nera_show_tickets_progress')
   ? nera_show_tickets_progress($product->get_id())
   : true;
@@ -78,6 +87,7 @@ $show_tickets_bar = function_exists('nera_show_tickets_bar')
       'countdown_date' => $countdown_date_for_js,
       'countdown'      => $countdown,
       'is_expired'     => $is_expired,
+      'opens_in'       => $is_not_started && empty($countdown['expired']),
     ]); } ?>
   </div>
 

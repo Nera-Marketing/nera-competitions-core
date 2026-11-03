@@ -21,14 +21,22 @@ if (!$product) {
 
 $product_id = $product->get_id();
 $end_date_gmt = get_post_meta($product_id, '_lty_end_date_gmt', true);
+$is_not_started = function_exists('nera_lottery_is_not_started') && nera_lottery_is_not_started($product);
+$target_gmt = $end_date_gmt;
+if ($is_not_started && method_exists($product, 'get_lty_start_date_gmt')) {
+  $start_gmt = (string) $product->get_lty_start_date_gmt();
+  if ($start_gmt !== '') {
+    $target_gmt = $start_gmt;
+  }
+}
 
-if (!$end_date_gmt) {
+if (!$target_gmt) {
   return;
 }
 
-$end_timestamp = strtotime($end_date_gmt) * 1000; // Convert to milliseconds for JS
-$is_urgent = isset($countdown['urgent']) && $countdown['urgent'];
-$is_expired = isset($countdown['expired']) && $countdown['expired'];
+$end_timestamp = strtotime($target_gmt) * 1000; // Convert to milliseconds for JS
+$is_urgent = !$is_not_started && isset($countdown['urgent']) && $countdown['urgent'];
+$is_expired = !$is_not_started && isset($countdown['expired']) && $countdown['expired'];
 
 $urgent_class = $is_urgent ? 'countdown--urgent' : '';
 ?>
@@ -36,7 +44,7 @@ $urgent_class = $is_urgent ? 'countdown--urgent' : '';
 <div class="ncs-countdown countdown-section">
   <div class="flex items-center justify-between mb-3">
     <span class="text-sm font-semibold text-text-secondary uppercase tracking-wide">
-      <?php _e('Competition Ends In', 'nera-competitions'); ?>
+      <?php echo esc_html($is_not_started ? __('Opens In', 'nera-competitions') : __('Competition Ends In', 'nera-competitions')); ?>
     </span>
     <?php if ($is_urgent && !$is_expired): ?>
       <span class="inline-flex items-center gap-1 text-danger text-xs font-bold animate-pulse">
