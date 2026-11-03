@@ -26,10 +26,22 @@ $is_in_stock = $remaining > 0;
 // Check if competition has ended
 $end_date_gmt = get_post_meta($product_id, '_lty_end_date_gmt', true);
 $is_ended = $end_date_gmt && strtotime($end_date_gmt) < time();
+$is_not_started = function_exists('nera_lottery_is_not_started') && nera_lottery_is_not_started($product);
 ?>
 
 <div class="add-to-cart-section">
-  <?php if ($is_ended): ?>
+  <?php if ($is_not_started): ?>
+    <button
+      type="button"
+      class="add-to-cart-btn w-full py-4 px-6 rounded-2xl bg-gradient-to-r from-primary to-primary text-white font-bold text-lg shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+      disabled
+    >
+      <span class="flex items-center justify-center gap-2">
+        <span class="material-symbols-outlined">shopping_cart</span>
+        <span class="btn-text"><?php esc_html_e('Add to Cart', 'nera-competitions'); ?></span>
+      </span>
+    </button>
+  <?php elseif ($is_ended): ?>
     <!-- Competition Ended -->
     <button
       type="button"

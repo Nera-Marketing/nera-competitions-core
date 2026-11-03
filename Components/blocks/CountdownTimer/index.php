@@ -14,6 +14,7 @@ if (!defined('ABSPATH')) {
  *   minutes: string,        // required, default '00' — zero-padded minutes remaining
  *   seconds: string,        // required, default '00' — zero-padded seconds remaining
  *   is_expired: bool,       // required, default false — switches to expired (static 00s) variant
+ *   opens_in: bool,         // required, default false — label counts to the start, not the close
  * }
  */
 function get_data(array $args = []): array
@@ -31,5 +32,6 @@ function get_data(array $args = []): array
         'minutes'        => $pad($countdown['minutes'] ?? 0),
         'seconds'        => $pad($countdown['seconds'] ?? 0),
         'is_expired'     => (bool) ($args['is_expired'] ?? false),
+        'opens_in'       => (bool) ($args['opens_in'] ?? false),
     ];
 }

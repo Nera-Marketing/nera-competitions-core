@@ -24,6 +24,7 @@ $product_id = $product->get_id();
 $is_sold_out = function_exists('nera_lottery_product_is_sold_out')
   ? nera_lottery_product_is_sold_out($product, $lottery_data)
   : false;
+$is_not_started = function_exists('nera_lottery_is_not_started') && nera_lottery_is_not_started($product);
 ?>
 
 <div class="bg-surface rounded-3xl shadow-xl p-6 lg:p-8 space-y-6">
@@ -80,11 +81,13 @@ $is_sold_out = function_exists('nera_lottery_product_is_sold_out')
       'lottery_data' => $lottery_data,
     ]); ?>
 
+    <?php if (!$is_not_started): ?>
     <!-- Quantity Selector -->
     <?php get_template_part('template-parts/single-product/quantity-selector', null, [
       'product' => $product,
       'lottery_data' => $lottery_data,
     ]); ?>
+    <?php endif; ?>
 
     <!-- Add to Cart (skill Q&A hooks fire inside this template when purchasable) -->
     <?php get_template_part('template-parts/single-product/add-to-cart', null, [
