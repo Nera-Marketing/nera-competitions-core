@@ -51,3 +51,11 @@ _Avoid_: Owned, locked
 **Add-ons Bundles switch**:
 The site-wide on/off for the whole Safety and Add-ons feature. While off, customers see and can buy nothing from it, but saved prize data and already-placed orders are untouched. Off by default.
 _Avoid_: Master toggle, feature flag
+
+**Ticket cap per person**:
+The most tickets one customer may hold for a single drop, counting tickets already bought. Set per drop either as a fixed number of tickets or as a percentage of the drop.
+_Avoid_: Max per user, purchase limit
+
+**Percentage cap**:
+A Ticket cap per person expressed as a share of the drop's total tickets, rounded down and never below one ticket. Fixed for the life of the drop, it does not shrink as tickets sell.
+_Avoid_: Percent limit

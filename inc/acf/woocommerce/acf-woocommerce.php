@@ -536,6 +536,11 @@ if (function_exists('acf_add_local_field_group')) {
     $woocommerce_fields = array_merge($woocommerce_fields, nera_prize_addons_settings_fields());
   }
 
+  // "Entry cap per person": percentage cap switch and site-wide default (inc/percentage-entry-cap.php).
+  if (function_exists('nera_pct_cap_settings_fields')) {
+    $woocommerce_fields = array_merge($woocommerce_fields, nera_pct_cap_settings_fields());
+  }
+
   if (class_exists('Nera_STW_ACF_Copy_Settings')) {
     $woocommerce_fields = array_merge(
       $woocommerce_fields,
