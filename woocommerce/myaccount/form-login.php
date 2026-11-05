@@ -386,16 +386,29 @@ $active_tab = isset($_GET['action']) && $_GET['action'] === 'register' ? 'regist
     history.pushState(null, '', url.toString());
 
     // Update the account hero's heading and description; an empty value hides its element.
+    // Without the hero hook (a child page.php that prints its own hero), fall back to the
+    // first h1 outside the page article and the paragraph right after it.
+    var prefix = isRegister ? 'register' : 'login';
+    var heroTitle = null;
+    var heroDesc = null;
     var hero = document.querySelector('[data-nera-account-hero]');
     if (hero) {
-      var prefix = isRegister ? 'register' : 'login';
-      [['h1', heroCopy[prefix + '_title']], ['p', heroCopy[prefix + '_description']]].forEach(function (pair) {
-        var el = hero.querySelector(pair[0]);
-        if (!el) return;
-        el.textContent = pair[1] || '';
-        el.hidden = !pair[1];
-      });
+      heroTitle = hero.querySelector('h1');
+      heroDesc = hero.querySelector('p');
+    } else {
+      var firstH1 = document.querySelector('h1');
+      if (firstH1 && !firstH1.closest('article')) {
+        heroTitle = firstH1;
+        var next = firstH1.nextElementSibling;
+        heroDesc = next && next.tagName === 'P' ? next : null;
+      }
     }
+    [[heroTitle, heroCopy[prefix + '_title']], [heroDesc, heroCopy[prefix + '_description']]].forEach(function (pair) {
+      var el = pair[0];
+      if (!el) return;
+      el.textContent = pair[1] || '';
+      el.hidden = !pair[1];
+    });
   }
 
   tabLogin.addEventListener('click', function ()    { activateTab('login'); });
