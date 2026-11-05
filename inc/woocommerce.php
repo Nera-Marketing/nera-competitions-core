@@ -2382,7 +2382,7 @@ function nera_cashflow_card_description()
 
     if ($description === '') {
         $description =
-            "You will taken to a third party checkout page, please do not refresh. You will be bought back to the website when payment is processed and tickets will be allocated.\n\nThe bigger heading will be Pay with Apple / Google Pay ( Debit & Credit )";
+            'You will be taken to a third party checkout page, please do not refresh. You will be brought back to the website when payment is processed and tickets will be allocated.';
     }
 
     return $description;
