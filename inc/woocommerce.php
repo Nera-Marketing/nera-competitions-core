@@ -207,6 +207,32 @@ function nera_get_draw_run_content(array $defaults = []): array
  *
  * @return list<array{icon: string, title: string, text: string}>
  */
+/**
+ * Logged-out My Account hero copy (Theme Settings → WooCommerce → My Account).
+ *
+ * A field never saved returns the default text; a field saved empty returns '' (hidden).
+ *
+ * @return array{login_title: string, login_description: string, register_title: string, register_description: string}
+ */
+function nera_account_hero_copy(): array
+{
+  $defaults = [
+    'login_title' => __('Welcome Back', 'woocommerce'),
+    'login_description' => __('Log in to your account to continue', 'woocommerce'),
+    'register_title' => __('Create Account', 'woocommerce'),
+    'register_description' => __('Join us and start entering competitions today', 'woocommerce'),
+  ];
+
+  $copy = [];
+  foreach ($defaults as $key => $default) {
+    // Raw option: null = never saved.
+    $raw = get_option('options_account_' . $key, null);
+    $copy[$key] = $raw === null ? $default : trim((string) $raw);
+  }
+
+  return $copy;
+}
+
 function nera_cart_empty_badges(): array
 {
   // Raw option: null = never saved (default on), '0' = switched off.

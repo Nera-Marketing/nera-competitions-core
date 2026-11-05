@@ -9,6 +9,8 @@
  * - eyebrow_label      (string, optional) translated label for pill
  * - eyebrow_icon       (string, optional) Material Symbols ligature name e.g. groups, emoji_events
  * - description_class  (string, optional) extra classes for the description paragraph
+ * - section_attr       (string, optional) bare data-* attribute added to the <section> (a script hook)
+ * - keep_empty         (bool, optional) always print the title and description; an empty one gets `hidden`
  *
  * @package Nera_Competitions
  */
@@ -26,6 +28,8 @@ $hero_args = wp_parse_args(
     'eyebrow_label' => '',
     'eyebrow_icon' => '',
     'description_class' => '',
+    'section_attr' => '',
+    'keep_empty' => false,
   ],
 );
 
@@ -35,6 +39,9 @@ $variant = $hero_args['variant'] === 'compact' ? 'compact' : 'default';
 $eyebrow_label = (string) $hero_args['eyebrow_label'];
 $eyebrow_icon = (string) $hero_args['eyebrow_icon'];
 $description_extra_class = trim((string) $hero_args['description_class']);
+
+$section_attr = preg_replace('/[^a-z0-9-]/', '', strtolower((string) $hero_args['section_attr']));
+$keep_empty = !empty($hero_args['keep_empty']);
 
 $has_eyebrow = $eyebrow_label !== '';
 
@@ -59,7 +66,7 @@ $p_classes = trim(
 );
 ?>
 
-<section class="<?php echo esc_attr($section_class); ?>">
+<section class="<?php echo esc_attr($section_class); ?>"<?php echo $section_attr !== '' ? ' ' . esc_attr($section_attr) : ''; ?>>
   <div class="<?php echo esc_attr($container_class); ?>">
     <div class="text-center max-w-2xl mx-auto">
       <?php if ($has_eyebrow) : ?>
@@ -75,18 +82,27 @@ $p_classes = trim(
         </div>
       <?php endif; ?>
 
+      <?php // An element printed hidden skips AOS so it isn't left transparent when a script shows it. ?>
       <h1
         class="<?php echo esc_attr($h1_class); ?>"
-        data-aos="fade-up"
-        <?php echo $has_eyebrow ? ' data-aos-delay="100"' : ''; ?>>
+        <?php if ($keep_empty && $title === '') : ?>
+          hidden
+        <?php else : ?>
+          data-aos="fade-up"
+          <?php echo $has_eyebrow ? ' data-aos-delay="100"' : ''; ?>
+        <?php endif; ?>>
         <?php echo esc_html($title); ?>
       </h1>
 
-      <?php if ($description !== '') : ?>
+      <?php if ($description !== '' || $keep_empty) : ?>
         <p
           class="<?php echo esc_attr($p_classes); ?>"
-          data-aos="fade-up"
-          data-aos-delay="<?php echo esc_attr($has_eyebrow ? '200' : '100'); ?>">
+          <?php if ($description === '') : ?>
+            hidden
+          <?php else : ?>
+            data-aos="fade-up"
+            data-aos-delay="<?php echo esc_attr($has_eyebrow ? '200' : '100'); ?>"
+          <?php endif; ?>>
           <?php echo esc_html($description); ?>
         </p>
       <?php endif; ?>

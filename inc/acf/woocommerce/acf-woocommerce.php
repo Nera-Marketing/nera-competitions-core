@@ -461,6 +461,55 @@ if (function_exists('acf_add_local_field_group')) {
         ],
       ],
     ],
+
+    // ── My Account hero ────────────────────────────────────────────────────
+    // Read through nera_account_hero_copy(); shown above the logged-out login / register forms.
+    [
+      'key' => 'field_wc_account_hero_accordion',
+      'label' => 'My Account',
+      'name' => '',
+      'type' => 'accordion',
+      'placement' => 'top',
+      'open' => 0,
+      'multi_expand' => 0,
+      'endpoint' => 0,
+    ],
+    [
+      'key' => 'field_wc_account_login_title',
+      'label' => 'Login title',
+      'name' => 'account_login_title',
+      'type' => 'text',
+      'instructions' => 'Hero title on the Login tab. Leave empty to hide.',
+      'default_value' => 'Welcome Back',
+      'wrapper' => ['width' => '50', 'class' => '', 'id' => ''],
+    ],
+    [
+      'key' => 'field_wc_account_login_description',
+      'label' => 'Login description',
+      'name' => 'account_login_description',
+      'type' => 'text',
+      'instructions' => 'Hero description on the Login tab. Leave empty to hide.',
+      'default_value' => 'Log in to your account to continue',
+      'wrapper' => ['width' => '50', 'class' => '', 'id' => ''],
+    ],
+    [
+      'key' => 'field_wc_account_register_title',
+      'label' => 'Register title',
+      'name' => 'account_register_title',
+      'type' => 'text',
+      'instructions' => 'Hero title on the Register tab. Leave empty to hide.',
+      'default_value' => 'Create Account',
+      'wrapper' => ['width' => '50', 'class' => '', 'id' => ''],
+    ],
+    [
+      'key' => 'field_wc_account_register_description',
+      'label' => 'Register description',
+      'name' => 'account_register_description',
+      'type' => 'text',
+      'instructions' => 'Hero description on the Register tab. Leave empty to hide.',
+      'default_value' => 'Join us and start entering competitions today',
+      'wrapper' => ['width' => '50', 'class' => '', 'id' => ''],
+    ],
   ];
 
   // "Add-ons Bundles": site switch and the Catalog of Safety items and Add-on options.
