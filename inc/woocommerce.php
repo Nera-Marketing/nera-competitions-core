@@ -200,6 +200,59 @@ function nera_get_draw_run_content(array $defaults = []): array
 }
 
 /**
+ * Empty basket badges from Theme Settings → WooCommerce.
+ *
+ * "Show badges" off → no badges. Otherwise the saved rows that have a title, or the
+ * three default badges when none are saved (never saved, or saved with no rows).
+ *
+ * @return list<array{icon: string, title: string, text: string}>
+ */
+function nera_cart_empty_badges(): array
+{
+  // Raw option: null = never saved (default on), '0' = switched off.
+  if (get_option('options_cart_empty_badges_show', null) === '0') {
+    return [];
+  }
+
+  $badges = [];
+  if (function_exists('get_field')) {
+    $rows = get_field('cart_empty_badges', 'option');
+    foreach (is_array($rows) ? $rows : [] as $row) {
+      $badge = [
+        'icon' => trim((string) ($row['icon'] ?? '')),
+        'title' => trim((string) ($row['title'] ?? '')),
+        'text' => trim((string) ($row['text'] ?? '')),
+      ];
+      if ($badge['title'] !== '') {
+        $badges[] = $badge;
+      }
+    }
+  }
+
+  if ($badges) {
+    return $badges;
+  }
+
+  return [
+    [
+      'icon' => 'verified_user',
+      'title' => __('Guaranteed Draws', 'nera-competitions'),
+      'text' => __('Regardless of sell out', 'nera-competitions'),
+    ],
+    [
+      'icon' => 'lock',
+      'title' => __('Secure Payment', 'nera-competitions'),
+      'text' => __('256-bit SSL Encrypted', 'nera-competitions'),
+    ],
+    [
+      'icon' => 'card_giftcard',
+      'title' => __('Instant Prizes', 'nera-competitions'),
+      'text' => __('Win immediately upon entry', 'nera-competitions'),
+    ],
+  ];
+}
+
+/**
  * Normalise ACF taxonomy values to product_cat term IDs.
  *
  * @param mixed $raw Field value (ids, WP_Term objects, or a single value).

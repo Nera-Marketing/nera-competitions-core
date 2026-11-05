@@ -401,6 +401,66 @@ if (function_exists('acf_add_local_field_group')) {
         ],
       ],
     ],
+
+    // ── Empty basket badges ────────────────────────────────────────────────
+    // Read through nera_cart_empty_badges(); rendered by template-parts/cart/cart-empty.php.
+    [
+      'key' => 'field_wc_cart_empty_badges_accordion',
+      'label' => 'Empty Basket Badges',
+      'name' => '',
+      'type' => 'accordion',
+      'placement' => 'top',
+      'open' => 0,
+      'multi_expand' => 0,
+      'endpoint' => 0,
+    ],
+    [
+      'key' => 'field_wc_cart_empty_badges_show',
+      'label' => 'Show badges',
+      'name' => 'cart_empty_badges_show',
+      'type' => 'true_false',
+      'instructions' => 'Badges under the empty basket message.',
+      'default_value' => 1,
+      'ui' => 1,
+      'ui_on_text' => 'Visible',
+      'ui_off_text' => 'Hidden',
+    ],
+    [
+      'key' => 'field_wc_cart_empty_badges',
+      'label' => 'Badges',
+      'name' => 'cart_empty_badges',
+      'type' => 'repeater',
+      'instructions' => 'Leave empty to show the default badges. Turn off Show badges to hide them.',
+      'layout' => 'table',
+      'button_label' => 'Add Badge',
+      'sub_fields' => [
+        [
+          'key' => 'field_wc_cart_empty_badges_icon',
+          'label' => 'Icon',
+          'name' => 'icon',
+          'type' => 'text',
+          'instructions' => 'Material Symbols icon name.',
+          'placeholder' => 'verified_user',
+          'wrapper' => ['width' => '20', 'class' => '', 'id' => ''],
+        ],
+        [
+          'key' => 'field_wc_cart_empty_badges_title',
+          'label' => 'Title',
+          'name' => 'title',
+          'type' => 'text',
+          'placeholder' => 'Guaranteed Draws',
+          'wrapper' => ['width' => '35', 'class' => '', 'id' => ''],
+        ],
+        [
+          'key' => 'field_wc_cart_empty_badges_text',
+          'label' => 'Text',
+          'name' => 'text',
+          'type' => 'text',
+          'placeholder' => 'Regardless of sell out',
+          'wrapper' => ['width' => '45', 'class' => '', 'id' => ''],
+        ],
+      ],
+    ],
   ];
 
   // "Add-ons Bundles": site switch and the Catalog of Safety items and Add-on options.
