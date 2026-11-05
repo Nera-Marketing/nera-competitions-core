@@ -116,7 +116,7 @@ if ($hero_title === '' && $hero_highlight === '' && $hero_description === '' && 
           <div class="relative rounded-2xl overflow-hidden shadow-2xl">
             <?php if ($hero_image): ?>
               <img src="<?php echo esc_url($hero_image); ?>" alt="<?php echo esc_attr(
-  $hero_title,
+  trim($hero_title . ' ' . $hero_highlight),
 ); ?>"
                 class="w-full h-auto">
             <?php else: ?>
