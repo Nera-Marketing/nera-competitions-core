@@ -1696,19 +1696,16 @@ function nera_advanced_filter_render_prize_cards_html(WP_Query $competitions, $c
 function nera_advanced_filter_render_grid_html(WP_Query $competitions, $page_id = 0)
 {
   $page_id = absint($page_id);
-  $empty_heading = '';
-  $empty_description = '';
-  if ($page_id > 0 && function_exists('get_field')) {
-    $empty_heading = get_field('product_listing_empty_heading', $page_id);
-    $empty_description = get_field('product_listing_empty_description', $page_id);
-  }
-  $empty_heading = is_string($empty_heading) ? trim($empty_heading) : '';
-  $empty_description = is_string($empty_description) ? trim($empty_description) : '';
-  if ($empty_heading === '') {
-    $empty_heading = __('No competitions found', 'nera-competitions');
-  }
-  if ($empty_description === '') {
-    $empty_description = __('Check back soon for new amazing prizes!', 'nera-competitions');
+  // A field never saved keeps the default; a field saved empty hides its line.
+  $empty_heading = __('No competitions found', 'nera-competitions');
+  $empty_description = __('Check back soon for new amazing prizes!', 'nera-competitions');
+  if ($page_id > 0) {
+    if (metadata_exists('post', $page_id, 'product_listing_empty_heading')) {
+      $empty_heading = trim((string) get_post_meta($page_id, 'product_listing_empty_heading', true));
+    }
+    if (metadata_exists('post', $page_id, 'product_listing_empty_description')) {
+      $empty_description = trim((string) get_post_meta($page_id, 'product_listing_empty_description', true));
+    }
   }
 
   ob_start();
@@ -1744,8 +1741,12 @@ function nera_advanced_filter_render_grid_html(WP_Query $competitions, $page_id 
           <polyline points="21 15 16 10 5 21" />
         </svg>
       </div>
-      <h3 class="text-2xl font-bold text-text-primary mb-2"><?php echo esc_html($empty_heading); ?></h3>
-      <p class="text-text-secondary"><?php echo esc_html($empty_description); ?></p>
+      <?php if ($empty_heading !== ''): ?>
+        <h3 class="text-2xl font-bold text-text-primary mb-2"><?php echo esc_html($empty_heading); ?></h3>
+      <?php endif; ?>
+      <?php if ($empty_description !== ''): ?>
+        <p class="text-text-secondary"><?php echo esc_html($empty_description); ?></p>
+      <?php endif; ?>
     </div>
     <?php
   }

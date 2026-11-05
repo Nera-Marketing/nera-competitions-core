@@ -142,7 +142,7 @@ function nera_register_shop_listing_fields(): void
         'name' => 'product_listing_empty_heading',
         'type' => 'text',
         'instructions' => __(
-          'Shown on the Shop page when there are no competitions at all.',
+          'Shown on the Shop page when there are no competitions at all. Leave empty to hide it.',
           'nera-competitions',
         ),
         'default_value' => __('No competitions found', 'nera-competitions'),
@@ -154,7 +154,7 @@ function nera_register_shop_listing_fields(): void
         'name' => 'product_listing_empty_description',
         'type' => 'textarea',
         'instructions' => __(
-          'Supporting text below the empty-state heading.',
+          'Supporting text below the empty-state heading. Leave empty to hide it.',
           'nera-competitions',
         ),
         'default_value' => __('Check back soon for new amazing prizes!', 'nera-competitions'),
