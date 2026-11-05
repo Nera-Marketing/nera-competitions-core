@@ -200,14 +200,6 @@ function nera_get_draw_run_content(array $defaults = []): array
 }
 
 /**
- * Empty basket badges from Theme Settings → WooCommerce.
- *
- * "Show badges" off → no badges. Otherwise the saved rows that have a title, or the
- * three default badges when none are saved (never saved, or saved with no rows).
- *
- * @return list<array{icon: string, title: string, text: string}>
- */
-/**
  * Logged-out My Account hero copy (Theme Settings → WooCommerce → My Account).
  *
  * A field never saved returns the default text; a field saved empty returns '' (hidden).
@@ -233,6 +225,14 @@ function nera_account_hero_copy(): array
   return $copy;
 }
 
+/**
+ * Empty basket badges from Theme Settings → WooCommerce.
+ *
+ * "Show badges" off → no badges. Otherwise the saved rows that have a title, or the
+ * three default badges when none are saved (never saved, or saved with no rows).
+ *
+ * @return list<array{icon: string, title: string, text: string}>
+ */
 function nera_cart_empty_badges(): array
 {
   // Raw option: null = never saved (default on), '0' = switched off.
