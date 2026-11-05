@@ -20,11 +20,9 @@ if (!$show_cards) {
 }
 
 // Contact information
-$address = function_exists('get_field')
-  ? get_field('contact_address')
-  : "123 Innovation Blvd\nTech District, NY 10012";
-$email = function_exists('get_field') ? get_field('contact_email') : 'support@competition.com';
-$phone = function_exists('get_field') ? get_field('contact_phone') : '+1 (555) 012-3456';
+$address = function_exists('get_field') ? get_field('contact_address') : '';
+$email = function_exists('get_field') ? get_field('contact_email') : '';
+$phone = function_exists('get_field') ? get_field('contact_phone') : '';
 
 // Section content
 $section_heading = function_exists('get_field')

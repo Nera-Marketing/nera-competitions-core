@@ -87,7 +87,6 @@ function nera_register_contact_fields()
           'Your business address (supports multiple lines)',
           'nera-competitions',
         ),
-        'default_value' => "123 Innovation Blvd\nTech District, NY 10012",
         'rows' => 3,
         'conditional_logic' => [
           [
@@ -105,7 +104,6 @@ function nera_register_contact_fields()
         'name' => 'contact_email',
         'type' => 'email',
         'instructions' => __('Primary contact email address', 'nera-competitions'),
-        'default_value' => 'support@competition.com',
         'placeholder' => 'support@example.com',
         'conditional_logic' => [
           [
@@ -123,7 +121,6 @@ function nera_register_contact_fields()
         'name' => 'contact_phone',
         'type' => 'text',
         'instructions' => __('Primary contact phone number', 'nera-competitions'),
-        'default_value' => '+1 (555) 012-3456',
         'placeholder' => '+1 (555) 123-4567',
         'conditional_logic' => [
           [

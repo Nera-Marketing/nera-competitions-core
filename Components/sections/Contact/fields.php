@@ -21,17 +21,17 @@ function get_acf_layout(): array {
             ['key' => 'field_pc_contact_show_contact_cards', 'label' => 'Show Contact Cards', 'name' => 'show_contact_cards', 'type' => 'true_false', 'default_value' => 1, 'ui' => 1],
             [
                 'key' => 'field_pc_contact_contact_address', 'label' => 'Address', 'name' => 'contact_address',
-                'type' => 'textarea', 'default_value' => '123 Innovation Blvd, Tech City, TC 12345',
+                'type' => 'textarea', 'default_value' => '',
                 'conditional_logic' => [[['field' => 'field_pc_contact_show_contact_cards', 'operator' => '==', 'value' => '1']]],
             ],
             [
                 'key' => 'field_pc_contact_contact_email', 'label' => 'Email', 'name' => 'contact_email',
-                'type' => 'email', 'default_value' => 'support@competition.com',
+                'type' => 'email', 'default_value' => '',
                 'conditional_logic' => [[['field' => 'field_pc_contact_show_contact_cards', 'operator' => '==', 'value' => '1']]],
             ],
             [
                 'key' => 'field_pc_contact_contact_phone', 'label' => 'Phone', 'name' => 'contact_phone',
-                'type' => 'text', 'default_value' => '+1 (555) 012-3456',
+                'type' => 'text', 'default_value' => '',
                 'conditional_logic' => [[['field' => 'field_pc_contact_show_contact_cards', 'operator' => '==', 'value' => '1']]],
             ],
             // Tab: Form

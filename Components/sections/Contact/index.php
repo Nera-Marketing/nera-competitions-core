@@ -10,10 +10,11 @@ if (!defined('ABSPATH')) exit;
  *   description: string,              // required, default "We'd love to hear…" — hero subheading
  *   get_in_touch_heading: string,     // required, default 'Get in Touch' — left column heading
  *   get_in_touch_description: string, // required, default "Have questions…" — left column intro
- *   show_contact_cards: bool,         // required, default true — whether to render contact info column
- *   contact_address: string,          // required, default placeholder address — raw address text
- *   contact_email: string,            // required, default 'support@competition.com' — email
- *   contact_phone: string,            // required, default '+1 (555) 012-3456' — phone display string
+ *   show_contact_cards: bool,         // required, default true — whether to render contact info column;
+ *                                     //   false when address, email, phone and social URLs are all empty
+ *   contact_address: string,          // required, default '' — raw address text; '' hides the address card
+ *   contact_email: string,            // required, default '' — email; '' hides the email card
+ *   contact_phone: string,            // required, default '' — phone display string; '' hides the phone card
  *   form_heading: string,             // required, default 'Send Us a Message' — form column heading
  *   form_description: string,         // required, default '' — optional form intro text
  *   fluent_form_id: int,              // required, default 0 — Fluent Forms ID (0 = not set)
@@ -46,9 +47,20 @@ function get_data(array $args = []): array
         "Have questions about our competitions? We're here to help."
     );
     $show_contact_cards = (bool) nera_component_field($args, 'show_contact_cards', 'show_contact_cards', true);
-    $contact_address = nera_component_field($args, 'contact_address', 'contact_address', '123 Innovation Blvd, Tech City, TC 12345');
-    $contact_email = nera_component_field($args, 'contact_email', 'contact_email', 'support@competition.com');
-    $contact_phone = nera_component_field($args, 'contact_phone', 'contact_phone', '+1 (555) 012-3456');
+    // Contact details have no default: a value saved blank in the row hides its card
+    // (no fallthrough to page meta), and without a row the page meta is used as saved.
+    $contact_value = static function (string $key) use ($args): string {
+        $row = $args['acf_row'] ?? null;
+        if (is_array($row) && array_key_exists($key, $row)) {
+            $value = $row[$key];
+        } else {
+            $value = function_exists('get_field') ? get_field($key) : '';
+        }
+        return is_scalar($value) ? trim((string) $value) : '';
+    };
+    $contact_address = $contact_value('contact_address');
+    $contact_email = $contact_value('contact_email');
+    $contact_phone = $contact_value('contact_phone');
     $form_heading = nera_component_field($args, 'form_heading', 'form_heading', 'Send Us a Message');
     $form_description = nera_component_field($args, 'form_description', 'form_description', '');
     $fluent_form_id = nera_component_field($args, 'fluent_form_id', 'fluent_form_id', 0);
@@ -59,8 +71,13 @@ function get_data(array $args = []): array
     $instagram_url = get_theme_mod('nera_instagram_url', '');
     $linkedin_url  = get_theme_mod('nera_linkedin_url', '');
 
-    $address_html  = nl2br(esc_html((string) $contact_address));
-    $phone_digits  = preg_replace('/[^0-9+]/', '', (string) $contact_phone);
+    if ($contact_address === '' && $contact_email === '' && $contact_phone === ''
+        && !$facebook_url && !$twitter_url && !$instagram_url && !$linkedin_url) {
+        $show_contact_cards = false;
+    }
+
+    $address_html  = $contact_address !== '' ? nl2br(esc_html($contact_address)) : '';
+    $phone_digits  = $contact_phone !== '' ? preg_replace('/[^0-9+]/', '', $contact_phone) : '';
     $can_edit      = current_user_can('edit_pages');
     $edit_link     = (string) get_edit_post_link();
 
