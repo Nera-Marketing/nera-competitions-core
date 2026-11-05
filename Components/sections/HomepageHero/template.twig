@@ -10,7 +10,11 @@
   image        string                                  required  ''        resolved hero image URL ('' = placeholder)
   last_winner  array{name:string,initial:string,prize:string}  required
   i18n         array{badge:string,last_winner:string}  required
+  A blank field hides its element; title, highlight, description and image all
+  blank render nothing.
 #}
+{% set _hl = heading_highlight ?: highlight %}
+{% if title or _hl or description or image %}
 <section
   class="ncs-hero hero-section relative py-16 lg:py-24 bg-gradient-to-br from-surface via-gray-50 to-secondary overflow-hidden"
   id="hero" data-aos="fade-up" data-aos-duration="600">
@@ -24,24 +28,34 @@
           🏆 {{ i18n.badge }}
         </span>
 
+        {% if title or _hl %}
         <h1 class="ncs-hero__title font-heading text-4xl md:text-5xl lg:text-6xl font-bold text-text-primary leading-tight mb-6">
-          {{ title }}{% set _hl = heading_highlight ?: highlight %}{% if _hl %}<br>
+          {{ title }}{% if _hl %}{% if title %}<br>{% endif %}
           <span style="{{ heading_accent_style|raw }}">{{ _hl }}</span>{% endif %}
         </h1>
+        {% endif %}
 
+        {% if description %}
         <p class="text-lg text-text-secondary leading-relaxed mb-8 max-w-lg">{{ description }}</p>
+        {% endif %}
 
+        {% if cta.text or secondary.text %}
         <div class="ncs-hero__cta flex flex-wrap gap-4 mb-8">
+          {% if cta.text %}
           <a href="{{ cta.url }}" class="inline-flex items-center gap-2 px-8 py-4 bg-gradient-primary text-white font-semibold rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all">
             {{ cta.text }}
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M5 12h14M12 5l7 7-7 7" />
             </svg>
           </a>
+          {% endif %}
+          {% if secondary.text %}
           <a href="{{ secondary.url }}" class="inline-flex items-center gap-2 px-8 py-4 border-2 border-gray-200 text-text-primary font-semibold rounded-xl hover:border-primary hover:text-primary transition-colors">
             {{ secondary.text }}
           </a>
+          {% endif %}
         </div>
+        {% endif %}
 
       </div>
 
@@ -57,6 +71,7 @@
             {% endif %}
           </div>
 
+          {% if last_winner.name %}
           <div class="absolute bottom-3 right-3 sm:bottom-4 sm:right-4 lg:bottom-8 lg:-right-8 bg-surface rounded-xl sm:rounded-2xl shadow-xl p-2.5 sm:p-4 flex items-center gap-2 sm:gap-3">
             <div class="w-9 h-9 sm:w-12 sm:h-12 rounded-full bg-gradient-primary flex items-center justify-center text-white font-bold text-sm sm:text-base">
               {{ last_winner.initial }}
@@ -67,6 +82,7 @@
             </div>
             <span class="text-success text-base sm:text-xl">✓</span>
           </div>
+          {% endif %}
         </div>
       </div>
 
@@ -74,3 +90,4 @@
   </div>
 
 </section>
+{% endif %}
