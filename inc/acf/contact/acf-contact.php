@@ -84,9 +84,10 @@ function nera_register_contact_fields()
         'name' => 'contact_address',
         'type' => 'textarea',
         'instructions' => __(
-          'Your business address (supports multiple lines)',
+          'Your business address (supports multiple lines). Leave empty to hide it.',
           'nera-competitions',
         ),
+        'placeholder' => "123 Innovation Blvd\nTech District, NY 10012",
         'rows' => 3,
         'conditional_logic' => [
           [
@@ -103,8 +104,8 @@ function nera_register_contact_fields()
         'label' => __('Email Address', 'nera-competitions'),
         'name' => 'contact_email',
         'type' => 'email',
-        'instructions' => __('Primary contact email address', 'nera-competitions'),
-        'placeholder' => 'support@example.com',
+        'instructions' => __('Primary contact email address. Leave empty to hide it.', 'nera-competitions'),
+        'placeholder' => 'support@competition.com',
         'conditional_logic' => [
           [
             [
@@ -120,8 +121,8 @@ function nera_register_contact_fields()
         'label' => __('Phone Number', 'nera-competitions'),
         'name' => 'contact_phone',
         'type' => 'text',
-        'instructions' => __('Primary contact phone number', 'nera-competitions'),
-        'placeholder' => '+1 (555) 123-4567',
+        'instructions' => __('Primary contact phone number. Leave empty to hide it.', 'nera-competitions'),
+        'placeholder' => '+1 (555) 012-3456',
         'conditional_logic' => [
           [
             [
