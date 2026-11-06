@@ -63,62 +63,32 @@ if (!defined('ABSPATH')) {
     </a>
   </div>
 
+  <?php
+  $nera_badges = function_exists('nera_cart_empty_badges') ? nera_cart_empty_badges() : [];
+  $nera_badge_icon_classes = ['bg-success-bg text-success', 'bg-info-bg text-primary', 'bg-secondary text-accent'];
+  if ($nera_badges): ?>
   <!-- Trust Badges (Refined) -->
   <div class="mt-12 pt-10 border-t border-gray-100/80 relative z-10">
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
+      <?php foreach ($nera_badges as $nera_i => $nera_badge): ?>
 
       <div class="flex flex-col items-center gap-2 group cursor-default">
+        <?php if ($nera_badge['icon'] !== ''): ?>
         <div
-          class="p-2 bg-success-bg rounded-full text-success mb-1 transition-transform group-hover:scale-110 duration-300">
-          <span class="material-symbols-outlined text-xl">verified_user</span>
+          class="p-2 <?php echo esc_attr($nera_badge_icon_classes[$nera_i % 3]); ?> rounded-full mb-1 transition-transform group-hover:scale-110 duration-300">
+          <span class="material-symbols-outlined text-xl"><?php echo esc_html($nera_badge['icon']); ?></span>
         </div>
+        <?php endif; ?>
         <div>
-          <h4 class="font-bold text-sm text-text-primary"><?php _e(
-            'Guaranteed Draws',
-            'nera-competitions',
-          ); ?></h4>
-          <p class="text-xs text-text-secondary mt-0.5"><?php _e(
-            'Regardless of sell out',
-            'nera-competitions',
-          ); ?></p>
+          <h4 class="font-bold text-sm text-text-primary"><?php echo esc_html($nera_badge['title']); ?></h4>
+          <?php if ($nera_badge['text'] !== ''): ?>
+          <p class="text-xs text-text-secondary mt-0.5"><?php echo esc_html($nera_badge['text']); ?></p>
+          <?php endif; ?>
         </div>
       </div>
-
-      <div class="flex flex-col items-center gap-2 group cursor-default">
-        <div
-          class="p-2 bg-info-bg rounded-full text-primary mb-1 transition-transform group-hover:scale-110 duration-300">
-          <span class="material-symbols-outlined text-xl">lock</span>
-        </div>
-        <div>
-          <h4 class="font-bold text-sm text-text-primary"><?php _e(
-            'Secure Payment',
-            'nera-competitions',
-          ); ?></h4>
-          <p class="text-xs text-text-secondary mt-0.5"><?php _e(
-            '256-bit SSL Encrypted',
-            'nera-competitions',
-          ); ?></p>
-        </div>
-      </div>
-
-      <div class="flex flex-col items-center gap-2 group cursor-default">
-        <div
-          class="p-2 bg-secondary rounded-full text-accent mb-1 transition-transform group-hover:scale-110 duration-300">
-          <span class="material-symbols-outlined text-xl">card_giftcard</span>
-        </div>
-        <div>
-          <h4 class="font-bold text-sm text-text-primary"><?php _e(
-            'Instant Prizes',
-            'nera-competitions',
-          ); ?></h4>
-          <p class="text-xs text-text-secondary mt-0.5"><?php _e(
-            'Win immediately upon entry',
-            'nera-competitions',
-          ); ?>
-          </p>
-        </div>
-      </div>
+      <?php endforeach; ?>
 
     </div>
   </div>
+  <?php endif; ?>
 </div>

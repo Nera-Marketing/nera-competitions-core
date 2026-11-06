@@ -21,7 +21,7 @@ $shop_page_id = wc_get_page_id('shop');
 
 <main id="main" class="nera-product-listing nera-shop-page" role="main">
 
-  <?php if (nera_render_page_components()): ?>
+  <?php if (nera_render_page_components($shop_page_id)): ?>
     <?php // page-components rendered via ACF Flexible Content ?>
   <?php else: ?>
   <?php

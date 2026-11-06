@@ -27,21 +27,17 @@ if (
       ? 'register'
       : 'login';
 
+  $hero_copy = nera_account_hero_copy();
+
   get_template_part('template-parts/components/shared/page-hero', null, [
-    'title' =>
-      $active_tab === 'register'
-        ? __('Create Account', 'woocommerce')
-        : __('Welcome Back', 'woocommerce'),
-    'description' =>
-      $active_tab === 'register'
-        ? __(
-          'Join us and start entering competitions today',
-          'woocommerce',
-        )
-        : __('Log in to your account to continue', 'woocommerce'),
+    'title' => $hero_copy[$active_tab . '_title'],
+    'description' => $hero_copy[$active_tab . '_description'],
     'variant' => 'compact',
     'eyebrow_label' => __('Your Account', 'woocommerce'),
     'eyebrow_icon' => 'lock',
+    // The login tabs swap this hero's title and description in place.
+    'section_attr' => 'data-nera-account-hero',
+    'keep_empty' => true,
   ]);
 }
 ?>

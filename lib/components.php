@@ -114,19 +114,58 @@ function nera_render_component(string $name, array $args = []): void
     \Timber\Timber::render($template, $data);
 }
 
-function nera_render_page_components(): bool {
-    $rows = function_exists('get_field') ? get_field('page_components') : null;
+/**
+ * Post whose fields the components being rendered read from, or null for the
+ * current query context. Set by nera_render_page_components() with an explicit
+ * ID so nera_component_field()'s legacy fallback reads the same post.
+ *
+ * @param int|null|false $set Post ID to set, null to clear, false to only read.
+ * @return int|null The current context post ID.
+ */
+function nera_component_context_post_id($set = false): ?int {
+    static $post_id = null;
+    if ($set !== false) {
+        $post_id = $set ? (int) $set : null;
+    }
+    return $post_id;
+}
+
+/**
+ * Render the page's `page_components` flexible content rows.
+ *
+ * @param int|null $post_id Post to read the rows from. Null uses the current
+ *                          query context. Pass an explicit ID where the global
+ *                          post is not the page (e.g. the WooCommerce shop
+ *                          archive, where it is the first product); the
+ *                          components' legacy field fallbacks then read that
+ *                          post too.
+ * @return bool Whether anything was rendered.
+ */
+function nera_render_page_components(?int $post_id = null): bool {
+    if (!function_exists('get_field')) {
+        return false;
+    }
+    $rows = $post_id ? get_field('page_components', $post_id) : get_field('page_components');
     if (!is_array($rows) || empty($rows)) {
         return false;
     }
 
-    $rendered_any = false;
-    foreach ($rows as $row) {
-        $layout = $row['acf_fc_layout'] ?? '';
-        if (!$layout) continue;
+    $previous = nera_component_context_post_id();
+    if ($post_id) {
+        nera_component_context_post_id($post_id);
+    }
 
-        nera_render_component($layout, ['acf_row' => $row]);
-        $rendered_any = true;
+    $rendered_any = false;
+    try {
+        foreach ($rows as $row) {
+            $layout = $row['acf_fc_layout'] ?? '';
+            if (!$layout) continue;
+
+            nera_render_component($layout, ['acf_row' => $row]);
+            $rendered_any = true;
+        }
+    } finally {
+        nera_component_context_post_id($previous);
     }
 
     return $rendered_any;
@@ -174,12 +213,13 @@ function nera_component_field(array $args, string $row_key, string $legacy_key, 
         }
     }
     if (function_exists('get_field')) {
-        $value = get_field($legacy_key);
+        $context_id = nera_component_context_post_id();
+        $value = $context_id ? get_field($legacy_key, $context_id) : get_field($legacy_key);
         if ($value !== null && $value !== '') {
             return $value;
         }
         if ($value === false || $value === 0 || $value === '0') {
-            $post_id = get_queried_object_id() ?: get_the_ID();
+            $post_id = $context_id ?: (get_queried_object_id() ?: get_the_ID());
             if ($post_id && metadata_exists('post', (int) $post_id, $legacy_key)) {
                 return $value;
             }

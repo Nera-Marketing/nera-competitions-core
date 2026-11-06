@@ -47,22 +47,22 @@ $trust_features = [
   ],
 ];
 
-// ACF Override
-if (function_exists('get_field')) {
-  // Determine context ID (e.g. for Shop page vs current page)
-  $context_id = isset($args['post_id']) && $args['post_id'] ? $args['post_id'] : get_the_ID();
-
-  $acf_title = get_field('trust_title', $context_id);
-  if ($acf_title) {
-    $section_title = $acf_title;
+// ACF Override: a field never saved keeps the default; a field saved empty hides its line.
+$context_id = !empty($args['post_id']) ? (int) $args['post_id'] : (int) get_the_ID();
+if ($context_id && function_exists('get_field')) {
+  if (get_field('trust_hide', $context_id)) {
+    return;
   }
 
-  $acf_subtitle = get_field('trust_subtitle', $context_id);
-  if ($acf_subtitle) {
-    $section_subtitle = $acf_subtitle;
+  if (metadata_exists('post', $context_id, 'trust_title')) {
+    $section_title = trim((string) get_field('trust_title', $context_id));
   }
 
-  // Check if repeater has rows (and not just empty)
+  if (metadata_exists('post', $context_id, 'trust_subtitle')) {
+    $section_subtitle = trim((string) get_field('trust_subtitle', $context_id));
+  }
+
+  // Badge rows with a title replace the defaults; no rows keeps the defaults.
   if (have_rows('trust_badges', $context_id)) {
     $acf_features = [];
     while (have_rows('trust_badges', $context_id)) {
@@ -72,7 +72,6 @@ if (function_exists('get_field')) {
       $desc = get_sub_field('description');
 
       if ($title) {
-        // ensuring at least a title exists
         $acf_features[] = [
           'icon' => $icon,
           'title' => $title,
@@ -81,7 +80,6 @@ if (function_exists('get_field')) {
       }
     }
 
-    // Replace defaults if we found valid rows
     if (!empty($acf_features)) {
       $trust_features = $acf_features;
     }
@@ -92,15 +90,21 @@ if (function_exists('get_field')) {
 <section class="py-16 md:py-20 bg-surface">
   <div class="max-w-7xl mx-auto px-4 lg:px-0">
 
+    <?php if ($section_title !== '' || $section_subtitle !== ''): ?>
     <!-- Section Header -->
     <div class="text-center mb-12">
+      <?php if ($section_title !== ''): ?>
       <h2 class="text-2xl md:text-3xl font-extrabold text-text-primary tracking-tight" data-aos="fade-up">
         <?php echo esc_html($section_title); ?>
       </h2>
+      <?php endif; ?>
+      <?php if ($section_subtitle !== ''): ?>
       <p class="text-text-secondary font-medium mt-2 max-w-xl mx-auto" data-aos="fade-up" data-aos-delay="100">
         <?php echo esc_html($section_subtitle); ?>
       </p>
+      <?php endif; ?>
     </div>
+    <?php endif; ?>
 
     <!-- Trust Features Grid -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-8">

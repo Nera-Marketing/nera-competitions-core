@@ -200,6 +200,85 @@ function nera_get_draw_run_content(array $defaults = []): array
 }
 
 /**
+ * Logged-out My Account hero copy (Theme Settings → WooCommerce → My Account).
+ *
+ * A field never saved returns the default text; a field saved empty returns '' (hidden).
+ *
+ * @return array{login_title: string, login_description: string, register_title: string, register_description: string}
+ */
+function nera_account_hero_copy(): array
+{
+  $defaults = [
+    'login_title' => __('Welcome Back', 'woocommerce'),
+    'login_description' => __('Log in to your account to continue', 'woocommerce'),
+    'register_title' => __('Create Account', 'woocommerce'),
+    'register_description' => __('Join us and start entering competitions today', 'woocommerce'),
+  ];
+
+  $copy = [];
+  foreach ($defaults as $key => $default) {
+    // Raw option: null = never saved.
+    $raw = get_option('options_account_' . $key, null);
+    $copy[$key] = $raw === null ? $default : trim((string) $raw);
+  }
+
+  return $copy;
+}
+
+/**
+ * Empty basket badges from Theme Settings → WooCommerce.
+ *
+ * "Show badges" off → no badges. Otherwise the saved rows that have a title, or the
+ * three default badges when none are saved (never saved, or saved with no rows).
+ *
+ * @return list<array{icon: string, title: string, text: string}>
+ */
+function nera_cart_empty_badges(): array
+{
+  // Raw option: null = never saved (default on), '0' = switched off.
+  if (get_option('options_cart_empty_badges_show', null) === '0') {
+    return [];
+  }
+
+  $badges = [];
+  if (function_exists('get_field')) {
+    $rows = get_field('cart_empty_badges', 'option');
+    foreach (is_array($rows) ? $rows : [] as $row) {
+      $badge = [
+        'icon' => trim((string) ($row['icon'] ?? '')),
+        'title' => trim((string) ($row['title'] ?? '')),
+        'text' => trim((string) ($row['text'] ?? '')),
+      ];
+      if ($badge['title'] !== '') {
+        $badges[] = $badge;
+      }
+    }
+  }
+
+  if ($badges) {
+    return $badges;
+  }
+
+  return [
+    [
+      'icon' => 'verified_user',
+      'title' => __('Guaranteed Draws', 'nera-competitions'),
+      'text' => __('Regardless of sell out', 'nera-competitions'),
+    ],
+    [
+      'icon' => 'lock',
+      'title' => __('Secure Payment', 'nera-competitions'),
+      'text' => __('256-bit SSL Encrypted', 'nera-competitions'),
+    ],
+    [
+      'icon' => 'card_giftcard',
+      'title' => __('Instant Prizes', 'nera-competitions'),
+      'text' => __('Win immediately upon entry', 'nera-competitions'),
+    ],
+  ];
+}
+
+/**
  * Normalise ACF taxonomy values to product_cat term IDs.
  *
  * @param mixed $raw Field value (ids, WP_Term objects, or a single value).
@@ -2382,7 +2461,7 @@ function nera_cashflow_card_description()
 
     if ($description === '') {
         $description =
-            "You will taken to a third party checkout page, please do not refresh. You will be bought back to the website when payment is processed and tickets will be allocated.\n\nThe bigger heading will be Pay with Apple / Google Pay ( Debit & Credit )";
+            'You will be taken to a third party checkout page, please do not refresh. You will be brought back to the website when payment is processed and tickets will be allocated.';
     }
 
     return $description;

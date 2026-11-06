@@ -349,7 +349,11 @@ $active_tab = isset($_GET['action']) && $_GET['action'] === 'register' ? 'regist
   'use strict';
 
   // ── Tab switching ──────────────────────────────────────────────────────────
-  var tabLogin    = document.getElementById('tab-login');
+  var heroCopy = <?php echo wp_json_encode(
+    nera_account_hero_copy(),
+    JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT,
+  ); ?>;
+  var tabLogin   = document.getElementById('tab-login');
   var tabRegister = document.getElementById('tab-register');
   var panelLogin    = document.getElementById('panel-login');
   var panelRegister = document.getElementById('panel-register');
@@ -381,21 +385,30 @@ $active_tab = isset($_GET['action']) && $_GET['action'] === 'register' ? 'regist
     }
     history.pushState(null, '', url.toString());
 
-    // Update heading and description
-    var heading = document.querySelector('h1');
-    var desc    = heading ? heading.nextElementSibling : null;
-    if (heading) {
-      heading.textContent = isRegister
-        ? '<?php echo esc_js(__('Create Account', 'woocommerce')); ?>'
-        : '<?php echo esc_js(__('Welcome Back', 'woocommerce')); ?>';
+    // Update the account hero's heading and description; an empty value hides its element.
+    // Without the hero hook (a child page.php that prints its own hero), fall back to the
+    // first h1 outside the page article and the paragraph right after it.
+    var prefix = isRegister ? 'register' : 'login';
+    var heroTitle = null;
+    var heroDesc = null;
+    var hero = document.querySelector('[data-nera-account-hero]');
+    if (hero) {
+      heroTitle = hero.querySelector('h1');
+      heroDesc = hero.querySelector('p');
+    } else {
+      var firstH1 = document.querySelector('h1');
+      if (firstH1 && !firstH1.closest('article')) {
+        heroTitle = firstH1;
+        var next = firstH1.nextElementSibling;
+        heroDesc = next && next.tagName === 'P' ? next : null;
+      }
     }
-    if (desc) {
-      desc.textContent = isRegister
-        ? '<?php echo esc_js(
-          __('Join us and start entering competitions today', 'woocommerce'),
-        ); ?>'
-        : '<?php echo esc_js(__('Log in to your account to continue', 'woocommerce')); ?>';
-    }
+    [[heroTitle, heroCopy[prefix + '_title']], [heroDesc, heroCopy[prefix + '_description']]].forEach(function (pair) {
+      var el = pair[0];
+      if (!el) return;
+      el.textContent = pair[1] || '';
+      el.hidden = !pair[1];
+    });
   }
 
   tabLogin.addEventListener('click', function ()    { activateTab('login'); });
