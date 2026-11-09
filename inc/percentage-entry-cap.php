@@ -39,7 +39,7 @@ const NERA_PCT_CAP_SWITCH = 'nera_pct_cap_enabled';
 const NERA_PCT_CAP_DEFAULT = 'nera_pct_cap_default';
 
 /** Percentage used when the switch is on but no default has been saved yet. */
-const NERA_PCT_CAP_FALLBACK = 5;
+const NERA_PCT_CAP_FALLBACK = 10;
 
 /** Product meta holding the per-product percentage ('' = use the site-wide default). */
 const NERA_PCT_CAP_META = '_nera_user_max_tickets_percent';
@@ -160,7 +160,7 @@ function nera_pct_cap_settings_fields(): array
       'label' => 'Default percentage per person',
       'name' => NERA_PCT_CAP_DEFAULT,
       'type' => 'number',
-      'instructions' => 'Whole number from 1 to 100. Used by every drop that does not set its own percentage. For example 5 on a drop of 1000 tickets lets one person hold up to 50.',
+      'instructions' => 'Whole number from 1 to 100. Used by every drop that does not set its own percentage. For example 10 on a drop of 1000 tickets lets one person hold up to 100.',
       'required' => 1,
       'default_value' => NERA_PCT_CAP_FALLBACK,
       'min' => 1,
@@ -168,10 +168,32 @@ function nera_pct_cap_settings_fields(): array
       'step' => 1,
       'append' => '%',
       'conditional_logic' => $on,
-      'wrapper' => ['width' => '30', 'class' => '', 'id' => ''],
+      'wrapper' => ['width' => '', 'class' => 'nera-pct-cap-default', 'id' => ''],
     ],
   ];
 }
+
+/**
+ * Theme Settings -> WooCommerce: keep the default percentage input short with its "%"
+ * joined to it, instead of a full-width input and a detached suffix.
+ */
+function nera_pct_cap_settings_css(): void
+{
+  $page = isset($_GET['page']) ? sanitize_key(wp_unslash($_GET['page'])) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+  if ('acf-options-woocommerce' !== $page) {
+    return;
+  }
+
+  wp_add_inline_style(
+    'wp-admin',
+    // ACF prints the suffix before the input and floats it right; reverse the row so it sits after.
+    '.acf-field.nera-pct-cap-default .acf-input{display:flex;flex-direction:row-reverse;justify-content:flex-end;align-items:stretch;}'
+    . '.acf-field.nera-pct-cap-default .acf-input-wrap{width:auto;max-width:none;}'
+    . '.acf-field.nera-pct-cap-default .acf-input-wrap input[type="number"]{width:6rem !important;max-width:6rem !important;border-radius:3px 0 0 3px !important;}'
+    . '.acf-field.nera-pct-cap-default .acf-input-append{position:static;float:none;display:flex;align-items:center;margin:0;border-radius:0 3px 3px 0;}'
+  );
+}
+add_action('admin_enqueue_scripts', 'nera_pct_cap_settings_css');
 
 /**
  * Per-product percentage field, printed at the end of the Giveaway panel (LFW has no
