@@ -7,7 +7,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  * The order has an instant win that is still pending payment. Until $max_tries reloads have
  * passed, the overlay carries a retry URL and the script reloads the page, which renders the
  * won screen once the payment is confirmed. After that it stops and points to the order.
- * A paid order skips the reloads: its result waits on the order status, not the payment.
+ * A paid order whose status is not a lottery complete status skips the reloads: its result
+ * waits on a later order status, not the payment.
  */
 $paid         = ! empty( $paid );
 $at_limit     = $paid || $try >= $max_tries;
@@ -15,15 +16,22 @@ $received_url = $order->get_checkout_order_received_url();
 $retry_url    = '';
 
 if ( $at_limit ) {
-	$heading = get_field( 'lty_rs_pending_limit_heading', 'option' ) ?: __( 'Still confirming your result', 'lty-result-screens' );
 	if ( $paid ) {
+		$heading = get_field( 'lty_rs_pending_paid_heading', 'option' ) ?: __( 'Payment confirmed', 'lty-result-screens' );
 		$message = get_field( 'lty_rs_pending_paid_message', 'option' ) ?: __( 'Your payment is confirmed. Your result will appear in My Account once your order is complete.', 'lty-result-screens' );
 	} else {
+		$heading = get_field( 'lty_rs_pending_limit_heading', 'option' ) ?: __( 'Still confirming your result', 'lty-result-screens' );
 		$message = get_field( 'lty_rs_pending_limit_message', 'option' ) ?: __( 'Your payment is taking longer than usual to confirm. Check My Account shortly to see your result.', 'lty-result-screens' );
 	}
-	$btn_text = get_field( 'lty_rs_pending_limit_button', 'option' ) ?: __( 'Go to My Account', 'lty-result-screens' );
 	$is_owner = is_user_logged_in() && get_current_user_id() === (int) $order->get_user_id();
-	$btn_url  = $is_owner ? $order->get_view_order_url() : wc_get_page_permalink( 'myaccount' );
+	if ( $is_owner ) {
+		$btn_text = get_field( 'lty_rs_pending_limit_button', 'option' ) ?: __( 'Go to My Account', 'lty-result-screens' );
+		$btn_url  = $order->get_view_order_url();
+	} else {
+		// Guests can't open the order in My Account; the order page checks the result once more and stays at the limit.
+		$btn_text = get_field( 'lty_rs_pending_limit_guest_button', 'option' ) ?: __( 'Check again', 'lty-result-screens' );
+		$btn_url  = add_query_arg( 'lty_rs_wait', $max_tries, $received_url );
+	}
 } else {
 	$heading   = get_field( 'lty_rs_pending_heading', 'option' ) ?: __( "Confirming your result\xe2\x80\xa6", 'lty-result-screens' );
 	$message   = get_field( 'lty_rs_pending_message', 'option' ) ?: __( "We're confirming your payment. Your result will appear here in a moment.", 'lty-result-screens' );

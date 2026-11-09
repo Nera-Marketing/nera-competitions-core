@@ -146,11 +146,26 @@ class LTY_Result_Screens {
 					'default_value' => 'Go to My Account',
 				),
 				array(
+					'key'           => 'field_lty_rs_pending_limit_guest_button',
+					'label'         => 'Still confirming: button text for guests',
+					'name'          => 'lty_rs_pending_limit_guest_button',
+					'type'          => 'text',
+					'instructions'  => 'Shown instead of the button text above when the visitor is not logged in as the order\'s customer. The button reloads the order page to check once more.',
+					'default_value' => 'Check again',
+				),
+				array(
+					'key'           => 'field_lty_rs_pending_paid_heading',
+					'label'         => 'Paid, result to follow: heading',
+					'name'          => 'lty_rs_pending_paid_heading',
+					'type'          => 'text',
+					'default_value' => 'Payment confirmed',
+				),
+				array(
 					'key'           => 'field_lty_rs_pending_paid_message',
 					'label'         => 'Paid, result to follow: message',
 					'name'          => 'lty_rs_pending_paid_message',
 					'type'          => 'textarea',
-					'instructions'  => 'Shown with the "Still confirming" heading and button when the order is paid but the result is only set once the order is complete.',
+					'instructions'  => 'Shown with the paid heading and the button when the order is paid but its status is not one of the lottery\'s complete order statuses, so the result is only set later.',
 					'default_value' => 'Your payment is confirmed. Your result will appear in My Account once your order is complete.',
 					'rows'          => 2,
 				),
@@ -331,9 +346,11 @@ class LTY_Result_Screens {
 				$max_tries         = 10;
 				$args['max_tries'] = $max_tries;
 				$args['try']       = isset( $_GET['lty_rs_wait'] ) ? min( $max_tries, absint( $_GET['lty_rs_wait'] ) ) : 0; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-				// A paid order can still be pending when the site flips wins only on a later order status,
-				// so reloading would not help. try = max_tries keeps any template without the paid branch at the limit.
-				$args['paid'] = $order->is_paid();
+				// The win is only set once the order reaches one of the lottery's complete statuses. A paid order
+				// on such a status is just ahead of that handler, so it keeps polling; on any other status
+				// reloading would not help. try = max_tries keeps any template without the paid branch at the limit.
+				$complete_statuses = (array) get_option( 'lty_settings_lottery_complete_order_statuses', array() );
+				$args['paid']      = $order->is_paid() && ! in_array( $order->get_status(), $complete_statuses, true );
 				if ( $args['paid'] ) {
 					$args['try'] = $max_tries;
 				}
