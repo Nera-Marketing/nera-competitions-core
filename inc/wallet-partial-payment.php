@@ -688,6 +688,9 @@ function nera_wallet_refunds_to_wallet(WC_Order $order)
 
     $linked = (int) $refund->get_meta('_nera_wallet_transaction_id');
     if ($linked > 0) {
+      if (!nera_wallet_linked_credit_exists($linked)) {
+        continue;
+      }
       $used[] = $linked;
       $counted[] = $refund->get_id();
       $total += $amount;
@@ -736,6 +739,47 @@ function nera_wallet_refunds_to_wallet(WC_Order $order)
 }
 
 /**
+ * Whether a refund's linked wallet credit is still on this site's wallet ledger.
+ *
+ * A credit an admin deleted is kept as a row marked deleted, so the customer no longer has it.
+ *
+ * @param int $transaction_id Wallet credit transaction id.
+ * @return bool
+ */
+function nera_wallet_linked_credit_exists($transaction_id)
+{
+  global $wpdb;
+
+  return (bool) $wpdb->get_var(
+    $wpdb->prepare(
+      "SELECT transaction_id FROM {$wpdb->base_prefix}woo_wallet_transactions
+      WHERE transaction_id = %d AND blog_id = %d AND type = 'credit' AND deleted = 0",
+      (int) $transaction_id,
+      get_current_blog_id(),
+    ),
+  );
+}
+
+/**
+ * Amount of an order's linked wallet refunds whose wallet credit was later deleted.
+ *
+ * @param WC_Order $order Order.
+ * @return float
+ */
+function nera_wallet_withdrawn_refunds(WC_Order $order)
+{
+  $total = 0.0;
+  foreach ($order->get_refunds() as $refund) {
+    $linked = (int) $refund->get_meta('_nera_wallet_transaction_id');
+    if ($linked > 0 && !nera_wallet_linked_credit_exists($linked)) {
+      $total += max(0.0, (float) $refund->get_amount());
+    }
+  }
+
+  return $total;
+}
+
+/**
  * The customer's refunds, on any of their orders, made within ten minutes of a time.
  *
  * @param int $customer_id Customer user ID.
@@ -771,6 +815,8 @@ function nera_wallet_already_returned(WC_Order $order, $amount)
 
   $returned = (float) $order->get_meta('_nera_wallet_refunded_total');
   if (!$order->get_date_paid()) {
+    // The running total also holds refunds whose wallet credit was deleted since.
+    $returned = max(0.0, $returned - nera_wallet_withdrawn_refunds($order));
     $returned = max($returned, nera_wallet_refunds_to_wallet($order));
   }
 
