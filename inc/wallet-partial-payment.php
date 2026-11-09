@@ -534,9 +534,21 @@ function nera_wallet_refund_partial_on_failed($order_id)
 add_action('woocommerce_order_status_failed', 'nera_wallet_refund_partial_on_failed', 10, 1);
 
 /**
+ * Whether the wallet refund guard (Theme Settings → WooCommerce) is on. Off by default.
+ *
+ * Reads the raw option so it also works before ACF loads and from WP-CLI.
+ *
+ * @return bool
+ */
+function nera_wallet_refund_guard_enabled()
+{
+  return (bool) get_option('options_nera_wallet_refund_guard', false);
+}
+
+/**
  * Return a Wallet Contribution to Wallet Balance for an order (WooCommerce refund path).
  *
- * Only the part not already refunded to the wallet by hand is credited.
+ * With the refund guard on, only the part not already refunded to the wallet by hand is credited.
  *
  * @param int    $order_id Order ID.
  * @param string $reason   Short reason for the note (`failed`, `orphan`, etc.).
@@ -558,7 +570,12 @@ function nera_wallet_refund_contribution_for_order($order_id, $reason = 'failed'
     return false;
   }
 
-  $returned = nera_wallet_already_returned($order, $amount);
+  $guard = nera_wallet_refund_guard_enabled();
+  if (!$guard && $order->get_meta('_woo_wallet_partial_payment_refunded')) {
+    return false;
+  }
+
+  $returned = $guard ? nera_wallet_already_returned($order, $amount) : 0.0;
   $remaining = (float) wc_format_decimal(max(0, $amount - $returned), wc_get_price_decimals());
   if ($remaining <= 0) {
     nera_wallet_add_reduced_note($order, $amount, $remaining, $returned);
@@ -817,7 +834,11 @@ function &nera_wallet_restore_caps()
  */
 function nera_wallet_cap_cancel_restore($order_id)
 {
-  if (!nera_wallet_is_active() || !function_exists('get_order_partial_payment_amount')) {
+  if (
+    !nera_wallet_is_active() ||
+    !function_exists('get_order_partial_payment_amount') ||
+    !nera_wallet_refund_guard_enabled()
+  ) {
     return;
   }
 
