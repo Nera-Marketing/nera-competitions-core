@@ -288,6 +288,24 @@ if (function_exists('acf_add_local_field_group')) {
       ],
     ],
     [
+      'key' => 'field_nera_wallet_refund_guard',
+      'label' => 'Wallet refund guard',
+      'name' => 'nera_wallet_refund_guard',
+      'type' => 'true_false',
+      'instructions' =>
+        'Stops wallet credit being returned twice when an order whose wallet part was already refunded to the wallet is later cancelled or fails. Off: the full wallet part is returned, as before.',
+      'required' => 0,
+      'ui' => 1,
+      'ui_on_text' => 'On',
+      'ui_off_text' => 'Off',
+      'default_value' => 0,
+      'wrapper' => [
+        'width' => '',
+        'class' => 'nera-acf-field--toggle',
+        'id' => '',
+      ],
+    ],
+    [
       'key' => 'field_nera_show_instant_win_winner_fullname',
       'label' => 'Show Instant Win Prize Winner Fullname',
       'name' => 'nera_show_instant_win_winner_fullname',

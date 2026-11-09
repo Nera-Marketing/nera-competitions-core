@@ -20,6 +20,12 @@
     --lty-rs-no-win-accent:    #e07b54;
     --lty-rs-no-win-bg:        #fffaf7;
 
+    /* Pending (payment still confirming): uses the no-win card background.
+       --lty-rs-pending-accent    top border + button, falls back to --lty-rs-win-accent
+       --lty-rs-pending-on-accent button text, falls back to #1a1a1a
+       Not declared here: the fallbacks resolve on the overlay, so a site that sets
+       --lty-rs-win-accent on .lty-rs-overlay gets its own accent. */
+
     /* Draw */
     --lty-rs-draw-accent:      #4f46e5;
     --lty-rs-draw-bg:          #f8f7ff;
@@ -124,6 +130,19 @@
 .lty-rs-overlay .lty-rs-btn-no-win:hover {
   transform: translateY(-2px);
   box-shadow: 0 6px 22px rgba(224, 123, 84, 0.4);
+}
+
+/* Pending — win accent by default; dark text, since white fails contrast on the default gold */
+.lty-rs-overlay .lty-rs-pending-card {
+  border-top-color: var(--lty-rs-pending-accent, var(--lty-rs-win-accent));
+}
+.lty-rs-overlay .lty-rs-btn.lty-rs-btn-pending {
+  color: var(--lty-rs-pending-on-accent, #1a1a1a);
+  -webkit-text-fill-color: var(--lty-rs-pending-on-accent, #1a1a1a);
+  background: var(--lty-rs-pending-accent, var(--lty-rs-win-accent));
+}
+.lty-rs-overlay .lty-rs-btn.lty-rs-btn-pending:hover {
+  transform: translateY(-2px);
 }
 
 /* Draw — indigo */

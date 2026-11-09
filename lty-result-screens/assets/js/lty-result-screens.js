@@ -16,8 +16,20 @@
 			firstFocusable.focus();
 		}
 
+		// ── Pending result: reload until the server renders the final screen ─
+		var retryTimer = null;
+		var retryUrl   = overlay.getAttribute( 'data-lty-rs-retry-url' );
+		if ( retryUrl ) {
+			retryTimer = setTimeout( function () {
+				window.location.replace( retryUrl );
+			}, parseInt( overlay.getAttribute( 'data-lty-rs-retry-ms' ), 10 ) || 3000 );
+		}
+
 		// ── Dismiss helper ──────────────────────────────────────────────────
 		function dismiss() {
+			// A reload after closing would bring back the popup the customer just closed.
+			clearTimeout( retryTimer );
+
 			overlay.style.transition = 'opacity 0.3s ease';
 			overlay.style.opacity    = '0';
 

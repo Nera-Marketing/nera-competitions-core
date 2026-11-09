@@ -100,6 +100,76 @@ class LTY_Result_Screens {
 					'placeholder'  => 'https://',
 				),
 
+				// ── Pending screen (instant win waiting for payment) ─────────
+				array(
+					'key'   => 'field_lty_rs_tab_pending',
+					'label' => 'Pending screen',
+					'type'  => 'tab',
+				),
+				array(
+					'key'           => 'field_lty_rs_pending_heading',
+					'label'         => 'Heading',
+					'name'          => 'lty_rs_pending_heading',
+					'type'          => 'text',
+					'instructions'  => 'Shown while the payment for a winning order is still being confirmed.',
+					'default_value' => "Confirming your result\xe2\x80\xa6",
+				),
+				array(
+					'key'           => 'field_lty_rs_pending_message',
+					'label'         => 'Message',
+					'name'          => 'lty_rs_pending_message',
+					'type'          => 'textarea',
+					'default_value' => "We're confirming your payment. Your result will appear here in a moment.",
+					'rows'          => 2,
+				),
+				array(
+					'key'           => 'field_lty_rs_pending_limit_heading',
+					'label'         => 'Still confirming: heading',
+					'name'          => 'lty_rs_pending_limit_heading',
+					'type'          => 'text',
+					'instructions'  => 'Shown when the payment is still not confirmed after the page stops checking.',
+					'default_value' => 'Still confirming your result',
+				),
+				array(
+					'key'           => 'field_lty_rs_pending_limit_message',
+					'label'         => 'Still confirming: message',
+					'name'          => 'lty_rs_pending_limit_message',
+					'type'          => 'textarea',
+					'default_value' => 'Your payment is taking longer than usual to confirm. Check My Account shortly to see your result.',
+					'rows'          => 2,
+				),
+				array(
+					'key'           => 'field_lty_rs_pending_limit_button',
+					'label'         => 'Still confirming: button text',
+					'name'          => 'lty_rs_pending_limit_button',
+					'type'          => 'text',
+					'default_value' => 'Go to My Account',
+				),
+				array(
+					'key'           => 'field_lty_rs_pending_limit_guest_button',
+					'label'         => 'Still confirming: button text for guests',
+					'name'          => 'lty_rs_pending_limit_guest_button',
+					'type'          => 'text',
+					'instructions'  => 'Shown instead of the button text above when the visitor is not logged in as the order\'s customer. The button reloads the order page to check once more.',
+					'default_value' => 'Check again',
+				),
+				array(
+					'key'           => 'field_lty_rs_pending_paid_heading',
+					'label'         => 'Paid, result to follow: heading',
+					'name'          => 'lty_rs_pending_paid_heading',
+					'type'          => 'text',
+					'default_value' => 'Payment confirmed',
+				),
+				array(
+					'key'           => 'field_lty_rs_pending_paid_message',
+					'label'         => 'Paid, result to follow: message',
+					'name'          => 'lty_rs_pending_paid_message',
+					'type'          => 'textarea',
+					'instructions'  => 'Shown with the paid heading and the button when the order is paid but its status is not one of the lottery\'s complete order statuses, so the result is only set later.',
+					'default_value' => 'Your payment is confirmed. Your result will appear in My Account once your order is complete.',
+					'rows'          => 2,
+				),
+
 			// ── Prize draw screen ─────────────────────────────────────────
 			array(
 				'key'   => 'field_lty_rs_tab_draw',
@@ -219,7 +289,7 @@ class LTY_Result_Screens {
 			return;
 		}
 
-		// Scan all items and prioritise: instant-win won > instant-win no-win > prize draw.
+		// Scan all items and prioritise: instant-win won > pending > no-win > prize draw.
 		$instant_win_won     = array(); // log_ids of won prizes
 		$instant_win_no_win  = null;    // product with no instant win match
 		$prize_draw_product  = null;    // regular lottery product
@@ -269,7 +339,25 @@ class LTY_Result_Screens {
 				'spin_links'        => $spin_links,
 				'spin_eyebrow_text' => $spin_eyebrow_text,
 			);
-			if ( apply_filters( 'lty_rs_show_overlay', true, 'instant-win-no-win', $order ) ) {
+			// A matched win stays pending until the gateway confirms payment, which can land after
+			// the customer reaches this page. The pending log can sit on any line, so check the whole order.
+			$pending_log_ids = lty_get_instant_winner_log_ids_by_order_id( $order_id, false, 'lty_pending' );
+			if ( ! empty( $pending_log_ids ) ) {
+				$max_tries         = 10;
+				$args['max_tries'] = $max_tries;
+				$args['try']       = isset( $_GET['lty_rs_wait'] ) ? min( $max_tries, absint( $_GET['lty_rs_wait'] ) ) : 0; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+				// The win is only set once the order reaches one of the lottery's complete statuses. A paid order
+				// on such a status is just ahead of that handler, so it keeps polling; on any other status
+				// reloading would not help. try = max_tries keeps any template without the paid branch at the limit.
+				$complete_statuses = (array) get_option( 'lty_settings_lottery_complete_order_statuses', array() );
+				$args['paid']      = $order->is_paid() && ! in_array( $order->get_status(), $complete_statuses, true );
+				if ( $args['paid'] ) {
+					$args['try'] = $max_tries;
+				}
+				if ( apply_filters( 'lty_rs_show_overlay', true, 'instant-win-pending', $order ) ) {
+					$this->render_template( 'instant-win-pending.php', $args );
+				}
+			} elseif ( apply_filters( 'lty_rs_show_overlay', true, 'instant-win-no-win', $order ) ) {
 				$this->render_template( 'instant-win-no-win.php', $args );
 			}
 		} elseif ( null !== $prize_draw_product ) {

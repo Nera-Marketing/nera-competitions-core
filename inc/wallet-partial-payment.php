@@ -534,7 +534,21 @@ function nera_wallet_refund_partial_on_failed($order_id)
 add_action('woocommerce_order_status_failed', 'nera_wallet_refund_partial_on_failed', 10, 1);
 
 /**
+ * Whether the wallet refund guard (Theme Settings → WooCommerce) is on. Off by default.
+ *
+ * Reads the raw option so it also works before ACF loads and from WP-CLI.
+ *
+ * @return bool
+ */
+function nera_wallet_refund_guard_enabled()
+{
+  return (bool) get_option('options_nera_wallet_refund_guard', false);
+}
+
+/**
  * Return a Wallet Contribution to Wallet Balance for an order (WooCommerce refund path).
+ *
+ * With the refund guard on, only the part not already refunded to the wallet by hand is credited.
  *
  * @param int    $order_id Order ID.
  * @param string $reason   Short reason for the note (`failed`, `orphan`, etc.).
@@ -556,13 +570,22 @@ function nera_wallet_refund_contribution_for_order($order_id, $reason = 'failed'
     return false;
   }
 
-  if ($order->get_meta('_woo_wallet_partial_payment_refunded')) {
+  $guard = nera_wallet_refund_guard_enabled();
+  if (!$guard && $order->get_meta('_woo_wallet_partial_payment_refunded')) {
+    return false;
+  }
+
+  $returned = $guard ? nera_wallet_already_returned($order, $amount) : 0.0;
+  $remaining = (float) wc_format_decimal(max(0, $amount - $returned), wc_get_price_decimals());
+  if ($remaining <= 0) {
+    nera_wallet_add_reduced_note($order, $amount, $remaining, $returned);
+    nera_wallet_close_restore($order);
     return false;
   }
 
   $transaction_id = woo_wallet()->wallet->credit(
     $order->get_customer_id(),
-    $amount,
+    $remaining,
     sprintf(
       /* translators: 1: order number, 2: reason */
       __('Wallet refund for order #%1$s (%2$s)', 'nera-competitions'),
@@ -576,11 +599,14 @@ function nera_wallet_refund_contribution_for_order($order_id, $reason = 'failed'
     return false;
   }
 
+  if ($returned > 0) {
+    nera_wallet_add_reduced_note($order, $amount, $remaining, $returned);
+  }
   $order->add_order_note(
     sprintf(
       /* translators: %s: refunded amount */
       __('Wallet amount %s credited to customer after card payment failure.', 'nera-competitions'),
-      wc_price($amount, woo_wallet_wc_price_args($order->get_customer_id())),
+      wc_price($remaining, woo_wallet_wc_price_args($order->get_customer_id())),
     ),
   );
   $order->delete_meta_data('_partial_pay_through_wallet_compleate');
@@ -590,6 +616,322 @@ function nera_wallet_refund_contribution_for_order($order_id, $reason = 'failed'
 
   return true;
 }
+
+/**
+ * Link a wallet refund to its wallet credit, and add it to an unpaid order's running total.
+ *
+ * `woo_wallet_order_refunded` fires only after the wallet was credited. On a paid order the
+ * panel can only refund the other payment (the wallet fee already lowers the order total), so
+ * those refunds don't count against the Wallet Contribution. The wallet gateway passes the
+ * amount instead of a refund object, so its credit stays unlinked.
+ *
+ * @param WC_Order|int                 $order          Refunded order.
+ * @param WC_Order_Refund|float|string $refund         Refund object, or the amount from the wallet gateway.
+ * @param int                          $transaction_id Wallet credit transaction id.
+ * @return void
+ */
+function nera_wallet_record_refund($order, $refund, $transaction_id = 0)
+{
+  if (!nera_wallet_is_active()) {
+    return;
+  }
+
+  $is_refund = is_a($refund, 'WC_Order_Refund');
+  if ($is_refund && (int) $transaction_id > 0) {
+    $refund->update_meta_data('_nera_wallet_transaction_id', (int) $transaction_id);
+    $refund->save();
+  }
+
+  $amount = $is_refund ? (float) $refund->get_amount() : (float) $refund;
+  $order = wc_get_order($order instanceof WC_Order ? $order->get_id() : $order);
+  if (!$order || $amount <= 0 || $order->get_date_paid()) {
+    return;
+  }
+
+  $total = (float) $order->get_meta('_nera_wallet_refunded_total') + $amount;
+  $order->update_meta_data('_nera_wallet_refunded_total', wc_format_decimal($total, wc_get_price_decimals()));
+  $order->save();
+}
+add_action('woo_wallet_order_refunded', 'nera_wallet_record_refund', 10, 3);
+
+/**
+ * Refunds on an unpaid order that credited the customer's wallet.
+ *
+ * A refund linked to its wallet credit counts. An unlinked refund (made before the link was
+ * stored) counts only when a wallet credit on this site with the same amount and reason was
+ * recorded for the customer within a few minutes of it, that credit is not linked to another
+ * refund, and the customer's other unlinked refunds with the same amount and reason can't claim
+ * it too. When they could, it is not counted: the customer keeps the credit. A "Refund manually"
+ * refund put no money in the wallet and does not count.
+ *
+ * @param WC_Order $order Unpaid order.
+ * @return float
+ */
+function nera_wallet_refunds_to_wallet(WC_Order $order)
+{
+  global $wpdb;
+
+  $customer_id = (int) $order->get_customer_id();
+  if ($customer_id <= 0) {
+    return 0.0;
+  }
+
+  $total = 0.0;
+  $used = [];
+  $counted = [];
+  foreach ($order->get_refunds() as $refund) {
+    $amount = (float) $refund->get_amount();
+    $created = $refund->get_date_created();
+    if ($amount <= 0 || !$created) {
+      continue;
+    }
+
+    $linked = (int) $refund->get_meta('_nera_wallet_transaction_id');
+    if ($linked > 0) {
+      if (!nera_wallet_linked_credit_exists($linked)) {
+        continue;
+      }
+      $used[] = $linked;
+      $counted[] = $refund->get_id();
+      $total += $amount;
+      continue;
+    }
+
+    $reason = $refund->get_reason();
+    $competitors = 0;
+    foreach (nera_wallet_customer_refunds_near($customer_id, $created->getTimestamp()) as $other) {
+      $other_tx = (int) $other->get_meta('_nera_wallet_transaction_id');
+      if ($other_tx > 0) {
+        $used[] = $other_tx;
+      } elseif (
+        !in_array($other->get_id(), $counted, true) &&
+        abs((float) $other->get_amount() - $amount) < 0.005 &&
+        $other->get_reason() === $reason
+      ) {
+        $competitors++;
+      }
+    }
+
+    $time = $created->getOffsetTimestamp();
+    $exclude = $used ? ' AND transaction_id NOT IN (' . implode(',', array_map('intval', array_unique($used))) . ')' : '';
+    $credits = $wpdb->get_col(
+      $wpdb->prepare(
+        "SELECT transaction_id FROM {$wpdb->base_prefix}woo_wallet_transactions
+        WHERE blog_id = %d AND user_id = %d AND type = 'credit' AND deleted = 0 AND ABS(amount - %f) < 0.005
+        AND details = %s AND date BETWEEN %s AND %s{$exclude}
+        ORDER BY transaction_id ASC",
+        get_current_blog_id(),
+        $customer_id,
+        $amount,
+        $reason,
+        gmdate('Y-m-d H:i:s', $time - 300),
+        gmdate('Y-m-d H:i:s', $time + 300),
+      ),
+    );
+    if ($credits && count($credits) >= max(1, $competitors)) {
+      $used[] = (int) $credits[0];
+      $counted[] = $refund->get_id();
+      $total += $amount;
+    }
+  }
+
+  return $total;
+}
+
+/**
+ * Whether a refund's linked wallet credit is still on this site's wallet ledger.
+ *
+ * A credit an admin deleted is kept as a row marked deleted, so the customer no longer has it.
+ *
+ * @param int $transaction_id Wallet credit transaction id.
+ * @return bool
+ */
+function nera_wallet_linked_credit_exists($transaction_id)
+{
+  global $wpdb;
+
+  return (bool) $wpdb->get_var(
+    $wpdb->prepare(
+      "SELECT transaction_id FROM {$wpdb->base_prefix}woo_wallet_transactions
+      WHERE transaction_id = %d AND blog_id = %d AND type = 'credit' AND deleted = 0",
+      (int) $transaction_id,
+      get_current_blog_id(),
+    ),
+  );
+}
+
+/**
+ * Amount of an order's linked wallet refunds whose wallet credit was later deleted.
+ *
+ * @param WC_Order $order Order.
+ * @return float
+ */
+function nera_wallet_withdrawn_refunds(WC_Order $order)
+{
+  $total = 0.0;
+  foreach ($order->get_refunds() as $refund) {
+    $linked = (int) $refund->get_meta('_nera_wallet_transaction_id');
+    if ($linked > 0 && !nera_wallet_linked_credit_exists($linked)) {
+      $total += max(0.0, (float) $refund->get_amount());
+    }
+  }
+
+  return $total;
+}
+
+/**
+ * The customer's refunds, on any of their orders, made within ten minutes of a time.
+ *
+ * @param int $customer_id Customer user ID.
+ * @param int $timestamp   UTC timestamp.
+ * @return WC_Order_Refund[]
+ */
+function nera_wallet_customer_refunds_near($customer_id, $timestamp)
+{
+  $refunds = wc_get_orders([
+    'type' => 'shop_order_refund',
+    'date_created' => ($timestamp - 600) . '...' . ($timestamp + 600),
+    'limit' => -1,
+  ]);
+
+  return array_filter($refunds, function ($refund) use ($customer_id) {
+    $parent = wc_get_order($refund->get_parent_id());
+    return $parent && (int) $parent->get_customer_id() === (int) $customer_id;
+  });
+}
+
+/**
+ * Amount of an order's Wallet Contribution already refunded to the wallet by hand.
+ *
+ * @param WC_Order $order  Order.
+ * @param float    $amount Wallet Contribution.
+ * @return float At most `$amount`.
+ */
+function nera_wallet_already_returned(WC_Order $order, $amount)
+{
+  if ($order->get_meta('_woo_wallet_partial_payment_refunded')) {
+    return (float) $amount;
+  }
+
+  $returned = (float) $order->get_meta('_nera_wallet_refunded_total');
+  if (!$order->get_date_paid()) {
+    // The running total also holds refunds whose wallet credit was deleted since.
+    $returned = max(0.0, $returned - nera_wallet_withdrawn_refunds($order));
+    $returned = max($returned, nera_wallet_refunds_to_wallet($order));
+  }
+
+  return min($returned, (float) $amount);
+}
+
+/**
+ * Note that the restore was lowered by what the wallet already got back.
+ *
+ * @param WC_Order $order     Order.
+ * @param float    $amount    Wallet Contribution.
+ * @param float    $remaining Amount still to restore.
+ * @param float    $returned  Amount already refunded to the wallet.
+ * @return void
+ */
+function nera_wallet_add_reduced_note(WC_Order $order, $amount, $remaining, $returned)
+{
+  $price_args = function_exists('woo_wallet_wc_price_args') ? woo_wallet_wc_price_args($order->get_customer_id()) : [];
+  $order->add_order_note(
+    sprintf(
+      /* translators: 1: Wallet Contribution, 2: amount still to restore, 3: amount already refunded to the wallet */
+      __('Wallet restore reduced from %1$s to %2$s: %3$s was already refunded to the customer wallet.', 'nera-competitions'),
+      wc_price($amount, $price_args),
+      wc_price($remaining, $price_args),
+      wc_price($returned, $price_args),
+    ),
+  );
+}
+
+/**
+ * Mark the Wallet Contribution as fully returned, so no later cancel or fail restores it.
+ *
+ * TeraWallet and the failed handler skip a zero amount without clearing their flag.
+ *
+ * @param WC_Order $order Order.
+ * @return void
+ */
+function nera_wallet_close_restore(WC_Order $order)
+{
+  $order->delete_meta_data('_partial_pay_through_wallet_compleate');
+  $order->update_meta_data('_woo_wallet_partial_payment_refunded', true);
+  $order->save();
+}
+
+/**
+ * Remaining Wallet Contribution per order while TeraWallet's cancel restore runs.
+ *
+ * @return array<int, float>
+ */
+function &nera_wallet_restore_caps()
+{
+  static $caps = [];
+  return $caps;
+}
+
+/**
+ * Before TeraWallet restores the Wallet Contribution on cancel, cap it at what is left.
+ *
+ * @param int $order_id Order ID.
+ * @return void
+ */
+function nera_wallet_cap_cancel_restore($order_id)
+{
+  if (
+    !nera_wallet_is_active() ||
+    !function_exists('get_order_partial_payment_amount') ||
+    !nera_wallet_refund_guard_enabled()
+  ) {
+    return;
+  }
+
+  $order = wc_get_order($order_id);
+  if (!$order || !$order->get_meta('_partial_pay_through_wallet_compleate')) {
+    return;
+  }
+
+  $amount = (float) get_order_partial_payment_amount($order->get_id());
+  $returned = $amount > 0 ? nera_wallet_already_returned($order, $amount) : 0.0;
+  if ($returned <= 0) {
+    return;
+  }
+
+  $remaining = (float) wc_format_decimal(max(0, $amount - $returned), wc_get_price_decimals());
+  $caps = &nera_wallet_restore_caps();
+  $caps[$order->get_id()] = $remaining;
+
+  nera_wallet_add_reduced_note($order, $amount, $remaining, $returned);
+  if ($remaining <= 0) {
+    nera_wallet_close_restore($order);
+  }
+}
+add_action('woocommerce_order_status_cancelled', 'nera_wallet_cap_cancel_restore', 9, 1);
+
+/**
+ * @param int $order_id Order ID.
+ * @return void
+ */
+function nera_wallet_end_cancel_restore($order_id)
+{
+  $caps = &nera_wallet_restore_caps();
+  unset($caps[(int) $order_id]);
+}
+add_action('woocommerce_order_status_cancelled', 'nera_wallet_end_cancel_restore', 11, 1);
+
+/**
+ * @param float $amount   Wallet Contribution.
+ * @param int   $order_id Order ID.
+ * @return float
+ */
+function nera_wallet_capped_partial_payment_amount($amount, $order_id)
+{
+  $caps = &nera_wallet_restore_caps();
+  return $caps[(int) $order_id] ?? $amount;
+}
+add_filter('woo_wallet_order_partial_payment_amount', 'nera_wallet_capped_partial_payment_amount', 20, 2);
 
 /**
  * Safety net: credit Wallet Balance when a debit is known but no order exists (ADR 0006).
