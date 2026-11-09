@@ -560,11 +560,8 @@ function nera_wallet_refund_contribution_for_order($order_id, $reason = 'failed'
 
   $returned = nera_wallet_already_returned($order, $amount);
   $remaining = (float) wc_format_decimal(max(0, $amount - $returned), wc_get_price_decimals());
-  if ($returned > 0) {
-    nera_wallet_add_reduced_note($order, $amount, $remaining, $returned);
-  }
-
   if ($remaining <= 0) {
+    nera_wallet_add_reduced_note($order, $amount, $remaining, $returned);
     nera_wallet_close_restore($order);
     return false;
   }
@@ -585,6 +582,9 @@ function nera_wallet_refund_contribution_for_order($order_id, $reason = 'failed'
     return false;
   }
 
+  if ($returned > 0) {
+    nera_wallet_add_reduced_note($order, $amount, $remaining, $returned);
+  }
   $order->add_order_note(
     sprintf(
       /* translators: %s: refunded amount */
@@ -601,23 +601,31 @@ function nera_wallet_refund_contribution_for_order($order_id, $reason = 'failed'
 }
 
 /**
- * Add a refund-panel wallet refund on an unpaid order to the order's running total.
+ * Link a wallet refund to its wallet credit, and add it to an unpaid order's running total.
  *
  * `woo_wallet_order_refunded` fires only after the wallet was credited. On a paid order the
  * panel can only refund the other payment (the wallet fee already lowers the order total), so
- * those refunds don't count against the Wallet Contribution.
+ * those refunds don't count against the Wallet Contribution. The wallet gateway passes the
+ * amount instead of a refund object, so its credit stays unlinked.
  *
- * @param WC_Order|int                 $order  Refunded order.
- * @param WC_Order_Refund|float|string $refund Refund object, or the amount from the wallet gateway.
+ * @param WC_Order|int                 $order          Refunded order.
+ * @param WC_Order_Refund|float|string $refund         Refund object, or the amount from the wallet gateway.
+ * @param int                          $transaction_id Wallet credit transaction id.
  * @return void
  */
-function nera_wallet_record_refund($order, $refund)
+function nera_wallet_record_refund($order, $refund, $transaction_id = 0)
 {
   if (!nera_wallet_is_active()) {
     return;
   }
 
-  $amount = is_a($refund, 'WC_Order_Refund') ? (float) $refund->get_amount() : (float) $refund;
+  $is_refund = is_a($refund, 'WC_Order_Refund');
+  if ($is_refund && (int) $transaction_id > 0) {
+    $refund->update_meta_data('_nera_wallet_transaction_id', (int) $transaction_id);
+    $refund->save();
+  }
+
+  $amount = $is_refund ? (float) $refund->get_amount() : (float) $refund;
   $order = wc_get_order($order instanceof WC_Order ? $order->get_id() : $order);
   if (!$order || $amount <= 0 || $order->get_date_paid()) {
     return;
@@ -627,14 +635,17 @@ function nera_wallet_record_refund($order, $refund)
   $order->update_meta_data('_nera_wallet_refunded_total', wc_format_decimal($total, wc_get_price_decimals()));
   $order->save();
 }
-add_action('woo_wallet_order_refunded', 'nera_wallet_record_refund', 10, 2);
+add_action('woo_wallet_order_refunded', 'nera_wallet_record_refund', 10, 3);
 
 /**
  * Refunds on an unpaid order that credited the customer's wallet.
  *
- * Covers refunds made before the running total was recorded. A refund counts only when a wallet
- * credit with the same amount and reason was recorded for the customer within a few minutes of
- * it; a "Refund manually" refund put no money in the wallet and does not count.
+ * A refund linked to its wallet credit counts. An unlinked refund (made before the link was
+ * stored) counts only when a wallet credit on this site with the same amount and reason was
+ * recorded for the customer within a few minutes of it, that credit is not linked to another
+ * refund, and the customer's other unlinked refunds with the same amount and reason can't claim
+ * it too. When they could, it is not counted: the customer keeps the credit. A "Refund manually"
+ * refund put no money in the wallet and does not count.
  *
  * @param WC_Order $order Unpaid order.
  * @return float
@@ -650,6 +661,7 @@ function nera_wallet_refunds_to_wallet(WC_Order $order)
 
   $total = 0.0;
   $used = [];
+  $counted = [];
   foreach ($order->get_refunds() as $refund) {
     $amount = (float) $refund->get_amount();
     $created = $refund->get_date_created();
@@ -657,28 +669,74 @@ function nera_wallet_refunds_to_wallet(WC_Order $order)
       continue;
     }
 
+    $linked = (int) $refund->get_meta('_nera_wallet_transaction_id');
+    if ($linked > 0) {
+      $used[] = $linked;
+      $counted[] = $refund->get_id();
+      $total += $amount;
+      continue;
+    }
+
+    $reason = $refund->get_reason();
+    $competitors = 0;
+    foreach (nera_wallet_customer_refunds_near($customer_id, $created->getTimestamp()) as $other) {
+      $other_tx = (int) $other->get_meta('_nera_wallet_transaction_id');
+      if ($other_tx > 0) {
+        $used[] = $other_tx;
+      } elseif (
+        !in_array($other->get_id(), $counted, true) &&
+        abs((float) $other->get_amount() - $amount) < 0.005 &&
+        $other->get_reason() === $reason
+      ) {
+        $competitors++;
+      }
+    }
+
     $time = $created->getOffsetTimestamp();
-    $exclude = $used ? ' AND transaction_id NOT IN (' . implode(',', array_map('intval', $used)) . ')' : '';
-    $transaction_id = $wpdb->get_var(
+    $exclude = $used ? ' AND transaction_id NOT IN (' . implode(',', array_map('intval', array_unique($used))) . ')' : '';
+    $credits = $wpdb->get_col(
       $wpdb->prepare(
         "SELECT transaction_id FROM {$wpdb->base_prefix}woo_wallet_transactions
-        WHERE user_id = %d AND type = 'credit' AND deleted = 0 AND ABS(amount - %f) < 0.005
+        WHERE blog_id = %d AND user_id = %d AND type = 'credit' AND deleted = 0 AND ABS(amount - %f) < 0.005
         AND details = %s AND date BETWEEN %s AND %s{$exclude}
-        ORDER BY transaction_id ASC LIMIT 1",
+        ORDER BY transaction_id ASC",
+        get_current_blog_id(),
         $customer_id,
         $amount,
-        $refund->get_reason(),
+        $reason,
         gmdate('Y-m-d H:i:s', $time - 300),
         gmdate('Y-m-d H:i:s', $time + 300),
       ),
     );
-    if ($transaction_id) {
-      $used[] = (int) $transaction_id;
+    if ($credits && count($credits) >= max(1, $competitors)) {
+      $used[] = (int) $credits[0];
+      $counted[] = $refund->get_id();
       $total += $amount;
     }
   }
 
   return $total;
+}
+
+/**
+ * The customer's refunds, on any of their orders, made within ten minutes of a time.
+ *
+ * @param int $customer_id Customer user ID.
+ * @param int $timestamp   UTC timestamp.
+ * @return WC_Order_Refund[]
+ */
+function nera_wallet_customer_refunds_near($customer_id, $timestamp)
+{
+  $refunds = wc_get_orders([
+    'type' => 'shop_order_refund',
+    'date_created' => ($timestamp - 600) . '...' . ($timestamp + 600),
+    'limit' => -1,
+  ]);
+
+  return array_filter($refunds, function ($refund) use ($customer_id) {
+    $parent = wc_get_order($refund->get_parent_id());
+    return $parent && (int) $parent->get_customer_id() === (int) $customer_id;
+  });
 }
 
 /**
