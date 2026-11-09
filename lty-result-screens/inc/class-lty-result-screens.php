@@ -145,6 +145,15 @@ class LTY_Result_Screens {
 					'type'          => 'text',
 					'default_value' => 'Go to My Account',
 				),
+				array(
+					'key'           => 'field_lty_rs_pending_paid_message',
+					'label'         => 'Paid, result to follow: message',
+					'name'          => 'lty_rs_pending_paid_message',
+					'type'          => 'textarea',
+					'instructions'  => 'Shown with the "Still confirming" heading and button when the order is paid but the result is only set once the order is complete.',
+					'default_value' => 'Your payment is confirmed. Your result will appear in My Account once your order is complete.',
+					'rows'          => 2,
+				),
 
 			// ── Prize draw screen ─────────────────────────────────────────
 			array(
@@ -322,6 +331,12 @@ class LTY_Result_Screens {
 				$max_tries         = 10;
 				$args['max_tries'] = $max_tries;
 				$args['try']       = isset( $_GET['lty_rs_wait'] ) ? min( $max_tries, absint( $_GET['lty_rs_wait'] ) ) : 0; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+				// A paid order can still be pending when the site flips wins only on a later order status,
+				// so reloading would not help. try = max_tries keeps any template without the paid branch at the limit.
+				$args['paid'] = $order->is_paid();
+				if ( $args['paid'] ) {
+					$args['try'] = $max_tries;
+				}
 				if ( apply_filters( 'lty_rs_show_overlay', true, 'instant-win-pending', $order ) ) {
 					$this->render_template( 'instant-win-pending.php', $args );
 				}
