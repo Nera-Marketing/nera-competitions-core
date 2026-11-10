@@ -3,6 +3,7 @@
   Child themes may override this view; data is provided by the parent's get_data().
   key             type    req/opt   default   note
   countdown_date  string  required  ''        passed to data-time for JS plugin
+  countdown_ms    int     optional  0         target instant (ms since epoch) for the Alpine countdown
   days            string  required  '00'      zero-padded days
   hours           string  required  '00'      zero-padded hours
   minutes         string  required  '00'      zero-padded minutes
@@ -32,14 +33,35 @@
   {% endif %}
 </div>
 
-{% if countdown_date and not is_expired %}
-  {# Active variant: lty plugin classes + data-time, JS will update values #}
+{% if (countdown_ms or countdown_date) and not is_expired %}
+  {# Active variant: with countdown_ms the Alpine countdown counts to an absolute instant and
+     reloads the page at zero; without it the lty plugin script drives it through data-time #}
+  {% if countdown_ms %}
+  <div class="competition-countdown grid grid-cols-4 gap-3"
+    x-data="countdown('{{ countdown_ms }}')"
+    {# init() has already run when x-init does, so isExpired tells whether this page was served
+       before the target. Served before: reload as soon as it ends. Served at or after it (the
+       viewer's clock is ahead, or the draw is not closed yet): re-check after a delay, at most
+       twice per target in this tab, so a page the server still shows open never reloads in a loop.
+       Without sessionStorage the re-check is skipped, as the count can't be kept. #}
+    x-init="if (isExpired) {
+      const key = 'nera-countdown-recheck-' + endTime;
+      let count = 2;
+      try {
+        count = Number(sessionStorage.getItem(key)) || 0;
+        if (count < 2) sessionStorage.setItem(key, count + 1);
+      } catch (e) { count = 2; }
+      if (count < 2) setTimeout(() => window.location.reload(), 5000);
+    } else { $el.dataset.live = '1'; }"
+    x-on:nera:countdown:end="$el.dataset.live && window.location.reload()">
+  {% else %}
   <div class="lty-lottery-countdown-timer competition-countdown grid grid-cols-4 gap-3"
     data-time="{{ countdown_date }}">
+  {% endif %}
     <div class="text-center">
       <div class="bg-primary rounded-xl p-3 lg:p-6">
-        <span class="lty-lottery-timer-content block text-2xl lg:text-3xl font-bold !text-white"
-          id="lty_lottery_days">
+        <span class="{% if not countdown_ms %}lty-lottery-timer-content {% endif %}block text-2xl lg:text-3xl font-bold !text-white"
+          {% if countdown_ms %}x-text="days"{% else %}id="lty_lottery_days"{% endif %}>
           {{ days }}
         </span>
       </div>
@@ -49,8 +71,8 @@
     </div>
     <div class="text-center">
       <div class="bg-primary rounded-xl p-3 lg:p-6">
-        <span class="lty-lottery-timer-content block text-2xl lg:text-3xl font-bold !text-white"
-          id="lty_lottery_hours">
+        <span class="{% if not countdown_ms %}lty-lottery-timer-content {% endif %}block text-2xl lg:text-3xl font-bold !text-white"
+          {% if countdown_ms %}x-text="hours"{% else %}id="lty_lottery_hours"{% endif %}>
           {{ hours }}
         </span>
       </div>
@@ -60,8 +82,8 @@
     </div>
     <div class="text-center">
       <div class="bg-primary rounded-xl p-3 lg:p-6">
-        <span class="lty-lottery-timer-content block text-2xl lg:text-3xl font-bold !text-white"
-          id="lty_lottery_minutes">
+        <span class="{% if not countdown_ms %}lty-lottery-timer-content {% endif %}block text-2xl lg:text-3xl font-bold !text-white"
+          {% if countdown_ms %}x-text="minutes"{% else %}id="lty_lottery_minutes"{% endif %}>
           {{ minutes }}
         </span>
       </div>
@@ -71,8 +93,8 @@
     </div>
     <div class="text-center">
       <div class="bg-primary rounded-xl p-3 lg:p-6">
-        <span class="lty-lottery-timer-content block text-2xl lg:text-3xl font-bold !text-white"
-          id="lty_lottery_seconds">
+        <span class="{% if not countdown_ms %}lty-lottery-timer-content {% endif %}block text-2xl lg:text-3xl font-bold !text-white"
+          {% if countdown_ms %}x-text="seconds"{% else %}id="lty_lottery_seconds"{% endif %}>
           {{ seconds }}
         </span>
       </div>

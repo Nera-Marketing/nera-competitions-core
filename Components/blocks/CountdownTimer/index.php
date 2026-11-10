@@ -9,6 +9,7 @@ if (!defined('ABSPATH')) {
  * @param array $args
  * @return array{
  *   countdown_date: string, // required, default '' — ISO/GMT date string; passed to data-time attr for JS
+ *   countdown_ms: int,      // optional, default 0 — target instant in ms since epoch; when set, the Alpine countdown drives the timer
  *   days: string,           // required, default '00' — zero-padded days remaining
  *   hours: string,          // required, default '00' — zero-padded hours remaining
  *   minutes: string,        // required, default '00' — zero-padded minutes remaining
@@ -27,6 +28,7 @@ function get_data(array $args = []): array
 
     return [
         'countdown_date' => (string) ($args['countdown_date'] ?? ''),
+        'countdown_ms'   => (int) ($args['countdown_ms'] ?? 0),
         'days'           => $pad($countdown['days'] ?? 0),
         'hours'          => $pad($countdown['hours'] ?? 0),
         'minutes'        => $pad($countdown['minutes'] ?? 0),

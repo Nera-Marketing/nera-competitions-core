@@ -78,13 +78,24 @@ $show_tickets_bar = function_exists('nera_show_tickets_bar')
 
   <div class="px-6 pb-6<?php echo $show_tickets_progress ? '' : ' ' . esc_attr($seam_pb); ?>">
     <?php
-    $countdown_date_for_js = '';
-    if (method_exists($product, 'get_countdown_timer_enddate')) {
-      $countdown_date_for_js = $product->get_countdown_timer_enddate();
+    // LTY closes the draw at the GMT end meta; its countdown string comes from the local meta and its
+    // script shifts by the browser's UTC offset, so count to the GMT instant instead.
+    $countdown_target_gmt = '';
+    if ($is_not_started && method_exists($product, 'get_lty_start_date_gmt')) {
+      $countdown_target_gmt = (string) $product->get_lty_start_date_gmt();
+    } elseif (method_exists($product, 'get_lty_end_date_gmt')) {
+      $countdown_target_gmt = (string) $product->get_lty_end_date_gmt();
     }
+    $countdown_target_ts = $countdown_target_gmt !== '' ? strtotime($countdown_target_gmt . ' UTC') : false;
+    // Child views that drive LTY's own timer read countdown_date; the parent view uses it only when
+    // there is no GMT target.
+    $countdown_date_for_js = method_exists($product, 'get_countdown_timer_enddate')
+      ? (string) $product->get_countdown_timer_enddate()
+      : '';
     ?>
     <?php if (function_exists('nera_render_component')) { nera_render_component('CountdownTimer', [
       'countdown_date' => $countdown_date_for_js,
+      'countdown_ms'   => $countdown_target_ts ? $countdown_target_ts * 1000 : 0,
       'countdown'      => $countdown,
       'is_expired'     => $is_expired,
       'opens_in'       => $is_not_started && empty($countdown['expired']),

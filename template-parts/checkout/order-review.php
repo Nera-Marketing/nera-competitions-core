@@ -103,9 +103,9 @@ if (!defined('ABSPATH')) {
       if ($_product->get_type() === 'lottery') {
             $end_date = get_post_meta($_product->get_id(), '_lty_end_date_gmt', true);
             if ($end_date) {
-              $formatted_date = date_i18n(
+              $formatted_date = wp_date(
                 get_option('date_format') . ' \a\t ' . get_option('time_format'),
-                strtotime($end_date),
+                strtotime($end_date . ' UTC'),
               ); ?>
               <div class="text-xs text-text-secondary mt-1 flex items-center gap-1">
                 <span class="material-symbols-outlined text-sm">event</span>

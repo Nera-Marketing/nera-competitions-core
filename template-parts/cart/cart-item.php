@@ -36,6 +36,7 @@ $is_lottery = $product->is_type('lottery');
 
 // Get lottery data if available
 $end_date = get_post_meta($product_id, '_lty_end_date_gmt', true);
+$end_ts = $end_date ? strtotime($end_date . ' UTC') : 0;
 
 // Determine if quantity can be edited (only for lottery products)
 $can_edit_qty = false;
@@ -108,11 +109,11 @@ $answers = isset($cart_item['lty_lottery']['answers']) ? $cart_item['lty_lottery
             $product_price,
           ); ?> / ticket</span>
           <?php if ($end_date): ?>
-            <span class="flex items-center gap-1 <?php echo strtotime($end_date) < time()
+            <span class="flex items-center gap-1 <?php echo $end_ts < time()
               ? 'text-danger'
               : ''; ?>">
               <span class="material-symbols-outlined text-xs">schedule</span>
-              <?php echo date_i18n(get_option('date_format'), strtotime($end_date)); ?>
+              <?php echo wp_date(get_option('date_format'), $end_ts); ?>
             </span>
           <?php endif; ?>
           <?php if ($answers): ?>
@@ -195,11 +196,11 @@ $answers = isset($cart_item['lty_lottery']['answers']) ? $cart_item['lty_lottery
               <?php echo wc_price($product_price); ?> / ticket
             </span>
             <?php if ($end_date): ?>
-              <span class="flex items-center gap-1 text-xs <?php echo strtotime($end_date) < time()
+              <span class="flex items-center gap-1 text-xs <?php echo $end_ts < time()
                 ? 'text-danger'
                 : 'text-text-secondary'; ?>">
                 <span class="material-symbols-outlined text-sm">schedule</span>
-                <?php echo date_i18n(get_option('date_format'), strtotime($end_date)); ?>
+                <?php echo wp_date(get_option('date_format'), $end_ts); ?>
               </span>
             <?php endif; ?>
           </div>

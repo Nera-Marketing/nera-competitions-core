@@ -571,7 +571,7 @@ For exact types, defaults, and notes, read the `get_data()` PHPDoc or the `templ
 | Component | Context keys |
 |---|---|
 | blocks/AddToCartButton | product_id, is_expired, is_manual_ticket, label_active, label_ended |
-| blocks/CountdownTimer | countdown_date, days, hours, minutes, seconds, is_expired |
+| blocks/CountdownTimer | countdown_date, countdown_ms?, days, hours, minutes, seconds, is_expired, opens_in |
 | blocks/PrizeAddOns | enabled, product_id, dom_id, title, description, options, option_count, purchased_count, available_count, bundle, notice, initial, config_json, i18n |
 | blocks/PrizeSafety | enabled, title, description, items, i18n |
 | blocks/ProductTitle | name, is_sold_out |
