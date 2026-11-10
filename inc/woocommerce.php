@@ -1322,8 +1322,7 @@ function nera_format_draw_date($date_gmt)
     return '';
   }
 
-  $timestamp = strtotime($date_gmt);
-  return date_i18n(get_option('date_format') . ' ' . get_option('time_format'), $timestamp);
+  return wp_date(get_option('date_format') . ' ' . get_option('time_format'), strtotime($date_gmt . ' UTC'));
 }
 
 /**
