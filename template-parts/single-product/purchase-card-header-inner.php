@@ -87,8 +87,14 @@ $show_tickets_bar = function_exists('nera_show_tickets_bar')
       $countdown_target_gmt = (string) $product->get_lty_end_date_gmt();
     }
     $countdown_target_ts = $countdown_target_gmt !== '' ? strtotime($countdown_target_gmt . ' UTC') : false;
+    // Child views that drive LTY's own timer read countdown_date; the parent view uses it only when
+    // there is no GMT target.
+    $countdown_date_for_js = method_exists($product, 'get_countdown_timer_enddate')
+      ? (string) $product->get_countdown_timer_enddate()
+      : '';
     ?>
     <?php if (function_exists('nera_render_component')) { nera_render_component('CountdownTimer', [
+      'countdown_date' => $countdown_date_for_js,
       'countdown_ms'   => $countdown_target_ts ? $countdown_target_ts * 1000 : 0,
       'countdown'      => $countdown,
       'is_expired'     => $is_expired,
