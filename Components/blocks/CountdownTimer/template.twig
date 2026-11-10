@@ -39,9 +39,20 @@
   {% if countdown_ms %}
   <div class="competition-countdown grid grid-cols-4 gap-3"
     x-data="countdown('{{ countdown_ms }}')"
-    {# Reload only when the timer was still running at page load: a page served while the
-       draw is not closed yet would otherwise reload in a loop. #}
-    x-init="$el.dataset.live = endTime > Date.now() ? '1' : ''"
+    {# init() has already run when x-init does, so isExpired tells whether this page was served
+       before the target. Served before: reload as soon as it ends. Served at or after it (the
+       viewer's clock is ahead, or the draw is not closed yet): re-check after a delay, at most
+       twice per target in this tab, so a page the server still shows open never reloads in a loop.
+       Without sessionStorage the re-check is skipped, as the count can't be kept. #}
+    x-init="if (isExpired) {
+      const key = 'nera-countdown-recheck-' + endTime;
+      let count = 2;
+      try {
+        count = Number(sessionStorage.getItem(key)) || 0;
+        if (count < 2) sessionStorage.setItem(key, count + 1);
+      } catch (e) { count = 2; }
+      if (count < 2) setTimeout(() => window.location.reload(), 5000);
+    } else { $el.dataset.live = '1'; }"
     x-on:nera:countdown:end="$el.dataset.live && window.location.reload()">
   {% else %}
   <div class="lty-lottery-countdown-timer competition-countdown grid grid-cols-4 gap-3"
