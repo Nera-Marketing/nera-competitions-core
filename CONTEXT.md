@@ -63,3 +63,11 @@ _Avoid_: Percent limit
 **Auto end date**:
 A site switch that fills a drop's End Date from its Start Date plus a configured number of days (default 14) while an admin edits the product. Applies only to Limited Duration drops, never overwrites an End Date set by hand, and never changes dates already saved. A drop still closes early when all its tickets sell (an LFW setting), so the drop ends when full or after the configured days, whichever comes first.
 _Avoid_: Auto close, auto schedule
+
+**Postal entry**:
+A free entry into a drop that someone posted in, logged by an admin on WooCommerce > Postal entries (needs the Postal entries switch in Theme Settings > WooCommerce). It is one entry per person per drop, held by a member (a registered account), issued as a GBP 0 order marked `_nera_postal_entry` and given its entry number the normal way, so it counts towards the drop's total but not towards the member's own Ticket cap per person. It shows as "postal" on the published entry list. The person is emailed: a confirmation with the entry number, or "not entered" when the drop was full or closed first.
+_Avoid_: Free ticket, manual entry, offline entry
+
+**Pending postal entry**:
+A Postal entry logged for an email that has no member account yet. No order exists. The person is emailed an invitation to register; when they register, the entry is issued automatically if the drop is still open and not full, otherwise they get the "not entered" email. An admin can cancel it or resend the invitation. Held in the postal entry log (an option), with the name, email and address, never shown publicly.
+_Avoid_: Reserved entry, draft entry
