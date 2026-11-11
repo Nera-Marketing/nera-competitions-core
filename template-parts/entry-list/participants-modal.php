@@ -169,7 +169,8 @@ if (!defined('ABSPATH')) {
 
           <template x-if="!ticketsLoading && ticketRows.length === 0">
             <div class="rounded-xl border border-gray-200 bg-secondary py-10 text-center text-sm text-text-secondary">
-              <?php esc_html_e('No tickets found.', 'lottery-for-woocommerce'); ?>
+              <span x-show="ticketMessage" x-text="ticketMessage"></span>
+              <span x-show="!ticketMessage"><?php esc_html_e('No tickets found.', 'lottery-for-woocommerce'); ?></span>
             </div>
           </template>
 

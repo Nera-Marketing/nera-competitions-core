@@ -98,7 +98,9 @@ class Nera_Entry_List_API
     $data = [
       'summary' => self::build_summary($product),
       'winner_logs' => self::build_winner_logs_payload($product),
-      'ticket_logs' => self::build_ticket_logs_payload($product, 1, ''),
+      'ticket_logs' => self::is_list_published($product)
+        ? self::build_ticket_logs_payload($product, 1, '')
+        : self::unpublished_ticket_logs_payload(''),
       'fallback_url' => function_exists('nera_get_entry_list_url') ? nera_get_entry_list_url($product_id) : '',
     ];
 
@@ -128,7 +130,9 @@ class Nera_Entry_List_API
     $page = max(1, absint($request->get_param('page')));
     $search = sanitize_text_field((string) $request->get_param('search'));
 
-    $payload = self::build_ticket_logs_payload($product, $page, $search);
+    $payload = self::is_list_published($product)
+      ? self::build_ticket_logs_payload($product, $page, $search)
+      : self::unpublished_ticket_logs_payload($search);
 
     return rest_ensure_response([
       'success' => true,
@@ -197,6 +201,42 @@ class Nera_Entry_List_API
     }
 
     return $product;
+  }
+
+  /**
+   * The full entry list is published when a drop is over: closed, finished or failed. While a drop is
+   * still open (or not started) the API returns no entries. Filter `nera_entry_list_is_published` can
+   * change the rule per product.
+   *
+   * @param WC_Product $product Product.
+   * @return bool
+   */
+  private static function is_list_published($product)
+  {
+    return nera_entry_list_is_published($product);
+  }
+
+  /**
+   * Same shape as build_ticket_logs_payload() with no rows, plus `published` and `message`.
+   *
+   * @param string $search Search term echoed back.
+   * @return array<string, mixed>
+   */
+  private static function unpublished_ticket_logs_payload($search)
+  {
+    return [
+      'columns' => [],
+      'rows' => [],
+      'pagination' => [
+        'current_page' => 1,
+        'page_count' => 1,
+        'has_next' => false,
+        'has_prev' => false,
+      ],
+      'search' => (string) $search,
+      'published' => false,
+      'message' => __('The full entry list is published when this drop closes.', 'nera-competitions'),
+    ];
   }
 
   /**
@@ -395,6 +435,8 @@ class Nera_Entry_List_API
           $text = function_exists('nera_winner_card_public_name')
             ? nera_winner_card_public_name($ticket)
             : (string) $ticket->display_user_name_by();
+          // Lets a child theme add markers such as "postal" or a county to the public name.
+          $text = (string) apply_filters('nera_entry_list_public_name', $text, $ticket);
           break;
         case 'date':
           $text = (string) $ticket->get_formatted_created_date();
@@ -467,6 +509,22 @@ class Nera_Entry_List_API
       'search' => (string) $search,
     ];
   }
+}
+
+/**
+ * Whether the full entry list of a drop may be shown: only once the drop is over (closed, finished or failed).
+ * Used by the REST API and by the single entry list page. Filter `nera_entry_list_is_published` can change the rule.
+ *
+ * @param WC_Product|int $product Product or product ID.
+ * @return bool
+ */
+function nera_entry_list_is_published($product)
+{
+  $product_id = is_object($product) && method_exists($product, 'get_id') ? (int) $product->get_id() : (int) $product;
+  $status = (string) get_post_meta($product_id, '_lty_lottery_status', true);
+  $published = in_array($status, ['lty_lottery_closed', 'lty_lottery_finished', 'lty_lottery_failed'], true);
+
+  return (bool) apply_filters('nera_entry_list_is_published', $published, $product);
 }
 
 Nera_Entry_List_API::init();
