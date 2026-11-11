@@ -59,3 +59,7 @@ _Avoid_: Max per user, purchase limit
 **Percentage cap**:
 A Ticket cap per person expressed as a share of the drop's total tickets, rounded down and never below one ticket. Fixed for the life of the drop, it does not shrink as tickets sell.
 _Avoid_: Percent limit
+
+**Auto end date**:
+A site switch that fills a drop's End Date from its Start Date plus a configured number of days (default 14) while an admin edits the product. Applies only to Limited Duration drops, never overwrites an End Date set by hand, and never changes dates already saved. A drop still closes early when all its tickets sell (an LFW setting), so the drop ends when full or after the configured days, whichever comes first.
+_Avoid_: Auto close, auto schedule

@@ -1224,6 +1224,7 @@ require_once get_template_directory() . '/inc/acf/single-product/acf-single-prod
 // fields, so it loads before the field groups that use them (docs/adr/0014).
 require_once get_template_directory() . '/inc/prize-addons-settings.php';
 require_once get_template_directory() . '/inc/percentage-entry-cap.php';
+require_once get_template_directory() . '/inc/auto-end-date.php';
 require_once get_template_directory() . '/inc/acf/single-product/acf-prize-addons.php';
 // One-time move of per-prize Safety items and Add-on options into the Catalog (docs/adr/0014).
 require_once get_template_directory() . '/inc/prize-addons-migration.php';
