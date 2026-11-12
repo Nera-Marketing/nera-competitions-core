@@ -35,6 +35,7 @@ if (!defined('ABSPATH')) {
       activeProductId: null,
       ticketColumns: [],
       ticketRows: [],
+      ticketMessage: '',
       ticketPagination: { current_page: 1, page_count: 1, has_next: false, has_prev: false },
       ticketSearchDraft: '',
       ticketsLoading: false,
@@ -90,6 +91,7 @@ if (!defined('ABSPATH')) {
         }
         this.ticketColumns = ticketLogs.columns || [];
         this.ticketRows = ticketLogs.rows || [];
+        this.ticketMessage = ticketLogs.message || '';
         this.ticketPagination = ticketLogs.pagination || {
           current_page: 1,
           page_count: 1,
