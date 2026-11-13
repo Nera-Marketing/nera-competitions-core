@@ -69,7 +69,7 @@ function nera_postal_admin_assets(string $hook_suffix): void
     'wp-admin',
     '.nera-postal{max-width:980px}#nera-postal-rows{overflow-x:auto;max-width:100%}.nera-postal-wide select{max-width:100%}.nera-postal .card{max-width:none;padding:1rem 1.25rem}'
     . '.nera-postal-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px 20px}@media(max-width:782px){.nera-postal-grid{grid-template-columns:1fr}}'
-    . '.nera-postal-grid label{display:block;font-weight:600;margin-bottom:4px}.nera-postal-grid input[type=text],.nera-postal-grid input[type=email],.nera-postal-grid select,.nera-postal-grid textarea{width:100%}'
+    . '.nera-postal-grid label{display:block;font-weight:600;margin-bottom:4px}.nera-postal-grid input[type=text],.nera-postal-grid input[type=email],.nera-postal-grid input[type=number],.nera-postal-grid select,.nera-postal-grid textarea{width:100%}'
     . '.nera-postal-wide{grid-column:1/-1}.nera-postal-results{position:relative}'
     . '.nera-postal-results ul{position:absolute;z-index:20;left:0;right:0;margin:0;background:#fff;border:1px solid #c3c4c7;max-height:240px;overflow:auto}'
     . '.nera-postal-results li{margin:0;padding:8px 10px;cursor:pointer;border-bottom:1px solid #f0f0f1}.nera-postal-results li:hover{background:#f0f6fc}'
@@ -155,6 +155,10 @@ function nera_postal_render_page(): void
           <div>
             <label for="nera-postal-postcode"><?php esc_html_e('Postcode', 'nera-competitions'); ?></label>
             <input type="text" id="nera-postal-postcode" name="postcode">
+          </div>
+          <div>
+            <label for="nera-postal-quantity"><?php esc_html_e('Number of free entries to generate', 'nera-competitions'); ?></label>
+            <input type="number" id="nera-postal-quantity" name="quantity" value="1" min="1" step="1">
           </div>
           <div class="nera-postal-wide">
             <label for="nera-postal-note"><?php esc_html_e('Note or reference (optional, admin only)', 'nera-competitions'); ?></label>
@@ -302,9 +306,10 @@ function nera_postal_ajax_log(): void
   nera_postal_ajax_guard();
 
   $input = [];
-  foreach (['product_id', 'user_id'] as $key) {
+  foreach (['product_id', 'user_id', 'quantity'] as $key) {
     $input[$key] = isset($_POST[$key]) ? absint(wp_unslash($_POST[$key])) : 0;
   }
+  $input['quantity'] = max(1, (int) $input['quantity']);
   foreach (['email', 'name', 'address_1', 'city', 'postcode', 'note'] as $key) {
     $input[$key] = isset($_POST[$key]) ? sanitize_text_field(wp_unslash($_POST[$key])) : '';
   }

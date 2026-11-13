@@ -109,6 +109,7 @@
         if (res && res.success) {
           say(d.message, d.status === 'entered' ? 'is-ok' : 'is-info');
           $form.find('input[type=text],input[type=email]').not('#nera-postal-search').val('');
+          $('#nera-postal-quantity').val(1);
           clearMember();
         } else {
           say(d.message || i18n.failed, 'is-err');
