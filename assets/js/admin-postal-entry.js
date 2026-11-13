@@ -1,5 +1,5 @@
 /**
- * WooCommerce > Postal entries: member search, "Log postal entry" and the per-drop table.
+ * Postal entries (main menu): member search, "Log postal entry" and the per-drop table.
  * Every call is an admin-ajax request with a nonce (see inc/postal-entry/admin.php).
  */
 (function ($) {
