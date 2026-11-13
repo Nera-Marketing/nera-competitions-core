@@ -16,3 +16,12 @@ lty-result-screens/node_modules/
 # Release zip (next to release.sh)
 /nera-competitions-standard-*.zip
 .release-tmp/
+Thumbs.db
+desktop.ini
+.idea/
+.vscode/
+.cursor/
+.env
+.env.*
+node_modules/
+/*.zip
