@@ -28,7 +28,7 @@ function nera_postal_admin_menu(): void
   // Position 55.55 sits just under Products (WooCommerce 55.5, Products next to it) and above Payments.
   add_menu_page(
     __('Postal entries', 'nera-competitions'),
-    __('Postal entries', 'nera-competitions'),
+    __('Nera Postal Entries', 'nera-competitions'),
     'manage_woocommerce',
     NERA_POSTAL_PAGE,
     'nera_postal_render_page',
