@@ -546,10 +546,8 @@ if (function_exists('acf_add_local_field_group')) {
     $woocommerce_fields = array_merge($woocommerce_fields, nera_auto_end_settings_fields());
   }
 
-  // "Postal entries": switch and the texts of the three emails (inc/postal-entry/emails.php).
-  if (function_exists('nera_postal_settings_fields')) {
-    $woocommerce_fields = array_merge($woocommerce_fields, nera_postal_settings_fields());
-  }
+  // "Postal entries" (switch and the three emails) now live on Theme Settings > Postal Entry
+  // (inc/acf/postal-entry/acf-postal-entry.php).
 
   if (class_exists('Nera_STW_ACF_Copy_Settings')) {
     $woocommerce_fields = array_merge(

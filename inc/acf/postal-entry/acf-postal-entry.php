@@ -30,6 +30,33 @@ if (function_exists('acf_add_options_page')) {
   ]);
 }
 
+// "Postal entries" (an admin logs a free postal entry): the switch and the three emails. Same option names as
+// before (they used to sit on Theme Settings > WooCommerce), so saved values carry over. Fields come from
+// inc/postal-entry/emails.php; the first one is the old accordion header and is not needed on its own page.
+add_action('acf/init', static function (): void {
+  if (!function_exists('acf_add_local_field_group') || !function_exists('nera_postal_settings_fields')) {
+    return;
+  }
+
+  $fields = array_values(array_filter(
+    nera_postal_settings_fields(),
+    static fn ($field) => ($field['type'] ?? '') !== 'accordion'
+  ));
+
+  acf_add_local_field_group([
+    'key' => 'group_neracompetitions_postal_entries_admin',
+    'title' => 'Postal entries (logged by an admin)',
+    'fields' => $fields,
+    'location' => [[['param' => 'options_page', 'operator' => '==', 'value' => 'acf-options-postal-entry']]],
+    'menu_order' => 10,
+    'position' => 'normal',
+    'style' => 'default',
+    'label_placement' => 'top',
+    'instruction_placement' => 'label',
+    'active' => true,
+  ]);
+});
+
 if (function_exists('acf_add_local_field_group')) {
   acf_add_local_field_group([
     'key' => 'group_neracompetitions_postal_entry',

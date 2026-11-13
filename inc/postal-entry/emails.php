@@ -7,7 +7,7 @@
  *   - Registration invite: the person has no member account yet, so the entry waits until they register.
  *
  * They are WooCommerce emails (WooCommerce > Settings > Emails switches each on or off and gives them the
- * store's email layout). The subject and the text are edited in Theme Settings > WooCommerce > Postal
+ * store's email layout). The subject and the text are edited in Theme Settings > Postal Entry > Postal
  * entries; these functions hold the neutral defaults.
  *
  * Placeholders: {first_name} {drop} {entry_numbers} {date} {register_url} {site_name}
@@ -57,7 +57,7 @@ function nera_postal_email_text(string $type, string $field): string
 }
 
 /**
- * Theme Settings -> WooCommerce fields (merged in inc/acf/woocommerce/acf-woocommerce.php).
+ * Theme Settings -> Postal Entry fields (registered as their own group in inc/acf/postal-entry/acf-postal-entry.php).
  *
  * @return array<int, array<string, mixed>>
  */
@@ -83,7 +83,7 @@ function nera_postal_settings_fields(): array
       'label' => 'Enable postal entries',
       'name' => NERA_POSTAL_SWITCH,
       'type' => 'true_false',
-      'instructions' => 'While on, WooCommerce > Postal entries lets an admin log a free postal entry against a drop (one entry per person per drop, GBP 0, issued the normal way and marked "postal" on the entry list), and three emails are sent: confirmation, not entered (drop full or closed) and an invitation to register. Turn off to hide the screen and stop the emails. Entries already logged stay.',
+      'instructions' => 'While on, the Postal entries menu item (under Products) lets an admin log a free postal entry against a drop (one entry per person per drop, GBP 0, issued the normal way and marked "postal" on the entry list), and three emails are sent: confirmation, not entered (drop full or closed) and an invitation to register. Turn off to hide the screen and stop the emails. Entries already logged stay.',
       'default_value' => 0,
       'ui' => 1,
       'ui_on_text' => 'On',
@@ -166,7 +166,7 @@ function nera_postal_register_emails($emails)
           'email_type' => [
             'title' => __('Email type', 'woocommerce'),
             'type' => 'select',
-            'description' => __('The subject and text are edited in Theme Settings > WooCommerce > Postal entries.', 'nera-competitions'),
+            'description' => __('The subject and text are edited in Theme Settings > Postal Entry.', 'nera-competitions'),
             'default' => 'html',
             'class' => 'email_type wc-enhanced-select',
             'options' => $this->get_email_type_options(),

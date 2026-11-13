@@ -1,8 +1,8 @@
 <?php
 /**
- * Postal entries: the WooCommerce > Postal entries admin screen and its ajax calls.
+ * Postal entries: the main-menu "Postal entries" admin screen (under Products) and its ajax calls.
  *
- * Only registered while the Theme Settings > WooCommerce > Postal entries switch is on, for users who can
+ * Only registered while the Theme Settings > Postal Entry > Postal entries switch is on, for users who can
  * manage_woocommerce, with a nonce on every call.
  *
  * @package Nera_Competitions
@@ -18,20 +18,22 @@ const NERA_POSTAL_PAGE = 'nera-postal-entries';
 /** Ajax actions. */
 const NERA_POSTAL_NONCE = 'nera_postal_entry';
 
-/** WooCommerce > Postal entries. */
+/** Postal entries: its own item in the main menu, right under Products. */
 function nera_postal_admin_menu(): void
 {
   if (!nera_postal_enabled()) {
     return;
   }
 
-  add_submenu_page(
-    'woocommerce',
+  // Position 55.55 sits just under Products (WooCommerce 55.5, Products next to it) and above Payments.
+  add_menu_page(
     __('Postal entries', 'nera-competitions'),
     __('Postal entries', 'nera-competitions'),
     'manage_woocommerce',
     NERA_POSTAL_PAGE,
-    'nera_postal_render_page'
+    'nera_postal_render_page',
+    'dashicons-email-alt',
+    '55.55'
   );
 }
 add_action('admin_menu', 'nera_postal_admin_menu', 60);

@@ -6,10 +6,10 @@
  * entry number, counts towards the drop's total, is marked "postal" on the public entry list, and the person
  * is emailed.
  *
- *   - Theme Settings -> WooCommerce -> "Postal entries": the switch, and the subject and text of the three
+ *   - Theme Settings -> Postal Entry -> "Postal entries (logged by an admin)": the switch, and the subject and text of the three
  *     emails. While the switch is off the admin screen and the emails do not exist. Entries already logged keep
  *     their "postal" marker.
- *   - WooCommerce -> Postal entries: pick a drop, find a member (live search) or type an email, enter the
+ *   - Postal entries (main menu, under Products): pick a drop, find a member (live search) or type an email, enter the
  *     name and postal address, log it. A typed email that belongs to a member is the same as picking them.
  *       - member + drop open and not full: a GBP 0 order is created, the entry number issued, the member
  *         emailed (confirmation).
