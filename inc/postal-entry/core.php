@@ -5,9 +5,10 @@
  * Everything here is plain functions. The admin screen, the emails and the registration hook call them.
  *
  * Data:
- *   - A logged postal entry is a WooCommerce order of GBP 0 with one line (the drop, quantity 1), marked with
- *     the order meta `_nera_postal_entry` = yes. The entry number is issued by Lottery for WooCommerce the
- *     normal way (automatic numbers), so the entry counts towards the drop's total.
+ *   - A logged postal entry is a WooCommerce order of GBP 0 with one line (the drop, quantity = the number of
+ *     free entries the admin typed, default 1), marked with the order meta `_nera_postal_entry` = yes. The entry
+ *     numbers are issued by Lottery for WooCommerce the normal way (automatic numbers), so they count towards
+ *     the drop's total. Still one postal entry (one order) per person per drop.
  *   - Every attempt (entered, waiting for registration, not entered, cancelled) is also a row in the option
  *     `nera_postal_entry_log` (autoload off). It holds the entrant's name, email and postal address, so it is
  *     read only by the admin screen, exported and erased through the WordPress privacy tools, and never printed
@@ -279,7 +280,8 @@ function nera_postal_issue($product, string $email, $user, array $details, strin
 
     $name = trim((string) ($details['name'] ?? ''));
     $parts = preg_split('/\s+/', $name, 2);
-    $order->add_product($product, 1, ['subtotal' => 0, 'total' => 0]);
+    $quantity = max(1, (int) ($details['quantity'] ?? 1));
+    $order->add_product($product, $quantity, ['subtotal' => 0, 'total' => 0]);
     $order->set_billing_first_name((string) ($parts[0] ?? ''));
     $order->set_billing_last_name((string) ($parts[1] ?? ''));
     $order->set_billing_email($email);
@@ -303,12 +305,21 @@ function nera_postal_issue($product, string $email, $user, array $details, strin
     $order = wc_get_order($order->get_id());
 
     $numbers = nera_postal_order_numbers($order);
-    if (!$numbers) {
+    if (count($numbers) !== $quantity) {
       $order->delete(true);
 
       return new WP_Error(
         'nera_postal_no_entry',
-        __('No entry number could be issued. Check that the drop uses automatic entry numbers and has no skill question.', 'nera-competitions')
+        sprintf(
+          /* translators: %d: number of entries asked for */
+          _n(
+            'No entry number could be issued. Check that the drop uses automatic entry numbers and has no skill question.',
+            'The %d entry numbers could not all be issued. Check that the drop has enough entries left, uses automatic entry numbers and has no skill question.',
+            $quantity,
+            'nera-competitions'
+          ),
+          $quantity
+        )
       );
     }
 
@@ -378,6 +389,7 @@ function nera_postal_submit(array $input)
     'city' => trim((string) ($input['city'] ?? '')),
     'postcode' => trim((string) ($input['postcode'] ?? '')),
     'note' => trim((string) ($input['note'] ?? '')),
+    'quantity' => max(1, (int) ($input['quantity'] ?? 1)),
   ];
   $base = [
     'product_id' => $product->get_id(),
@@ -389,6 +401,16 @@ function nera_postal_submit(array $input)
   $state = nera_postal_drop_state($product);
   if (!$state['open']) {
     return nera_postal_record_not_entered($base, $state['reason']);
+  }
+  if ($details['quantity'] > $state['left']) {
+    return new WP_Error(
+      'nera_postal_quantity',
+      sprintf(
+        /* translators: %d: entries left on the drop */
+        _n('Only %d entry is left on this drop. Lower the number of free entries.', 'Only %d entries are left on this drop. Lower the number of free entries.', $state['left'], 'nera-competitions'),
+        $state['left']
+      )
+    );
   }
 
   if (!$user) {
@@ -441,7 +463,7 @@ function nera_postal_enter(array $base, $product, $user, string $row_id = '')
     'status' => 'entered',
     'message' => sprintf(
       /* translators: %s: entry number(s) */
-      __('Entered. Entry number %s. A confirmation email has been sent.', 'nera-competitions'),
+      _n('Entered. Entry number %s. A confirmation email has been sent.', 'Entered. Entry numbers %s. A confirmation email has been sent.', count($result['numbers']), 'nera-competitions'),
       implode(', ', $result['numbers'])
     ),
     'row' => (array) $row,
@@ -502,8 +524,8 @@ function nera_postal_fulfil_pending($user_id): void
 
     $product = wc_get_product((int) $row['product_id']);
     $state = nera_postal_drop_state($product);
-    if (!$state['open']) {
-      nera_postal_record_not_entered($row, $state['reason'], (string) $row['id']);
+    if (!$state['open'] || max(1, (int) ($row['quantity'] ?? 1)) > $state['left']) {
+      nera_postal_record_not_entered($row, $state['open'] ? 'full' : $state['reason'], (string) $row['id']);
       continue;
     }
 
