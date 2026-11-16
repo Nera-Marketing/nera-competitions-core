@@ -224,6 +224,60 @@ if (function_exists('acf_add_local_field_group')) {
       ],
     ],
 
+    [
+      'key' => 'field_wc_single_lightbox_zoom',
+      'label' => 'Single product — enlarged image: tap/click to zoom',
+      'name' => 'single_lightbox_zoom',
+      'type' => 'select',
+      'instructions' =>
+        'Controls the zoom in the enlarged (lightbox) view. "Desktop only" shows the whole image on phones and tablets (the visitor can still pinch-zoom); "Off" never zooms.',
+      'choices' => [
+        'all' => 'All devices (default)',
+        'desktop' => 'Desktop only',
+        'off' => 'Off',
+      ],
+      'default_value' => 'all',
+      'ui' => 0,
+      'wrapper' => ['width' => '50', 'class' => '', 'id' => ''],
+    ],
+    [
+      'key' => 'field_wc_single_lightbox_zoom_level',
+      'label' => 'Single product — enlarged image: zoom level',
+      'name' => 'single_lightbox_zoom_level',
+      'type' => 'number',
+      'instructions' => 'How much the enlarged image magnifies when zoom is on. Between 1.5 and 4. Default: 2.',
+      'min' => 1.5,
+      'max' => 4,
+      'step' => 0.1,
+      'default_value' => 2,
+      'placeholder' => '2',
+      'wrapper' => ['width' => '50', 'class' => '', 'id' => ''],
+    ],
+    [
+      'key' => 'field_wc_single_thumb_aspect_ratio',
+      'label' => 'Single product — thumbnail aspect ratio',
+      'name' => 'single_thumb_aspect_ratio',
+      'type' => 'text',
+      'instructions' => 'CSS aspect-ratio value for the gallery thumbnails. Leave empty for square (1/1). Examples: 4/3, 4/5.',
+      'required' => 0,
+      'placeholder' => '1/1',
+      'wrapper' => ['width' => '50', 'class' => '', 'id' => ''],
+    ],
+    [
+      'key' => 'field_wc_single_thumb_fit',
+      'label' => 'Single product — thumbnail image fit',
+      'name' => 'single_thumb_fit',
+      'type' => 'select',
+      'instructions' => '"Crop to fill" trims the image to the thumbnail shape; "Show whole image" never cuts anything off.',
+      'choices' => [
+        'cover' => 'Crop to fill (default)',
+        'contain' => 'Show whole image',
+      ],
+      'default_value' => 'cover',
+      'ui' => 0,
+      'wrapper' => ['width' => '50', 'class' => '', 'id' => ''],
+    ],
+
     // ── Product Components ──────────────────────────────────────────────────
     // Site-wide switch for the "Add Component" area on lottery product edit
     // screens (see inc/acf/product-components/acf-product-components.php) and

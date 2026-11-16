@@ -1,6 +1,8 @@
 document.addEventListener('alpine:init', () => {
-  Alpine.data('productGallery', (images = []) => ({
+  Alpine.data('productGallery', (images = [], zoomConfig = {}) => ({
     images,
+    zoomMode: zoomConfig.mode || 'all', // all | desktop | off (Theme Settings → WooCommerce)
+    zoomLevel: Number(zoomConfig.level) || 2,
     lightboxOpen: false,
     currentIndex: 0,
     zoomed: false,
@@ -47,7 +49,17 @@ document.addEventListener('alpine:init', () => {
       if (e.key === 'ArrowRight') this.nextSlide();
     },
 
+    // 'desktop' = hover-capable pointer with a wide viewport; phones and tablets show the whole image.
+    zoomEnabled() {
+      if (this.zoomMode === 'off') return false;
+      if (this.zoomMode === 'desktop') {
+        return window.matchMedia('(hover: hover) and (min-width: 1024px)').matches;
+      }
+      return true;
+    },
+
     toggleZoom(e) {
+      if (!this.zoomed && !this.zoomEnabled()) return;
       if (this.zoomed) {
         this.zoomed = false;
       } else {
