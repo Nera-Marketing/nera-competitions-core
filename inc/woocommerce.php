@@ -659,6 +659,53 @@ function nera_get_single_product_image_max_height(): ?string
 }
 
 /**
+ * Single-product gallery display options (Theme Settings → WooCommerce).
+ *
+ * Every default reproduces the behaviour before these options existed, so sites that
+ * never set them are unchanged.
+ *
+ * @return array{lightbox_zoom: string, zoom_level: float, thumb_aspect_ratio: string, thumb_fit: string}
+ */
+function nera_get_single_product_gallery_options(): array
+{
+  $options = [
+    'lightbox_zoom' => 'all',
+    'zoom_level' => 2.0,
+    'thumb_aspect_ratio' => '1/1',
+    'thumb_fit' => 'cover',
+  ];
+
+  if (!function_exists('get_field')) {
+    return $options;
+  }
+
+  $zoom = get_field('single_lightbox_zoom', 'option');
+  if (is_string($zoom) && in_array($zoom, ['all', 'desktop', 'off'], true)) {
+    $options['lightbox_zoom'] = $zoom;
+  }
+
+  $level = get_field('single_lightbox_zoom_level', 'option');
+  if (is_numeric($level)) {
+    $options['zoom_level'] = max(1.5, min(4.0, (float) $level));
+  }
+
+  $ratio = get_field('single_thumb_aspect_ratio', 'option');
+  if (is_string($ratio) && function_exists('nera_sanitize_aspect_ratio')) {
+    $ratio = nera_sanitize_aspect_ratio($ratio);
+    if ($ratio) {
+      $options['thumb_aspect_ratio'] = $ratio;
+    }
+  }
+
+  $fit = get_field('single_thumb_fit', 'option');
+  if (is_string($fit) && in_array($fit, ['cover', 'contain'], true)) {
+    $options['thumb_fit'] = $fit;
+  }
+
+  return $options;
+}
+
+/**
  * Custom template loader for lottery products
  * Uses our custom lottery.php template for lottery product type
  * Supports multiple template styles via ACF field

@@ -94,6 +94,18 @@ $gallery_main_style = $gallery_styles
   ? ' style="' . esc_attr(implode('; ', $gallery_styles)) . ';"'
   : '';
 
+// Lightbox zoom + thumbnail shape (Theme Settings → WooCommerce)
+$gallery_opts = function_exists('nera_get_single_product_gallery_options')
+  ? nera_get_single_product_gallery_options()
+  : ['lightbox_zoom' => 'all', 'zoom_level' => 2.0, 'thumb_aspect_ratio' => '1/1', 'thumb_fit' => 'cover'];
+$thumb_style = ' style="aspect-ratio: ' . esc_attr($gallery_opts['thumb_aspect_ratio']) . ';"';
+// Images below use inline object-fit: the global `.woocommerce img {object-fit: cover; height: 100%}` rule outranks Tailwind's utility classes.
+$thumb_fit = $gallery_opts['thumb_fit'];
+$zoom_config = [
+  'mode' => $gallery_opts['lightbox_zoom'],
+  'level' => $gallery_opts['zoom_level'],
+];
+
 if (!$product) {
   return;
 }
@@ -129,7 +141,7 @@ $alpine_images = array_map(function ($img) {
 
 <div
   class="product-gallery"
-  x-data="productGallery(<?php echo esc_attr(wp_json_encode($alpine_images)); ?>)"
+  x-data="productGallery(<?php echo esc_attr(wp_json_encode($alpine_images)); ?>, <?php echo esc_attr(wp_json_encode($zoom_config)); ?>)"
   @swiper:slidechange.window="currentIndex = $event.detail.index"
 >
 
@@ -156,6 +168,7 @@ $alpine_images = array_map(function ($img) {
               src="<?php echo esc_url($image['large']); ?>"
               alt="<?php echo esc_attr($image['alt'] ?: $product->get_name()); ?>"
               class="w-full h-full object-contain"
+              style="object-fit: contain;"
               loading="<?php echo $index === 0 ? 'eager' : 'lazy'; ?>"
             />
           </div>
@@ -215,11 +228,11 @@ $alpine_images = array_map(function ($img) {
         <div class="swiper-wrapper">
           <?php foreach ($images as $index => $image): ?>
             <div class="swiper-slide !w-20 sm:!w-24 cursor-pointer">
-              <div class="thumb-border aspect-square rounded-lg overflow-hidden border-2 border-transparent transition-all hover:border-primary/50 bg-gray-100">
+              <div class="thumb-border rounded-lg overflow-hidden border-2 border-transparent transition-all hover:border-primary/50 bg-gray-100"<?php echo $thumb_style; ?>>
                 <img
                   src="<?php echo esc_url($image['thumbnail']); ?>"
                   alt="<?php echo esc_attr(sprintf(__('Thumbnail %d', 'nera-competitions'), $index + 1)); ?>"
-                  class="h-full w-full object-cover"
+                  class="h-full w-full" style="object-fit: <?php echo esc_attr($thumb_fit); ?>;"
                   loading="lazy"
                 />
               </div>
@@ -233,12 +246,12 @@ $alpine_images = array_map(function ($img) {
               role="button"
               aria-label="<?php echo esc_attr(sprintf(__('Play uploaded video %d', 'nera-competitions'), $video_index + 1)); ?>"
             >
-              <div class="thumb-border relative aspect-square rounded-lg overflow-hidden border-2 border-transparent bg-background-dark transition-all hover:border-primary/50">
+              <div class="thumb-border relative rounded-lg overflow-hidden border-2 border-transparent bg-background-dark transition-all hover:border-primary/50"<?php echo $thumb_style; ?>>
                 <?php if ($video_file['poster']): ?>
                   <img
                     src="<?php echo esc_url($video_file['poster']); ?>"
                     alt="<?php echo esc_attr(sprintf(__('Uploaded product video %d', 'nera-competitions'), $video_index + 1)); ?>"
-                    class="h-full w-full object-cover"
+                    class="h-full w-full" style="object-fit: <?php echo esc_attr($thumb_fit); ?>;"
                     loading="lazy"
                   />
                 <?php endif; ?>
@@ -256,12 +269,12 @@ $alpine_images = array_map(function ($img) {
               role="button"
               aria-label="<?php esc_attr_e('Play product video', 'nera-competitions'); ?>"
             >
-              <div class="thumb-border relative aspect-square rounded-lg overflow-hidden border-2 border-transparent bg-background-dark transition-all hover:border-primary/50">
+              <div class="thumb-border relative rounded-lg overflow-hidden border-2 border-transparent bg-background-dark transition-all hover:border-primary/50"<?php echo $thumb_style; ?>>
                 <?php if ($video_thumb): ?>
                   <img
                     src="<?php echo esc_url($video_thumb); ?>"
                     alt="<?php esc_attr_e('Product video', 'nera-competitions'); ?>"
-                    class="h-full w-full object-cover"
+                    class="h-full w-full" style="object-fit: <?php echo esc_attr($thumb_fit); ?>;"
                     loading="lazy"
                   />
                 <?php endif; ?>
@@ -301,9 +314,10 @@ $alpine_images = array_map(function ($img) {
         <img
           src="<?php echo esc_url($image['full']); ?>"
           alt="<?php echo esc_attr($image['alt'] ?: $product->get_name()); ?>"
-          :style="zoomed ? { transform: 'scale(2)', transformOrigin: zoomOrigin.x + '% ' + zoomOrigin.y + '%' } : {}"
-          :class="zoomed ? 'cursor-zoom-out' : 'cursor-zoom-in'"
+          :style="zoomed ? { transform: 'scale(' + zoomLevel + ')', transformOrigin: zoomOrigin.x + '% ' + zoomOrigin.y + '%' } : {}"
+          :class="zoomed ? 'cursor-zoom-out' : (zoomEnabled() ? 'cursor-zoom-in' : '')"
           class="max-w-full max-h-full object-contain transition-transform duration-300 select-none"
+          style="touch-action: pinch-zoom; object-fit: contain; height: auto;"
           @click="toggleZoom($event)"
           @mousemove="updateZoomOrigin($event)"
           draggable="false"
