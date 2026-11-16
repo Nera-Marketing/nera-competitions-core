@@ -99,7 +99,8 @@ $gallery_opts = function_exists('nera_get_single_product_gallery_options')
   ? nera_get_single_product_gallery_options()
   : ['lightbox_zoom' => 'all', 'zoom_level' => 2.0, 'thumb_aspect_ratio' => '1/1', 'thumb_fit' => 'cover'];
 $thumb_style = ' style="aspect-ratio: ' . esc_attr($gallery_opts['thumb_aspect_ratio']) . ';"';
-$thumb_fit = $gallery_opts['thumb_fit']; // inline style: .woocommerce img {object-fit: cover} outranks the utility classes
+// Images below use inline object-fit: the global `.woocommerce img {object-fit: cover; height: 100%}` rule outranks Tailwind's utility classes.
+$thumb_fit = $gallery_opts['thumb_fit'];
 $zoom_config = [
   'mode' => $gallery_opts['lightbox_zoom'],
   'level' => $gallery_opts['zoom_level'],
@@ -167,6 +168,7 @@ $alpine_images = array_map(function ($img) {
               src="<?php echo esc_url($image['large']); ?>"
               alt="<?php echo esc_attr($image['alt'] ?: $product->get_name()); ?>"
               class="w-full h-full object-contain"
+              style="object-fit: contain;"
               loading="<?php echo $index === 0 ? 'eager' : 'lazy'; ?>"
             />
           </div>
@@ -315,7 +317,7 @@ $alpine_images = array_map(function ($img) {
           :style="zoomed ? { transform: 'scale(' + zoomLevel + ')', transformOrigin: zoomOrigin.x + '% ' + zoomOrigin.y + '%' } : {}"
           :class="zoomed ? 'cursor-zoom-out' : (zoomEnabled() ? 'cursor-zoom-in' : '')"
           class="max-w-full max-h-full object-contain transition-transform duration-300 select-none"
-          style="touch-action: pinch-zoom;"
+          style="touch-action: pinch-zoom; object-fit: contain; height: auto;"
           @click="toggleZoom($event)"
           @mousemove="updateZoomOrigin($event)"
           draggable="false"
