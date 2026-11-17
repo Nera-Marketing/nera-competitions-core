@@ -876,11 +876,11 @@ function nera_get_lottery_product_data($product = null)
 
 /**
  * Predefined-button label, badge or range-slider label with `{discount}` as the money saved
- * in Fixed Price mode.
+ * in Fixed Price mode and the whole percent in Percentage mode.
  *
  * In Fixed Price mode LTY stores each button's bundle total and fills `{discount}` with it.
- * Here `{discount}` is the saving: quantity × single-ticket price − bundle total. Percentage
- * mode returns LTY's own output.
+ * Here `{discount}` is the saving: quantity × single-ticket price − bundle total. In Percentage
+ * mode LTY pads the integer percent to the price decimals ("5.00"); here it is "5".
  *
  * @param WC_Product $product   Lottery product.
  * @param int|string $button_id Predefined button rule id.
@@ -890,23 +890,26 @@ function nera_get_lottery_product_data($product = null)
  */
 function nera_lty_predefined_button_label($product, $button_id, int $qty, string $context = 'button'): string
 {
-  $lty_label = [
-    'button'       => 'get_predefined_button_label',
-    'badge'        => 'get_predefined_button_badge_label',
-    'range_slider' => 'get_range_slider_predefined_discount_label',
-  ];
   $template = [
     'button'       => 'get_predefined_buttons_label',
     'badge'        => 'get_lty_predefined_buttons_badge_label',
     'range_slider' => 'get_lty_range_slider_predefined_discount_label',
   ];
 
-  if (!isset($lty_label[$context])) {
+  if (!isset($template[$context])) {
     return '';
   }
 
   if ('1' == $product->get_predefined_buttons_selection_type()) {
-    return (string) $product->{$lty_label[$context]}($button_id, $qty);
+    return str_replace(
+      ['{ticket_quantity}', '{price}', '{discount}'],
+      [
+        $qty,
+        wc_price($qty * $product->get_predefined_buttons_per_ticket_amount($button_id)),
+        (string) absint($product->get_predefined_buttons_discount_amount($button_id)),
+      ],
+      (string) $product->{$template[$context]}()
+    );
   }
 
   $unit_price = (float) apply_filters('lty_predefined_button_product_price', $product->get_price());
