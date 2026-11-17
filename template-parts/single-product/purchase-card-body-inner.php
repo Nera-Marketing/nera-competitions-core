@@ -120,7 +120,7 @@ $decimal_sep       = wc_get_price_decimal_separator();
               continue;
             }
             $label_html = method_exists($product, 'get_range_slider_predefined_discount_label')
-              ? $product->get_range_slider_predefined_discount_label($button_id, $marker_qty)
+              ? nera_lty_predefined_button_label($product, $button_id, $marker_qty, 'range_slider')
               : '';
             if ($label_html === '') {
               continue;

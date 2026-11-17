@@ -875,6 +875,67 @@ function nera_get_lottery_product_data($product = null)
 }
 
 /**
+ * Predefined-button label, badge or range-slider label with `{discount}` as the money saved
+ * in Fixed Price mode.
+ *
+ * In Fixed Price mode LTY stores each button's bundle total and fills `{discount}` with it.
+ * Here `{discount}` is the saving: quantity × single-ticket price − bundle total. Percentage
+ * mode returns LTY's own output.
+ *
+ * @param WC_Product $product   Lottery product.
+ * @param int|string $button_id Predefined button rule id.
+ * @param int        $qty       Ticket quantity.
+ * @param string     $context   'button', 'badge' or 'range_slider'.
+ * @return string Label HTML; '' for a badge or range-slider label when a fixed bundle saves nothing.
+ */
+function nera_lty_predefined_button_label($product, $button_id, int $qty, string $context = 'button'): string
+{
+  $lty_label = [
+    'button'       => 'get_predefined_button_label',
+    'badge'        => 'get_predefined_button_badge_label',
+    'range_slider' => 'get_range_slider_predefined_discount_label',
+  ];
+  $template = [
+    'button'       => 'get_predefined_buttons_label',
+    'badge'        => 'get_lty_predefined_buttons_badge_label',
+    'range_slider' => 'get_lty_range_slider_predefined_discount_label',
+  ];
+
+  if (!isset($lty_label[$context])) {
+    return '';
+  }
+
+  if ('1' == $product->get_predefined_buttons_selection_type()) {
+    return (string) $product->{$lty_label[$context]}($button_id, $qty);
+  }
+
+  $unit_price = (float) apply_filters('lty_predefined_button_product_price', $product->get_price());
+  $total      = (float) $product->get_predefined_buttons_discount_amount($button_id);
+  if ($total <= 0) {
+    $total = $qty * $unit_price;
+  }
+  $saving = round($qty * $unit_price - $total, wc_get_price_decimals());
+
+  if ($saving <= 0 && $context !== 'button') {
+    return '';
+  }
+
+  $html = str_replace(
+    ['{ticket_quantity}', '{price}', '{discount}'],
+    [
+      $qty,
+      wc_price($qty * $product->get_predefined_buttons_per_ticket_amount($button_id)),
+      wc_price(max(0, $saving)),
+    ],
+    (string) $product->{$template[$context]}()
+  );
+
+  // The badge and the slider chip are inline-flex: without one wrapper the price markup and
+  // the text around it become separate flex items and the space between them collapses.
+  return $context === 'button' ? $html : '<span>' . $html . '</span>';
+}
+
+/**
  * Whether a lottery product has no tickets left (sold out).
  *
  * @param WC_Product     $product      Product object.
