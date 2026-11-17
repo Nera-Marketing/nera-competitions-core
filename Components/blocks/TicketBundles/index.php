@@ -92,7 +92,7 @@ function get_data(array $args = []): array
                 : $base_price;
 
             $label_html = method_exists($product, 'get_predefined_button_label')
-                ? $product->get_predefined_button_label($button_id, $qty)
+                ? \nera_lty_predefined_button_label($product, $button_id, $qty, 'button')
                 : sprintf(
                     /* translators: 1: ticket quantity 2: formatted price */
                     __('Buy %1$d ticket(s) for %2$s', 'nera-competitions'),
@@ -102,7 +102,7 @@ function get_data(array $args = []): array
 
             $badge_html = '';
             if ($show_tag && method_exists($product, 'get_predefined_button_badge_label')) {
-                $badge_html = (string) $product->get_predefined_button_badge_label($button_id, $qty);
+                $badge_html = \nera_lty_predefined_button_label($product, $button_id, $qty, 'badge');
             }
 
             $buttons[] = [
