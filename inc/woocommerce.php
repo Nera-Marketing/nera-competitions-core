@@ -932,7 +932,7 @@ function nera_lty_predefined_button_label($product, $button_id, int $qty, string
 
   // The badge and the slider chip are inline-flex: without one wrapper the price markup and
   // the text around it become separate flex items and the space between them collapses.
-  return $context === 'button' ? $html : '<span>' . $html . '</span>';
+  return $context === 'button' || $html === '' ? $html : '<span>' . $html . '</span>';
 }
 
 /**
