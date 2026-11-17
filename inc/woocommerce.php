@@ -875,7 +875,7 @@ function nera_get_lottery_product_data($product = null)
 }
 
 /**
- * Predefined-button label, badge or range-slider label with `{discount}` as the money saved
+ * Predefined-button label, badge or range-slider label with `{discount}` as the amount saved
  * in Fixed Price mode.
  *
  * In Fixed Price mode LTY stores each button's bundle total and fills `{discount}` with it.
@@ -925,7 +925,7 @@ function nera_lty_predefined_button_label($product, $button_id, int $qty, string
     [
       $qty,
       wc_price($qty * $product->get_predefined_buttons_per_ticket_amount($button_id)),
-      wc_price(max(0, $saving)),
+      wc_format_decimal(max(0, $saving), wc_get_price_decimals()),
     ],
     (string) $product->{$template[$context]}()
   );
