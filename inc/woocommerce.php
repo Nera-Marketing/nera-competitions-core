@@ -2252,14 +2252,19 @@ add_filter('woocommerce_default_address_fields', 'nera_customize_default_address
  */
 function nera_checkout_phone_is_required(): bool
 {
-  // Same accessor WooCommerce uses to build the field, so both always agree.
-  $utils = '\Automattic\WooCommerce\Blocks\Utils\CartCheckoutUtils';
-  if (class_exists($utils) && method_exists($utils, 'get_phone_field_visibility')) {
-    return 'required' === $utils::get_phone_field_visibility();
-  }
-
-  return 'required' === get_option('woocommerce_checkout_phone_field');
+  // Only an explicit "Required" choice makes it required. When the option was
+  // never saved, WooCommerce itself falls back to "required" for the classic
+  // checkout, so it must not be asked: the default here is optional.
+  return 'required' === get_option('woocommerce_checkout_phone_field', 'optional');
 }
+
+/**
+ * Default of the Customizer "Phone field" setting is Optional (WooCommerce
+ * would otherwise show and apply "Required" until someone saves it).
+ */
+add_filter('default_option_woocommerce_checkout_phone_field', function () {
+  return 'optional';
+});
 
 /**
  * Clearer message than "Billing Phone is a required field."
