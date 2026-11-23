@@ -2246,6 +2246,35 @@ function nera_customize_default_address_fields($fields)
 add_filter('woocommerce_default_address_fields', 'nera_customize_default_address_fields', 20);
 
 /**
+ * Whether the checkout phone field is set to "Required" in
+ * Appearance › Customize › WooCommerce › Checkout. Defaults to optional,
+ * as before, so existing sites keep their behaviour until the setting is changed.
+ */
+function nera_checkout_phone_is_required(): bool
+{
+  // Same accessor WooCommerce uses to build the field, so both always agree.
+  $utils = '\Automattic\WooCommerce\Blocks\Utils\CartCheckoutUtils';
+  if (class_exists($utils) && method_exists($utils, 'get_phone_field_visibility')) {
+    return 'required' === $utils::get_phone_field_visibility();
+  }
+
+  return 'required' === get_option('woocommerce_checkout_phone_field');
+}
+
+/**
+ * Clearer message than "Billing Phone is a required field."
+ */
+function nera_checkout_phone_required_notice($notice, $field_label, $key)
+{
+  if ('billing_phone' !== $key) {
+    return $notice;
+  }
+
+  return esc_html__('Please enter your phone number so we can contact you if you win.', 'nera-competitions');
+}
+add_filter('woocommerce_checkout_required_field_notice', 'nera_checkout_phone_required_notice', 10, 3);
+
+/**
  * Customize billing field widths and non-address field priorities
  * Creates a balanced 2-column grid layout with proper field pairing
  */
@@ -2273,7 +2302,8 @@ function nera_customize_billing_fields($fields)
   }
   if (isset($fields['billing']['billing_phone'])) {
     $fields['billing']['billing_phone']['priority'] = 40;
-    $fields['billing']['billing_phone']['required'] = false;
+    // Follow Appearance › Customize › WooCommerce › Checkout › Phone field.
+    $fields['billing']['billing_phone']['required'] = nera_checkout_phone_is_required();
   }
   if (isset($fields['billing']['billing_company'])) {
     $fields['billing']['billing_company']['required'] = false;
